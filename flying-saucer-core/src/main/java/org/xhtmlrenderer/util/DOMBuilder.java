@@ -133,7 +133,10 @@ public class DOMBuilder {
     } else if (node instanceof org.jsoup.nodes.DocumentType) {
       System.out.println("Doc type not handled.");
       // TODO
+    } else if (node instanceof org.jsoup.nodes.Comment) {
+      // Ignored
     } else {
+      System.out.println("Node type not handled:" + node.getClass());
       throw new NotImplementedException(); // TODO: NOP
     }
   }
