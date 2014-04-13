@@ -22,14 +22,19 @@ package org.xhtmlrenderer.pdf;
 import java.awt.Color;
 import java.io.IOException;
 
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.*;
-
-import org.jsoup.nodes.Element;
+import org.w3c.dom.Element;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.render.RenderingContext;
+
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.BaseField;
+import com.lowagie.text.pdf.PdfBorderDictionary;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfFormField;
+import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.text.pdf.RadioCheckField;
 
 public class CheckboxFormField extends AbstractFormField
 {

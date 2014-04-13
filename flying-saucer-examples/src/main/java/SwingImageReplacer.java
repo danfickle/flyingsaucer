@@ -1,21 +1,25 @@
 
 
-import org.jsoup.nodes.Element;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+
+import org.w3c.dom.Element;
+import org.xhtmlrenderer.extend.FSImage;
 import org.xhtmlrenderer.extend.ReplacedElement;
 import org.xhtmlrenderer.extend.UserAgentCallback;
-import org.xhtmlrenderer.extend.FSImage;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
-import org.xhtmlrenderer.util.XRLog;
-import org.xhtmlrenderer.util.ImageUtil;
 import org.xhtmlrenderer.swing.AWTFSImage;
-import org.xhtmlrenderer.swing.ImageReplacedElement;
 import org.xhtmlrenderer.swing.EmptyReplacedElement;
-
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.util.logging.Level;
-import java.util.*;
+import org.xhtmlrenderer.swing.ImageReplacedElement;
+import org.xhtmlrenderer.util.ImageUtil;
+import org.xhtmlrenderer.util.XRLog;
 
 /**
  * @author patrick

@@ -19,10 +19,17 @@
  */
 package org.xhtmlrenderer.swing;
 
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.Map;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.xhtmlrenderer.extend.NamespaceHandler;
-import org.xhtmlrenderer.extend.ReplacedElementFactory;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.extend.UserInterface;
 import org.xhtmlrenderer.layout.BoxBuilder;
@@ -35,12 +42,6 @@ import org.xhtmlrenderer.render.ViewportBox;
 import org.xhtmlrenderer.simple.HtmlNamespaceHandler;
 import org.xhtmlrenderer.util.Configuration;
 import org.xhtmlrenderer.util.ImageUtil;
-
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.util.Map;
 
 /**
  * <p>Renders an XML files, formatted with CSS, as an Box. Input is a document in the form of file or URL,

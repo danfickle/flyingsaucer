@@ -19,7 +19,9 @@
  */
 package org.xhtmlrenderer.simple.extend.form;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -28,7 +30,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.plaf.basic.BasicButtonUI;
 
-import org.jsoup.nodes.Element;
+import org.w3c.dom.Element;
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.style.CalculatedStyle;
 import org.xhtmlrenderer.css.style.FSDerivedValue;

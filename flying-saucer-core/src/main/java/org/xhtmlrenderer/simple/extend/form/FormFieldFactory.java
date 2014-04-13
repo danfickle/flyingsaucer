@@ -19,7 +19,7 @@
  */
 package org.xhtmlrenderer.simple.extend.form;
 
-import org.jsoup.nodes.Element;
+import org.w3c.dom.Element;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.simple.extend.XhtmlForm;
@@ -33,11 +33,11 @@ public class FormFieldFactory {
 
         final Element e = box.getElement();
 
-        if (e.nodeName().equals("input")) {
-            typeKey = e.attr("type");  
-        } else if (e.nodeName().equals("textarea")) {
+        if (e.getNodeName().equals("input")) {
+            typeKey = e.getAttribute("type");  
+        } else if (e.getNodeName().equals("textarea")) {
             typeKey = "textarea";
-        } else if (e.nodeName().equals("select")) {
+        } else if (e.getNodeName().equals("select")) {
             typeKey = "select";
         } else {
             return null;

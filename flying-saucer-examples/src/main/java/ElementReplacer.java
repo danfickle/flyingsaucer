@@ -1,9 +1,9 @@
 
 
-import org.jsoup.nodes.Element;
-import org.xhtmlrenderer.layout.LayoutContext;
+import org.w3c.dom.Element;
 import org.xhtmlrenderer.extend.ReplacedElement;
 import org.xhtmlrenderer.extend.UserAgentCallback;
+import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
 
 /**

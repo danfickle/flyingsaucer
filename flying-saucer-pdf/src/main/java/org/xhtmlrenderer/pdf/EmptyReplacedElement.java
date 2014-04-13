@@ -1,16 +1,15 @@
 package org.xhtmlrenderer.pdf;
 
-import com.lowagie.text.pdf.PdfAcroForm;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfFormField;
-import com.lowagie.text.pdf.PdfWriter;
+import java.awt.Point;
 
-import org.jsoup.nodes.Element;
+import org.w3c.dom.Element;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.render.RenderingContext;
 
-import java.awt.*;
+import com.lowagie.text.pdf.PdfAcroForm;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfWriter;
 
 /**
  * Created by IntelliJ IDEA.

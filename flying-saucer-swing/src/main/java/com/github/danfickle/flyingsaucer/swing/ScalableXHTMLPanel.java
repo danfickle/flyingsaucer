@@ -20,13 +20,16 @@
 
 package com.github.danfickle.flyingsaucer.swing;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.print.PrinterGraphics;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-import org.jsoup.nodes.Document;
+import org.w3c.dom.Document;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.layout.Layer;
 import org.xhtmlrenderer.layout.PaintingInfo;

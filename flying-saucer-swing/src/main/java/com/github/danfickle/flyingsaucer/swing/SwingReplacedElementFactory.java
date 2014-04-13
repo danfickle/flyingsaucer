@@ -19,13 +19,26 @@
  */
 package com.github.danfickle.flyingsaucer.swing;
 
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.logging.Level;
+
+import javax.swing.JComponent;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.xhtmlrenderer.extend.ReplacedElement;
 import org.xhtmlrenderer.extend.ReplacedElementFactory;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
+import org.xhtmlrenderer.resource.ImageResource;
 import org.xhtmlrenderer.simple.extend.DefaultFormSubmissionListener;
 import org.xhtmlrenderer.simple.extend.FormSubmissionListener;
 import org.xhtmlrenderer.simple.extend.XhtmlForm;
@@ -38,15 +51,6 @@ import org.xhtmlrenderer.swing.ImageResourceLoader;
 import org.xhtmlrenderer.swing.RepaintListener;
 import org.xhtmlrenderer.util.ImageUtil;
 import org.xhtmlrenderer.util.XRLog;
-import org.xhtmlrenderer.resource.ImageResource;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.logging.Level;
 
 /**
  * A ReplacedElementFactory where Elements are replaced by Swing components.
@@ -273,7 +277,7 @@ public class SwingReplacedElementFactory implements ReplacedElementFactory {
         Node node = e;
 
         do {
-            node = node.parentNode();
+            node = node.getParentNode();
         } while (node instanceof Element &&
                 !context.getNamespaceHandler().isFormElement((Element) node));
 

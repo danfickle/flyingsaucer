@@ -19,14 +19,17 @@
  */
 
 
-import org.jsoup.nodes.Element;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.w3c.dom.Element;
 import org.xhtmlrenderer.extend.ReplacedElement;
 import org.xhtmlrenderer.extend.ReplacedElementFactory;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
-
-import java.util.*;
 import org.xhtmlrenderer.simple.extend.FormSubmissionListener;
 
 /**
@@ -49,7 +52,7 @@ public class DelegatingReplacedElementFactory implements ReplacedElementFactory 
                                                  final int cssWidth,
                                                  final int cssHeight
     ) {
-        final ElementReplacer nameReplacer = byNameReplacers.get(box.getElement().nodeName());
+        final ElementReplacer nameReplacer = byNameReplacers.get(box.getElement().getNodeName());
         if (nameReplacer != null) {
             return replaceUsing(context, box, uac, cssWidth, cssHeight, nameReplacer);
         }

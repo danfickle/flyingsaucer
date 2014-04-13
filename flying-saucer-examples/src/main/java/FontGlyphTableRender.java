@@ -47,7 +47,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-import org.jsoup.nodes.Document;
+import org.w3c.dom.Document;
 import org.xhtmlrenderer.event.DefaultDocumentListener;
 import org.xhtmlrenderer.pdf.ITextFontResolver;
 import org.xhtmlrenderer.pdf.ITextRenderer;

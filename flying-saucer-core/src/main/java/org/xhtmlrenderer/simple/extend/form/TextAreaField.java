@@ -19,6 +19,10 @@
  */
 package org.xhtmlrenderer.simple.extend.form;
 
+import java.awt.Dimension;
+import java.awt.FontMetrics;
+import java.awt.Insets;
+
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -26,7 +30,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.plaf.basic.BasicTextAreaUI;
 import javax.swing.plaf.basic.BasicTextUI;
 
-import org.jsoup.nodes.Element;
+import org.w3c.dom.Element;
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.style.CalculatedStyle;
 import org.xhtmlrenderer.css.style.FSDerivedValue;
@@ -37,8 +41,6 @@ import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.simple.extend.XhtmlForm;
 import org.xhtmlrenderer.util.GeneralUtil;
-
-import java.awt.*;
 
 class TextAreaField extends FormField {
     private TextAreaFieldJTextArea _textarea;

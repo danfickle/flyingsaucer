@@ -21,8 +21,8 @@ package com.github.danfickle.flyingsaucer.swing;
 
 import java.awt.Rectangle;
 
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.xhtmlrenderer.context.StyleReference;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.layout.PaintingInfo;
@@ -124,7 +124,7 @@ public class HoverListener extends DefaultFSMouseListener {
         Element element = ib.getElement();
 
         while (element != null && !style.isHoverStyled(element)) {
-            final Node node = element.parentNode();
+            final Node node = element.getParentNode();
             if (node instanceof Element) {
                 element = (Element) node;
             } else {

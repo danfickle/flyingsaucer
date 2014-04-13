@@ -19,11 +19,13 @@
  */
 package com.github.danfickle.flyingsaucer.swing;
 
-import org.jsoup.nodes.Document;
-import org.xhtmlrenderer.layout.SharedContext;
-
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+
+import org.w3c.dom.Document;
+import org.xhtmlrenderer.layout.SharedContext;
 
 
 /**

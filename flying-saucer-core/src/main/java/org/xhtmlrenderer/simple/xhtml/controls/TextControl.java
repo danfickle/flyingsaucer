@@ -19,9 +19,10 @@
  */
 package org.xhtmlrenderer.simple.xhtml.controls;
 
-import org.jsoup.nodes.Element;
-import org.xhtmlrenderer.simple.xhtml.XhtmlForm;
 import static org.xhtmlrenderer.util.GeneralUtil.ciEquals;
+
+import org.w3c.dom.Element;
+import org.xhtmlrenderer.simple.xhtml.XhtmlForm;
 
 public class TextControl extends AbstractControl {
 
@@ -36,8 +37,8 @@ public class TextControl extends AbstractControl {
     public TextControl(final XhtmlForm form, final Element e) {
         super(form, e);
 
-        _readonly = (e.attr("readonly").length() > 0);
-        if (ciEquals(e.nodeName(), "textarea")) {
+        _readonly = (e.getAttribute("readonly").length() > 0);
+        if (ciEquals(e.getNodeName(), "textarea")) {
             _multiline = true;
             _password = false;
             _size = getIntAttribute(e, "cols", DEFAULT_SIZE);
@@ -46,7 +47,7 @@ public class TextControl extends AbstractControl {
             setInitialValue(collectText(e));
         } else { // <input>
             _multiline = false;
-            _password = ciEquals(e.attr("type"), "password");
+            _password = ciEquals(e.getAttribute("type"), "password");
             _size = getIntAttribute(e, "size", DEFAULT_SIZE);
             _rows = 1;
             _maxlength = getIntAttribute(e, "maxlength", -1);

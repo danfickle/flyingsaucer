@@ -19,7 +19,7 @@
  */
 package org.xhtmlrenderer.simple.xhtml.controls;
 
-import org.jsoup.nodes.Element;
+import org.w3c.dom.Element;
 import org.xhtmlrenderer.simple.xhtml.FormControl;
 import org.xhtmlrenderer.simple.xhtml.XhtmlForm;
 
@@ -30,10 +30,10 @@ public class CheckControl extends AbstractControl {
     public CheckControl(final XhtmlForm form, final Element e) {
         super(form, e);
 
-        _initialValue = e.attr("checked").length() != 0;
+        _initialValue = e.getAttribute("checked").length() != 0;
         setSuccessful(_initialValue);
 
-        _radio = e.attr("type").equals("radio");
+        _radio = e.getAttribute("type").equals("radio");
     }
 
     public void setSuccessful(final boolean successful) {

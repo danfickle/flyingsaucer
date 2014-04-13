@@ -28,11 +28,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.jsoup.nodes.DataNode;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
-import org.jsoup.nodes.TextNode;
+import org.w3c.dom.CDATASection;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.Text;
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.CSSPrimitiveUnit;
 import org.xhtmlrenderer.css.constants.IdentValue;
@@ -81,7 +81,7 @@ public class BoxBuilder {
     private static final int CONTENT_LIST_MARGIN_BOX = 2;
 
     public static BlockBox createRootBox(final LayoutContext c, final Document document) {
-        final Element root = document;
+        final Element root = document.getDocumentElement();
 
         final CalculatedStyle style = c.getSharedContext().getStyle(root);
 
@@ -776,7 +776,7 @@ public class BoxBuilder {
 
     private static String getAttributeValue(final FSFunction attrFunc, final Element e) {
         final PropertyValue value = (PropertyValue) attrFunc.getParameters().get(0);
-        return e.attr(value.getStringValue());
+        return e.getAttribute(value.getStringValue());
     }
 
     private static List<Styleable> createGeneratedContentList(
@@ -1019,7 +1019,7 @@ public class BoxBuilder {
     private static void addColumns(final LayoutContext c, final TableBox table, final TableColumn parent) {
         final SharedContext sharedContext = c.getSharedContext();
 
-        Node working = parent.getElement().childNodes().isEmpty() ? null : parent.getElement().childNode(0);
+        Node working = parent.getElement().getFirstChild();
         boolean found = false;
         while (working != null) {
             if (working instanceof Element) {
@@ -1033,7 +1033,7 @@ public class BoxBuilder {
                     table.addStyleColumn(col);
                 }
             }
-            working = working.nextSibling();
+            working = working.getNextSibling();
         }
         if (! found) {
             table.addStyleColumn(parent);
@@ -1053,7 +1053,7 @@ public class BoxBuilder {
             final String text, final Element parent, final CalculatedStyle parentStyle, final Node node) {
         final InlineBox result = new InlineBox(text, node);
 
-        if (parentStyle.isInline() && ! (parent.parentNode() instanceof Document)) {
+        if (parentStyle.isInline() && ! (parent.getParentNode() instanceof Document)) {
             result.setStyle(parentStyle);
             result.setElement(parent);
         } else {
@@ -1074,7 +1074,7 @@ public class BoxBuilder {
 
         insertGeneratedContent(c, parent, parentStyle, "before", children, info);
 
-        Node working = parent.childNodes().isEmpty() ? null : parent.childNode(0);
+        Node working = parent.getFirstChild();
         boolean needStartText = inline;
         boolean needEndText = inline;
         if (working != null) {
@@ -1152,7 +1152,7 @@ public class BoxBuilder {
                         //I think we need to do this to evaluate counters correctly
                         block.ensureChildren(c);
                     }
-                } else if (nodeType instanceof TextNode || nodeType instanceof DataNode) {
+                } else if (nodeType instanceof Text || nodeType instanceof CDATASection) {
                     needStartText = false;
                     needEndText = false;
 
@@ -1182,7 +1182,7 @@ public class BoxBuilder {
                     child = createInlineBox(text.toString(), parent, parentStyle, textNode);
                     */
 
-                    child = createInlineBox(textNode instanceof DataNode ? ((DataNode) textNode).getWholeData() : ((TextNode) textNode).getWholeText(), parent, parentStyle, textNode);
+                    child = createInlineBox(textNode instanceof CDATASection ? ((CDATASection) textNode).getTextContent() : ((Text) textNode).getWholeText(), parent, parentStyle, textNode);
 
                     final InlineBox iB = (InlineBox) child;
                     iB.setEndsHere(true);
@@ -1197,7 +1197,7 @@ public class BoxBuilder {
                 if (child != null) {
                     children.add(child);
                 }
-            } while ((working = working.nextSibling()) != null);
+            } while ((working = working.getNextSibling()) != null);
         }
         if (needStartText || needEndText) {
             final InlineBox iB = createInlineBox("", parent, parentStyle, null);

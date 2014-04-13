@@ -19,7 +19,7 @@
  */
 package org.xhtmlrenderer.context;
 
-import org.jsoup.nodes.Element;
+import org.w3c.dom.Element;
 import org.xhtmlrenderer.css.extend.AttributeResolver;
 import org.xhtmlrenderer.extend.NamespaceHandler;
 import org.xhtmlrenderer.extend.UserAgentCallback;

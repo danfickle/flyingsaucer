@@ -23,9 +23,9 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.RenderingHints.Key;
 import java.awt.Shape;
 import java.awt.Stroke;
-import java.awt.RenderingHints.Key;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
@@ -50,9 +50,8 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.IdentValue;
 import org.xhtmlrenderer.css.parser.FSCMYKColor;
@@ -79,6 +78,7 @@ import org.xhtmlrenderer.render.PageBox;
 import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.util.Configuration;
 import org.xhtmlrenderer.util.JsoupUtil;
+import org.xhtmlrenderer.util.NodeHelper;
 import org.xhtmlrenderer.util.XRLog;
 import org.xhtmlrenderer.util.XRRuntimeException;
 
@@ -104,7 +104,6 @@ import com.lowagie.text.pdf.PdfShadingPattern;
 import com.lowagie.text.pdf.PdfString;
 import com.lowagie.text.pdf.PdfTextArray;
 import com.lowagie.text.pdf.PdfWriter;
-import com.lowagie.text.pdf.ShadingColor;
 
 /**
  * This class is largely based on {@link com.lowagie.text.pdf.PdfGraphics2D}.
@@ -998,7 +997,9 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
     }
 
     private void loadBookmarks(final Document doc) {
-        final Element head = doc.head();
+      // TODO
+      /*
+        final Element head = NodeHelper.getHead(doc);
         if (head != null) {
             final Element bookmarks = JsoupUtil.firstChild(head.select("bookmarks"));
             if (bookmarks != null) {
@@ -1010,21 +1011,25 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
                 }
             }
         }
+        */
     }
 
     private void loadBookmark(final Bookmark parent, final Element bookmark) {
-        final Bookmark us = new Bookmark(bookmark.attr("name"), bookmark.attr("href"));
+        final Bookmark us = new Bookmark(bookmark.getAttribute("name"), bookmark.getAttribute("href"));
         if (parent == null) {
             _bookmarks.add(us);
         } else {
             parent.addChild(us);
         }
+        // TODO
+        /*
         final Elements l = bookmark.select("bookmark");
         if (l != null) {
             for (final Element e : l) {
                 loadBookmark(us, e);
             }
         }
+        */
     }
 
     private static class Bookmark {
@@ -1140,6 +1145,8 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
      *            the Document level node of the parsed xhtml file.
      */
     private void loadMetadata(final Document doc) {
+      // TODO
+      /*
         final Element head = doc.head();
         if (head != null) {
             final Elements l = head.select("meta");
@@ -1164,6 +1171,7 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
                 }
             }
         }
+        */
     }
 
     /**

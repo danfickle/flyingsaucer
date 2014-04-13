@@ -26,12 +26,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.logging.Level;
 
-import org.jsoup.nodes.Document;
+import org.w3c.dom.Document;
 import org.xhtmlrenderer.render.Box;
-import com.github.danfickle.flyingsaucer.swing.Graphics2DRenderer;
 import org.xhtmlrenderer.util.Uu;
 import org.xhtmlrenderer.util.XMLUtil;
 import org.xhtmlrenderer.util.XRLog;
+
+import com.github.danfickle.flyingsaucer.swing.Graphics2DRenderer;
 
 /**
  * Description of the Class

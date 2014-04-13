@@ -19,16 +19,17 @@
  */
 package org.xhtmlrenderer.swing;
 
-import java.awt.*;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.xhtmlrenderer.extend.NamespaceHandler;
-import org.xhtmlrenderer.extend.ReplacedElementFactory;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.extend.UserInterface;
 import org.xhtmlrenderer.layout.BoxBuilder;
