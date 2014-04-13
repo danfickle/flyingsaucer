@@ -997,13 +997,11 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
     }
 
     private void loadBookmarks(final Document doc) {
-      // TODO
-      /*
         final Element head = NodeHelper.getHead(doc);
         if (head != null) {
-            final Element bookmarks = JsoupUtil.firstChild(head.select("bookmarks"));
+            final Element bookmarks = NodeHelper.getFirstMatchingChildByTagName(head, "bookmarks");
             if (bookmarks != null) {
-                final Elements l = bookmarks.select("bookmark");
+              final List<Element> l = NodeHelper.getMatchingChildrenByTagName(bookmarks, "bookmark");
                 if (l != null) {
                     for (final Element e : l) {
                         loadBookmark(null, e);
@@ -1011,7 +1009,6 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
                 }
             }
         }
-        */
     }
 
     private void loadBookmark(final Bookmark parent, final Element bookmark) {
@@ -1021,15 +1018,12 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
         } else {
             parent.addChild(us);
         }
-        // TODO
-        /*
-        final Elements l = bookmark.select("bookmark");
+        final List<Element> l = NodeHelper.getMatchingChildrenByTagName(bookmark, "bookmark");
         if (l != null) {
             for (final Element e : l) {
                 loadBookmark(us, e);
             }
         }
-        */
     }
 
     private static class Bookmark {
@@ -1145,16 +1139,14 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
      *            the Document level node of the parsed xhtml file.
      */
     private void loadMetadata(final Document doc) {
-      // TODO
-      /*
-        final Element head = doc.head();
+        final Element head = NodeHelper.getHead(doc);
         if (head != null) {
-            final Elements l = head.select("meta");
+          final List<Element> l = NodeHelper.getMatchingChildrenByTagName(head, "meta");
             if (l != null) {
                 for (final Element e : l) {
-                    final String name = e.attr("name");
+                    final String name = e.getAttribute("name");
                     if (name != null) { // ignore non-name metadata data
-                        final String content = e.attr("content");
+                        final String content = e.getAttribute("content");
                         final Metadata m = new Metadata(name, content);
                         _metadata.add(m);
                     }
@@ -1163,15 +1155,14 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
             // If there is no title meta data attribute, use the document title.
             String title = getMetadataByName("title");
             if (title == null) {
-                final Element t = JsoupUtil.firstChild(head.select("title"));
+                final Element t = NodeHelper.getFirstMatchingByTagName(head, "title");
                 if (t != null) {
-                    title = t.text().trim();
+                    title = t.getTextContent().trim();
                     final Metadata m = new Metadata("title", title);
                     _metadata.add(m);
                 }
             }
         }
-        */
     }
 
     /**
