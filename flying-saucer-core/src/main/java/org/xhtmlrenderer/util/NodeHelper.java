@@ -1,6 +1,8 @@
 package org.xhtmlrenderer.util;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -94,8 +96,8 @@ public class NodeHelper {
     };
   }
 
-  private static Element getFirstMatchingByTagName(final Document doc, final String tagName) {
-    NodeList matchingElements = doc.getElementsByTagName(tagName);
+  public static Element getFirstMatchingByTagName(final Element e, final String tagName) {
+    NodeList matchingElements = e.getElementsByTagName(tagName);
     if (matchingElements != null) {
       return (Element) matchingElements.item(0);
     } else {
@@ -103,12 +105,56 @@ public class NodeHelper {
     }
   }
 
+  public static List<Element> getMatchingChildrenByTagName(final Element element, final String tagName) {
+    NodeList matchingElements = element.getChildNodes();
+    if (matchingElements != null) {
+      List<Element> result = new ArrayList<Element>();
+      int i = 0;
+      int N = matchingElements.getLength();
+      while (i < N) {
+        final Node n = matchingElements.item(i);
+        if (n instanceof Element) {
+          final Element e = (Element) n;
+          if (tagName.equals(e.getTagName())) {
+            result.add(e);
+          }
+        }
+        i++;
+      }
+      return result;
+    } else {
+      return null;
+    }
+  }
+  public static Element getFirstMatchingChildByTagName(final Element element, final String tagName) {
+    NodeList matchingElements = element.getChildNodes();
+    if (matchingElements != null) {
+      int i = 0;
+      int N = matchingElements.getLength();
+      Element result = null;
+      while (i < N && result == null) {
+        final Node n = matchingElements.item(i);
+        if (n instanceof Element) {
+          final Element e = (Element) n;
+          if (tagName.equals(e.getTagName())) {
+            result = e;
+          }
+        }
+        i++;
+      }
+      return result;
+    } else {
+      return null;
+    }
+  }
+
+
   public static Element getHead(final Document doc) {
-    return getFirstMatchingByTagName(doc, "head");
+    return getFirstMatchingChildByTagName(doc.getDocumentElement(), "head");
   }
 
   public static Element getBody(Document doc) {
-    return getFirstMatchingByTagName(doc, "body");
+    return getFirstMatchingChildByTagName(doc.getDocumentElement(), "body");
   }
 
   public static boolean isElement(final Node n) {
