@@ -25,9 +25,10 @@ public class NodeHelper {
     final Attr attr = (Attr) link.getAttributes().getNamedItem(attrName);
     final String[] values = attr.getValue().split(" ");
     boolean found = false;
-    final int i = 0;
+    int i = 0;
     while (!found && i < values.length) {
       found = searchStr.equals(values[i]);
+      i++;
     }
     return found;
   }
