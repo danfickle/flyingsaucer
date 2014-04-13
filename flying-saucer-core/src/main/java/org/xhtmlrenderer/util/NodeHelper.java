@@ -35,11 +35,11 @@ public class NodeHelper {
 
   public static Iterable<Node> makeIterable(final NodeList nodeList) {
     return new Iterable<Node>() {
-      int i = 0;
-
       @Override
       public Iterator<Node> iterator() {
+
         return new Iterator<Node>() {
+          private int i = 0;
 
           @Override
           public boolean hasNext() {
