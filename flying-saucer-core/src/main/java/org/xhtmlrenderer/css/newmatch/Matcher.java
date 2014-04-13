@@ -50,7 +50,7 @@ import org.xhtmlrenderer.util.Util;
  */
 public class Matcher {
 
-    Mapper docMapper;
+    private final Mapper docMapper;
     private final org.xhtmlrenderer.css.extend.AttributeResolver _attRes;
     private final org.xhtmlrenderer.css.extend.TreeResolver _treeRes;
     private final org.xhtmlrenderer.css.extend.StylesheetFactory _styleFactory;
