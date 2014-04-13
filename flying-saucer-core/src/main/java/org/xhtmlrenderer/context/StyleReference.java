@@ -214,7 +214,6 @@ public class StyleReference {
         	infos.add(_context.getDefaultStylesheet());
         }
         
-        
         final List<StylesheetInfo> refs = _nsh.getStylesheets(_doc);
         int inlineStyleCount = 0;
         if (refs != null) {
