@@ -1155,7 +1155,7 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
             // If there is no title meta data attribute, use the document title.
             String title = getMetadataByName("title");
             if (title == null) {
-                final Element t = NodeHelper.getFirstMatchingByTagName(head, "title");
+                final Element t = NodeHelper.getFirstMatchingChildByTagName(head, "title");
                 if (t != null) {
                     title = t.getTextContent().trim();
                     final Metadata m = new Metadata("title", title);
