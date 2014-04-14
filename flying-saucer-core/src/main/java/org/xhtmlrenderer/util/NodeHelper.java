@@ -96,7 +96,7 @@ public class NodeHelper {
     };
   }
 
-  public static Element getFirstMatchingByTagName(final Element e, final String tagName) {
+  public static Element getFirstMatchingDeepChildByTagName(final Element e, final String tagName) {
     NodeList matchingElements = e.getElementsByTagName(tagName);
     if (matchingElements != null) {
       return (Element) matchingElements.item(0);
