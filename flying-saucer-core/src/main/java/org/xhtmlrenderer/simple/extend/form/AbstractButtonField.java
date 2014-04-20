@@ -1,22 +1,24 @@
 package org.xhtmlrenderer.simple.extend.form;
 
-import org.jsoup.nodes.Element;
+import java.awt.Color;
+import java.awt.Insets;
+
+import javax.swing.JButton;
+import javax.swing.plaf.basic.BasicBorders;
+import javax.swing.plaf.basic.BasicButtonUI;
+
+import org.w3c.dom.Element;
+import org.xhtmlrenderer.css.constants.CSSName;
+import org.xhtmlrenderer.css.parser.FSColor;
+import org.xhtmlrenderer.css.parser.FSRGBColor;
 import org.xhtmlrenderer.css.style.CalculatedStyle;
 import org.xhtmlrenderer.css.style.FSDerivedValue;
 import org.xhtmlrenderer.css.style.derived.BorderPropertySet;
-import org.xhtmlrenderer.css.style.derived.RectPropertySet;
 import org.xhtmlrenderer.css.style.derived.LengthValue;
-import org.xhtmlrenderer.css.parser.FSColor;
-import org.xhtmlrenderer.css.parser.FSRGBColor;
-import org.xhtmlrenderer.css.constants.CSSName;
-import org.xhtmlrenderer.simple.extend.XhtmlForm;
+import org.xhtmlrenderer.css.style.derived.RectPropertySet;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
-
-import javax.swing.*;
-import javax.swing.plaf.basic.BasicButtonUI;
-import javax.swing.plaf.basic.BasicBorders;
-import java.awt.*;
+import org.xhtmlrenderer.simple.extend.XhtmlForm;
 
 public abstract class AbstractButtonField extends InputField {
 

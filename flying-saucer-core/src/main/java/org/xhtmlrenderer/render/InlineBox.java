@@ -18,8 +18,8 @@
  */
 package org.xhtmlrenderer.render;
 
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.xhtmlrenderer.css.constants.IdentValue;
 import org.xhtmlrenderer.css.extend.ContentFunction;
 import org.xhtmlrenderer.css.parser.FSFunction;
@@ -382,7 +382,7 @@ public class InlineBox implements Styleable {
         result.append("InlineBox: ");
         if (getElement() != null) {
             result.append("<");
-            result.append(getElement().nodeName());
+            result.append(getElement().getNodeName());
             result.append("> ");
         } else {
             result.append("(anonymous) ");

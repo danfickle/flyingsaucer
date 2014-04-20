@@ -19,12 +19,17 @@
  */
 package org.xhtmlrenderer.simple.extend.form;
 
-import javax.swing.*;
+import java.awt.FontMetrics;
+import java.awt.Insets;
+
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
+import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.plaf.basic.BasicTextFieldUI;
 import javax.swing.plaf.basic.BasicTextUI;
 
-import org.jsoup.nodes.Element;
+import org.w3c.dom.Element;
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.style.CalculatedStyle;
 import org.xhtmlrenderer.css.style.FSDerivedValue;
@@ -35,8 +40,6 @@ import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.simple.extend.XhtmlForm;
 import org.xhtmlrenderer.util.GeneralUtil;
-
-import java.awt.*;
 
 class TextField extends InputField {
     public TextField(final Element e, final XhtmlForm form, final LayoutContext context, final BlockBox box) {

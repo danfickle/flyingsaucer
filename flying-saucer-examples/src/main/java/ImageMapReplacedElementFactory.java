@@ -18,32 +18,43 @@
  * }}}
  */
 
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
-import org.xhtmlrenderer.extend.FSImage;
-import org.xhtmlrenderer.extend.ReplacedElement;
-import org.xhtmlrenderer.extend.UserAgentCallback;
-import org.xhtmlrenderer.extend.FSCanvas;
-import org.xhtmlrenderer.layout.LayoutContext;
-import org.xhtmlrenderer.render.BlockBox;
-import org.xhtmlrenderer.swing.AWTFSImage;
-import org.xhtmlrenderer.util.XRLog;
-
-import com.github.danfickle.flyingsaucer.swing.SwingReplacedElement;
-import com.github.danfickle.flyingsaucer.swing.SwingReplacedElementFactory;
-
-import javax.swing.*;
-
-import java.awt.*;
+import java.awt.Cursor;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Polygon;
+import java.awt.Shape;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.logging.Level;
+
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xhtmlrenderer.extend.FSCanvas;
+import org.xhtmlrenderer.extend.FSImage;
+import org.xhtmlrenderer.extend.ReplacedElement;
+import org.xhtmlrenderer.extend.UserAgentCallback;
+import org.xhtmlrenderer.layout.LayoutContext;
+import org.xhtmlrenderer.render.BlockBox;
+import org.xhtmlrenderer.swing.AWTFSImage;
+import org.xhtmlrenderer.util.NodeHelper;
+import org.xhtmlrenderer.util.XRLog;
+
+import com.github.danfickle.flyingsaucer.swing.SwingReplacedElement;
+import com.github.danfickle.flyingsaucer.swing.SwingReplacedElementFactory;
 
 
 /**
@@ -128,16 +139,18 @@ public class ImageMapReplacedElementFactory extends SwingReplacedElementFactory 
 
             if (im != null) {
                final String mapName = usemapAttr.substring(1);
-               Node map = elem.ownerDocument().getElementById(mapName);
+               Node map = elem.getOwnerDocument().getElementById(mapName);
                if (null == map) {
-                  final List<Element> maps = elem.ownerDocument().getElementsByTag(MAP_ELT);
+                  final Iterable<Node> maps = NodeHelper.makeIterable(elem.getOwnerDocument().getElementsByTagName(MAP_ELT));
+                  // TODO
+                  /*
                   for (int i = 0; i < maps.size(); i++) {
-                      final String mapAttr = maps.get(i).attr(MAP_NAME_ATTR);
+                      final String mapAttr = maps.get(i).getAttribute(MAP_NAME_ATTR);
                       if (areEqual(mapName, mapAttr)) {
                         map = maps.get(i);
                         break;
                      }
-                  }
+                  }*/
                   if (null == map) {
                      XRLog.layout(Level.INFO, "No map named: '" + mapName + "'");
                   }
@@ -205,9 +218,11 @@ public class ImageMapReplacedElementFactory extends SwingReplacedElementFactory 
       private static Map<Shape, String> parseMap(final Node map) {
          if (null == map) {
             return Collections.emptyMap();
-         } else if (map.childNodeSize() > 0) {
-            final List<Node> children = map.childNodes();
-            final Map<Shape, String> areas = new HashMap<>(children.size());
+         } else if (map.hasChildNodes()) {
+            final NodeList children = map.getChildNodes();
+            final Map<Shape, String> areas = new HashMap<>(children.getLength());
+            // TODO
+            /*
             for (int i = 0; i < children.size(); i++) {
                final Node area = children.get(i);
                if (areEqualIgnoreCase(AREA_ELT, area.nodeName())) {
@@ -237,7 +252,7 @@ public class ImageMapReplacedElementFactory extends SwingReplacedElementFactory 
                      }
                   }
                }
-            }
+            } */
             return areas;
          } else {
             return Collections.emptyMap();

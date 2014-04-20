@@ -40,8 +40,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.CSSPrimitiveUnit;
 import org.xhtmlrenderer.css.constants.IdentValue;
@@ -117,6 +117,11 @@ public class RootPanel extends JPanel implements ComponentListener,
         getSharedContext().getCss().setDocumentContext(getSharedContext(), getSharedContext().getNamespaceHandler(), doc, this);
 
         repaint();
+    }
+
+    public void updateDocument() {
+        setRootBox(null);
+        getSharedContext().getCss().setDocumentContext(getSharedContext(), getSharedContext().getNamespaceHandler(), doc, this);
     }
 
     // iterates over all boxes and, if they have a BG url assigned, makes a call to the UAC

@@ -19,13 +19,13 @@
  */
 package org.xhtmlrenderer.simple.xhtml.controls;
 
+import static org.xhtmlrenderer.util.GeneralUtil.ciEquals;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jsoup.nodes.Element;
+import org.w3c.dom.Element;
 import org.xhtmlrenderer.simple.xhtml.XhtmlForm;
-
-import static org.xhtmlrenderer.util.GeneralUtil.ciEquals;
 
 public class ButtonControl extends AbstractControl {
 
@@ -36,14 +36,14 @@ public class ButtonControl extends AbstractControl {
     public ButtonControl(final XhtmlForm form, final Element e) {
         super(form, e);
 
-        _extended = ciEquals(e.nodeName(), "button");
+        _extended = ciEquals(e.getNodeName(), "button");
         if (_extended) {
             _label = collectText(e);
         } else {
             _label = getValue();
         }
 
-        _type = e.attr("type");
+        _type = e.getAttribute("type");
         if (!ciEquals(_type, "reset") && !ciEquals(_type, "button")) {
             _type = "submit";
         }

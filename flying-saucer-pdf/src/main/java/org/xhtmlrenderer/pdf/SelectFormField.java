@@ -19,19 +19,19 @@
  */
 package org.xhtmlrenderer.pdf;
 
+import static org.xhtmlrenderer.util.GeneralUtil.ciEquals;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
-import org.jsoup.nodes.TextNode;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.Text;
 import org.xhtmlrenderer.css.parser.FSColor;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.render.RenderingContext;
-import org.xhtmlrenderer.util.*;
-
-import static org.xhtmlrenderer.util.GeneralUtil.ciEquals;
+import org.xhtmlrenderer.util.Util;
 
 import com.lowagie.text.pdf.PdfAnnotation;
 import com.lowagie.text.pdf.PdfAppearance;
@@ -116,18 +116,18 @@ public class SelectFormField extends AbstractFormField {
     private List<Option> readOptions(final Element e) {
         final List<Option> result = new ArrayList<>();
         
-        Node n = e.childNodeSize() > 0 ? e.childNode(0) : null;
+        Node n = e.getFirstChild();
         while (n != null) {
-            if (n instanceof Element && ciEquals(n.nodeName(), "option")) 
+            if (n instanceof Element && ciEquals(n.getNodeName(), "option")) 
             {
                 final Element optionElem = (Element)n;
                 final String label = collectText(optionElem);
                 String value;
 
-                if (!optionElem.hasAttr("value")) {
+                if (!optionElem.hasAttribute("value")) {
                     value = label;
                 } else {
-                    value = optionElem.attr("value");
+                    value = optionElem.getAttribute("value");
                 }
                 
                 if (label != null) {
@@ -141,7 +141,7 @@ public class SelectFormField extends AbstractFormField {
                 }
             }
             
-            n = n.nextSibling();
+            n = n.getNextSibling();
         }
         
         return result;
@@ -150,13 +150,13 @@ public class SelectFormField extends AbstractFormField {
     private String collectText(final Element e) {
         final StringBuilder result = new StringBuilder();
         
-        Node n = e.childNodeSize() > 0 ? e.childNode(0) : null;
+        Node n = e.getFirstChild();
         while (n != null) 
         {
-        	if (n instanceof TextNode)
-            	result.append(((TextNode) n).text());
+        	if (n instanceof Text)
+            	result.append(((Text) n).getTextContent());
 
-            n = n.nextSibling();
+            n = n.getNextSibling();
         }
         
         return result.length() > 0 ? result.toString() : null;
@@ -179,7 +179,7 @@ public class SelectFormField extends AbstractFormField {
     private int getSize(final Element elem) {
         int result = 1;
         try {
-            final String v = elem.hasAttr("size") ? elem.attr("size").trim() : "";
+            final String v = elem.hasAttribute("size") ? elem.getAttribute("size").trim() : "";
             if (!v.isEmpty()) {
                 final int i = Integer.parseInt(v);
                 if (i > 1) {
@@ -195,7 +195,7 @@ public class SelectFormField extends AbstractFormField {
     }
     
     protected boolean isMultiple(final Element e) {
-        return !Util.isNullOrEmpty(e.attr("multiple"));
+        return !Util.isNullOrEmpty(e.getAttribute("multiple"));
     }
     
     protected String getFieldType() {

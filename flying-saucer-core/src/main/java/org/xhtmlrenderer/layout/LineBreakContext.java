@@ -19,7 +19,7 @@
  */
 package org.xhtmlrenderer.layout;
 
-import org.jsoup.nodes.Node;
+import org.w3c.dom.Node;
 
 /**
  * A bean which serves as a way for the layout code to pass information to the

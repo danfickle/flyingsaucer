@@ -19,7 +19,7 @@
  */
 package org.xhtmlrenderer.extend;
 
-import org.jsoup.nodes.Element;
+import org.w3c.dom.Element;
 
 
 

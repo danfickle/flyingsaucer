@@ -19,8 +19,8 @@
  */
 package com.github.danfickle.flyingsaucer.swing;
 
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.xhtmlrenderer.render.Box;
 
 
@@ -70,7 +70,7 @@ public class LinkListener extends DefaultFSMouseListener {
     private String findLink(final BasicPanel panel, final Element e) {
         String uri = null;
 
-        for (Node node = e; node instanceof Element; node = node.parent()) {
+        for (Node node = e; node instanceof Element; node = node.getParentNode()) {
             uri = panel.getSharedContext().getNamespaceHandler().getLinkUri((Element) node);
 
             if (uri != null) {

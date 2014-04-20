@@ -24,9 +24,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.extend.AttributeResolver;
 import org.xhtmlrenderer.css.extend.lib.DOMTreeResolver;
@@ -148,7 +148,7 @@ public class StyleReference {
         if (node instanceof Element) {
             e = (Element) node;
         } else {
-            e = (Element) node.parent();
+            e = (Element) node.getParentNode();
         }
         return _matcher.getPECascadedStyle(e, pseudoElement);
     }
@@ -157,7 +157,7 @@ public class StyleReference {
      * Gets the CascadedStyle for an element. This must then be converted in the
      * current context to a CalculatedStyle (use getDerivedStyle)
      */
-    public CascadedStyle getCascadedStyle(final Element e, final boolean restyle) {
+    public CascadedStyle getCascadedStyle(final Node e, final boolean restyle) {
         if (e == null) return CascadedStyle.emptyCascadedStyle;
         return _matcher.getCascadedStyle(e, restyle);
     }
@@ -213,7 +213,6 @@ public class StyleReference {
         {
         	infos.add(_context.getDefaultStylesheet());
         }
-        
         
         final List<StylesheetInfo> refs = _nsh.getStylesheets(_doc);
         int inlineStyleCount = 0;

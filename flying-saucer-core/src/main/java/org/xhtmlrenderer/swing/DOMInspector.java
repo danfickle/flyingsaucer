@@ -19,26 +19,13 @@
  */
 package org.xhtmlrenderer.swing;
 
-import org.jsoup.nodes.Comment;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
-import org.jsoup.nodes.TextNode;
-import org.xhtmlrenderer.context.StyleReference;
-import org.xhtmlrenderer.css.constants.ValueConstants;
-import org.xhtmlrenderer.css.parser.PropertyValue;
-import org.xhtmlrenderer.layout.SharedContext;
-
-import javax.swing.*;
-import javax.swing.event.TreeModelListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.table.*;
-import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.TreeModel;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -46,6 +33,40 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTable;
+import javax.swing.JTree;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.TreeModelListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
+
+import org.jsoup.nodes.TextNode;
+import org.w3c.dom.Comment;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
+import org.xhtmlrenderer.context.StyleReference;
+import org.xhtmlrenderer.css.constants.ValueConstants;
+import org.xhtmlrenderer.css.parser.PropertyValue;
+import org.xhtmlrenderer.layout.SharedContext;
 
 
 /**
@@ -552,10 +573,10 @@ class DOMTreeModel implements TreeModel {
 
     private void setRoot(final String rootNodeName) {
         final Node tempRoot = doc;
-        for (final Node node : tempRoot.childNodes())
-        {
-            if (node.nodeName().toLowerCase(Locale.US).equals(rootNodeName))
-            {
+        final NodeList children = tempRoot.getChildNodes();
+        for (int i = 0, N = children.getLength(); i < N; i++) {
+          final Node node = children.item(i);
+            if (node.getNodeName().toLowerCase(Locale.US).equals(rootNodeName)) {
                 this.root = node;
             }
         }
@@ -701,7 +722,7 @@ class DOMTreeModel implements TreeModel {
 
         final Node node = (Node) nd;
 
-        return (node.childNodeSize() <= 0);
+        return (!node.hasChildNodes());
     }
 
     // only adds displayable nodes--not stupid DOM text filler nodes
@@ -716,12 +737,15 @@ class DOMTreeModel implements TreeModel {
         if (children == null) {
             children = new ArrayList<Node>();
             this.displayableNodes.put(parent, children);
-            for (final Node child : parent.childNodes())
+            // for (final Node child : parent.childNodes())
+            NodeList kids = parent.getChildNodes();
+            for (int i = 0, N = kids.getLength(); i < N; i++)
             {
+              final Node child = kids.item(i);
             	if (child instanceof Element ||
             		child instanceof Comment ||
-            		(child instanceof TextNode &&
-            		 !((TextNode) child).text().trim().isEmpty()))
+            		(child instanceof Text &&
+            		 !((Text) child).getTextContent().trim().isEmpty()))
             	{
             		children.add(child);
             	}
@@ -760,25 +784,26 @@ class DOMTreeCellRenderer extends DefaultTreeCellRenderer {
     public Component getTreeCellRendererComponent(final JTree tree, Object value,
                                                   final boolean selected, final boolean expanded, final boolean leaf, final int row, final boolean hasFocus) {
 
-        final Node node = (Node) value;
+        final Element node = (Element) value;
 
         if (node instanceof Element) {
 
             String cls = "";
-            if (node.attributes().size() > 0) {
-                final String cn = node.attr("class");
+            if (node.hasAttributes()) {
+                final String cn = node.getAttribute("class");
                 if (cn != null) {
                     cls = " class='" + cn + "'";
                 }
             }
-            value = "<" + node.nodeName() + cls + ">";
+            value = "<" + node.getNodeName() + cls + ">";
 
         }
 
-        if (node instanceof TextNode) {
+        if (node instanceof Text) {
 
-            if (((TextNode) node).text().trim().length() > 0) {
-                value = "\"" + ((TextNode) node).text() + "\"";
+            final String textContent = ((Text) node).getTextContent();
+            if (textContent.trim().length() > 0) {
+                value = "\"" + textContent + "\"";
             }
         }
 

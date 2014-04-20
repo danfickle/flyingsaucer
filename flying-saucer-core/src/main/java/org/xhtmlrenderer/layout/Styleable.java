@@ -19,8 +19,9 @@
  */
 package org.xhtmlrenderer.layout;
 
-import org.jsoup.nodes.Element;
+import org.w3c.dom.Element;
 import org.xhtmlrenderer.css.style.CalculatedStyle;
+import org.xhtmlrenderer.render.InlineLayoutBox;
 
 /**
  * All objects appearing the layout tree must implement this interface.  It

@@ -18,19 +18,26 @@
  * }}}
  */
 
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.xhtmlrenderer.simple.FSScrollPane;
-import org.xhtmlrenderer.simple.HtmlNamespaceHandler;
-
-import com.github.danfickle.flyingsaucer.swing.XHTMLPanel;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Date;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
+import org.xhtmlrenderer.simple.FSScrollPane;
+import org.xhtmlrenderer.simple.HtmlNamespaceHandler;
+import org.xhtmlrenderer.util.NodeHelper;
+
+import com.github.danfickle.flyingsaucer.swing.XHTMLPanel;
 
 /**
  * This sample shows how to add nodes to a DOM Document object that has already been rendered to the screen, and
@@ -59,7 +66,8 @@ public class AddNodeToDocument {
 				Action addDocAction = new AbstractAction("Add Node") {
                     public void actionPerformed(final ActionEvent event) {
                         // we'll add a single node on each click
-                        documentRoot.appendText("adding node at " + new Date());
+                        final Text textNode = documentRoot.getOwnerDocument().createTextNode("adding node at " + new Date());
+                        documentRoot.appendChild(textNode);
                         documentRoot.appendChild(domDocument.createElement("br"));
 
                         // note that we just pass in the same DOM instance we already
@@ -101,7 +109,7 @@ public class AddNodeToDocument {
 
             // root element of the document--you could grab any other element
             // by traversing, XPath, etc.
-            documentRoot = domDocument.body();
+            documentRoot = NodeHelper.getBody(domDocument);
         } catch (final Exception e) {
             messageAndExit("Could not render page: " + e.getMessage(), -1);
         }

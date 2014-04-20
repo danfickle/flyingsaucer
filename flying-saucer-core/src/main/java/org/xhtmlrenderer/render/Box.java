@@ -31,8 +31,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Document;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.IdentValue;
 import org.xhtmlrenderer.css.parser.FSColor;
@@ -45,6 +45,7 @@ import org.xhtmlrenderer.layout.Layer;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.layout.PaintingInfo;
 import org.xhtmlrenderer.layout.Styleable;
+import org.xhtmlrenderer.util.NodeHelper;
 import org.xhtmlrenderer.util.XRLog;
 
 public abstract class Box implements Styleable {
@@ -691,7 +692,7 @@ public abstract class Box implements Styleable {
     }
 
     public boolean isRoot() {
-        return getElement() != null && ! isAnonymous() && (getElement() instanceof Document);
+        return getElement() != null && ! isAnonymous() && NodeHelper.isRootNode(getElement());
     }
 
     public boolean isBody() {

@@ -38,8 +38,8 @@ import java.util.logging.Level;
 
 import javax.swing.JOptionPane;
 
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.xhtmlrenderer.css.style.CalculatedStyle;
 import org.xhtmlrenderer.css.style.derived.RectPropertySet;
 import org.xhtmlrenderer.event.DocumentListener;

@@ -26,7 +26,8 @@ import java.io.Reader;
 import java.util.logging.Level;
 
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
+import org.w3c.dom.Document;
+import org.xhtmlrenderer.util.DOMBuilder;
 import org.xhtmlrenderer.util.XRLog;
 import org.xhtmlrenderer.util.XRRuntimeException;
 
@@ -36,17 +37,21 @@ import org.xhtmlrenderer.util.XRRuntimeException;
 public class HTMLResource extends AbstractResource {
     private Document document;
     private final String _uri;
-    
+
+    private Document toW3CDom(org.jsoup.nodes.Document jsoupDoc) {
+      return DOMBuilder.jsoup2DOM(jsoupDoc);
+    }
+
     private HTMLResource(final String html)
     {
-    	setDocument(Jsoup.parse(html));
+    	setDocument(toW3CDom(Jsoup.parse(html)));
       _uri = null;
     }
 
     private HTMLResource(final InputStream stream, final String uri) {
       _uri = uri;
     	try {
-			document = Jsoup.parse(stream, null, "");
+			document = toW3CDom(Jsoup.parse(stream, null, ""));
 		} catch (final IOException e) {
 			XRLog.load(Level.WARNING, "Unable to parse input stream", e);
 			throw new XRRuntimeException("Unable to parse input stream", e);
@@ -57,7 +62,7 @@ public class HTMLResource extends AbstractResource {
     {
       _uri = null;
     	try {
-			document = Jsoup.parse(file, null);
+			document = toW3CDom(Jsoup.parse(file, null));
 		} catch (final IOException e) {
 			XRLog.load(Level.WARNING, "Unable to parse file", e);
 			throw new XRRuntimeException("Unable to parse file", e);

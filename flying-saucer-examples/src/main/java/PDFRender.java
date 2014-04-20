@@ -17,15 +17,19 @@
  */
 
 
-import com.lowagie.text.DocumentException;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
-import org.jsoup.nodes.Document;
+import org.w3c.dom.Document;
 import org.xhtmlrenderer.pdf.ITextOutputDevice;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 import org.xhtmlrenderer.pdf.ITextUserAgent;
 import org.xhtmlrenderer.resource.HTMLResource;
 
-import java.io.*;
+import com.lowagie.text.DocumentException;
 
 public class PDFRender {
     public static void main(final String[] args) throws IOException, DocumentException {

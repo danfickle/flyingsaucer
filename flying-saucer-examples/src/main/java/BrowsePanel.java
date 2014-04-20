@@ -17,7 +17,16 @@
  */
 
 
-import org.jsoup.nodes.Document;
+import java.awt.Cursor;
+import java.awt.EventQueue;
+import java.io.File;
+import java.io.StringReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import javax.swing.JFrame;
+
+import org.w3c.dom.Document;
 import org.xhtmlrenderer.event.DefaultDocumentListener;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.resource.HTMLResource;
@@ -28,13 +37,6 @@ import org.xhtmlrenderer.util.GeneralUtil;
 
 import com.github.danfickle.flyingsaucer.swing.SwingReplacedElementFactory;
 import com.github.danfickle.flyingsaucer.swing.XHTMLPanel;
-
-import javax.swing.*;
-import java.awt.*;
-import java.io.File;
-import java.io.StringReader;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 /**
  * This example shows the most basic use of Flying Saucer, to

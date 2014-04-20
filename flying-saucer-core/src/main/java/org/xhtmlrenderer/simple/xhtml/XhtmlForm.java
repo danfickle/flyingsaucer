@@ -19,20 +19,20 @@
  */
 package org.xhtmlrenderer.simple.xhtml;
 
+import static org.xhtmlrenderer.util.GeneralUtil.ciEquals;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.jsoup.nodes.Element;
+import org.w3c.dom.Element;
 import org.xhtmlrenderer.simple.extend.URLUTF8Encoder;
 import org.xhtmlrenderer.simple.xhtml.controls.ButtonControl;
 import org.xhtmlrenderer.simple.xhtml.controls.CheckControl;
 import org.xhtmlrenderer.simple.xhtml.controls.HiddenControl;
 import org.xhtmlrenderer.simple.xhtml.controls.SelectControl;
 import org.xhtmlrenderer.simple.xhtml.controls.TextControl;
-
-import static org.xhtmlrenderer.util.GeneralUtil.ciEquals;
 
 public class XhtmlForm {
 
@@ -87,9 +87,9 @@ public class XhtmlForm {
             return null;
 
         FormControl control;
-        final String name = e.nodeName();
+        final String name = e.getNodeName();
         if (name.equals("input")) {
-            final String type = e.attr("type");
+            final String type = e.getAttribute("type");
             if (ciEquals(type, "text") || ciEquals(type, "password")) {
                 control = new TextControl(form, e);
             } else if (ciEquals(type, "hidden")) {

@@ -21,7 +21,8 @@
 package org.xhtmlrenderer.util;
 
 import java.io.File;
-import org.jsoup.nodes.Document;
+
+import org.w3c.dom.Document;
 import org.xhtmlrenderer.resource.HTMLResource;
 
 

@@ -21,7 +21,7 @@ package org.xhtmlrenderer.simple.extend.form;
 
 import javax.swing.JComponent;
 
-import org.jsoup.nodes.Element;
+import org.w3c.dom.Element;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.simple.extend.XhtmlForm;

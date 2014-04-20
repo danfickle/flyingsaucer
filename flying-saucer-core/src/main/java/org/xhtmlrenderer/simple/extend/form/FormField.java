@@ -19,9 +19,13 @@
  */
 package org.xhtmlrenderer.simple.extend.form;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+
 import javax.swing.JComponent;
 
-import org.jsoup.nodes.Element;
+import org.w3c.dom.Element;
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.parser.FSColor;
 import org.xhtmlrenderer.css.parser.FSRGBColor;
@@ -35,8 +39,6 @@ import org.xhtmlrenderer.render.FSFont;
 import org.xhtmlrenderer.simple.extend.URLUTF8Encoder;
 import org.xhtmlrenderer.simple.extend.XhtmlForm;
 import org.xhtmlrenderer.swing.AWTFSFont;
-
-import java.awt.*;
 
 public abstract class FormField {
     private final XhtmlForm _parentForm;
@@ -96,11 +98,11 @@ public abstract class FormField {
     }
     
     protected boolean hasAttribute(final String attributeName) {
-        return getElement().attr(attributeName).length() > 0;
+        return getElement().getAttribute(attributeName).length() > 0;
     }
 
     protected String getAttribute(final String attributeName) {
-        return getElement().attr(attributeName);
+        return getElement().getAttribute(attributeName);
     }
     
     private void initialize() {
@@ -114,7 +116,7 @@ public abstract class FormField {
 
             _component.setSize(getIntrinsicSize());
 
-            final String d = _element.attr("disabled");
+            final String d = _element.getAttribute("disabled");
             if (d.equalsIgnoreCase("disabled")) {
                 _component.setEnabled(false);
             }
