@@ -65,7 +65,6 @@ import org.xhtmlrenderer.render.Box;
 import org.xhtmlrenderer.render.PageBox;
 import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.render.ViewportBox;
-import org.xhtmlrenderer.swing.ContentStore;
 import org.xhtmlrenderer.swing.Java2DFontContext;
 import org.xhtmlrenderer.swing.Java2DOutputDevice;
 import org.xhtmlrenderer.swing.RepaintListener;
@@ -111,8 +110,6 @@ public class RootPanel extends JPanel implements ComponentListener,
         } else {
             getSharedContext().getCss().flushAllStyleSheets();
         }
-
-        final ContentStore store = new ContentStore(doc);
 
         getSharedContext().reset();
         getSharedContext().setBaseURL(url);
