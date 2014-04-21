@@ -105,16 +105,17 @@ public class Matcher {
         }
     }
     
-    public PageInfo getPageCascadedStyle(final String pageName, final String pseudoPage) {
-        final List<PropertyDeclaration> props = new ArrayList<PropertyDeclaration>();
-        final Map<MarginBoxName, List<PropertyDeclaration>> marginBoxes = new HashMap<MarginBoxName, List<PropertyDeclaration>>();
+    public PageInfo getPageCascadedStyle(final String pageName, final String pseudoPage) 
+    {
+        final List<PropertyDeclaration> props = new ArrayList<>();
+        final Map<MarginBoxName, List<PropertyDeclaration>> marginBoxes = new HashMap<>();
 
-        for (final PageRule pageRule : _pageRules) {
-            if (pageRule.applies(pageName, pseudoPage)) {
-                props.addAll(pageRule.getRuleset().getPropertyDeclarations());
-                marginBoxes.putAll(pageRule.getMarginBoxes());
-            }
-        }
+        _pageRules.stream()
+                  .filter(pageRule -> pageRule.applies(pageName, pseudoPage))
+                  .forEach(pageRule -> {
+                      props.addAll(pageRule.getRuleset().getPropertyDeclarations());
+                      marginBoxes.putAll(pageRule.getMarginBoxes());
+                  });
         
         CascadedStyle style = null;
         if (props.isEmpty()) {

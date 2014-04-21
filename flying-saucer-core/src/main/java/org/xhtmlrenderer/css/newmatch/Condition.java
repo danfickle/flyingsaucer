@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import org.xhtmlrenderer.css.extend.AttributeResolver;
 import org.xhtmlrenderer.css.extend.TreeResolver;
@@ -273,15 +274,11 @@ abstract class Condition {
             super(namespaceURI, name, value);
         }
         
-        protected boolean compare(final String attrValue, final String conditionValue) {
+        protected boolean compare(final String attrValue, final String conditionValue) 
+        {
             final String[] ca = split(attrValue, ' ');
-            boolean matched = false;
-            for (final String element : ca) {
-                if (conditionValue.equals(element)) {
-                    matched = true;
-                }
-            }
-            return matched;
+            return Stream.of(ca)
+            		     .anyMatch(element -> conditionValue.equals(element));
         }
     }
 

@@ -545,13 +545,7 @@ public class HtmlNamespaceHandler implements NamespaceHandler
 
     protected boolean isInteger(final String value) 
     {
-        for (int i = 0; i < value.length(); i++) {
-            final char c = value.charAt(i);
-            if (! (c >= '0' && c <= '9')) {
-                return false;
-            }
-        }
-        return true;
+    	return value.chars().allMatch(c -> c >= '0' && c <= '9');
     }
 
     protected String getAttribute(final Element e, final String attrName)
@@ -689,15 +683,9 @@ public class HtmlNamespaceHandler implements NamespaceHandler
 
     private Element findFirstChild(final Element parent, final String targetName)
     {
-        final List<Node> children = parent.childNodes();
-
-        for (final Node n : children) 
-        {
-            if (n instanceof Element && ciEquals(n.nodeName(), targetName)) 
-                return (Element)n;
-        }
-
-        return null;
+    	return (Element) parent.childNodes().stream()
+    			  .filter(n -> n instanceof Element && ciEquals(n.nodeName(), targetName))
+    			  .findFirst().orElse(null);
     }
 
     @Override

@@ -22,6 +22,7 @@ package org.xhtmlrenderer.css.newmatch;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.IdentValue;
@@ -88,14 +89,10 @@ public class PageInfo {
         return new CascadedStyle(all.iterator());
     }
     
-    public boolean hasAny(final MarginBoxName[] marginBoxes) {
-        for (final MarginBoxName marginBox : marginBoxes) {
-            if (_marginBoxes.containsKey(marginBox)) {
-                return true;
-            }
-        }
-        
-        return false;
+    public boolean hasAny(final MarginBoxName[] marginBoxes) 
+    {
+    	return Stream.of(marginBoxes)
+    			     .anyMatch(marginBox -> _marginBoxes.containsKey(marginBox));
     }
     
     public List<PropertyDeclaration> getXMPPropertyList()
