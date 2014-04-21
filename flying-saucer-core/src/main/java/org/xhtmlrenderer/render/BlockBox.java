@@ -1283,15 +1283,18 @@ public class BlockBox extends Box implements InlinePaintable {
         }
 
         ensureChildren(c);
-        if (getChildrenContentType() == CONTENT_INLINE) {
+        if (getChildrenContentType() == CONTENT_INLINE) 
+        {
             return false;
-        } else if (getChildrenContentType() == CONTENT_BLOCK) {
-            for (final Iterator<Box> i = getChildIterator(); i.hasNext();) {
-                final BlockBox child = (BlockBox) i.next();
-                if (child.isSkipWhenCollapsingMargins() || ! child.isVerticalMarginsAdjoin(c)) {
-                    return false;
-                }
-            }
+        }
+        else if (getChildrenContentType() == CONTENT_BLOCK) 
+        {
+        	if (getChildren().stream()
+        			.anyMatch(child -> {
+        				final BlockBox blockbox = (BlockBox) child;
+        				return blockbox.isSkipWhenCollapsingMargins() || !blockbox.isVerticalMarginsAdjoin(c);
+        			}))
+        		return false;
         }
 
         return style.asFloat(CSSName.MIN_HEIGHT) == 0 &&

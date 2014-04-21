@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.CSSPrimitiveUnit;
@@ -927,16 +928,9 @@ public class PrimitivePropertyBuilders {
                     new PropertyDeclaration(cssName, result, important, origin));
         }
 
-        private String concat(final List<String> strings, final char separator) {
-            final StringBuilder buf = new StringBuilder(64);
-            for (final Iterator<String> i = strings.iterator(); i.hasNext(); ) {
-                final String s = i.next();
-                buf.append(s);
-                if (i.hasNext()) {
-                    buf.append(separator);
-                }
-            }
-            return buf.toString();
+        private String concat(final List<String> strings, final char separator) 
+        {
+        	return strings.stream().collect(Collectors.joining("" + separator));
         }
     }
 

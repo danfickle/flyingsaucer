@@ -49,12 +49,8 @@ public class ContentFunctionFactory
     
     public ContentFunction lookupFunction(final LayoutContext c, final FSFunction function) 
     {
-        for (final ContentFunction f : _functions) {
-            if (f.canHandle(c, function)) {
-                return f;
-            }
-        }
-        return null;
+    	return _functions.stream().filter(f -> f.canHandle(c, function))
+    			                  .findFirst().orElse(null);
     }
     
     public void registerFunction(final ContentFunction function) {
