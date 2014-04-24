@@ -21,12 +21,11 @@ package org.xhtmlrenderer.swing;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.logging.Level;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.util.ImageUtil;
 import org.xhtmlrenderer.util.Configuration;
-import org.xhtmlrenderer.util.XRLog;
 import org.xhtmlrenderer.resource.ImageResource;
 
 import javax.swing.*;
@@ -41,6 +40,8 @@ import javax.swing.*;
  * loaded into the ImageResource.
  */
 public class DeferredImageReplacedElement extends ImageReplacedElement {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DeferredImageReplacedElement.class);
     private Point _location = new Point(0, 0);
 
     private final RepaintListener repaintListener;
@@ -151,7 +152,7 @@ public class DeferredImageReplacedElement extends ImageReplacedElement {
                 _image = image;
             }
             _loaded = true;
-            XRLog.load(Level.FINE, "Icon: replaced image " + _imageResource.getImageUri() + ", repaint requested");
+            LOGGER.debug("Icon: replaced image " + _imageResource.getImageUri() + ", repaint requested");
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
                     repaintListener.repaintRequested(_doScaleImage);

@@ -19,6 +19,9 @@
  */
 package org.xhtmlrenderer.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -29,6 +32,8 @@ import java.io.StringWriter;
  * @author empty
  */
 public class Uu extends Util {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Uu.class);
     /**
      * Description of the Field
      */
@@ -73,9 +78,8 @@ public class Uu extends Util {
         utilAsString.setPrintWriter(pw);
         utilAsString.print(object);// our log adds a newline
         pw.flush();
-        if (XRLog.isLoggingEnabled()) {
-            XRLog.general(sw.getBuffer().toString());
-        }
+        LOGGER.info(sw.getBuffer().toString());
+
     }
 
     /**
@@ -90,9 +94,7 @@ public class Uu extends Util {
         utilAsString.setPrintWriter(pw);
         utilAsString.print(object);// our log adds a newline
         pw.flush();
-        if (XRLog.isLoggingEnabled()) {
-            XRLog.general(sw.getBuffer().toString());
-        }
+        LOGGER.info(sw.getBuffer().toString());
         //util.print( object );
     }
 

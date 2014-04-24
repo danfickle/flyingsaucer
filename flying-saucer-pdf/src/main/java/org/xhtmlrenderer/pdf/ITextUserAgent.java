@@ -25,11 +25,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.extend.FSImage;
 import org.xhtmlrenderer.layout.SharedContext;
 import org.xhtmlrenderer.resource.ImageResource;
 import org.xhtmlrenderer.swing.NaiveUserAgent;
-import org.xhtmlrenderer.util.XRLog;
 
 import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
@@ -37,6 +38,8 @@ import com.lowagie.text.pdf.PdfReader;
 import org.xhtmlrenderer.util.ImageUtil;
 
 public class ITextUserAgent extends NaiveUserAgent {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ITextUserAgent.class);
     private static final int IMAGE_CACHE_CAPACITY = 32;
 
     private SharedContext _sharedContext;
@@ -85,7 +88,7 @@ public class ITextUserAgent extends NaiveUserAgent {
                         }
                         _imageCache.put(uri, resource);
                     } catch (final Exception e) {
-                        XRLog.exception("Can't read image file; unexpected problem for URI '" + uri + "'", e);
+                        LOGGER.error("Can't read image file; unexpected problem for URI '" + uri + "'", e);
                     } finally {
                         try {
                             is.close();
@@ -112,7 +115,7 @@ public class ITextUserAgent extends NaiveUserAgent {
             scaleToOutputResolution(image);
             return new ImageResource(null, new ITextFSImage(image));
         } catch (final Exception e) {
-            XRLog.exception("Can't read XHTML embedded image.", e);
+            LOGGER.error("Can't read XHTML embedded image.", e);
         }
         return new ImageResource(null, null);
     }

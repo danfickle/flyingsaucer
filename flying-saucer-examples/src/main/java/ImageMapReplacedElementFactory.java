@@ -20,6 +20,8 @@
 
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.extend.FSImage;
 import org.xhtmlrenderer.extend.ReplacedElement;
 import org.xhtmlrenderer.extend.UserAgentCallback;
@@ -27,7 +29,6 @@ import org.xhtmlrenderer.extend.FSCanvas;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.swing.AWTFSImage;
-import org.xhtmlrenderer.util.XRLog;
 
 import com.github.danfickle.flyingsaucer.swing.SwingReplacedElement;
 import com.github.danfickle.flyingsaucer.swing.SwingReplacedElementFactory;
@@ -43,7 +44,6 @@ import java.awt.geom.Rectangle2D;
 import java.util.*;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.logging.Level;
 
 
 /**
@@ -52,6 +52,8 @@ import java.util.logging.Level;
  * Sample is incomplete in current state and meant as a starting point for future work.
  */
 public class ImageMapReplacedElementFactory extends SwingReplacedElementFactory {
+
+   private static final Logger LOGGER = LoggerFactory.getLogger(ImageMapReplacedElementFactory.class);
    private final ImageMapListener listener;
    private static final String IMG_USEMAP_ATTR = "usemap";
    private static final String MAP_ELT = "map";
@@ -118,7 +120,7 @@ public class ImageMapReplacedElementFactory extends SwingReplacedElementFactory 
          Image im = null;
          final String imageSrc = context.getNamespaceHandler().getImageSourceURI(elem);
          if (imageSrc == null || imageSrc.length() == 0) {
-            XRLog.layout(Level.WARNING, "No source provided for img element.");
+            LOGGER.warn("No source provided for img element.");
             re = newIrreplaceableImageElement(cssWidth, cssHeight);
          } else {
             final FSImage fsImage = uac.getImageResource(imageSrc).getImage();
@@ -139,7 +141,7 @@ public class ImageMapReplacedElementFactory extends SwingReplacedElementFactory 
                      }
                   }
                   if (null == map) {
-                     XRLog.layout(Level.INFO, "No map named: '" + mapName + "'");
+                    LOGGER.info("No map named: '" + mapName + "'");
                   }
                }
                re = new ImageMapReplacedElement(im, map, cssWidth, cssHeight, listener);
@@ -231,9 +233,7 @@ public class ImageMapReplacedElementFactory extends SwingReplacedElementFactory 
                            areas.put(shape, href);
                         }
                      } else {
-                        if (XRLog.isLoggingEnabled()) {
-                           XRLog.layout(Level.INFO, "Unsupported shape: '" + shapeAttr + "'");
-                        }
+                        LOGGER.info( "Unsupported shape: '" + shapeAttr + "'");
                      }
                   }
                }
@@ -252,7 +252,7 @@ public class ImageMapReplacedElementFactory extends SwingReplacedElementFactory 
                  try {
                      coords[i++] = Integer.parseInt(coord.trim());
                  } catch (final NumberFormatException e) {
-                     XRLog.layout(Level.WARNING, "Error while parsing shape coords", e);
+                     LOGGER.warn("Error while parsing shape coords", e);
                      return null;
                  }
              }
@@ -271,7 +271,7 @@ public class ImageMapReplacedElementFactory extends SwingReplacedElementFactory 
                }
                return new Polygon(xpoints, ypoints, npoints);
             } else {
-               XRLog.layout(Level.INFO, "Unsupported shape: '" + length + "'");
+               LOGGER.info("Unsupported shape: '" + length + "'");
                return null;
             }
          } else {

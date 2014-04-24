@@ -36,6 +36,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.extend.StylesheetFactory;
 import org.xhtmlrenderer.css.extend.TreeResolver;
 import org.xhtmlrenderer.css.sheet.Stylesheet;
@@ -43,15 +45,16 @@ import org.xhtmlrenderer.css.sheet.StylesheetInfo;
 import org.xhtmlrenderer.extend.NamespaceHandler;
 import org.xhtmlrenderer.simple.xhtml.XhtmlForm;
 import org.xhtmlrenderer.util.Configuration;
-import org.xhtmlrenderer.util.XRLog;
 
 import static org.xhtmlrenderer.util.GeneralUtil.ciEquals;
 
 /**
  * Handles a general HTML document
  */
-public class HtmlNamespaceHandler implements NamespaceHandler 
-{
+public class HtmlNamespaceHandler implements NamespaceHandler {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HtmlNamespaceHandler.class);
+
     private Map<String, String> _metadata = null;
 	
 	@Override
@@ -174,14 +177,14 @@ public class HtmlNamespaceHandler implements NamespaceHandler
             	ciEquals(piNode.attr("alternate"), "yes"))
             {
                 // TODO: handle alternate stylesheets
-            	XRLog.cssParse(Level.INFO, "Alternate stylesheet not handled");
+            	LOGGER.info("Alternate stylesheet not handled");
             	continue;
             }
             else if (piNode.hasAttr("type") &&
             		 !ciEquals(piNode.attr("type"), "text/css"))
             {
             	// TODO: handle other stylesheet types
-            	XRLog.cssParse(Level.INFO, "Style type other than CSS not handled");
+            	LOGGER.info("Style type other than CSS not handled");
             	continue;
             }
 
@@ -719,7 +722,7 @@ public class HtmlNamespaceHandler implements NamespaceHandler
 			info.setStylesheet(sheet);
 
 		} catch (final Exception e) {
-			XRLog.exception("Could not parse default stylesheet", e);
+			LOGGER.error("Could not parse default stylesheet", e);
 		} finally {
 			if (is != null) {
 				try {
@@ -741,7 +744,7 @@ public class HtmlNamespaceHandler implements NamespaceHandler
 
         if (stream == null)
         {
-            XRLog.exception("Can't load default CSS from " + defaultStyleSheet + "." +
+            LOGGER.error("Can't load default CSS from " + defaultStyleSheet + "." +
                     "This file must be on your CLASSPATH. Please check before continuing.");
         }
 

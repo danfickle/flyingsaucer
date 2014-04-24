@@ -1,5 +1,8 @@
 package org.xhtmlrenderer.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
@@ -8,6 +11,8 @@ import java.net.URLConnection;
  * @author patrick
  */
 public class IOUtil {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(IOUtil.class);
     public static File copyFile(final File page, final File outputDir) throws IOException {
         InputStream in = null;
         OutputStream out = null;
@@ -82,11 +87,11 @@ public class IOUtil {
 
             is = uc.getInputStream();
         } catch (final java.net.MalformedURLException e) {
-            XRLog.exception("bad URL given: " + uri, e);
+            LOGGER.error("bad URL given: " + uri, e);
         } catch (final FileNotFoundException e) {
-            XRLog.exception("item at URI " + uri + " not found");
+            LOGGER.error("item at URI " + uri + " not found");
         } catch (final IOException e) {
-            XRLog.exception("IO problem for " + uri, e);
+            LOGGER.error("IO problem for " + uri, e);
         }
 
         return is;

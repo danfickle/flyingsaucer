@@ -30,8 +30,6 @@ import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.simple.extend.FormSubmissionListener;
 import org.xhtmlrenderer.swing.SwingReplacedElement;
-import org.xhtmlrenderer.util.XRLog;
-
 import javax.swing.*;
 import java.util.logging.Level;
 import java.awt.*;
@@ -42,6 +40,8 @@ import java.awt.*;
  * the Salamander library. Salamander in this case will return a Swing JPanel.
  */
 public class SVGSalamanderReplacedElementFactory implements ReplacedElementFactory {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SVGSalamanderReplacedElementFactory.class);
 
     public ReplacedElement createReplacedElement(
             LayoutContext c,
@@ -64,8 +64,8 @@ public class SVGSalamanderReplacedElementFactory implements ReplacedElementFacto
             content = getSVGElementContent(elem);
 
             String path = elem.getAttribute("data");
-            XRLog.general(Level.FINE, "Rendering embedded SVG via object tag from: " + path);
-            XRLog.general(Level.FINE, "Content is: " + content);
+            LOGGER.debug(, "Rendering embedded SVG via object tag from: " + path);
+            LOGGER.debug(, "Content is: " + content);
             panel.setAntiAlias(true);
             panel.setSvgResourcePath(path);
 
@@ -90,7 +90,7 @@ public class SVGSalamanderReplacedElementFactory implements ReplacedElementFacto
 
             cc = panel;
         } catch (SVGException e) {
-            XRLog.general(Level.WARNING, "Could not replace SVG element; rendering failed" +
+            LOGGER.warn("Could not replace SVG element; rendering failed" +
                     " in SVG renderer. Skipping and using blank JPanel.", e);
             cc = getDefaultJComponent(content, cssWidth, cssHeight);
         }

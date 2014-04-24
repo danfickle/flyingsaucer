@@ -7,25 +7,26 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.logging.Level;
 
 import javax.imageio.ImageIO;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.extend.FSImage;
 import org.xhtmlrenderer.resource.ImageResource;
 import org.xhtmlrenderer.util.Configuration;
 import org.xhtmlrenderer.util.ImageUtil;
 import org.xhtmlrenderer.util.StreamResource;
-import org.xhtmlrenderer.util.XRLog;
-
 
 /**
  *
  */
 public class ImageResourceLoader {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ImageResourceLoader.class);
     public static final RepaintListener NO_OP_REPAINT_LISTENER = new RepaintListener() {
         public void repaintRequested(final boolean doLayout) {
-            XRLog.general(Level.FINE, "No-op repaint requested");
+           LOGGER.debug("No-op repaint requested");
         }
     };
     private final Map<CacheKey, ImageResource> _imageCache;
@@ -81,15 +82,15 @@ public class ImageResourceLoader {
                     }
                     ir = createImageResource(uri, img);
                 } catch (final FileNotFoundException e) {
-                    XRLog.exception("Can't read image file; image at URI '" + uri + "' not found");
+                    LOGGER.error("Can't read image file; image at URI '" + uri + "' not found");
                 } catch (final IOException e) {
-                    XRLog.exception("Can't read image file; unexpected problem for URI '" + uri + "'", e);
+                    LOGGER.error("Can't read image file; unexpected problem for URI '" + uri + "'", e);
                 } finally {
                     sr.close();
                 }
             } catch (final IOException e) {
                 // couldnt open stream at URI...
-                XRLog.exception("Can't open stream for URI '" + uri + "': " + e.getMessage());
+                LOGGER.error("Can't open stream for URI '" + uri + "': " + e.getMessage());
             }
             if (ir == null) {
                 ir = createImageResource(uri, null);
@@ -142,19 +143,19 @@ public class ImageResourceLoader {
                 // no: loaded
                 if (ir == null) {
                     if (isImmediateLoadUri(uri)) {
-                        XRLog.load(Level.FINE, "Load immediate: " + uri);
+                        LOGGER.debug("Load immediate: " + uri);
                         ir = loadImageResourceFromUri(uri);
                         final FSImage awtfsImage = ir.getImage();
                         BufferedImage newImg = ((AWTFSImage) awtfsImage).getImage();
                         loaded(ir, -1, -1);
                         if (width > -1 && height > -1) {
-                            XRLog.load(Level.FINE, this + ", scaling " + uri + " to " + width + ", " + height);
+                            LOGGER.debug(this + ", scaling " + uri + " to " + width + ", " + height);
                             newImg = ImageUtil.getScaledInstance(newImg, width, height);
                             ir = new ImageResource(ir.getImageUri(), AWTFSImage.createImage(newImg));
                             loaded(ir, width, height);
                         }
                     } else {
-                        XRLog.load(Level.FINE, "Image cache miss, URI not yet loaded, queueing: " + uri);
+                        LOGGER.debug("Image cache miss, URI not yet loaded, queueing: " + uri);
                         final MutableFSImage mfsi = new MutableFSImage(_repaintListener);
                         ir = new ImageResource(uri, mfsi);
                         _loadQueue.addToQueue(this, uri, mfsi, width, height);
@@ -163,7 +164,7 @@ public class ImageResourceLoader {
                     _imageCache.put(key, ir);
                 } else {
                     // loaded at base size, need to scale
-                    XRLog.load(Level.FINE, this + ", scaling " + uri + " to " + width + ", " + height);
+                    LOGGER.debug(this + ", scaling " + uri + " to " + width + ", " + height);
 
                     if (width > -1 && height > -1) 
                     {
@@ -205,7 +206,7 @@ public class ImageResourceLoader {
 
     public void stopLoading() {
         if (_loadQueue != null) {
-            XRLog.load("By request, clearing pending items from load queue: " + _loadQueue.size());
+            LOGGER.info("By request, clearing pending items from load queue: " + _loadQueue.size());
             _loadQueue.reset();
         }
     }

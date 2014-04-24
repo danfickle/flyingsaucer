@@ -1,5 +1,8 @@
 package org.xhtmlrenderer.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.InputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -10,6 +13,8 @@ import java.net.URLConnection;
 import java.net.URL;
 
 public class StreamResource {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(StreamResource.class);
     private String _uri;
     private String _uriFinal;
     private URLConnection _conn;
@@ -64,11 +69,11 @@ public class StreamResource {
             	}
             }
         } catch (final java.net.MalformedURLException e) {
-            XRLog.exception("bad URL given: " + _uri, e);
+            LOGGER.error("bad URL given: " + _uri, e);
         } catch (final FileNotFoundException e) {
-            XRLog.exception("item at URI " + _uri + " not found");
+            LOGGER.error("item at URI " + _uri + " not found");
         } catch (final IOException e) {
-            XRLog.exception("IO problem for " + _uri, e);
+            LOGGER.error("IO problem for " + _uri, e);
         }
     }
 

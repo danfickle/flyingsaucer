@@ -24,14 +24,14 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.logging.Level;
 
 import org.jsoup.nodes.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.render.Box;
 import com.github.danfickle.flyingsaucer.swing.Graphics2DRenderer;
 import org.xhtmlrenderer.util.Uu;
 import org.xhtmlrenderer.util.XMLUtil;
-import org.xhtmlrenderer.util.XRLog;
 
 /**
  * Description of the Class
@@ -39,6 +39,8 @@ import org.xhtmlrenderer.util.XRLog;
  * @author empty
  */
 public class DocumentDiffTest {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DocumentDiffTest.class);
     public static final int width = 500;
     public static final int height = 500;
 
@@ -61,13 +63,13 @@ public class DocumentDiffTest {
             if (file.getName().endsWith(".xhtml")) {
                 final String testfile = file.getAbsolutePath();
                 final String difffile = testfile.substring(0, testfile.length() - 6) + ".diff";
-                XRLog.log("unittests", Level.WARNING, "test file = " + testfile);
+                LOGGER.warn("test file = " + testfile);
                 //Uu.p( "diff file = " + difffile );
                 try {
                     final boolean is_correct = compareTestFile(testfile, difffile, width, height);
-                    XRLog.log("unittests", Level.WARNING, "is correct = " + is_correct);
+                    LOGGER.warn("is correct = " + is_correct);
                 } catch (final Throwable thr) {
-                    XRLog.log("unittests", Level.WARNING, thr.toString());
+                    LOGGER.warn(thr.toString());
                     thr.printStackTrace();
                 }
             }
@@ -163,18 +165,16 @@ public class DocumentDiffTest {
         try {
             din = Uu.file_to_string(diff);
         } catch (final FileNotFoundException ex) {
-            XRLog.log("unittests", Level.WARNING, "diff file missing");
+            LOGGER.warn("diff file missing");
             return false;
         }
-        //XRLog.log("unittests",Level.WARNING,"tin = " + tin);
-        //XRLog.log("unittests",Level.WARNING,"din = " + din);
         if (tin.equals(din)) {
             return true;
         }
-        XRLog.log("unittests", Level.WARNING, "warning not equals");
+        LOGGER.warn("warning not equals");
         final File dfile = new File("correct.diff");
         final File tfile = new File("test.diff");
-        XRLog.log("unittests", Level.WARNING, "writing to " + dfile + " and " + tfile);
+        LOGGER.warn("writing to " + dfile + " and " + tfile);
         Uu.string_to_file(tin, tfile);
         Uu.string_to_file(din, dfile);
         //System.exit(-1);
@@ -205,7 +205,6 @@ public class DocumentDiffTest {
     public static void main(final String[] args)
             throws Exception {
 
-        XRLog.setLevel("plumbing.general", Level.OFF);
         //String testfile = "tests/diff/background/01.xhtml";
         //String difffile = "tests/diff/background/01.diff";
         String file = null;

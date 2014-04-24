@@ -19,12 +19,12 @@
  */
 package org.xhtmlrenderer.swing;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.util.ImageUtil;
-import org.xhtmlrenderer.util.XRLog;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.logging.Level;
 
 
 /**
@@ -34,6 +34,8 @@ import java.util.logging.Level;
  * image has loaded, a 1x1 transparent pixel will be returned from getImage().
  */
 public class MutableFSImage extends AWTFSImage {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MutableFSImage.class);
     private volatile BufferedImage img;
     private final RepaintListener repaintListener;
     private volatile boolean loaded;
@@ -64,7 +66,7 @@ public class MutableFSImage extends AWTFSImage {
         
         img = newImg;
         loaded = true;
-        XRLog.general(Level.FINE, "Mutable image " + uri + " loaded, repaint requested");
+        LOGGER.debug("Mutable image " + uri + " loaded, repaint requested");
         repaintListener.repaintRequested(wasScaled);
     }
 

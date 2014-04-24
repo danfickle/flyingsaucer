@@ -40,6 +40,8 @@ import javax.swing.JOptionPane;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.style.CalculatedStyle;
 import org.xhtmlrenderer.css.style.derived.RectPropertySet;
 import org.xhtmlrenderer.event.DocumentListener;
@@ -56,7 +58,6 @@ import org.xhtmlrenderer.simple.extend.FormSubmissionListener;
 import org.xhtmlrenderer.swing.Java2DOutputDevice;
 import org.xhtmlrenderer.util.Configuration;
 import org.xhtmlrenderer.util.Uu;
-import org.xhtmlrenderer.util.XRLog;
 
 /**
  * A Swing {@link javax.swing.JPanel} that encloses the Flying Saucer renderer
@@ -66,8 +67,9 @@ import org.xhtmlrenderer.util.XRLog;
  */
 @SuppressWarnings("serial")
 public abstract class BasicPanel extends RootPanel implements
-	FormSubmissionListener 
-{
+	FormSubmissionListener {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(BasicPanel.class);
     private static final int PAGE_PAINTING_CLEARANCE_WIDTH = 10;
     private static final int PAGE_PAINTING_CLEARANCE_HEIGHT = 10;
 
@@ -141,13 +143,13 @@ public abstract class BasicPanel extends RootPanel implements
         if (root == null) {
             //Uu.p("dispatching an initial resize event");
             //queue.dispatchLayoutEvent(new ReflowEvent(ReflowEvent.CANVAS_RESIZED, this.getSize()));
-            XRLog.render(Level.FINE, "skipping the actual painting");
+            LOGGER.debug( "skipping the actual painting");
         } else {
             final RenderingContext c = newRenderingContext((Graphics2D) g.create());
             final long start = System.currentTimeMillis();
             doRender(c, root);
             final long end = System.currentTimeMillis();
-            XRLog.render(Level.FINE, "RENDERING TOOK " + (end - start) + " ms");
+            LOGGER.debug( "RENDERING TOOK " + (end - start) + " ms");
         }
     }
 
@@ -188,7 +190,7 @@ public abstract class BasicPanel extends RootPanel implements
                 }
 
                 // "Shouldn't" happen
-                XRLog.exception(t.getMessage(), t);
+                LOGGER.error(t.getMessage(), t);
             }
         }
     }
@@ -320,7 +322,7 @@ public abstract class BasicPanel extends RootPanel implements
     }
 
     private void printTree(final Box box, final String tab) {
-        XRLog.layout(Level.FINEST, tab + "Box = " + box);
+        LOGGER.trace(tab + "Box = " + box);
         final Iterator<Box> it = box.getChildIterator();
         while (it.hasNext()) {
             final Box bx = (Box) it.next();
@@ -344,7 +346,7 @@ public abstract class BasicPanel extends RootPanel implements
     }
 
     public void setSize(final Dimension d) {
-        XRLog.layout(Level.FINEST, "set size called");
+        LOGGER.trace("set size called");
         super.setSize(d);
         /* CLEAN: do we need this?
         if (doc != null && body_box != null) {
@@ -438,10 +440,9 @@ public abstract class BasicPanel extends RootPanel implements
      */
     public void reloadDocument(final Document doc) {
         if (this.doc == null) {
-            XRLog.render("Reload called on BasicPanel, but there is no document set on the panel yet.");
+            LOGGER.info("Reload called on BasicPanel, but there is no document set on the panel yet.");
             return;
         }
-        ;
         this.doc = doc;
         setDocument(this.doc, getSharedContext().getBaseURL(), getSharedContext().getNamespaceHandler());
     }

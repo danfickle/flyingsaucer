@@ -26,12 +26,16 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 
 import org.jsoup.nodes.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.simple.extend.XhtmlForm;
-import org.xhtmlrenderer.util.XRLog;
 
 class ResetField extends AbstractButtonField {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ResetField.class);
+
     public ResetField(final Element e, final XhtmlForm form, final LayoutContext context, final BlockBox box) {
         super(e, form, context, box);
     }
@@ -55,7 +59,7 @@ class ResetField extends AbstractButtonField {
         
         button.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent event) {
-                XRLog.layout("Reset pressed: Restore");
+                LOGGER.info("Reset pressed: Restore");
                 
                 getParentForm().reset();
             }

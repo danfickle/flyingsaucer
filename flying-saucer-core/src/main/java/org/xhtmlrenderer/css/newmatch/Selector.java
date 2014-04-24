@@ -19,12 +19,11 @@
  */
 package org.xhtmlrenderer.css.newmatch;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.extend.AttributeResolver;
 import org.xhtmlrenderer.css.extend.TreeResolver;
 import org.xhtmlrenderer.css.sheet.Ruleset;
-import org.xhtmlrenderer.util.XRLog;
-
-import java.util.logging.Level;
 
 
 /**
@@ -34,6 +33,8 @@ import java.util.logging.Level;
  * @author Torbjoern Gannholm
  */
 public class Selector {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Selector.class);
     private Ruleset _parent;
     private Selector chainedSelector = null;
     private Selector siblingSelector = null;
@@ -299,7 +300,7 @@ public class Selector {
     public void setPseudoElement(final String pseudoElement) {
         if (_pe != null) {
             addUnsupportedCondition();
-            XRLog.match(Level.WARNING, "Trying to set more than one pseudo-element");
+            LOGGER.warn("Trying to set more than one pseudo-element");
         } else {
             _specificityD++;
             _pe = pseudoElement;
@@ -408,7 +409,7 @@ public class Selector {
                 sibling = treeRes.getPreviousSiblingElement(e);
                 break;
             default:
-                XRLog.exception("Bad sibling axis");
+                LOGGER.error("Bad sibling axis");
         }
         return sibling;
     }
@@ -424,7 +425,7 @@ public class Selector {
         }
         if (_pe != null) {
             conditions.add(Condition.createUnsupportedCondition());
-            XRLog.match(Level.WARNING, "Trying to append conditions to pseudoElement " + _pe);
+            LOGGER.warn("Trying to append conditions to pseudoElement " + _pe);
         }
         conditions.add(c);
     }

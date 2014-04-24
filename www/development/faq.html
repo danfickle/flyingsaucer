@@ -296,13 +296,6 @@ below INFO (FINE, FINER, FINEST) is generally only interesting for core renderer
 We don't guarrantee that anything below INFO will be useful, correct, practical or informative.
 You can usually leave log levels at INFO for most purposes.</p>
 
-<p>If you are modifying the renderer core code and want to add log messages, we recommend
-you always use the <code>org.xhtmlrenderer.XRLog</code> class. Using this class ensures that
-our log configuration is read properly before we write anything out to the log system.
-The class is pretty self-explanatory, and all logging methods in it are static. If for some
-reason you need to use the <code>java.util.logging.Logger</code> class directly, please
-use <code>XRLog.getLogger()</code> to retrieve the instance to use.</p>
-
 <!-- TODO: Update logging docs once we figure out how we will handle distribution log
 controls versus dev log controls with override files. PW -->
 

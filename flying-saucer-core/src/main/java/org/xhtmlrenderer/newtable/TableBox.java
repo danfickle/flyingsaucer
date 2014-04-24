@@ -27,6 +27,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.IdentValue;
 import org.xhtmlrenderer.css.style.CalculatedStyle;
@@ -42,13 +44,15 @@ import org.xhtmlrenderer.render.ContentLimitContainer;
 import org.xhtmlrenderer.render.PageBox;
 import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.util.ArrayUtil;
-import org.xhtmlrenderer.util.XRLog;
 
 // Much of this code is directly inspired by (and even copied from)
 // the equivalent code in KHTML (including the idea of "effective columns" to
 // manage colspans and the details of the table layout algorithms).  Many kudos
 // to the KHTML developers for making such an amazing piece of software!
 public class TableBox extends BlockBox {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TableBox.class);
+
     private final List<ColumnData> _columns = new ArrayList<ColumnData>();
     private int[] _columnPos;
     private TableLayout _tableLayout;
@@ -419,7 +423,7 @@ public class TableBox extends BlockBox {
         final ContentLimit limit = _contentLimitContainer.getContentLimit(c.getPageNo());
 
         if (limit == null) {
-            XRLog.layout(Level.WARNING, "No content limit found");
+            LOGGER.warn("No content limit found");
             return result;
         } else {
             if (limit.getTop() == ContentLimit.UNDEFINED ||

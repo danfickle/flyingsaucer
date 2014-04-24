@@ -21,6 +21,8 @@ package org.xhtmlrenderer.css.style.derived;
 
 import java.util.logging.Level;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.CSSPrimitiveUnit;
 import org.xhtmlrenderer.css.constants.ValueConstants;
@@ -29,9 +31,11 @@ import org.xhtmlrenderer.css.style.CalculatedStyle;
 import org.xhtmlrenderer.css.style.CssContext;
 import org.xhtmlrenderer.css.style.DerivedValue;
 import org.xhtmlrenderer.css.value.FontSpecification;
-import org.xhtmlrenderer.util.XRLog;
 
 public class LengthValue extends DerivedValue {
+
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(LengthValue.class);
     private final static int MM__PER__CM = 10;
     private final static float CM__PER__IN = 2.54F;
     private final static float PT__PER__IN = 1f / 72f;
@@ -175,21 +179,20 @@ public class LengthValue extends DerivedValue {
                 break;
             default:
                 // nothing to do, we only convert those listed above
-                XRLog.cascade(Level.SEVERE,
-                        "Asked to convert " + cssName + " from relative to absolute, " +
+                LOGGER.error("Asked to convert " + cssName + " from relative to absolute, " +
                         " don't recognize the datatype " +
                         "'" + ValueConstants.stringForSACPrimitiveType(primitiveType) + "' "
                         + primitiveType + "(" + stringValue + ")");
         }
         //assert (new Float(absVal).intValue() >= 0);
 
-        if (XRLog.isLoggingEnabled()) {
+        if (LOGGER.isTraceEnabled()) {
             if (cssName == CSSName.FONT_SIZE) {
-                XRLog.cascade(Level.FINEST, cssName + ", relative= " +
+                LOGGER.trace(cssName + ", relative= " +
                         relVal + " (" + stringValue + "), absolute= "
                         + absVal);
             } else {
-                XRLog.cascade(Level.FINEST, cssName + ", relative= " +
+                LOGGER.trace(cssName + ", relative= " +
                         relVal + " (" + stringValue + "), absolute= "
                         + absVal + " using base=" + baseValue);
             }

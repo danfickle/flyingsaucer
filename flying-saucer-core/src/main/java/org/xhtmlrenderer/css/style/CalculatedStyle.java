@@ -26,6 +26,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.IdentValue;
 import org.xhtmlrenderer.css.newmatch.CascadedStyle;
@@ -47,7 +49,6 @@ import org.xhtmlrenderer.css.value.FontSpecification;
 import org.xhtmlrenderer.render.FSFont;
 import org.xhtmlrenderer.render.FSFontMetrics;
 import org.xhtmlrenderer.util.GeneralUtil;
-import org.xhtmlrenderer.util.XRLog;
 import org.xhtmlrenderer.util.XRRuntimeException;
 
 
@@ -59,8 +60,8 @@ import org.xhtmlrenderer.util.XRRuntimeException;
  * assigned values, e.g. font attributes. Property values are fully resolved
  * when this style is created. A property retrieved by name should always have
  * only one value in this class (e.g. one-one map). Any methods to retrieve
- * property values from an instance of this class require a valid {@link
- * org.xhtmlrenderer.layout.Context} be given to it, for some cases of property
+ * property values from an instance of this class require a valid Context
+ * be given to it, for some cases of property
  * resolution. Generally, a programmer will not use this class directly, but
  * will retrieve properties using a {@link org.xhtmlrenderer.context.StyleReference}
  * implementation.
@@ -69,6 +70,9 @@ import org.xhtmlrenderer.util.XRRuntimeException;
  * @author Patrick Wright
  */
 public class CalculatedStyle {
+
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CalculatedStyle.class);
     /**
      * The parent-style we inherit from
      */
@@ -246,7 +250,7 @@ public class CalculatedStyle {
         try {
             isAbs = valueByName(cssName).hasAbsoluteUnit();
         } catch (final Exception e) {
-            XRLog.layout(Level.WARNING, "Property " + cssName + " has an assignment we don't understand, " +
+            LOGGER.warn("Property " + cssName + " has an assignment we don't understand, " +
                     "and can't tell if it's an absolute unit or not. Assuming it is not. Exception was: " +
                     e.getMessage());
             isAbs = false;

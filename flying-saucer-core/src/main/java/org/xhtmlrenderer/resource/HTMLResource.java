@@ -23,17 +23,18 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.util.logging.Level;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.xhtmlrenderer.util.XRLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.util.XRRuntimeException;
 
 /**
  * @author Patrick Wright
  */
 public class HTMLResource extends AbstractResource {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HTMLResource.class);
     private Document document;
     private final String _uri;
     
@@ -48,7 +49,7 @@ public class HTMLResource extends AbstractResource {
     	try {
 			document = Jsoup.parse(stream, null, "");
 		} catch (final IOException e) {
-			XRLog.load(Level.WARNING, "Unable to parse input stream", e);
+			LOGGER.warn("Unable to parse input stream", e);
 			throw new XRRuntimeException("Unable to parse input stream", e);
 		}
     }
@@ -59,7 +60,7 @@ public class HTMLResource extends AbstractResource {
     	try {
 			document = Jsoup.parse(file, null);
 		} catch (final IOException e) {
-			XRLog.load(Level.WARNING, "Unable to parse file", e);
+			LOGGER.warn("Unable to parse file", e);
 			throw new XRRuntimeException("Unable to parse file", e);
 		}
     }
@@ -87,7 +88,7 @@ public class HTMLResource extends AbstractResource {
 			    builder.append(cbuf, 0, numChars);
 			}
 		} catch (final IOException e) {
-			XRLog.load(Level.WARNING, "Unable to parse reader", e);
+			LOGGER.warn("Unable to parse reader", e);
 			throw new XRRuntimeException("Unable to parse reader", e);
 		}
 

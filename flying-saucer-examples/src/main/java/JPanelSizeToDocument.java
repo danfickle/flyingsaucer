@@ -19,15 +19,15 @@
  */
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.event.DefaultDocumentListener;
-import org.xhtmlrenderer.util.XRLog;
 
 import com.github.danfickle.flyingsaucer.swing.XHTMLPanel;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
-import java.util.logging.Level;
 
 /**
  * This example shows how to render a document as a Swing JPanel (XHTMLPanel, a subclass) and have the
@@ -40,6 +40,8 @@ import java.util.logging.Level;
  * @author Patrick Wright
  */
 public class JPanelSizeToDocument {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(JPanelSizeToDocument.class);
     private String fileName;
     private int targetWidth = 800;
 
@@ -70,7 +72,7 @@ public class JPanelSizeToDocument {
                 frame.setTitle("Flying Saucer: " + panel.getDocumentTitle());
 
                 final Dimension dim = panel.getPreferredSize();
-                XRLog.general("Preferred size" + dim);
+                LOGGER.info("Preferred size" + dim);
             }
         });
 
@@ -82,7 +84,7 @@ public class JPanelSizeToDocument {
         try {
             panel.setDocument(new File(fileName));
         } catch (final Exception e) {
-            XRLog.general(Level.WARNING, "Could not load XHTML document " + fileName, e);
+            LOGGER.warn("Could not load XHTML document " + fileName, e);
             messageAndExit("Failed to load document", -1);
         }
 
