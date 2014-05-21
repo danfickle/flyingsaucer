@@ -19,18 +19,17 @@
  */
 package org.xhtmlrenderer.swing;
 
-import org.xhtmlrenderer.util.XRLog;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.LinkedList;
-import java.util.logging.Level;
-
-
 
 /**
  * A thread-safe queue containing BackgroundImageLoaderItem, each of which represents one image (identified by a URI)
  * which needs to be loaded.
  */
 class ImageLoadQueue {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ImageLoadQueue.class);
     // marker queue item which, if read, means the reading threads should simply stop their polling
     // introduced by kill()
     private static final ImageLoadItem KILL_SWITCH = new ImageLoadItem(null, null, null, -1, -1);
@@ -66,7 +65,7 @@ class ImageLoadQueue {
      *            the URI is a proper URL before calling this method.
      */
     public synchronized void addToQueue(final ImageResourceLoader imageResourceLoader, final String uri, final MutableFSImage mfsi, final int width, final int height) {
-        XRLog.general(Level.FINE, "Queueing load for image uri " + uri);
+        LOGGER.debug("Queueing load for image uri " + uri);
         _loadQueue.addLast(new ImageLoadItem(imageResourceLoader, uri, mfsi, width, height));
         notifyAll();
     }
@@ -83,13 +82,13 @@ class ImageLoadQueue {
             wait();
         }
         if (_loadQueue.getLast() == KILL_SWITCH) {
-            XRLog.general(Level.FINE, "Thread " + Thread.currentThread().getName() +
+            LOGGER.debug("Thread " + Thread.currentThread().getName() +
                     " requested item, but queue is shutting down; returning kill switch.");
             return KILL_SWITCH;
         } else {
             final ImageLoadItem item = _loadQueue.removeLast();
 
-            XRLog.general(Level.FINE, "Thread " + Thread.currentThread().getName() +
+            LOGGER.debug("Thread " + Thread.currentThread().getName() +
                     " pulled item " + item._uri + " from queue, " + (_loadQueue.size() - 1) + " remaining");
             return item;
         }

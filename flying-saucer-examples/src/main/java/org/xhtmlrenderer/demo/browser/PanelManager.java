@@ -19,17 +19,17 @@
  */
 package org.xhtmlrenderer.demo.browser;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.swing.DelegatingUserAgent;
 import org.xhtmlrenderer.util.StreamResource;
 import org.xhtmlrenderer.util.Uu;
-import org.xhtmlrenderer.util.XRLog;
 import org.xhtmlrenderer.util.GeneralUtil;
 
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
-import java.util.logging.Level;
 
 
 /**
@@ -42,6 +42,8 @@ import java.util.logging.Level;
  *  
  */
 public class PanelManager extends DelegatingUserAgent {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PanelManager.class);
     private int index = -1;
     private final ArrayList history = new ArrayList();
 
@@ -107,11 +109,11 @@ public class PanelManager extends DelegatingUserAgent {
             try {
                 final StringBuffer sbURI = GeneralUtil.htmlEscapeSpace(uri);
 
-                XRLog.general("Encoded URI: " + sbURI);
+                LOGGER.info("Encoded URI: " + sbURI);
                 file = new File(new URI(sbURI.toString()));
             } catch (final URISyntaxException
                     e) {
-                XRLog.exception("Invalid file URI " + uri, e);
+                LOGGER.error("Invalid file URI " + uri, e);
                 return getNotFoundDocument(uri);
             }
             if (file.isDirectory()) {
@@ -128,12 +130,12 @@ public class PanelManager extends DelegatingUserAgent {
         	uc = strm.getUrlConnection();
             final String contentType = uc.getContentType();
 
-            XRLog.load(Level.INFO, "Content-Type = " + contentType);
+            LOGGER.info("Content-Type = " + contentType);
 
             if (uc instanceof HttpURLConnection)
             {
-            	XRLog.load(Level.INFO, "Response Code = " + ((HttpURLConnection) uc).getResponseCode());
-            	XRLog.load(Level.INFO, "Response Message = " + ((HttpURLConnection) uc).getResponseMessage());
+            	LOGGER.info( "Response Code = " + ((HttpURLConnection) uc).getResponseCode());
+            	LOGGER.info( "Response Message = " + ((HttpURLConnection) uc).getResponseMessage());
             }
             
             //Maybe should popup a choice when content/unknown!
@@ -148,9 +150,9 @@ public class PanelManager extends DelegatingUserAgent {
                 xr = HTMLResource.load(inputStream, uri);
             }
         } catch (final MalformedURLException e) {
-            XRLog.exception("bad URL given: " + uri, e);
+            LOGGER.error("bad URL given: " + uri, e);
         } catch (final IOException e) {
-            XRLog.exception("IO problem for " + uri, e);
+            LOGGER.error("IO problem for " + uri, e);
         } finally {
             if (inputStream != null) {
                 try {

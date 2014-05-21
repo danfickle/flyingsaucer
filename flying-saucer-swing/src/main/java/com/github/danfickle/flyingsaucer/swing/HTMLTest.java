@@ -19,9 +19,10 @@
  */
 package com.github.danfickle.flyingsaucer.swing;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.swing.DOMInspector;
 import org.xhtmlrenderer.util.Uu;
-import org.xhtmlrenderer.util.XRLog;
 
 import javax.swing.*;
 import java.awt.Dimension;
@@ -37,6 +38,8 @@ import java.net.URL;
  * @author empty
  */
 public class HTMLTest extends JFrame {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HTMLTest.class);
     private static final long serialVersionUID = 1L;
 
     /**
@@ -158,7 +161,7 @@ public class HTMLTest extends JFrame {
                     panel.setDocument(url.toExternalForm());
 
                     final long el = System.currentTimeMillis() - st;
-                    XRLog.general("loadDocument(" + url.toString() + ") in " + el + "ms, render may take longer");
+                    LOGGER.info("loadDocument(" + url.toString() + ") in " + el + "ms, render may take longer");
                     HTMLTest.this.setTitle(BASE_TITLE + "-  " +
                             panel.getDocumentTitle() + "  " +
                             "(" + url.toString() + ")");

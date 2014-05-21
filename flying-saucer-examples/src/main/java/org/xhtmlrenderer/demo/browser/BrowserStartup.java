@@ -20,13 +20,12 @@
 package org.xhtmlrenderer.demo.browser;
 
 import java.awt.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.util.GeneralUtil;
-import org.xhtmlrenderer.util.XRLog;
 
 /**
  * Description of the Class
@@ -34,6 +33,8 @@ import org.xhtmlrenderer.util.XRLog;
  * @author empty
  */
 public class BrowserStartup {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(BrowserStartup.class);
     /**
      * Description of the Field
      */
@@ -63,10 +64,6 @@ public class BrowserStartup {
      * Description of the Field
      */
     protected ValidationHandler error_handler = new ValidationHandler();
-    /**
-     * Description of the Field
-     */
-    public static final Logger logger = Logger.getLogger("app.browser");
 
     /**
      * Constructor for the BrowserStartup object
@@ -79,7 +76,7 @@ public class BrowserStartup {
      * Constructor for the BrowserStartup object
      */
     public BrowserStartup(final String startPage) {
-        logger.info("starting up");
+        LOGGER.info("starting up");
         this.startPage = startPage;
     }
 
@@ -93,7 +90,7 @@ public class BrowserStartup {
                 System.setProperty("com.apple.mrj.application.apple.menu.about.name", "FS Browser");
             } catch (final Exception ex) {
                 try {
-                    logger.log(Level.SEVERE, "error initalizing the mac properties", ex);
+                    LOGGER.error("error initalizing the mac properties", ex);
                 } catch (final Exception ex2) {
                     //System.out.println("error writing to the log file!" + ex2);
                     //ex2.printStackTrace();
@@ -106,7 +103,7 @@ public class BrowserStartup {
         final JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.frame = frame;
-        logger.info("creating UI");
+        LOGGER.info("creating UI");
         actions = new BrowserActions(this);
         actions.init();
 
@@ -153,7 +150,7 @@ public class BrowserStartup {
 
             frame.setVisible(true);
         } catch (final Exception ex) {
-            XRLog.general(Level.SEVERE, ex.getMessage(), ex);
+            LOGGER.error(ex.getMessage(), ex);
         }
     }
 

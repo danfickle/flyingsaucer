@@ -29,13 +29,15 @@ import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.net.URLCodec;
-import org.xhtmlrenderer.util.XRLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DataURLConnection extends URLConnection {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataURLConnection.class);
 
     private final Map<String, String> _headers = new HashMap<String, String>();
     private byte [] _data;
@@ -142,7 +144,7 @@ public class DataURLConnection extends URLConnection {
 				return URLCodec.decodeUrl(s.getBytes("ASCII"));
 			} catch (UnsupportedEncodingException | DecoderException e) 
 			{
-				XRLog.load(Level.WARNING, "Unable to decode url");
+				LOGGER.warn("Unable to decode url");
 				return new byte[0];
 			}
         }

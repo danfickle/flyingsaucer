@@ -1,13 +1,15 @@
 package org.xhtmlrenderer.swing;
 
-import org.xhtmlrenderer.util.XRLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.io.File;
-import java.util.logging.Level;
 
 public class UriResolver {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(UriResolver.class);
     private String _baseUri;
 
     public String resolve(final String uri) {
@@ -21,7 +23,7 @@ public class UriResolver {
                 try {
                     setBaseUri(new File(".").toURI().toURL().toExternalForm());
                 } catch (final Exception e1) {
-                    XRLog.exception("The default NaiveUserAgent doesn't know how to resolve the base URL for " + uri);
+                    LOGGER.error("The default NaiveUserAgent doesn't know how to resolve the base URL for " + uri);
                     return null;
                 }
             }
@@ -30,13 +32,13 @@ public class UriResolver {
         try {
             return new URL(uri).toString();
         } catch (final MalformedURLException e) {
-            XRLog.load(Level.FINE, "Could not read " + uri + " as a URL; may be relative. Testing using parent URL " + _baseUri);
+            LOGGER.debug("Could not read " + uri + " as a URL; may be relative. Testing using parent URL " + _baseUri);
             try {
                 final URL result = new URL(new URL(_baseUri), uri);
                 ret = result.toString();
-                XRLog.load(Level.FINE, "Was able to read from " + uri + " using parent URL " + _baseUri);
+                LOGGER.debug("Was able to read from " + uri + " using parent URL " + _baseUri);
             } catch (final MalformedURLException e1) {
-                XRLog.exception("The default NaiveUserAgent cannot resolve the URL " + uri + " with base URL " + _baseUri);
+                LOGGER.error("The default NaiveUserAgent cannot resolve the URL " + uri + " with base URL " + _baseUri);
             }
         }
         return ret;

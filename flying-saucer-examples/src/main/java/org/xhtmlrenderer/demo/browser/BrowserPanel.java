@@ -19,16 +19,15 @@
  */
 package org.xhtmlrenderer.demo.browser;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.event.DocumentListener;
 import org.xhtmlrenderer.layout.SharedContext;
 import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.simple.FSScrollPane;
 import org.xhtmlrenderer.simple.PDFRenderer;
 import org.xhtmlrenderer.swing.ImageResourceLoader;
-import org.xhtmlrenderer.util.GeneralUtil;
-import org.xhtmlrenderer.util.Uu;
-import org.xhtmlrenderer.util.XRLog;
-import org.xhtmlrenderer.util.XRRuntimeException;
+import org.xhtmlrenderer.util.*;
 
 import com.github.danfickle.flyingsaucer.swing.ScalableXHTMLPanel;
 import com.github.danfickle.flyingsaucer.swing.SwingReplacedElementFactory;
@@ -40,8 +39,6 @@ import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 /**
@@ -50,6 +47,8 @@ import java.util.logging.Logger;
  * @author empty
  */
 public class BrowserPanel extends JPanel implements DocumentListener {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(BrowserPanel.class);
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -111,11 +110,6 @@ public class BrowserPanel extends JPanel implements DocumentListener {
 	BrowserPanelListener listener;
 
 	JButton print_preview;
-
-	/**
-	 * Description of the Field
-	 */
-	public static final Logger logger = Logger.getLogger("app.browser");
 
 	private PanelManager manager;
 	JButton goToPage;
@@ -328,7 +322,7 @@ public class BrowserPanel extends JPanel implements DocumentListener {
 	 * Description of the Method
 	 */
 	public void reloadPage() {
-		logger.info("Reloading Page: ");
+		LOGGER.info("Reloading Page: ");
 		if (manager.getBaseURL() != null) {
 			loadPage(manager.getBaseURL());
 		}
@@ -342,7 +336,7 @@ public class BrowserPanel extends JPanel implements DocumentListener {
 	//TODO: make this part of an implementation of UserAgentCallback instead
 	public void loadPage(final String url_text) {
 		try {
-			logger.info("Loading Page: " + url_text);
+			LOGGER.info("Loading Page: " + url_text);
 			view.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 			view.setDocument(url_text);
 			view.addDocumentListener(BrowserPanel.this);
@@ -355,11 +349,11 @@ public class BrowserPanel extends JPanel implements DocumentListener {
 				listener.pageLoadSuccess(url_text, view.getDocumentTitle());
 			}
 		} catch (final XRRuntimeException ex) {
-			XRLog.general(Level.SEVERE, "Runtime exception", ex);
+			LOGGER.error("Runtime exception", ex);
             setStatus("Can't load document");
             handlePageLoadFailed(url_text, ex);
         } catch (final Exception ex) {
-			XRLog.general(Level.SEVERE, "Could not load page for display.", ex);
+			LOGGER.error("Could not load page for display.", ex);
 			ex.printStackTrace();
 		}
 	}
@@ -396,7 +390,7 @@ public class BrowserPanel extends JPanel implements DocumentListener {
 //               renderer.createPDF(os);
 //               setStatus( "Done export." );
 //            } catch (Exception e) {
-//                XRLog.general(Level.SEVERE, "Could not export PDF.", e);
+//                LOGGER.error"Could not export PDF.", e);
 //                e.printStackTrace();
 //                setStatus( "Error exporting to PDF." );
 //               } finally {

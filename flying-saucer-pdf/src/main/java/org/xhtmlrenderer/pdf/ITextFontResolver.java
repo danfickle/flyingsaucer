@@ -22,6 +22,8 @@ package org.xhtmlrenderer.pdf;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.BaseFont;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.IdentValue;
 import org.xhtmlrenderer.css.sheet.FontFaceRule;
@@ -31,13 +33,14 @@ import org.xhtmlrenderer.css.value.FontSpecification;
 import org.xhtmlrenderer.extend.FontResolver;
 import org.xhtmlrenderer.layout.SharedContext;
 import org.xhtmlrenderer.render.FSFont;
-import org.xhtmlrenderer.util.XRLog;
 import org.xhtmlrenderer.util.XRRuntimeException;
 
 import java.io.*;
 import java.util.*;
 
 public class ITextFontResolver implements FontResolver {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ITextFontResolver.class);
     private Map<String, FontFamily> _fontFamilies = createInitialFontMap();
     private Map<String, FontDescription> _fontCache = new HashMap<String, FontDescription>();
 
@@ -113,7 +116,7 @@ public class ITextFontResolver implements FontResolver {
 
             byte[] font1 = _sharedContext.getUac().getBinaryResource(src.asString());
             if (font1 == null) {
-                XRLog.exception("Could not load font " + src.asString());
+                LOGGER.error("Could not load font " + src.asString());
                 continue;
             }
 
@@ -122,7 +125,7 @@ public class ITextFontResolver implements FontResolver {
             if (metricsSrc != IdentValue.NONE) {
                 font2 = _sharedContext.getUac().getBinaryResource(metricsSrc.asString());
                 if (font2 == null) {
-                    XRLog.exception("Could not load font metric data " + src.asString());
+                    LOGGER.error("Could not load font metric data " + src.asString());
                     continue;
                 }
             }
@@ -144,10 +147,10 @@ public class ITextFontResolver implements FontResolver {
             try {
                 addFontFaceFont(fontFamily, src.asString(), encoding, embedded, font1, font2);
             } catch (final DocumentException e) {
-                XRLog.exception("Could not load font " + src.asString(), e);
+                LOGGER.error("Could not load font " + src.asString(), e);
                 continue;
             } catch (final IOException e) {
-                XRLog.exception("Could not load font " + src.asString(), e);
+                LOGGER.error("Could not load font " + src.asString(), e);
             }
         }
     }

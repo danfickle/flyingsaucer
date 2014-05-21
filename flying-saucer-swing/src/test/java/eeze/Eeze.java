@@ -32,10 +32,11 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.simple.FSScrollPane;
 import com.github.danfickle.flyingsaucer.swing.Graphics2DRenderer;
 import com.github.danfickle.flyingsaucer.swing.XHTMLPanel;
-import org.xhtmlrenderer.util.XRLog;
 
 
 /**
@@ -45,6 +46,8 @@ import org.xhtmlrenderer.util.XRLog;
  * @author Who?
  */
 public class Eeze {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Eeze.class);
     /**
      * Description of the Field
      */
@@ -264,10 +267,10 @@ public class Eeze {
         eezeFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         try {
             if (reload) {
-                XRLog.load("Reloading " + currentDisplayed);
+                LOGGER.info("Reloading " + currentDisplayed);
                 html.reloadDocument(file.toURL().toExternalForm());
             } else {
-                XRLog.load("Loading " + currentDisplayed);
+                LOGGER.info("Loading " + currentDisplayed);
                 html.setDocument(file.toURL().toExternalForm());
             }
             currentDisplayed = file;

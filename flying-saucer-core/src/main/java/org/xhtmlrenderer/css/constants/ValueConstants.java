@@ -20,13 +20,12 @@
  */
 package org.xhtmlrenderer.css.constants;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.css.CSSValue;
 import org.xhtmlrenderer.css.parser.PropertyValue;
 import org.xhtmlrenderer.util.GeneralUtil;
-import org.xhtmlrenderer.util.XRLog;
 import org.xhtmlrenderer.util.XRRuntimeException;
-
-import java.util.logging.Level;
 
 
 /**
@@ -36,6 +35,7 @@ import java.util.logging.Level;
  */
 public final class ValueConstants {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ValueConstants.class);
      /**
      * Description of the Method
      *
@@ -150,7 +150,7 @@ public final class ValueConstants {
             case CSS_STRING:
                 return true;
             case CSS_UNKNOWN:
-                XRLog.cascade(Level.WARNING, "Asked whether type was absolute, given CSS_UNKNOWN as the type. " +
+                LOGGER.warn("Asked whether type was absolute, given CSS_UNKNOWN as the type. " +
                         "Might be one of those funny values like background-position.");
                 GeneralUtil.dumpShortException(new Exception());
                 // fall-through

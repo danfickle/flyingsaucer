@@ -42,6 +42,8 @@ import javax.swing.JViewport;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.CSSPrimitiveUnit;
 import org.xhtmlrenderer.css.constants.IdentValue;
@@ -70,11 +72,11 @@ import org.xhtmlrenderer.swing.Java2DOutputDevice;
 import org.xhtmlrenderer.swing.RepaintListener;
 import org.xhtmlrenderer.util.Configuration;
 import org.xhtmlrenderer.util.Uu;
-import org.xhtmlrenderer.util.XRLog;
 
 public class RootPanel extends JPanel implements ComponentListener,
-			UserInterface, FSCanvas, RepaintListener 
-{
+			UserInterface, FSCanvas, RepaintListener {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RootPanel.class);
     static final long serialVersionUID = 1L;
 
     private Box rootBox = null;
@@ -131,7 +133,7 @@ public class RootPanel extends JPanel implements ComponentListener,
             final CalculatedStyle style = cb.getStyle();
             if (!style.isIdent(CSSName.BACKGROUND_IMAGE, IdentValue.NONE)) {
                 final String uri = style.getStringProperty(CSSName.BACKGROUND_IMAGE);
-                XRLog.load(Level.FINE, "Greedily loading background property " + uri);
+                LOGGER.debug("Greedily loading background property " + uri);
                 try {
                     getSharedContext().getUac().getImageResource(uri);
                 } catch (final Exception ex) {
@@ -194,7 +196,7 @@ public class RootPanel extends JPanel implements ComponentListener,
      */
     public void addNotify() {
         super.addNotify();
-        XRLog.general(Level.FINE, "add notify called");
+        LOGGER.debug( "add notify called");
         final Container p = getParent();
         if (p instanceof JViewport) {
             final Container vp = p.getParent();
@@ -226,11 +228,11 @@ public class RootPanel extends JPanel implements ComponentListener,
     boolean layoutInProgress = false;
 
     public RenderingContext newRenderingContext(final Graphics2D g) {
-        XRLog.layout(Level.FINEST, "new context begin");
+        LOGGER.trace( "new context begin");
 
         getSharedContext().setCanvas(this);
 
-        XRLog.layout(Level.FINEST, "new context end");
+        LOGGER.trace( "new context end");
 
         final RenderingContext result = getSharedContext().newRenderingContextInstance();
         result.setFontContext(new Java2DFontContext(g));
@@ -247,11 +249,11 @@ public class RootPanel extends JPanel implements ComponentListener,
     }
 
     protected LayoutContext newLayoutContext(final Graphics2D g) {
-        XRLog.layout(Level.FINEST, "new context begin");
+        LOGGER.trace( "new context begin");
 
         getSharedContext().setCanvas(this);
 
-        XRLog.layout(Level.FINEST, "new context end");
+        LOGGER.trace( "new context end");
 
         final LayoutContext result = getSharedContext().newLayoutContextInstance();
 
@@ -329,7 +331,7 @@ public class RootPanel extends JPanel implements ComponentListener,
 
             final long end = System.currentTimeMillis();
 
-            XRLog.layout(Level.INFO, "Layout took " + (end - start) + "ms");
+            LOGGER.info( "Layout took " + (end - start) + "ms");
 
             /*
             System.out.println(root.dump(c, "", BlockBox.DUMP_LAYOUT));
@@ -344,7 +346,7 @@ public class RootPanel extends JPanel implements ComponentListener,
                 super.setOpaque(true);
             }
 
-            XRLog.layout(Level.FINEST, "after layout: " + root);
+            LOGGER.trace( "after layout: " + root);
 
             final Dimension intrinsic_size = root.getLayer().getPaintingDimension(c);
 
@@ -389,7 +391,7 @@ public class RootPanel extends JPanel implements ComponentListener,
             if (Configuration.isTrue("xr.image.background.greedy", false)) {
                 EventQueue.invokeLater(new Runnable() {
                     public void run() {
-                        XRLog.load("loading images in document and css greedily");
+                        LOGGER.info("loading images in document and css greedily");
                         requestBGImages(getRootBox());
                     }
                 });
@@ -408,7 +410,7 @@ public class RootPanel extends JPanel implements ComponentListener,
                 }
 
                 // "Shouldn't" happen
-                XRLog.exception(t.getMessage(), t);
+                LOGGER.error(t.getMessage(), t);
             }
         }
     }
@@ -444,7 +446,7 @@ public class RootPanel extends JPanel implements ComponentListener,
             try {
                 list.documentStarted();
             } catch (final Exception e) {
-                XRLog.load(Level.WARNING, "Document listener threw an exception; continuing processing", e);
+                LOGGER.warn( "Document listener threw an exception; continuing processing", e);
             }
         }
 	}
@@ -456,7 +458,7 @@ public class RootPanel extends JPanel implements ComponentListener,
             try {
                 list.documentLoaded();
             } catch (final Exception e) {
-                XRLog.load(Level.WARNING, "Document listener threw an exception; continuing processing", e);
+                LOGGER.warn( "Document listener threw an exception; continuing processing", e);
             }
         }
     }
@@ -468,7 +470,7 @@ public class RootPanel extends JPanel implements ComponentListener,
             try {
                 list.onLayoutException(t);
             } catch (final Exception e) {
-                XRLog.load(Level.WARNING, "Document listener threw an exception; continuing processing", e);
+                LOGGER.warn( "Document listener threw an exception; continuing processing", e);
             }
         }
     }
@@ -480,7 +482,7 @@ public class RootPanel extends JPanel implements ComponentListener,
             try {
                 list.onRenderException(t);
             } catch (final Exception e) {
-                XRLog.load(Level.WARNING, "Document listener threw an exception; continuing processing", e);
+                LOGGER.warn( "Document listener threw an exception; continuing processing", e);
             }
         }
     }
@@ -627,7 +629,7 @@ public class RootPanel extends JPanel implements ComponentListener,
         final long now = System.currentTimeMillis();
         final long el = now - lastRepaintRunAt;
         if (!doLayout || el > maxRepaintRequestWaitMs || pendingRepaintCount > 5) {
-            XRLog.general(Level.FINE, "*** Repainting panel, by request, el: " + el + " pending " + pendingRepaintCount);
+            LOGGER.debug( "*** Repainting panel, by request, el: " + el + " pending " + pendingRepaintCount);
             if (doLayout) {
                 relayout();
             } else {
@@ -638,7 +640,7 @@ public class RootPanel extends JPanel implements ComponentListener,
             pendingRepaintCount = 0;
         } else {
             if (!repaintRequestPending) {
-                XRLog.general(Level.FINE, "... Queueing new repaint request, el: " + el + " < " + maxRepaintRequestWaitMs);
+                LOGGER.debug( "... Queueing new repaint request, el: " + el + " < " + maxRepaintRequestWaitMs);
                 repaintRequestPending = true;
                 new Thread(new Runnable() {
                     public void run() {
@@ -646,7 +648,7 @@ public class RootPanel extends JPanel implements ComponentListener,
                             Thread.sleep(Math.min(maxRepaintRequestWaitMs, Math.abs(maxRepaintRequestWaitMs - el)));
                             EventQueue.invokeLater(new Runnable() {
                                 public void run() {
-                                    XRLog.general(Level.FINE, "--> running queued repaint request");
+                                    LOGGER.debug( "--> running queued repaint request");
                                     repaintRequested(doLayout);
                                     repaintRequestPending = false;
                                 }
@@ -658,7 +660,7 @@ public class RootPanel extends JPanel implements ComponentListener,
                 }).start();
             } else {
                 pendingRepaintCount++;
-                XRLog.general("hmm... repaint request, but already have one");
+                LOGGER.info("hmm... repaint request, but already have one");
             }
         }
     }

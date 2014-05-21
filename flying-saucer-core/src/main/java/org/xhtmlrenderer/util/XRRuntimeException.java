@@ -21,6 +21,9 @@
 package org.xhtmlrenderer.util;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * General runtime exception used in XHTMLRenderer. Auto-logs messages to
  * plumbing.exception hierarchy.
@@ -28,6 +31,8 @@ package org.xhtmlrenderer.util;
  * @author   Patrick Wright
  */
 public class XRRuntimeException extends RuntimeException {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(XRRuntimeException.class);
     private static final long serialVersionUID = 1L;
 
     /**
@@ -58,7 +63,7 @@ public class XRRuntimeException extends RuntimeException {
      * @param msg  Message for the log.
      */
     private void log( final String msg ) {
-        XRLog.exception( "Unhandled exception. " + msg );
+        LOGGER.error("Unhandled exception. " + msg );
     }
 
     /**
@@ -70,6 +75,6 @@ public class XRRuntimeException extends RuntimeException {
      *      IOException.
      */
     private void log( final String msg, final Throwable cause ) {
-        XRLog.exception( "Unhandled exception. " + msg, cause );
+        LOGGER.error("Unhandled exception. " + msg, cause );
     }
 }

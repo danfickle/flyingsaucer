@@ -799,8 +799,6 @@ Please review the ${jlogging} package docs before proceeding.
 
 We log to a set of hierarchies. The internal code--everything between a request to load a page and the page rendering--is logged to a subhierarchy of "plumbing", e.g. plumbing.load. Our convention is that WARNING and SEVERE levels are very important and should always be logged. INFO messages are useful and but can be excluded if you want a quiet ride. Anything below INFO (FINE, FINER, FINEST) is generally only interesting for core renderer developers. We don't guarrantee that anything below INFO will be useful, correct, practical or informative. You can usually leave log levels at INFO for most purposes.
 
-If you are modifying the renderer core code and want to add log messages, we recommend you always use the @org.xhtmlrenderer.XRLog@ class. Using this class ensures that our log configuration is read properly before we write anything out to the log system. The class is pretty self-explanatory, and all logging methods in it are static. If for some reason you need to use the @java.util.logging.Logger@ class directly, please use XRLog.getLogger() to retrieve the instance to use. 
-
 bcx{font-size: 8pt;}. {{
 org.xhtmlrenderer.general INFO:: ref = jar:file:/home/patrick/dev/xhtmlrenderer/dist/browser.jar!/demos/r7/counters.xhtml
 org.xhtmlrenderer.load INFO:: SAX XMLReader in use (parser): com.sun.org.apache.xerces.internal.parsers.SAXParser
