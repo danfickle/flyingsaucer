@@ -5,7 +5,6 @@ import org.xhtmlrenderer.pdf.ITextRenderer;
 import org.xhtmlrenderer.simple.FSScrollPane;
 import org.xhtmlrenderer.simple.XHTMLPanel;
 import org.xhtmlrenderer.simple.extend.XhtmlNamespaceHandler;
-import org.xhtmlrenderer.util.XRLog;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,6 +21,9 @@ import java.security.NoSuchAlgorithmException;
 import java.math.BigInteger;
 
 public class Review {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Review.class);
+
     private String lastRenderedHex;
 
     public static void main(String[] args) {
@@ -88,7 +90,7 @@ public class Review {
         String content = codeEditor.getText();
         String currentHex = getDigestHex(content.getBytes());
         if (currentHex.equals(lastRenderedHex)) {
-            XRLog.general("Already rendered, skipping");
+            LOGGER.info("Already rendered, skipping");
             return;
         }
 
@@ -108,13 +110,13 @@ public class Review {
             PDFFile pdffile = new PDFFile(buf);
 
             // show the first page
-            XRLog.general("Page count: " + pdffile.getNumPages());
+            LOGGER.info("Page count: " + pdffile.getNumPages());
             PDFPage page = pdffile.getPage(0);
             pdfPanel.setZoom(-3.0);
             pdfPanel.showPage(page);
             lastRenderedHex = currentHex;
 
-            XRLog.general("MD5 via BI: " + currentHex);
+            LOGGER.info("MD5 via BI: " + currentHex);
         } catch (Exception e) {
             e.printStackTrace();
         }

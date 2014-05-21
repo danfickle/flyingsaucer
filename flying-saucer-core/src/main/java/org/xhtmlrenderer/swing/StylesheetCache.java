@@ -2,11 +2,14 @@ package org.xhtmlrenderer.swing;
 
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.sheet.Stylesheet;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo;
-import org.xhtmlrenderer.util.XRLog;
 
 public class StylesheetCache {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(StylesheetCache.class);
 	/**
 	 * an LRU cache
 	 */
@@ -32,7 +35,7 @@ public class StylesheetCache {
 	 *            The sheet to cache.
 	 */
 	public void putStylesheet(final String key, final Stylesheet sheet) {
-		XRLog.load("Receiving stylesheet for " + key);
+		LOGGER.info("Receiving stylesheet for " + key);
 		
 		_cache.put(key, sheet);
 	}
@@ -55,9 +58,9 @@ public class StylesheetCache {
 	 */
 	public Stylesheet getStylesheet(final StylesheetInfo key) {
 		if (_cache.containsKey(key.getUri()))
-			XRLog.load("Stylesheet hit for " + key.getUri());
+			LOGGER.info("Stylesheet hit for " + key.getUri());
 		else
-			XRLog.load("Stylesheet miss for " + key.getUri());
+			LOGGER.info("Stylesheet miss for " + key.getUri());
 		
 		return _cache.get(key.getUri());
 	}

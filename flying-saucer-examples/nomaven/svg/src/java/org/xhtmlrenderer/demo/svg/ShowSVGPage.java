@@ -4,7 +4,6 @@ import org.xhtmlrenderer.extend.ReplacedElementFactory;
 import org.xhtmlrenderer.simple.FSScrollPane;
 import org.xhtmlrenderer.simple.XHTMLPanel;
 import org.xhtmlrenderer.swing.SwingReplacedElementFactory;
-import org.xhtmlrenderer.util.XRLog;
 
 import javax.swing.*;
 import java.awt.*;
@@ -64,10 +63,10 @@ public class ShowSVGPage {
 
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                XRLog.general("URI is: " + uri);
+                LOGGER.info("URI is: " + uri);
                 URL url = ShowSVGPage.class.getResource(uri);
                 String urls = url.toExternalForm();
-                XRLog.general("Loading URI: " + urls);
+                LOGGER.info("Loading URI: " + urls);
                 panel.setDocument(urls);
             }
         });

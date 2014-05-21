@@ -21,16 +21,15 @@ package org.xhtmlrenderer.pdf.util;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.pdf.DefaultPDFCreationListener;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 import org.xhtmlrenderer.pdf.PDFCreationListener;
-import org.xhtmlrenderer.util.XRLog;
 
 import com.lowagie.text.pdf.PdfName;
 import com.lowagie.text.pdf.PdfObject;
@@ -112,6 +111,8 @@ import com.lowagie.text.pdf.PdfString;
  * @see http://www.seoconsultants.com/meta-tags/dublin/
  */
 public class XHtmlMetaToPdfInfoAdapter extends DefaultPDFCreationListener {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(XHtmlMetaToPdfInfoAdapter.class);
     private static final String HTML_TAG_TITLE = "title";    
     private static final String HTML_TAG_HEAD = "head";    
     private static final String HTML_TAG_META = "meta";    
@@ -143,16 +144,16 @@ public class XHtmlMetaToPdfInfoAdapter extends DefaultPDFCreationListener {
      * @see PDFCreationListener
      */
     public void onClose( final ITextRenderer renderer ) {
-        XRLog.render(Level.FINEST, "handling onClose event ..." );
+        LOGGER.trace( "handling onClose event ..." );
         addPdfMetaValuesToPdfDocument( renderer );        
     }
 
     private void parseHtmlTags( final Document doc ) {
-        XRLog.render(Level.FINEST, "parsing (X)HTML tags ..." );
+        LOGGER.trace( "parsing (X)HTML tags ..." );
         parseHtmlTitleTag( doc );
         parseHtmlMetaTags( doc );
-        if ( XRLog.isLoggingEnabled() ) {
-            XRLog.render(Level.FINEST, "PDF info map = " + pdfInfoValues );
+        if ( LOGGER.isTraceEnabled() ) {
+            LOGGER.trace( "PDF info map = " + pdfInfoValues );
         }
     }
     
@@ -174,15 +175,15 @@ public class XHtmlMetaToPdfInfoAdapter extends DefaultPDFCreationListener {
         
         final Element rootHeadNodeElement = (Element) doc.head();
         final Elements metaNodeList = rootHeadNodeElement.getElementsByTag("meta");
-        XRLog.render(Level.FINEST, "metaNodeList=" + metaNodeList );        
+        LOGGER.trace( "metaNodeList=" + metaNodeList );        
 
         for (int inode = 0; inode < metaNodeList.size(); ++inode) {
-            XRLog.render(Level.FINEST, "node " + inode + " = "+ metaNodeList.get(inode).nodeName() );            
+            LOGGER.trace( "node " + inode + " = "+ metaNodeList.get(inode).nodeName() );            
             final Element thisNode = (Element) metaNodeList.get(inode);
-            XRLog.render(Level.FINEST, "node " + thisNode );            
+            LOGGER.trace( "node " + thisNode );            
             final String metaName = thisNode.attr("name");
             final String metaContent = thisNode.attr("content");
-            XRLog.render(Level.FINEST, "metaName=" + metaName + ", metaContent=" + metaContent );            
+            LOGGER.trace( "metaName=" + metaName + ", metaContent=" + metaContent );            
             if (metaName.length() != 0 && metaContent.length() != 0) {
 
                 PdfName pdfName = null;
@@ -224,11 +225,11 @@ public class XHtmlMetaToPdfInfoAdapter extends DefaultPDFCreationListener {
         while (pdfNameIter.hasNext()) {
             final PdfName pdfName = pdfNameIter.next();
             final PdfString pdfString = pdfInfoValues.get( pdfName );
-            XRLog.render(Level.FINEST, "pdfName=" + pdfName + ", pdfString=" + pdfString );
+            LOGGER.trace( "pdfName=" + pdfName + ", pdfString=" + pdfString );
             renderer.getOutputDevice().getWriter().getInfo().put( pdfName, pdfString );            
         }
-        if ( XRLog.isLoggingEnabled() ) {
-            XRLog.render(Level.FINEST, "added " + renderer.getOutputDevice().getWriter().getInfo().getKeys() );            
+        if ( LOGGER.isTraceEnabled()) {
+            LOGGER.trace( "added " + renderer.getOutputDevice().getWriter().getInfo().getKeys() );            
         }
     }
     

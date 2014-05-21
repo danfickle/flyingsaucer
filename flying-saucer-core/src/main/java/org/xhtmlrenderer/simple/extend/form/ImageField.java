@@ -29,6 +29,8 @@ import javax.swing.JComponent;
 import javax.swing.plaf.basic.BasicButtonUI;
 
 import org.jsoup.nodes.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.style.CalculatedStyle;
 import org.xhtmlrenderer.css.style.FSDerivedValue;
@@ -38,9 +40,11 @@ import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.simple.extend.XhtmlForm;
 import org.xhtmlrenderer.swing.AWTFSImage;
-import org.xhtmlrenderer.util.XRLog;
 
 class ImageField extends InputField {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ImageField.class);
+
     public ImageField(final Element e, final XhtmlForm form, final LayoutContext context, final BlockBox box) {
         super(e, form, context, box);
     }
@@ -93,7 +97,7 @@ class ImageField extends InputField {
 
         button.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent event) {
-                XRLog.layout("Image pressed: Submit");
+                LOGGER.info("Image pressed: Submit");
 
                 getParentForm().submit(getComponent());
             }

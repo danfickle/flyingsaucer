@@ -5,6 +5,8 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.logging.Level;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.CSSPrimitiveUnit;
 import org.xhtmlrenderer.css.constants.IdentValue;
@@ -15,12 +17,14 @@ import org.xhtmlrenderer.css.sheet.PropertyDeclaration;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
 import org.xhtmlrenderer.layout.SharedContext;
 import org.xhtmlrenderer.util.LangId;
-import org.xhtmlrenderer.util.XRLog;
 
 /**
  * Static utility functions to check types, etc for builders to use.
  */
 public class BuilderUtil {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(BuilderUtil.class);
+
 	private BuilderUtil() {
 	}
 
@@ -46,7 +50,7 @@ public class BuilderUtil {
 	{
 		final String msg = String.format(SharedContext.ERRS.get().getString(key.toString()), args);
 		SharedContext.USER_ERRORS.get().add(msg);
-		XRLog.cssParse(Level.WARNING, msg);
+		LOGGER.warn(msg);
 	}
 	
 	public static void checkValueType(final CSSName cssName, final PropertyValue value, final EnumSet<CSSPrimitiveUnit> in)

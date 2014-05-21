@@ -24,6 +24,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.parser.CSSErrorHandler;
 import org.xhtmlrenderer.css.parser.CSSParser;
 import org.xhtmlrenderer.css.parser.PropertyValue;
@@ -42,7 +44,6 @@ import org.xhtmlrenderer.css.parser.property.SizePropertyBuilder;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo;
 import org.xhtmlrenderer.css.style.FSDerivedValue;
 import org.xhtmlrenderer.css.style.derived.DerivedValueFactory;
-import org.xhtmlrenderer.util.XRLog;
 
 
 /**
@@ -1534,6 +1535,9 @@ public enum CSSName {
     	NOT_INHERITED;
     }
 
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CSSName.class);
+
     /**
      * The CSS 2 property name, e.g. "border"
      */
@@ -1754,7 +1758,7 @@ public enum CSSName {
     static {
         final CSSParser parser = new CSSParser(new CSSErrorHandler() {
             public void error(final String uri, final String message) {
-                XRLog.cssParse("(" + uri + ") " + message);
+                LOGGER.info("(" + uri + ") " + message);
             }
         });
         for (final CSSName cssName : ALL_PRIMITIVE_PROPERTY_NAMES.values()) {
@@ -1763,7 +1767,7 @@ public enum CSSName {
                         cssName, StylesheetInfo.CSSOrigin.USER_AGENT, cssName.initialValue);
 
                 if (value == null) {
-                    XRLog.exception("Unable to derive initial value for " + cssName);
+                    LOGGER.error("Unable to derive initial value for " + cssName);
                 } else {
                     cssName.initialDerivedValue = DerivedValueFactory.newDerivedValue(
                             null,

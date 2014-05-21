@@ -33,6 +33,8 @@ import java.util.Set;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.nodes.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.context.AWTFontResolver;
 import org.xhtmlrenderer.context.StyleReference;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo;
@@ -54,7 +56,6 @@ import org.xhtmlrenderer.render.FSFontMetrics;
 import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.simple.extend.FormSubmissionListener;
 import org.xhtmlrenderer.swing.Java2DTextRenderer;
-import org.xhtmlrenderer.util.XRLog;
 
 /**
  * The SharedContext is that which is kept between successive
@@ -63,6 +64,9 @@ import org.xhtmlrenderer.util.XRLog;
  * @author empty
  */
 public class SharedContext {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SharedContext.class);
+
     private TextRenderer text_renderer;
     private String media;
     private UserAgentCallback uac;
@@ -155,7 +159,7 @@ public class SharedContext {
         setMedia("screen");
         this.uac = uac;
         setCss(new StyleReference(uac));
-        XRLog.render("Using CSS implementation from: " + getCss().getClass().getName());
+        LOGGER.info("Using CSS implementation from: " + getCss().getClass().getName());
         setTextRenderer(new Java2DTextRenderer());
         try {
             setDPI(Toolkit.getDefaultToolkit().getScreenResolution());
@@ -176,7 +180,7 @@ public class SharedContext {
         setMedia("screen");
         this.uac = uac;
         setCss(new StyleReference(uac));
-        XRLog.render("Using CSS implementation from: " + getCss().getClass().getName());
+        LOGGER.info("Using CSS implementation from: " + getCss().getClass().getName());
         setTextRenderer(tr);
         setDPI(dpi);
     }

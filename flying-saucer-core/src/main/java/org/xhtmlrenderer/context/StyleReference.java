@@ -27,6 +27,8 @@ import java.util.List;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.extend.AttributeResolver;
 import org.xhtmlrenderer.css.extend.lib.DOMTreeResolver;
@@ -41,13 +43,14 @@ import org.xhtmlrenderer.extend.NamespaceHandler;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.extend.UserInterface;
 import org.xhtmlrenderer.layout.SharedContext;
-import org.xhtmlrenderer.util.XRLog;
 
 
 /**
  * @author Torbjoern Gannholm
  */
 public class StyleReference {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(StyleReference.class);
     /**
      * The Context this StyleReference operates in; used for property
      * resolution.
@@ -81,9 +84,9 @@ public class StyleReference {
         final AttributeResolver attRes = new StandardAttributeResolver(_nsh, _uac, ui);
 
         final List<StylesheetInfo> infos = getStylesheets();
-        XRLog.match("media = " + _context.getMedia());
+        LOGGER.info("media = " + _context.getMedia());
         _matcher = new org.xhtmlrenderer.css.newmatch.Matcher(
-                new DOMTreeResolver(), 
+                new DOMTreeResolver(),
                 attRes, 
                 _stylesheetFactory, 
                 readAndParseAll(infos, _context.getMedia()), 
@@ -119,10 +122,7 @@ public class StyleReference {
      * Returns a Map keyed by CSS property names (e.g. 'border-width'), and the
      * assigned value as a SAC CSSValue instance. The properties should have
      * been matched to the element when the Context was established for this
-     * StyleReference on the Document to which the Element belongs. See {@link
-     * org.xhtmlrenderer.swing.BasicPanel#setDocument(Document, java.net.URL)}
-     * for an example of how to establish a StyleReference and associate to a
-     * Document.
+     * StyleReference on the Document to which the Element belongs.
      *
      * @param e The DOM Element for which to find properties
      * @return Map of CSS property names to CSSValue instance assigned to it.
@@ -176,9 +176,9 @@ public class StyleReference {
         info.setOrigin(StylesheetInfo.CSSOrigin.AUTHOR);
         if (_stylesheetFactory.getUac().getStylesheetCache().containsStylesheet(uri)) {
             _stylesheetFactory.getUac().getStylesheetCache().removeCachedStylesheet(uri);
-            XRLog.cssParse("Removing stylesheet '" + uri + "' from cache by request.");
+            LOGGER.info("Removing stylesheet '" + uri + "' from cache by request.");
         } else {
-            XRLog.cssParse("Requested removing stylesheet '" + uri + "', but it's not in cache.");
+            LOGGER.info("Requested removing stylesheet '" + uri + "', but it's not in cache.");
         }
     }
     
@@ -238,7 +238,7 @@ public class StyleReference {
         // TODO: here we should also get user stylesheet from userAgent
 
         final long el = System.currentTimeMillis() - st;
-        XRLog.load("TIME: parse stylesheets  " + el + "ms");
+        LOGGER.info("TIME: parse stylesheets  " + el + "ms");
 
         return infos;
     }

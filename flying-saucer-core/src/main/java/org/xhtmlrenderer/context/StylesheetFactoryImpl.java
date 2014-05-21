@@ -26,6 +26,8 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.util.logging.Level;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.extend.StylesheetFactory;
 import org.xhtmlrenderer.css.parser.CSSErrorHandler;
 import org.xhtmlrenderer.css.parser.CSSParser;
@@ -35,7 +37,6 @@ import org.xhtmlrenderer.css.sheet.StylesheetInfo;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.resource.CSSResource;
-import org.xhtmlrenderer.util.XRLog;
 
 /**
  * A Factory class for Cascading Style Sheets. Sheets are parsed using a single
@@ -46,6 +47,7 @@ import org.xhtmlrenderer.util.XRLog;
  */
 public class StylesheetFactoryImpl implements StylesheetFactory {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(StylesheetFactoryImpl.class);
 	/**
      * the UserAgentCallback to resolve uris
      */
@@ -56,7 +58,7 @@ public class StylesheetFactoryImpl implements StylesheetFactory {
         _userAgentCallback = userAgentCallback;
         _cssParser = new CSSParser(new CSSErrorHandler() {
             public void error(final String uri, final String message) {
-                XRLog.cssParse(Level.WARNING, "(" + uri + ") " + message);
+                LOGGER.warn("(" + uri + ") " + message);
             }
         });
     }
@@ -67,7 +69,7 @@ public class StylesheetFactoryImpl implements StylesheetFactory {
         	_userAgentCallback.getStylesheetCache().putStylesheet(info.getUri(), s1);
             return s1; 
         } catch (final IOException e) {
-            XRLog.cssParse(Level.WARNING, "Couldn't parse stylesheet at URI " + info.getUri() + ": " + e.getMessage(), e);
+            LOGGER.warn("Couldn't parse stylesheet at URI " + info.getUri() + ": " + e.getMessage(), e);
             e.printStackTrace();
             return new Stylesheet(info.getUri(), info.getOrigin());
         }
@@ -104,7 +106,7 @@ public class StylesheetFactoryImpl implements StylesheetFactory {
 
     public Stylesheet getStylesheet(final StylesheetInfo info) 
     {
-        XRLog.load("Requesting stylesheet: " + info.getUri());
+        LOGGER.info("Requesting stylesheet: " + info.getUri());
         
         // Give the user agent the chance to return a cached Stylesheet
         // instance.

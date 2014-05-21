@@ -31,6 +31,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.constants.MarginBoxName;
 import org.xhtmlrenderer.css.extend.AttributeResolver;
 import org.xhtmlrenderer.css.extend.StylesheetFactory;
@@ -41,7 +43,6 @@ import org.xhtmlrenderer.css.sheet.PageRule;
 import org.xhtmlrenderer.css.sheet.PropertyDeclaration;
 import org.xhtmlrenderer.css.sheet.Ruleset;
 import org.xhtmlrenderer.css.sheet.Stylesheet;
-import org.xhtmlrenderer.util.XRLog;
 import org.xhtmlrenderer.util.Util;
 
 
@@ -49,6 +50,8 @@ import org.xhtmlrenderer.util.Util;
  * @author Torbjoern Gannholm
  */
 public class Matcher {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Matcher.class);
 
     private final Mapper docMapper;
     private final org.xhtmlrenderer.css.extend.AttributeResolver _attRes;
@@ -163,7 +166,7 @@ public class Matcher {
     Mapper createDocumentMapper(final List<Stylesheet> stylesheets, final String medium) {
         final java.util.TreeMap<String, Selector> sorter = new java.util.TreeMap<String, Selector>();
         addAllStylesheets(stylesheets, sorter, medium);
-        XRLog.match("Matcher created with " + sorter.size() + " selectors");
+        LOGGER.info("Matcher created with " + sorter.size() + " selectors");
         return new Mapper(sorter.values());
     }
     

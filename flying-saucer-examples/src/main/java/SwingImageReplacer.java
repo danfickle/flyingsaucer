@@ -1,12 +1,11 @@
-
-
 import org.jsoup.nodes.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.extend.ReplacedElement;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.extend.FSImage;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
-import org.xhtmlrenderer.util.XRLog;
 import org.xhtmlrenderer.util.ImageUtil;
 import org.xhtmlrenderer.swing.AWTFSImage;
 import org.xhtmlrenderer.swing.ImageReplacedElement;
@@ -14,13 +13,14 @@ import org.xhtmlrenderer.swing.EmptyReplacedElement;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.logging.Level;
 import java.util.*;
 
 /**
  * @author patrick
  */
 public class SwingImageReplacer extends ElementReplacer {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SwingImageReplacer.class);
     private final Map<Element, ReplacedElement> imageComponents;
 
     public SwingImageReplacer() {
@@ -73,7 +73,7 @@ public class SwingImageReplacer extends ElementReplacer {
             Image im = null;
             final String imageSrc = context.getNamespaceHandler().getImageSourceURI(elem);
             if (imageSrc == null || imageSrc.length() == 0) {
-                XRLog.layout(Level.WARNING, "No source provided for img element.");
+                LOGGER.warn("No source provided for img element.");
                 re = newIrreplaceableImageElement(cssWidth, cssHeight);
             } else {
                 //FSImage is here since we need to capture a target H/W

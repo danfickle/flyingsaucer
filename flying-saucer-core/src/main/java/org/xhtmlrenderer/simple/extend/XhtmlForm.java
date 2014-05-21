@@ -34,12 +34,13 @@ import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.simple.extend.form.FormField;
 import org.xhtmlrenderer.simple.extend.form.FormFieldFactory;
-import org.xhtmlrenderer.util.XRLog;
 
 /**
  * Represents a form object
@@ -48,6 +49,8 @@ import org.xhtmlrenderer.util.XRLog;
  * @author Sean Bright
  */
 public class XhtmlForm {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(XhtmlForm.class);
     private static final String FS_DEFAULT_GROUP = "__fs_default_group_";
 
     private static int _defaultGroupCount = 1;
@@ -117,7 +120,7 @@ public class XhtmlForm {
             field = FormFieldFactory.create(this, context, box);
     
             if (field == null) {
-                XRLog.layout("Unknown field type: " + e.nodeName());
+                LOGGER.info("Unknown field type: " + e.nodeName());
 
                 return null;
             }

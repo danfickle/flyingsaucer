@@ -32,6 +32,8 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import javax.imageio.ImageIO;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.event.DocumentListener;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.resource.CSSResource;
@@ -40,7 +42,6 @@ import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.swing.AWTFSImage;
 import org.xhtmlrenderer.swing.StylesheetCache;
 import org.xhtmlrenderer.util.ImageUtil;
-import org.xhtmlrenderer.util.XRLog;
 
 /**
  * <p>NaiveUserAgent is a simple implementation of {@link UserAgentCallback} which places no restrictions on what
@@ -60,6 +61,8 @@ import org.xhtmlrenderer.util.XRLog;
  * @author Torbjoern Gannholm
  */
 public class NaiveUserAgent implements UserAgentCallback, DocumentListener {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(NaiveUserAgent.class);
 
     private static final int DEFAULT_IMAGE_CACHE_SIZE = 16;
 
@@ -126,11 +129,11 @@ public class NaiveUserAgent implements UserAgentCallback, DocumentListener {
         try {
             is = new URL(uri).openStream();
         } catch (final java.net.MalformedURLException e) {
-            XRLog.exception("bad URL given: " + uri, e);
+           LOGGER.error("bad URL given: " + uri, e);
         } catch (final java.io.FileNotFoundException e) {
-            XRLog.exception("item at URI " + uri + " not found");
+           LOGGER.error("item at URI " + uri + " not found");
         } catch (final java.io.IOException e) {
-            XRLog.exception("IO problem for " + uri, e);
+           LOGGER.error("IO problem for " + uri, e);
         }
         return is;
     }
@@ -175,9 +178,9 @@ public class NaiveUserAgent implements UserAgentCallback, DocumentListener {
                         ir = createImageResource(uri, img);
                         _imageCache.put(uri, ir);
                     } catch (final FileNotFoundException e) {
-                        XRLog.exception("Can't read image file; image at URI '" + uri + "' not found");
+                       LOGGER.error("Can't read image file; image at URI '" + uri + "' not found");
                     } catch (final IOException e) {
-                        XRLog.exception("Can't read image file; unexpected problem for URI '" + uri + "'", e);
+                       LOGGER.error("Can't read image file; unexpected problem for URI '" + uri + "'", e);
                     } finally {
                         try {
                             is.close();
@@ -298,7 +301,7 @@ public class NaiveUserAgent implements UserAgentCallback, DocumentListener {
                 try {
                     setBaseURL(new File(".").toURI().toURL().toExternalForm());
                 } catch (final Exception e1) {
-                    XRLog.exception("The default NaiveUserAgent doesn't know how to resolve the base URL for " + uri);
+                   LOGGER.error("The default NaiveUserAgent doesn't know how to resolve the base URL for " + uri);
                     return null;
                 }
             }
@@ -307,12 +310,12 @@ public class NaiveUserAgent implements UserAgentCallback, DocumentListener {
         try {
             return new URL(uri).toString();
         } catch (final MalformedURLException e) {
-            XRLog.load(uri + " is not a URL; may be relative. Testing using parent URL " + _baseURL);
+            LOGGER.info(uri + " is not a URL; may be relative. Testing using parent URL " + _baseURL);
             try {
                 final URL result = new URL(new URL(_baseURL), uri);
                 ret = result.toString();
             } catch (final MalformedURLException e1) {
-                XRLog.exception("The default NaiveUserAgent cannot resolve the URL " + uri + " with base URL " + _baseURL);
+               LOGGER.error("The default NaiveUserAgent cannot resolve the URL " + uri + " with base URL " + _baseURL);
             }
         }
         return ret;

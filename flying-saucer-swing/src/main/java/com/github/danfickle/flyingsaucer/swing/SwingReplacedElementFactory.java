@@ -21,6 +21,8 @@ package com.github.danfickle.flyingsaucer.swing;
 
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.extend.ReplacedElement;
 import org.xhtmlrenderer.extend.ReplacedElementFactory;
 import org.xhtmlrenderer.extend.UserAgentCallback;
@@ -37,7 +39,6 @@ import org.xhtmlrenderer.swing.ImageReplacedElement;
 import org.xhtmlrenderer.swing.ImageResourceLoader;
 import org.xhtmlrenderer.swing.RepaintListener;
 import org.xhtmlrenderer.util.ImageUtil;
-import org.xhtmlrenderer.util.XRLog;
 import org.xhtmlrenderer.resource.ImageResource;
 
 import javax.swing.*;
@@ -46,12 +47,12 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.logging.Level;
 
 /**
  * A ReplacedElementFactory where Elements are replaced by Swing components.
  */
 public class SwingReplacedElementFactory implements ReplacedElementFactory {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SwingReplacedElementFactory.class);
     /**
      * Cache of image components (ReplacedElements) for quick lookup, keyed by Element.
      */
@@ -148,7 +149,7 @@ public class SwingReplacedElementFactory implements ReplacedElementFactory {
         final String imageSrc = context.getNamespaceHandler().getImageSourceURI(elem);
         
         if (imageSrc == null || imageSrc.length() == 0) {
-            XRLog.layout(Level.WARNING, "No source provided for img element.");
+            LOGGER.warn("No source provided for img element.");
             re = newIrreplaceableImageElement(cssWidth, cssHeight);
         } else if (ImageUtil.isEmbeddedBase64Image(imageSrc)) {
             final BufferedImage image = ImageUtil.loadEmbeddedBase64Image(imageSrc);
@@ -160,7 +161,7 @@ public class SwingReplacedElementFactory implements ReplacedElementFactory {
             final String ruri = uac.resolveURI(imageSrc);
             re = lookupImageReplacedElement(elem, ruri, cssWidth, cssHeight);
             if (re == null) {
-                XRLog.load(Level.FINE, "Swing: Image " + ruri + " requested at "+ " to " + cssWidth + ", " + cssHeight);
+                LOGGER.debug("Swing: Image " + ruri + " requested at " + " to " + cssWidth + ", " + cssHeight);
                 final ImageResource imageResource = imageResourceLoader.get(ruri, cssWidth, cssHeight);
                 if (imageResource.isLoaded()) {
                     re = new ImageReplacedElement(((AWTFSImage) imageResource.getImage()).getImage(), cssWidth, cssHeight);

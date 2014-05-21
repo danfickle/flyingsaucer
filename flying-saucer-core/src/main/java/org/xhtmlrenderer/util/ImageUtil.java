@@ -32,6 +32,8 @@ import javax.imageio.ImageIO;
 import javax.xml.bind.DatatypeConverter;
 
 import org.imgscalr.Scalr;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Static utility methods for working with images. Meant to suggest "best practices" for the most straightforward
@@ -40,6 +42,8 @@ import org.imgscalr.Scalr;
  * @author pwright
  */
 public class ImageUtil {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ImageUtil.class);
 
     private static final Map<DownscaleQuality, Scaler> qual;
 
@@ -97,8 +101,7 @@ public class ImageUtil {
      * for best performance. In a headless environment, simply creates a new BufferedImage. For non-headless
      * environments, this just sets up and calls
      * {@link java.awt.GraphicsConfiguration#createCompatibleImage(int,int,int)}. The image will not have anything
-     * drawn to it, not even a white background; you must do this yourself. The {@link #clearBackground(BufferedImage)}
-     * method will do this for you if you like.
+     * drawn to it, not even a white background; you must do this yourself.
      *
      * @param width  Target width for the image
      * @param height Target height for the image
@@ -209,8 +212,7 @@ public class ImageUtil {
     }
 
     /**
-     * Scales one image to multiple dimensions, using the same ScalingOptions for each. The method follows the same
-     * process for scaling as {@link #getScaledInstance(ScalingOptions,java.awt.Image)}.
+     * Scales one image to multiple dimensions, using the same ScalingOptions for each.
      *
      * @param opt		Options to apply to control scaling process.
      * @param img		The original image to scale
@@ -290,7 +292,7 @@ public class ImageUtil {
             final String b64encoded = imageDataUri.substring(b64Index + "base64,".length());
             return DatatypeConverter.parseBase64Binary(b64encoded);
         } else {
-            XRLog.load(Level.SEVERE, "Embedded XHTML images must be encoded in base 64.");
+            LOGGER.error("Embedded XHTML images must be encoded in base 64.");
         }
         return null;
     }
@@ -308,7 +310,7 @@ public class ImageUtil {
                 return ImageIO.read(new ByteArrayInputStream(buffer));
             }
         } catch (final IOException ex) {
-            XRLog.exception("Can't read XHTML embedded image", ex);
+            LOGGER.error("Can't read XHTML embedded image", ex);
         }
         return null;
     }

@@ -33,6 +33,8 @@ import java.util.logging.Level;
 
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.IdentValue;
 import org.xhtmlrenderer.css.parser.FSColor;
@@ -45,9 +47,11 @@ import org.xhtmlrenderer.layout.Layer;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.layout.PaintingInfo;
 import org.xhtmlrenderer.layout.Styleable;
-import org.xhtmlrenderer.util.XRLog;
 
 public abstract class Box implements Styleable {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Box.class);
+
     protected static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
     private Element _element;
@@ -573,7 +577,7 @@ public abstract class Box implements Styleable {
     public int forcePageBreakBefore(final LayoutContext c, final IdentValue pageBreakValue, final boolean pendingPageName) {
         PageBox page = c.getRootLayer().getFirstPage(c, this);
         if (page == null) {
-            XRLog.layout(Level.WARNING, "Box has no page");
+            LOGGER.warn("Box has no page");
             return 0;
         } else {
             int pageBreakCount = 1;

@@ -53,6 +53,8 @@ import java.util.regex.Pattern;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.IdentValue;
 import org.xhtmlrenderer.css.parser.FSCMYKColor;
@@ -79,7 +81,6 @@ import org.xhtmlrenderer.render.PageBox;
 import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.util.Configuration;
 import org.xhtmlrenderer.util.JsoupUtil;
-import org.xhtmlrenderer.util.XRLog;
 import org.xhtmlrenderer.util.XRRuntimeException;
 
 import com.lowagie.text.DocumentException;
@@ -104,14 +105,14 @@ import com.lowagie.text.pdf.PdfShadingPattern;
 import com.lowagie.text.pdf.PdfString;
 import com.lowagie.text.pdf.PdfTextArray;
 import com.lowagie.text.pdf.PdfWriter;
-import com.lowagie.text.pdf.ShadingColor;
-
 /**
  * This class is largely based on {@link com.lowagie.text.pdf.PdfGraphics2D}.
  * See <a href="http://sourceforge.net/projects/itext/">http://sourceforge.net/
  * projects/itext/</a> for license information.
  */
 public class ITextOutputDevice extends AbstractOutputDevice implements OutputDevice {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ITextOutputDevice.class);
     private static final int FILL = 1;
     private static final int STROKE = 2;
     private static final int CLIP = 3;
@@ -542,7 +543,7 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
         // first check to see if the replacement character even exists in the
         // given font. If not, then do nothing.
         if (!_font.getFontDescription().getFont().charExists(replacementCharacter)) {
-            XRLog.render(Level.INFO, "Missing replacement character [" + replacementCharacter + ":" + (int) replacementCharacter
+            LOGGER.info( "Missing replacement character [" + replacementCharacter + ":" + (int) replacementCharacter
                     + "]. No replacement will occur.");
             return string;
         }
@@ -552,7 +553,7 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
         for (int i = 0; i < charArr.length; i++) {
             if (!(charArr[i] == ' ' || charArr[i] == '\u00a0' || charArr[i] == '\u3000' || _font.getFontDescription().getFont()
                     .charExists(charArr[i]))) {
-                XRLog.render(Level.INFO, "Missing character [" + charArr[i] + ":" + (int) charArr[i] + "] in string [" + string
+                LOGGER.info( "Missing character [" + charArr[i] + ":" + (int) charArr[i] + "] in string [" + string
                         + "]. Replacing with '" + replacementCharacter + "'");
                 charArr[i] = replacementCharacter;
             }

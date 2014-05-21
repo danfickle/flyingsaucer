@@ -19,14 +19,13 @@
  */
 package org.xhtmlrenderer.swing;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.extend.FSImage;
 import org.xhtmlrenderer.resource.ImageResource;
 import org.xhtmlrenderer.util.ImageUtil;
-import org.xhtmlrenderer.util.XRLog;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.logging.Level;
 
 
 /**
@@ -37,6 +36,8 @@ import java.util.logging.Level;
  * will be returned instead and the problem will be logged.
  */
 class ImageLoadWorker extends Thread {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ImageLoadWorker.class);
     private static volatile int counter = 0;
     private final ImageLoadQueue queue;
 
@@ -58,12 +59,12 @@ class ImageLoadWorker extends Thread {
                 final ImageResource ir = ImageResourceLoader.loadImageResourceFromUri(loadItem._uri);
                 final FSImage awtfsImage = ir.getImage();
                 BufferedImage newImg = (BufferedImage) ((AWTFSImage) awtfsImage).getImage();
-                XRLog.load(Level.FINE, this + ", loaded " + loadItem._uri);
+                LOGGER.debug(this + ", loaded " + loadItem._uri);
 
                 loadItem._imageResourceLoader.loaded(ir, newImg.getWidth(), newImg.getHeight());
                 final boolean wasScaled;
                 if (loadItem.haveTargetDimensions() && !ir.hasDimensions(loadItem._targetWidth, loadItem._targetHeight)) {
-                    XRLog.load(Level.FINE, this + ", scaling " + loadItem._uri + " to " + loadItem._targetWidth + ", " + loadItem._targetHeight);
+                    LOGGER.debug(this + ", scaling " + loadItem._uri + " to " + loadItem._targetWidth + ", " + loadItem._targetHeight);
                     newImg = ImageUtil.getScaledInstance(newImg, loadItem._targetWidth, loadItem._targetHeight);
                     final ImageResource sir = new ImageResource(ir.getImageUri(), AWTFSImage.createImage(newImg));
                     loadItem._imageResourceLoader.loaded(sir, newImg.getWidth(), newImg.getHeight());

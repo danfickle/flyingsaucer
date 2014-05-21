@@ -34,6 +34,8 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.resource.CSSResource;
 import org.xhtmlrenderer.resource.ImageResource;
@@ -41,7 +43,6 @@ import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.swing.AWTFSImage;
 import org.xhtmlrenderer.swing.StylesheetCache;
 import org.xhtmlrenderer.util.Uu;
-import org.xhtmlrenderer.util.XRLog;
 
 
 /**
@@ -52,6 +53,9 @@ import org.xhtmlrenderer.util.XRLog;
  * To change this template use File | Settings | File Templates.
  */
 public class BsUserAgent implements UserAgentCallback {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(BsUserAgent.class);
+
     private String baseUrl;
     private int index = -1;
     private ArrayList history = new ArrayList();
@@ -75,9 +79,9 @@ public class BsUserAgent implements UserAgentCallback {
             uc.connect();
             is = uc.getInputStream();
         } catch (MalformedURLException e) {
-            XRLog.exception("bad URL given: " + uri, e);
+            LOGGER.error("bad URL given: " + uri, e);
         } catch (IOException e) {
-            XRLog.exception("IO problem for " + uri, e);
+            LOGGER.error("IO problem for " + uri, e);
         }
         return new CSSResource(is);
     }
@@ -94,9 +98,9 @@ public class BsUserAgent implements UserAgentCallback {
                 uc.connect();
                 is = uc.getInputStream();
             } catch (MalformedURLException e1) {
-                XRLog.exception("bad URL given: " + uri, e1);
+                LOGGER.error("Bad URL given: {} ", uri, e1);
             } catch (IOException e11) {
-                XRLog.exception("IO problem for " + uri, e11);
+                LOGGER.error("IO problem for ", uri, e11);
             }
             if (is != null) {
                 try {
@@ -104,7 +108,7 @@ public class BsUserAgent implements UserAgentCallback {
                     ir = new ImageResource(uri, AWTFSImage.createImage(img));
                     imageCache.put(uri, ir);
                 } catch (IOException e) {
-                    XRLog.exception("Can't read image file; unexpected problem for URI '" + uri + "'", e);
+                    LOGGER.error("Can't read image file; unexpected problem for URI '{}'", uri, e);
                 }
             }
         }
@@ -160,9 +164,9 @@ public class BsUserAgent implements UserAgentCallback {
             inputStream = uc.getInputStream();
             xr = HTMLResource.load(inputStream, uri);
         } catch (MalformedURLException e) {
-            XRLog.exception("bad URL given: " + uri, e);
+            LOGGER.error("bad URL given: " + uri, e);
         } catch (IOException e) {
-            XRLog.exception("IO problem for " + uri, e);
+            LOGGER.error("IO problem for " + uri, e);
         } finally {
             if ( inputStream != null ) try {
                 inputStream.close();
