@@ -3,8 +3,6 @@ package org.xhtmlrenderer.css.parser.property;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.logging.Level;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.constants.CSSName;
@@ -63,6 +61,13 @@ public class BuilderUtil {
 	{
 		if (!in.contains(value.getPrimitiveTypeN()) && !in2.contains(value.getPrimitiveTypeN()))
 			cssThrowError(LangId.UNSUPPORTED_TYPE, value.getPrimitiveTypeN(), cssName);
+	}
+	
+	public static PropertyValue checkAndReturnOneValue(final CSSName cssName, final List<PropertyValue> values, final boolean inheritAllowed)
+	{
+		checkValueCount(cssName, 1, values.size());
+		checkInheritAllowed(values.get(0), inheritAllowed);
+		return values.get(0);
 	}
 	
 	public static void checkValueCount(final CSSName cssName, final int expected, final int found) {
