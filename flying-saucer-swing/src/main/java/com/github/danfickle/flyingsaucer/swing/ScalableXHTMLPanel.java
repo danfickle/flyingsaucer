@@ -24,7 +24,6 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.print.PrinterGraphics;
 import java.io.InputStream;
-import java.util.ArrayList;
 
 import org.jsoup.nodes.Document;
 import org.xhtmlrenderer.extend.UserAgentCallback;
@@ -50,7 +49,7 @@ public class ScalableXHTMLPanel extends XHTMLPanel {
 
 	private int scalePolicy = SCALE_POLICY_NONE;
 	private double scale = -1.0d;
-	private ArrayList<ScaleChangeListener> scListeners = null;
+
 	/**
 	 * The lastly calculated layout size
 	 */
@@ -61,7 +60,6 @@ public class ScalableXHTMLPanel extends XHTMLPanel {
 	 */
 	public ScalableXHTMLPanel() {
 		super();
-		scListeners = new ArrayList<ScaleChangeListener>();
 	}
 
 	/**
@@ -72,7 +70,6 @@ public class ScalableXHTMLPanel extends XHTMLPanel {
 	 */
 	public ScalableXHTMLPanel(final UserAgentCallback uac) {
 		super(uac);
-		scListeners = new ArrayList<ScaleChangeListener>();
 	}
 
 	/**
@@ -132,26 +129,10 @@ public class ScalableXHTMLPanel extends XHTMLPanel {
 		scalePolicy = SCALE_POLICY_NONE;
 		lastLayoutSize = null;
 		repaint(getFixedRectangle());
-		scaleChanged();
 	}
 
 	public double getScale() {
 		return scale;
-	}
-
-	public void addScaleChangeListener(final ScaleChangeListener scl) {
-		scListeners.add(scl);
-	}
-
-	public void removeScaleChangeListener(final ScaleChangeListener scl) {
-		scListeners.remove(scl);
-	}
-
-	private void scaleChanged() {
-		final ScaleChangeEvent evt = new ScaleChangeEvent(this, scale);
-		for (final ScaleChangeListener scl: scListeners) {
-			scl.scaleChanged(evt);
-		}
 	}
 
 	/**
