@@ -112,13 +112,13 @@ public class XhtmlForm {
             }
 
             field = FormFieldFactory.create(this, context, box);
-    
+
             if (field == null) {
                 LOGGER.info("Unknown field type: " + e.nodeName());
 
                 return null;
             }
-            
+
             _componentCache.put(e, field);
         }
 

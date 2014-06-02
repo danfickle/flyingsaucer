@@ -45,16 +45,15 @@ import org.xhtmlrenderer.extend.FSCanvas;
 import org.xhtmlrenderer.extend.FontContext;
 import org.xhtmlrenderer.extend.FontResolver;
 import org.xhtmlrenderer.extend.NamespaceHandler;
-import org.xhtmlrenderer.extend.ReplacedElement;
 import org.xhtmlrenderer.extend.ReplacedElementFactory;
 import org.xhtmlrenderer.extend.TextRenderer;
 import org.xhtmlrenderer.extend.UserAgentCallback;
-import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.render.Box;
 import org.xhtmlrenderer.render.FSFont;
 import org.xhtmlrenderer.render.FSFontMetrics;
 import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.swing.Java2DTextRenderer;
+import org.xhtmlrenderer.swing.SwingReplacedElementFactory;
 
 /**
  * The SharedContext is that which is kept between successive
@@ -125,27 +124,7 @@ public class SharedContext {
     	this();
     	
     	font_resolver = new AWTFontResolver();
-        replacedElementFactory = new ReplacedElementFactory() {
-			
-			@Override
-			public void reset() {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void remove(final Element e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public ReplacedElement createReplacedElement(final LayoutContext c, final BlockBox box,
-					final UserAgentCallback uac, final int cssWidth, final int cssHeight) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-		}; // TODO new SwingReplacedElementFactory();
+        replacedElementFactory = new SwingReplacedElementFactory();
         setMedia("screen");
         this.uac = uac;
         setCss(new StyleReference(uac));

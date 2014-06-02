@@ -185,7 +185,6 @@ public class Java2DOutputDevice extends AbstractOutputDevice implements OutputDe
     public void paintReplacedElement(final RenderingContext c, final BlockBox box) {
         final ReplacedElement replaced = box.getReplacedElement();
 //      if (replaced instanceof SwingReplacedElement) {
-// TODO
 //            Rectangle contentBounds = box.getContentAreaEdge(box.getAbsX(), box.getAbsY(), c);
 //            JComponent component = ((SwingReplacedElement)box.getReplacedElement()).getJComponent();
 //            RootPanel canvas = (RootPanel)c.getCanvas();

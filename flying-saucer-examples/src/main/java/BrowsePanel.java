@@ -24,12 +24,13 @@ import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.simple.FSScrollPane;
 import org.xhtmlrenderer.swing.DelegatingUserAgent;
 import org.xhtmlrenderer.swing.ImageResourceLoader;
+import org.xhtmlrenderer.swing.SwingReplacedElementFactory;
 import org.xhtmlrenderer.util.GeneralUtil;
 
-import com.github.danfickle.flyingsaucer.swing.SwingReplacedElementFactory;
 import com.github.danfickle.flyingsaucer.swing.XHTMLPanel;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.io.File;
 import java.io.StringReader;
