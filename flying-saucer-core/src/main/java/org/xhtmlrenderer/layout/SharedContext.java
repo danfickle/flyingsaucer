@@ -524,10 +524,6 @@ public class SharedContext {
         return false;
     }
 
-    public boolean isInteractive() {
-        return false;
-    }
-
     public boolean isPrint() {
         return print;
     }

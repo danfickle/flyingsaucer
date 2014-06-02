@@ -580,11 +580,6 @@ public abstract class BasicPanel extends RootPanel implements
         }
     }
 
-
-    public boolean isInteractive() {
-        return this.getSharedContext().isInteractive();
-    }
-
     public void addMouseTrackingListener(final FSMouseListener l) {
         mouseTracker.addListener(l);
     }

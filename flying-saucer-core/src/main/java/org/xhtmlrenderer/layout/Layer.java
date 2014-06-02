@@ -552,7 +552,7 @@ public class Layer {
         if (contentBounds.x != loc.x || contentBounds.y != loc.y) {
             replaced.getReplacedElement().setLocation(contentBounds.x, contentBounds.y);
         }
-        if (! c.isInteractive() || replaced.getReplacedElement().isRequiresInteractivePaint()) {
+        if (replaced.getReplacedElement().isRequiresInteractivePaint()) {
             c.getOutputDevice().paintReplacedElement(c, replaced);
         }
     }

@@ -157,10 +157,6 @@ public class RenderingContext implements CssContext {
         return sharedContext.debugDrawFontMetrics();
     }
 
-    public boolean isInteractive() {
-        return sharedContext.isInteractive();
-    }
-
     public boolean isPrint() {
         return sharedContext.isPrint();
     }

@@ -59,9 +59,6 @@ public class SwingReplacedElement implements ReplacedElement {
     }
     
     public void detach(final LayoutContext c) {
-        if (c.isInteractive()) {
-            ((RootPanel)c.getCanvas()).remove(getJComponent());
-        }
     }
     
     public boolean isRequiresInteractivePaint() {

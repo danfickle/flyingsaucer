@@ -257,10 +257,6 @@ public class LayoutContext implements CssContext {
         _sharedContext.removeBoxId(id);
     }
 
-    public boolean isInteractive() {
-        return _sharedContext.isInteractive();
-    }
-
     public float getMmPerDot() {
         return _sharedContext.getMmPerPx();
     }

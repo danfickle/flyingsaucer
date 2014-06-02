@@ -125,9 +125,6 @@ public class SwingReplacedElementFactory implements ReplacedElementFactory {
             final SwingReplacedElement result = new SwingReplacedElement(cc);
             result.setIntrinsicSize(formField.getIntrinsicSize());
 
-            if (context.isInteractive()) {
-                ((Container) context.getCanvas()).add(cc);
-            }
             return result;
         }
     }
