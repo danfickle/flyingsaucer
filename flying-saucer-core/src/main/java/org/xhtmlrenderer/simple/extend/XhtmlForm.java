@@ -59,18 +59,12 @@ public class XhtmlForm {
     private final Map<Element, FormField> _componentCache;
     private final Map<String, ButtonGroupWrapper> _buttonGroups;
     private final Element _parentFormElement;
-    private final FormSubmissionListener _formSubmissionListener;
 
-    public XhtmlForm(final UserAgentCallback uac, final Element e, final FormSubmissionListener fsListener) {
+    public XhtmlForm(final UserAgentCallback uac, final Element e) {
         _userAgentCallback = uac;
         _buttonGroups = new HashMap<String, ButtonGroupWrapper>();
         _componentCache = new LinkedHashMap<Element, FormField>();
         _parentFormElement = e;
-        _formSubmissionListener = fsListener;
-    }
-
-    public XhtmlForm(final UserAgentCallback uac, final Element e) {
-        this(uac, e, new DefaultFormSubmissionListener());
     }
 
     public UserAgentCallback getUserAgentCallback() {
@@ -173,8 +167,6 @@ public class XhtmlForm {
                 }
             }
         }
-        
-        if(_formSubmissionListener !=null) _formSubmissionListener.submit(data.toString());
     }
 
     public static String collectText(final Element e) {

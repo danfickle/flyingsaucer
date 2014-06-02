@@ -34,7 +34,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
-import javax.swing.JOptionPane;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -52,7 +51,6 @@ import org.xhtmlrenderer.render.PageBox;
 import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.simple.HtmlNamespaceHandler;
-import org.xhtmlrenderer.simple.extend.FormSubmissionListener;
 import org.xhtmlrenderer.swing.Java2DOutputDevice;
 import org.xhtmlrenderer.util.Configuration;
 import org.xhtmlrenderer.util.Uu;
@@ -64,8 +62,7 @@ import org.xhtmlrenderer.util.Uu;
  * @author Joshua Marinacci
  */
 @SuppressWarnings("serial")
-public abstract class BasicPanel extends RootPanel implements
-	FormSubmissionListener {
+public abstract class BasicPanel extends RootPanel {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BasicPanel.class);
     private static final int PAGE_PAINTING_CLEARANCE_WIDTH = 10;
@@ -73,7 +70,6 @@ public abstract class BasicPanel extends RootPanel implements
 
     private boolean explicitlyOpaque;
     private boolean centeredPagedView;
-    protected FormSubmissionListener formSubmissionListener;
 
     public BasicPanel() {
         this(new NaiveUserAgent());
@@ -81,22 +77,6 @@ public abstract class BasicPanel extends RootPanel implements
 
     public BasicPanel(final UserAgentCallback uac) {
         sharedContext = new SharedContext(uac);
-        formSubmissionListener = new FormSubmissionListener() {
-            public void submit(final String query) {
-                System.out.println("Form Submitted!");
-                System.out.println("Data: " + query);
-
-                JOptionPane.showMessageDialog(
-                        null,
-                        "Form submit called; check console to see the query string" +
-                        " that would have been submitted.",
-                        "Form Submission",
-                        JOptionPane.INFORMATION_MESSAGE
-                );
-            }
-
-        };
-        sharedContext.setFormSubmissionListener(formSubmissionListener);
         init();
     }
 
@@ -583,12 +563,5 @@ public abstract class BasicPanel extends RootPanel implements
 
     public void setCenteredPagedView(final boolean centeredPagedView) {
         this.centeredPagedView = centeredPagedView;
-    }
-    public void submit(final String url) {
-        formSubmissionListener.submit(url);
-    }
-    public void setFormSubmissionListener(final FormSubmissionListener fsl) {
-        this.formSubmissionListener =fsl;
-        sharedContext.setFormSubmissionListener(formSubmissionListener);
     }
 }

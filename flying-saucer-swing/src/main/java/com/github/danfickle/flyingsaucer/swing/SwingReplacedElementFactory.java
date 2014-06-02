@@ -28,8 +28,6 @@ import org.xhtmlrenderer.extend.ReplacedElementFactory;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
-import org.xhtmlrenderer.simple.extend.DefaultFormSubmissionListener;
-import org.xhtmlrenderer.simple.extend.FormSubmissionListener;
 import org.xhtmlrenderer.simple.extend.XhtmlForm;
 import org.xhtmlrenderer.simple.extend.form.FormField;
 import org.xhtmlrenderer.swing.AWTFSImage;
@@ -62,8 +60,6 @@ public class SwingReplacedElementFactory implements ReplacedElementFactory {
      */
     protected LinkedHashMap<Element, XhtmlForm> forms;
 
-    private FormSubmissionListener formSubmissionListener;
-
     protected final RepaintListener repaintListener;
 
     private final ImageResourceLoader imageResourceLoader;
@@ -80,7 +76,6 @@ public class SwingReplacedElementFactory implements ReplacedElementFactory {
     public SwingReplacedElementFactory(final RepaintListener listener, final ImageResourceLoader irl) {
         this.repaintListener = listener;
         this.imageResourceLoader = irl;
-        this.formSubmissionListener = new DefaultFormSubmissionListener();
     }
 
     /**
@@ -107,7 +102,7 @@ public class SwingReplacedElementFactory implements ReplacedElementFactory {
             //parentForm may be null! No problem! Assume action is this document and method is get.
             XhtmlForm form = getForm(parentForm);
             if (form == null) {
-                form = new XhtmlForm(uac, parentForm, formSubmissionListener);
+                form = new XhtmlForm(uac, parentForm);
                 addForm(parentForm, form);
             }
 
@@ -298,10 +293,6 @@ public class SwingReplacedElementFactory implements ReplacedElementFactory {
         if (imageComponents != null) {
             imageComponents.remove(e);
         }
-    }
-
-    public void setFormSubmissionListener(final FormSubmissionListener fsl) {
-        this.formSubmissionListener = fsl;
     }
 
     private static class CacheKey {

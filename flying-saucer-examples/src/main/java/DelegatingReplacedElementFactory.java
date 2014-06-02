@@ -27,7 +27,6 @@ import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
 
 import java.util.*;
-import org.xhtmlrenderer.simple.extend.FormSubmissionListener;
 
 /**
  * @author patrick
@@ -96,10 +95,6 @@ public class DelegatingReplacedElementFactory implements ReplacedElementFactory 
 
     public void removeReplacer(final ElementReplacer replacer) {
         replacers.remove(replacer);
-    }
-
-    public void setFormSubmissionListener(final FormSubmissionListener listener) {
-        // maybe there is nothing to do...
     }
 
     private static class ERItem {

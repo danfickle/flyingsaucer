@@ -54,7 +54,6 @@ import org.xhtmlrenderer.render.Box;
 import org.xhtmlrenderer.render.FSFont;
 import org.xhtmlrenderer.render.FSFontMetrics;
 import org.xhtmlrenderer.render.RenderingContext;
-import org.xhtmlrenderer.simple.extend.FormSubmissionListener;
 import org.xhtmlrenderer.swing.Java2DTextRenderer;
 
 /**
@@ -129,12 +128,6 @@ public class SharedContext {
         replacedElementFactory = new ReplacedElementFactory() {
 			
 			@Override
-			public void setFormSubmissionListener(final FormSubmissionListener listener) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
 			public void reset() {
 				// TODO Auto-generated method stub
 				
@@ -180,10 +173,6 @@ public class SharedContext {
         LOGGER.info("Using CSS implementation from: " + getCss().getClass().getName());
         setTextRenderer(tr);
         setDPI(dpi);
-    }
-
-    public void setFormSubmissionListener(final FormSubmissionListener fsl) {
-        replacedElementFactory.setFormSubmissionListener(fsl);
     }
 
     public LayoutContext newLayoutContextInstance() {

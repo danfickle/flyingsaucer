@@ -18,10 +18,6 @@ public class NoReplacedElementFactory implements ReplacedElementFactory {
 
     }
 
-    public void setFormSubmissionListener(final FormSubmissionListener listener) {
-        //TODO
-    }
-
     public void reset() {
     }
 

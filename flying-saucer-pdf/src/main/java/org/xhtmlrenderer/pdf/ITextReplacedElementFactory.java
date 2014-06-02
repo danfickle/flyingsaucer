@@ -32,7 +32,6 @@ import org.xhtmlrenderer.extend.ReplacedElementFactory;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
-import org.xhtmlrenderer.simple.extend.FormSubmissionListener;
 import org.xhtmlrenderer.util.JsoupUtil;
 
 import static org.xhtmlrenderer.util.GeneralUtil.ciEquals;
@@ -165,9 +164,5 @@ public class ITextReplacedElementFactory implements ReplacedElementFactory {
 
     public List<RadioButtonFormField> getRadioButtons(final String name) {
         return _radioButtonsByName.get(name);
-    }
-
-    public void setFormSubmissionListener(final FormSubmissionListener listener) {
-        // nothing to do, form submission is handled by pdf readers
     }
 }
