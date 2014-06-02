@@ -338,10 +338,8 @@ public class BrowserActions {
             // flip status--either we are in "print" mode (print media) or non-print (screen media)
             if (sharedContext.isPrint()) {
                 sharedContext.setPrint(false);
-                sharedContext.setInteractive(true);
             } else {
                 sharedContext.setPrint(true);
-                sharedContext.setInteractive(false);
             }
             print_preview.putValue(Action.SHORT_DESCRIPTION,
                     ! sharedContext.isPrint() ? "Print preview" : "Normal view");

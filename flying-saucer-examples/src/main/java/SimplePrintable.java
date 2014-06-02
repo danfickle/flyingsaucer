@@ -74,7 +74,6 @@ public class SimplePrintable {
     private void printURL(final String url) {
         final XHTMLPanel panel = new XHTMLPanel();
         panel.getSharedContext().setPrint(true);
-        panel.getSharedContext().setInteractive(false);
 
         try {
             panel.setDocument(url);

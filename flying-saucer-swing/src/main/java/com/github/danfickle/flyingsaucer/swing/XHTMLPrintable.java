@@ -59,7 +59,6 @@ public class XHTMLPrintable implements Printable {
             if (g2r == null) {
                 g2r = new Graphics2DRenderer();
                 g2r.getSharedContext().setPrint(true);
-                g2r.getSharedContext().setInteractive(false);
                 g2r.getSharedContext().setDPI(72f);
                 g2r.getSharedContext().getTextRenderer().setSmoothingThreshold(0);
                 g2r.getSharedContext().setUserAgentCallback(panel.getSharedContext().getUserAgentCallback());

@@ -63,7 +63,6 @@ public class Graphics2DRenderer {
      */
     public Graphics2DRenderer() {
         panel = new XHTMLPanel();
-        panel.setInteractive(false);
     }
 
     // ASK maybe we could change the graphics2d to be a font rendering context?

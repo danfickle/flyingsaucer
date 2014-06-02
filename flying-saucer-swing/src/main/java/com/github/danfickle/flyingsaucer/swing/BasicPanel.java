@@ -34,8 +34,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-
 import javax.swing.JOptionPane;
 
 import org.jsoup.nodes.Document;
@@ -585,10 +583,6 @@ public abstract class BasicPanel extends RootPanel implements
 
     public boolean isInteractive() {
         return this.getSharedContext().isInteractive();
-    }
-
-    public void setInteractive(final boolean interactive) {
-        this.getSharedContext().setInteractive(interactive);
     }
 
     public void addMouseTrackingListener(final FSMouseListener l) {

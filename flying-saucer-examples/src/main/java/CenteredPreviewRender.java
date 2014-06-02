@@ -49,7 +49,6 @@ public class CenteredPreviewRender {
 
         // Create a JPanel subclass to render the page
         final XHTMLPanel panel = new XHTMLPanel();
-        panel.setInteractive(false);
         panel.getSharedContext().setPrint(true);
         panel.setBackground(Color.LIGHT_GRAY);
         panel.setCenteredPagedView(true);

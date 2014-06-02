@@ -342,7 +342,6 @@ public class BoxRenderer {
         context.setDPI(72 * this.dotsPerPoint);
         context.setDotsPerPixel(dotsPerPixel);
         context.setPrint(false);
-        context.setInteractive(false);
         return context;
     }
 

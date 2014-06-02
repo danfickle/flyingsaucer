@@ -220,7 +220,6 @@ public class Printer implements Runnable, DocumentListener, Printable, PrintJobL
                 j2dr = new Java2DRenderer(file, 1024);
                 final SharedContext context = j2dr.getSharedContext();
                 context.setPrint(true);
-                context.setInteractive(false);
                 context.setDPI(72f);
 
                 context.getTextRenderer().setSmoothingThreshold(0);

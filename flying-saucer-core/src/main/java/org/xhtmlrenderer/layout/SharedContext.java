@@ -70,9 +70,6 @@ public class SharedContext {
     private TextRenderer text_renderer;
     private String media;
     private UserAgentCallback uac;
-
-    private boolean interactive = true;
-
     private Map<String, Box> idMap;
 
     private StylesheetInfo defaultStylesheet;
@@ -528,11 +525,7 @@ public class SharedContext {
     }
 
     public boolean isInteractive() {
-        return interactive;
-    }
-
-    public void setInteractive(final boolean interactive) {
-        this.interactive = interactive;
+        return false;
     }
 
     public boolean isPrint() {
@@ -541,11 +534,7 @@ public class SharedContext {
 
     public void setPrint(final boolean print) {
         this.print = print;
-        if (print) {
-            setMedia("print");
-        } else {
-            setMedia("screen");
-        }
+        setMedia(print ? "print" : "screen");
     }
 
     /**

@@ -28,7 +28,6 @@ import java.util.Map;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.xhtmlrenderer.extend.NamespaceHandler;
-import org.xhtmlrenderer.extend.ReplacedElementFactory;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.extend.UserInterface;
 import org.xhtmlrenderer.layout.BoxBuilder;
@@ -380,7 +379,6 @@ public class Java2DRenderer {
 		sharedContext.setDPI(72 * this.dotsPerPoint);
 		sharedContext.setDotsPerPixel(dotsPerPixel);
 		sharedContext.setPrint(false);
-		sharedContext.setInteractive(false);
 	}
 
 	private static final class NullUserInterface implements UserInterface {
