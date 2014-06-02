@@ -104,30 +104,5 @@ public interface AttributeResolver {
      * @return The visited value
      */
     public boolean isVisited(Object e);
-
-    /**
-     * Gets the hover attribute of the AttributeResolver object
-     *
-     * @param e PARAM
-     * @return The hover value
-     */
-    public boolean isHover(Object e);
-
-    /**
-     * Gets the active attribute of the AttributeResolver object
-     *
-     * @param e PARAM
-     * @return The active value
-     */
-    public boolean isActive(Object e);
-
-    /**
-     * Gets the focus attribute of the AttributeResolver object
-     *
-     * @param e PARAM
-     * @return The focus value
-     */
-    public boolean isFocus(Object e);
-
 }
 

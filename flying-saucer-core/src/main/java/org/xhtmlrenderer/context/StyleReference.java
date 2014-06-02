@@ -41,7 +41,6 @@ import org.xhtmlrenderer.css.sheet.Stylesheet;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo;
 import org.xhtmlrenderer.extend.NamespaceHandler;
 import org.xhtmlrenderer.extend.UserAgentCallback;
-import org.xhtmlrenderer.extend.UserInterface;
 import org.xhtmlrenderer.layout.SharedContext;
 
 
@@ -77,11 +76,11 @@ public class StyleReference {
     /**
      * Sets the documentContext attribute of the StyleReference object
      */
-    public void setDocumentContext(final SharedContext context, final NamespaceHandler nsh, final Document doc, final UserInterface ui) {
+    public void setDocumentContext(final SharedContext context, final NamespaceHandler nsh, final Document doc) {
         _context = context;
         _nsh = nsh;
         _doc = doc;
-        final AttributeResolver attRes = new StandardAttributeResolver(_nsh, _uac, ui);
+        final AttributeResolver attRes = new StandardAttributeResolver(_nsh, _uac);
 
         final List<StylesheetInfo> infos = getStylesheets();
         LOGGER.info("media = " + _context.getMedia());

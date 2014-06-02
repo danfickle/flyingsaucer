@@ -20,11 +20,8 @@
 package org.xhtmlrenderer.swing;
 
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.xhtmlrenderer.extend.NamespaceHandler;
-import org.xhtmlrenderer.extend.ReplacedElementFactory;
 import org.xhtmlrenderer.extend.UserAgentCallback;
-import org.xhtmlrenderer.extend.UserInterface;
 import org.xhtmlrenderer.layout.BoxBuilder;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.layout.SharedContext;
@@ -290,8 +287,7 @@ public class BoxRenderer {
 		sharedContext.getCss().setDocumentContext(
 				sharedContext,
 				sharedContext.getNamespaceHandler(),
-				doc,
-				new NullUserInterface()
+				doc
 		);
 	}
 
@@ -344,19 +340,4 @@ public class BoxRenderer {
         context.setPrint(false);
         return context;
     }
-
-    private static final class NullUserInterface implements UserInterface {
-
-		public boolean isHover(final Element e) {
-			return false;
-		}
-
-		public boolean isActive(final Element e) {
-			return false;
-		}
-
-		public boolean isFocus(final Element e) {
-			return false;
-		}
-	}
 }

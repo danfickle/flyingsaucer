@@ -121,19 +121,13 @@ public class Selector {
             }
         }
         if (isPseudoClass(ACTIVE_PSEUDOCLASS)) {
-            if (attRes == null || !attRes.isActive(e)) {
-                return false;
-            }
+            return false;
         }
         if (isPseudoClass(HOVER_PSEUDOCLASS)) {
-            if (attRes == null || !attRes.isHover(e)) {
-                return false;
-            }
+            return false;
         }
         if (isPseudoClass(FOCUS_PSEUDOCLASS)) {
-            if (attRes == null || !attRes.isFocus(e)) {
-                return false;
-            }
+            return false;
         }
         return true;
     }

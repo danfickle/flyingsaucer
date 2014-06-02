@@ -23,7 +23,6 @@ import org.jsoup.nodes.Element;
 import org.xhtmlrenderer.css.extend.AttributeResolver;
 import org.xhtmlrenderer.extend.NamespaceHandler;
 import org.xhtmlrenderer.extend.UserAgentCallback;
-import org.xhtmlrenderer.extend.UserInterface;
 
 
 /**
@@ -32,18 +31,10 @@ import org.xhtmlrenderer.extend.UserInterface;
  * @author Torbjoern Gannholm
  */
 public class StandardAttributeResolver implements AttributeResolver {
-    /**
-     * Description of the Field
-     */
+
     private final NamespaceHandler nsh;
-    /**
-     * Description of the Field
-     */
     private final UserAgentCallback uac;
-    /**
-     * Description of the Field
-     */
-    private final UserInterface ui;
+
 
     /**
      * Constructor for the StandardAttributeResolver object
@@ -52,10 +43,9 @@ public class StandardAttributeResolver implements AttributeResolver {
      * @param uac PARAM
      * @param ui  PARAM
      */
-    public StandardAttributeResolver(final NamespaceHandler nsh, final UserAgentCallback uac, final UserInterface ui) {
+    public StandardAttributeResolver(final NamespaceHandler nsh, final UserAgentCallback uac) {
         this.nsh = nsh;
         this.uac = uac;
-        this.ui = ui;
     }
 
     /**
@@ -135,36 +125,6 @@ public class StandardAttributeResolver implements AttributeResolver {
      */
     public boolean isVisited(final Object e) {
         return isLink(e) && uac.isVisited(nsh.getLinkUri((Element) e));
-    }
-
-    /**
-     * Gets the hover attribute of the StandardAttributeResolver object
-     *
-     * @param e PARAM
-     * @return The hover value
-     */
-    public boolean isHover(final Object e) {
-        return ui.isHover((Element) e);
-    }
-
-    /**
-     * Gets the active attribute of the StandardAttributeResolver object
-     *
-     * @param e PARAM
-     * @return The active value
-     */
-    public boolean isActive(final Object e) {
-        return ui.isActive((Element) e);
-    }
-
-    /**
-     * Gets the focus attribute of the StandardAttributeResolver object
-     *
-     * @param e PARAM
-     * @return The focus value
-     */
-    public boolean isFocus(final Object e) {
-        return ui.isFocus((Element) e);
     }
 }
 

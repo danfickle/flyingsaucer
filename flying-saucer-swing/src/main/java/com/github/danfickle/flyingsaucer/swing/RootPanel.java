@@ -33,15 +33,12 @@ import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.logging.Level;
-
 import javax.swing.CellRendererPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.constants.CSSName;
@@ -57,7 +54,6 @@ import org.xhtmlrenderer.css.style.derived.StringValue;
 import org.xhtmlrenderer.event.DocumentListener;
 import org.xhtmlrenderer.extend.FSCanvas;
 import org.xhtmlrenderer.extend.NamespaceHandler;
-import org.xhtmlrenderer.extend.UserInterface;
 import org.xhtmlrenderer.layout.BoxBuilder;
 import org.xhtmlrenderer.layout.Layer;
 import org.xhtmlrenderer.layout.LayoutContext;
@@ -74,7 +70,7 @@ import org.xhtmlrenderer.util.Configuration;
 import org.xhtmlrenderer.util.Uu;
 
 public class RootPanel extends JPanel implements ComponentListener,
-			UserInterface, FSCanvas, RepaintListener {
+			FSCanvas, RepaintListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RootPanel.class);
     static final long serialVersionUID = 1L;
@@ -116,7 +112,7 @@ public class RootPanel extends JPanel implements ComponentListener,
         getSharedContext().reset();
         getSharedContext().setBaseURL(url);
         getSharedContext().setNamespaceHandler(nsh);
-        getSharedContext().getCss().setDocumentContext(getSharedContext(), getSharedContext().getNamespaceHandler(), doc, this);
+        getSharedContext().getCss().setDocumentContext(getSharedContext(), getSharedContext().getNamespaceHandler(), doc);
 
         repaint();
     }
@@ -503,33 +499,6 @@ public class RootPanel extends JPanel implements ComponentListener,
     /*
     * ========= UserInterface implementation ===============
     */
-    public Element hovered_element = null;
-
-    public Element active_element = null;
-
-    public Element focus_element = null;
-
-    public boolean isHover(final Element e) {
-        if (e == hovered_element) {
-            return true;
-        }
-        return false;
-    }
-
-    public boolean isActive(final Element e) {
-        if (e == active_element) {
-            return true;
-        }
-        return false;
-    }
-
-    public boolean isFocus(final Element e) {
-        if (e == focus_element) {
-            return true;
-        }
-        return false;
-    }
-
     public void componentHidden(final ComponentEvent e) {
     }
 

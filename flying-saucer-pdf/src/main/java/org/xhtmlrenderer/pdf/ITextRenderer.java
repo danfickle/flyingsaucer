@@ -36,7 +36,6 @@ import org.jsoup.nodes.Node;
 import org.xhtmlrenderer.context.StyleReference;
 import org.xhtmlrenderer.css.style.CalculatedStyle;
 import org.xhtmlrenderer.extend.NamespaceHandler;
-import org.xhtmlrenderer.extend.UserInterface;
 import org.xhtmlrenderer.layout.BoxBuilder;
 import org.xhtmlrenderer.layout.Layer;
 import org.xhtmlrenderer.layout.LayoutContext;
@@ -160,7 +159,7 @@ public class ITextRenderer {
         }
         _sharedContext.setBaseURL(url);
         _sharedContext.setNamespaceHandler(nsh);
-        _sharedContext.getCss().setDocumentContext(_sharedContext, _sharedContext.getNamespaceHandler(), doc, new NullUserInterface());
+        _sharedContext.getCss().setDocumentContext(_sharedContext, _sharedContext.getNamespaceHandler(), doc);
         getFontResolver().importFontFaces(_sharedContext.getCss().getFontFaceRules());
     }
 
@@ -469,20 +468,6 @@ public class ITextRenderer {
 
     public List<PagePosition> findPagePositionsByID(final Pattern pattern) {
         return _outputDevice.findPagePositionsByID(newLayoutContext(), pattern);
-    }
-
-    private static final class NullUserInterface implements UserInterface {
-        public boolean isHover(final Element e) {
-            return false;
-        }
-
-        public boolean isActive(final Element e) {
-            return false;
-        }
-
-        public boolean isFocus(final Element e) {
-            return false;
-        }
     }
 
     public PDFCreationListener getListener() {

@@ -36,7 +36,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.style.CalculatedStyle;
@@ -458,28 +457,6 @@ public abstract class BasicPanel extends RootPanel {
 
     /* ====== hover and active utility methods
 ========= */
-
-    public boolean isHover(final Element e) {
-        if (e == hovered_element) {
-            return true;
-        }
-        return false;
-    }
-
-    public boolean isActive(final Element e) {
-        if (e == active_element) {
-            return true;
-        }
-        return false;
-    }
-
-    public boolean isFocus(final Element e) {
-        if (e == focus_element) {
-            return true;
-        }
-        return false;
-    }
-
 
     /**
      * Returns whether the background of this <code>BasicPanel</code> will
