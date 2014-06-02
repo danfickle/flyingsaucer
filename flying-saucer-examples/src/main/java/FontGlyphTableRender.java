@@ -55,8 +55,6 @@ import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.simple.FSScrollPane;
 import org.xhtmlrenderer.simple.HtmlNamespaceHandler;
 
-import com.github.danfickle.flyingsaucer.swing.FSMouseListener;
-import com.github.danfickle.flyingsaucer.swing.LinkListener;
 import com.github.danfickle.flyingsaucer.swing.XHTMLPanel;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.BaseFont;
@@ -266,12 +264,6 @@ public class FontGlyphTableRender {
     }
 
     private void resetMouseListeners() {
-        final List<FSMouseListener> l = xpanel.getMouseTrackingListeners();
-        for (final FSMouseListener listener : l) {
-            if (listener instanceof LinkListener) {
-                xpanel.removeMouseTrackingListener(listener);
-            }
-        }
     }
 
     private void enableButtons() {

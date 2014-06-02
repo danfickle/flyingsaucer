@@ -21,12 +21,8 @@ package org.xhtmlrenderer.demo.browser;
 
 import org.xhtmlrenderer.demo.browser.actions.ZoomAction;
 import org.xhtmlrenderer.swing.*;
-import org.xhtmlrenderer.util.Configuration;
 import org.xhtmlrenderer.util.Uu;
 
-import com.github.danfickle.flyingsaucer.swing.BasicPanel;
-import com.github.danfickle.flyingsaucer.swing.FSMouseListener;
-import com.github.danfickle.flyingsaucer.swing.LinkListener;
 import com.github.danfickle.flyingsaucer.swing.ScalableXHTMLPanel;
 
 import javax.swing.*;
@@ -307,29 +303,6 @@ public class BrowserMenuBar extends JMenuBar {
      * Description of the Method
      */
     public void createActions() {
-        if (Configuration.isTrue("xr.use.listeners", true)) {
-            final List<FSMouseListener> l = root.panel.view.getMouseTrackingListeners();
-            for (final FSMouseListener listener : l) {
-                if ( listener instanceof LinkListener ) {
-                    root.panel.view.removeMouseTrackingListener(listener);
-                }
-            }
-
-            root.panel.view.addMouseTrackingListener(new LinkListener() {
-               public void linkClicked(final BasicPanel panel, final String uri) {
-                   if (uri.startsWith("demoNav")) {
-                       final String pg = uri.split(":")[1];
-                       if (pg.equals("back")) {
-                           navigateToPriorDemo();
-                       } else {
-                           navigateToNextDemo();
-                       }
-                   } else {
-                       super.linkClicked(panel, uri);
-                   }
-               } 
-            });
-        }
     }
 
     private ScaleFactor[] initializeScales() {

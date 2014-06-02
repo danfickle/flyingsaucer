@@ -28,8 +28,6 @@ import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.layout.SharedContext;
 import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.simple.HtmlNamespaceHandler;
-import org.xhtmlrenderer.simple.extend.FormSubmissionListener;
-import org.xhtmlrenderer.util.Configuration;
 
 /**
  * <p/>
@@ -119,22 +117,9 @@ public class XHTMLPanel extends BasicPanel {
     }
 
     private void setupListeners() {
-        if (Configuration.isTrue("xr.use.listeners", true)) {
-            addMouseTrackingListener(new HoverListener());
-            addMouseTrackingListener(new LinkListener());
-            addMouseTrackingListener(new CursorListener());
-            setFormSubmissionListener(new FormSubmissionListener() {
-                public void submit(final String query) {
-                    XHTMLPanel.this.setDocumentRelative(query);
-                }
-            });
-        }
     }
 
     private void resetListeners() {
-        if (Configuration.isTrue("xr.use.listeners", true)) {
-            resetMouseTracker();
-        }
     }
 
     /**

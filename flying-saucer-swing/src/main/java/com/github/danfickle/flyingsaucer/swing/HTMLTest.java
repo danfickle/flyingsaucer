@@ -69,8 +69,6 @@ public class HTMLTest extends JFrame {
         scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         scroll.setPreferredSize(new Dimension(width, height));
 
-        panel.addMouseTrackingListener(new LinkListener());
-
         if (args.length > 0) {
             loadDocument(args[0]);
         }

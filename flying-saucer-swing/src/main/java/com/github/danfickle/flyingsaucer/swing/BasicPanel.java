@@ -72,8 +72,6 @@ public abstract class BasicPanel extends RootPanel implements
     private static final int PAGE_PAINTING_CLEARANCE_HEIGHT = 10;
 
     private boolean explicitlyOpaque;
-
-    private final MouseTracker mouseTracker;
     private boolean centeredPagedView;
     protected FormSubmissionListener formSubmissionListener;
 
@@ -83,7 +81,6 @@ public abstract class BasicPanel extends RootPanel implements
 
     public BasicPanel(final UserAgentCallback uac) {
         sharedContext = new SharedContext(uac);
-        mouseTracker = new MouseTracker(this);
         formSubmissionListener = new FormSubmissionListener() {
             public void submit(final String query) {
                 System.out.println("Form Submitted!");
@@ -578,22 +575,6 @@ public abstract class BasicPanel extends RootPanel implements
         if (this.enclosingScrollPane != null) {
             this.enclosingScrollPane.getVerticalScrollBar().setValue(pt.y);
         }
-    }
-
-    public void addMouseTrackingListener(final FSMouseListener l) {
-        mouseTracker.addListener(l);
-    }
-
-    public void removeMouseTrackingListener(final FSMouseListener l) {
-        mouseTracker.removeListener(l);
-    }
-
-    public List<FSMouseListener> getMouseTrackingListeners() {
-        return mouseTracker.getListeners();
-    }
-
-    protected void resetMouseTracker() {
-        mouseTracker.reset();
     }
 
     public boolean isCenteredPagedView() {
