@@ -65,13 +65,11 @@ import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.render.ViewportBox;
 import org.xhtmlrenderer.swing.Java2DFontContext;
 import org.xhtmlrenderer.swing.Java2DOutputDevice;
-import org.xhtmlrenderer.swing.RepaintListener;
 import org.xhtmlrenderer.util.Configuration;
 import org.xhtmlrenderer.util.Uu;
 
-public class RootPanel extends JPanel implements ComponentListener,
-			FSCanvas, RepaintListener {
-
+public class RootPanel extends JPanel implements ComponentListener, FSCanvas
+{
     private static final Logger LOGGER = LoggerFactory.getLogger(RootPanel.class);
     static final long serialVersionUID = 1L;
 

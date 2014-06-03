@@ -58,11 +58,6 @@ public interface ReplacedElement {
      */
     void detach(LayoutContext c);
 
-    /**
-     *
-     */
-    boolean isRequiresInteractivePaint();
-    
     boolean hasBaseline();
     
     int getBaseline();

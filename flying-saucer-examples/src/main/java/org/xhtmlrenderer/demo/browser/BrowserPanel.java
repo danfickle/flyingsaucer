@@ -155,11 +155,9 @@ public class BrowserPanel extends JPanel implements DocumentListener {
 
 		manager = new PanelManager();
         view = new ScalableXHTMLPanel(manager);
-        manager.setRepaintListener(view);
         final ImageResourceLoader irl = new ImageResourceLoader();
-        irl.setRepaintListener(view);
         manager.setImageResourceLoader(irl);
-        view.getSharedContext().setReplacedElementFactory(new SwingReplacedElementFactory(view, irl));
+        view.getSharedContext().setReplacedElementFactory(new SwingReplacedElementFactory(irl));
         view.addDocumentListener(manager);
         view.setCenteredPagedView(true);
         view.setBackground(Color.LIGHT_GRAY);

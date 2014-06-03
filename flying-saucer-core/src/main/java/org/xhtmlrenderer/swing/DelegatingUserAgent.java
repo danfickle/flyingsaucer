@@ -197,7 +197,6 @@ public class DelegatingUserAgent implements UserAgentCallback, DocumentListener 
     }
 
     public void documentStarted() {
-        _imageResourceLoader.stopLoading();
         shrinkImageCache();
     }
 
@@ -206,10 +205,6 @@ public class DelegatingUserAgent implements UserAgentCallback, DocumentListener 
     public void onLayoutException(final Throwable t) { /* ignore*/ }
 
     public void onRenderException(final Throwable t) { /* ignore*/ }
-
-    public void setRepaintListener(final RepaintListener listener) {
-        //_imageResourceLoader.setRepaintListener(listener);
-    }
 
 	@Override
 	public StylesheetCache getStylesheetCache() {

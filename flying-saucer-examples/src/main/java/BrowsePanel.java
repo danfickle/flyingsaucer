@@ -89,11 +89,10 @@ public class BrowsePanel {
         uac = new DelegatingUserAgent();
 
         final ImageResourceLoader irl = new ImageResourceLoader();
-        irl.setRepaintListener(panel);
         ((DelegatingUserAgent) uac).setImageResourceLoader(irl);
         
         panel.getSharedContext().setUserAgentCallback(uac);
-        panel.getSharedContext().setReplacedElementFactory(new SwingReplacedElementFactory(panel, irl));
+        panel.getSharedContext().setReplacedElementFactory(new SwingReplacedElementFactory(irl));
     }
 
     private void setupDocumentListener(final XHTMLPanel panel) {

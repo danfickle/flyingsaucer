@@ -31,11 +31,9 @@ import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.simple.extend.XhtmlForm;
 import org.xhtmlrenderer.simple.extend.form.FormField;
 import org.xhtmlrenderer.swing.AWTFSImage;
-import org.xhtmlrenderer.swing.DeferredImageReplacedElement;
 import org.xhtmlrenderer.swing.EmptyReplacedElement;
 import org.xhtmlrenderer.swing.ImageReplacedElement;
 import org.xhtmlrenderer.swing.ImageResourceLoader;
-import org.xhtmlrenderer.swing.RepaintListener;
 import org.xhtmlrenderer.util.ImageUtil;
 import org.xhtmlrenderer.resource.ImageResource;
 
@@ -60,21 +58,14 @@ public class SwingReplacedElementFactory implements ReplacedElementFactory {
      */
     protected LinkedHashMap<Element, XhtmlForm> forms;
 
-    protected final RepaintListener repaintListener;
-
     private final ImageResourceLoader imageResourceLoader;
 
-
     public SwingReplacedElementFactory() {
-        this(ImageResourceLoader.NO_OP_REPAINT_LISTENER);
+        this(new ImageResourceLoader());
     }
 
-    public SwingReplacedElementFactory(final RepaintListener repaintListener) {
-        this(repaintListener, new ImageResourceLoader());
-    }
-
-    public SwingReplacedElementFactory(final RepaintListener listener, final ImageResourceLoader irl) {
-        this.repaintListener = listener;
+    public SwingReplacedElementFactory(final ImageResourceLoader irl) 
+    {
         this.imageResourceLoader = irl;
     }
 
@@ -154,12 +145,9 @@ public class SwingReplacedElementFactory implements ReplacedElementFactory {
             re = lookupImageReplacedElement(elem, ruri, cssWidth, cssHeight);
             if (re == null) {
                 LOGGER.debug("Swing: Image " + ruri + " requested at " + " to " + cssWidth + ", " + cssHeight);
+
                 final ImageResource imageResource = imageResourceLoader.get(ruri, cssWidth, cssHeight);
-                if (imageResource.isLoaded()) {
-                    re = new ImageReplacedElement(((AWTFSImage) imageResource.getImage()).getImage(), cssWidth, cssHeight);
-                } else {
-                    re = new DeferredImageReplacedElement(imageResource, repaintListener, cssWidth, cssHeight);
-                }
+                re = new ImageReplacedElement(((AWTFSImage) imageResource.getImage()).getImage(), cssWidth, cssHeight);
                 storeImageReplacedElement(elem, re, ruri, cssWidth, cssHeight);
             }
         }

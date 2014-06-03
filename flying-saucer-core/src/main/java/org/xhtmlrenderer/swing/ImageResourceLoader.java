@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.extend.FSImage;
 import org.xhtmlrenderer.resource.ImageResource;
-import org.xhtmlrenderer.util.Configuration;
 import org.xhtmlrenderer.util.ImageUtil;
 import org.xhtmlrenderer.util.StreamResource;
 
@@ -24,20 +23,9 @@ import org.xhtmlrenderer.util.StreamResource;
 public class ImageResourceLoader {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ImageResourceLoader.class);
-    public static final RepaintListener NO_OP_REPAINT_LISTENER = new RepaintListener() {
-        public void repaintRequested(final boolean doLayout) {
-           LOGGER.debug("No-op repaint requested");
-        }
-    };
     private final Map<CacheKey, ImageResource> _imageCache;
 
-    private final ImageLoadQueue _loadQueue;
-
     private final int _imageCacheCapacity;
-
-    private RepaintListener _repaintListener = NO_OP_REPAINT_LISTENER;
-
-    private final boolean _useBackgroundImageLoading;
 
     public ImageResourceLoader() {
         // FIXME
@@ -46,19 +34,6 @@ public class ImageResourceLoader {
 
     public ImageResourceLoader(final int cacheSize) {
         this._imageCacheCapacity = cacheSize;
-        this._useBackgroundImageLoading = Configuration.isTrue("xr.image.background.loading.enable", false);
-
-        if (_useBackgroundImageLoading) {
-            this._loadQueue = new ImageLoadQueue();
-            final int workerCount = Configuration.valueAsInt("xr.image.background.workers", 5);
-            for (int i = 0; i < workerCount; i++) {
-                new ImageLoadWorker(_loadQueue).start();
-            }
-        } else {
-            this._loadQueue = null;
-        }
-
-        this._repaintListener = NO_OP_REPAINT_LISTENER;
 
         // note we do *not* override removeEldestEntry() here--users of this class must call shrinkImageCache().
         // that's because we don't know when is a good time to flush the cache
@@ -126,8 +101,9 @@ public class ImageResourceLoader {
         return get(uri, -1, -1);
     }
 
-    public synchronized ImageResource get(final String uri, final int width, final int height) {
-        if (ImageUtil.isEmbeddedBase64Image(uri)) {
+    public ImageResource get(final String uri, final int width, final int height) 
+    {
+    	if (ImageUtil.isEmbeddedBase64Image(uri)) {
             final ImageResource resource = loadEmbeddedBase64ImageResource(uri);
             resource.getImage().scale(width, height);
             return resource;
@@ -142,26 +118,18 @@ public class ImageResourceLoader {
 
                 // no: loaded
                 if (ir == null) {
-                    if (isImmediateLoadUri(uri)) {
-                        LOGGER.debug("Load immediate: " + uri);
-                        ir = loadImageResourceFromUri(uri);
-                        final FSImage awtfsImage = ir.getImage();
-                        BufferedImage newImg = ((AWTFSImage) awtfsImage).getImage();
-                        loaded(ir, -1, -1);
-                        if (width > -1 && height > -1) {
-                            LOGGER.debug(this + ", scaling " + uri + " to " + width + ", " + height);
-                            newImg = ImageUtil.getScaledInstance(newImg, width, height);
-                            ir = new ImageResource(ir.getImageUri(), AWTFSImage.createImage(newImg));
-                            loaded(ir, width, height);
-                        }
-                    } else {
-                        LOGGER.debug("Image cache miss, URI not yet loaded, queueing: " + uri);
-                        final MutableFSImage mfsi = new MutableFSImage(_repaintListener);
-                        ir = new ImageResource(uri, mfsi);
-                        _loadQueue.addToQueue(this, uri, mfsi, width, height);
-                    }
-
-                    _imageCache.put(key, ir);
+                   LOGGER.debug("Load immediate: " + uri);
+                   ir = loadImageResourceFromUri(uri);
+                   final FSImage awtfsImage = ir.getImage();
+                   BufferedImage newImg = ((AWTFSImage) awtfsImage).getImage();
+                   loaded(ir, -1, -1);
+                   if (width > -1 && height > -1) {
+                       LOGGER.debug(this + ", scaling " + uri + " to " + width + ", " + height);
+                       newImg = ImageUtil.getScaledInstance(newImg, width, height);
+                       ir = new ImageResource(ir.getImageUri(), AWTFSImage.createImage(newImg));
+                       loaded(ir, width, height);
+                   }
+                   _imageCache.put(key, ir);
                 } else {
                     // loaded at base size, need to scale
                     LOGGER.debug(this + ", scaling " + uri + " to " + width + ", " + height);
@@ -181,11 +149,7 @@ public class ImageResourceLoader {
         }
     }
 
-    public boolean isImmediateLoadUri(final String uri) {
-        return ! _useBackgroundImageLoading || uri.startsWith("jar:file:") || uri.startsWith("file:");
-    }
-
-    public synchronized void loaded(final ImageResource ir, final int width, final int height) {
+    public void loaded(final ImageResource ir, final int width, final int height) {
         final String imageUri = ir.getImageUri();
         if (imageUri != null) {
             _imageCache.put(new CacheKey(imageUri, width, height), ir);
@@ -197,17 +161,6 @@ public class ImageResourceLoader {
             return new ImageResource(uri, AWTFSImage.createImage(ImageUtil.createTransparentImage(10, 10)));
         } else {
             return new ImageResource(uri, AWTFSImage.createImage(ImageUtil.makeCompatible(img)));
-        }
-    }
-
-    public void setRepaintListener(final RepaintListener repaintListener) {
-        _repaintListener = repaintListener;
-    }
-
-    public void stopLoading() {
-        if (_loadQueue != null) {
-            LOGGER.info("By request, clearing pending items from load queue: " + _loadQueue.size());
-            _loadQueue.reset();
         }
     }
 

@@ -56,14 +56,17 @@ public class ITextReplacedElementFactory implements ReplacedElementFactory {
         final String nodeName = e.nodeName();
         if (nodeName.equals("img")) {
             final String srcAttr = e.attr("src");
-            if (srcAttr != null && srcAttr.length() > 0) {
-                final FSImage fsImage = uac.getImageResource(srcAttr).getImage();
-                if (fsImage != null) {
+
+            if (srcAttr != null && srcAttr.length() > 0) 
+            {
+            	final FSImage fsImage = uac.getImageResource(srcAttr).getImage();
+
+            	if (fsImage != null) {
                     if (cssWidth != -1 || cssHeight != -1) {
                         fsImage.scale(cssWidth, cssHeight);
                     }
                     return new ITextImageElement(fsImage);
-                }                    
+                }
             }
 
         } else if (nodeName.equals("input")) {
