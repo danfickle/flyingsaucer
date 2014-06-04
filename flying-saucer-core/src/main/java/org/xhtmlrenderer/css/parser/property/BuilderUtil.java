@@ -3,8 +3,6 @@ package org.xhtmlrenderer.css.parser.property;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.logging.Level;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.constants.CSSName;
@@ -42,14 +40,12 @@ public class BuilderUtil {
 	public static void cssThrowError(final LangId key, final Object... args) 
 	{
 		final String msg = String.format(SharedContext.ERRS.get().getString(key.toString()), args);
-		SharedContext.USER_ERRORS.get().add(msg);
 		throw new CSSParseException(msg, -1);
 	}
 
 	public static void cssNoThrowError(final LangId key, final Object... args) 
 	{
 		final String msg = String.format(SharedContext.ERRS.get().getString(key.toString()), args);
-		SharedContext.USER_ERRORS.get().add(msg);
 		LOGGER.warn(msg);
 	}
 	
