@@ -23,6 +23,7 @@ import org.xhtmlrenderer.demo.browser.actions.ZoomAction;
 import org.xhtmlrenderer.swing.*;
 import org.xhtmlrenderer.util.Uu;
 
+import com.github.danfickle.flyingsaucer.swing.DOMInspector;
 import com.github.danfickle.flyingsaucer.swing.ScalableXHTMLPanel;
 
 import javax.swing.*;

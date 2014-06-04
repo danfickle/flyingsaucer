@@ -21,7 +21,6 @@ package com.github.danfickle.flyingsaucer.swing;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xhtmlrenderer.swing.DOMInspector;
 import org.xhtmlrenderer.util.Uu;
 
 import javax.swing.*;
