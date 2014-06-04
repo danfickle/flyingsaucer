@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.logging.Level;
 import javax.imageio.ImageIO;
 import javax.xml.bind.DatatypeConverter;
 

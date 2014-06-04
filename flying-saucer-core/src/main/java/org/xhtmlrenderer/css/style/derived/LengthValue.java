@@ -19,8 +19,6 @@
  */
 package org.xhtmlrenderer.css.style.derived;
 
-import java.util.logging.Level;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.constants.CSSName;
