@@ -42,6 +42,7 @@ import org.xhtmlrenderer.css.sheet.StylesheetInfo;
 import org.xhtmlrenderer.extend.NamespaceHandler;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.layout.SharedContext;
+import org.xhtmlrenderer.swing.StylesheetCache.StylesheetCacheKey;
 
 
 /**
@@ -83,7 +84,9 @@ public class StyleReference {
         final AttributeResolver attRes = new StandardAttributeResolver(_nsh, _uac);
 
         final List<StylesheetInfo> infos = getStylesheets();
+        
         LOGGER.info("media = " + _context.getMedia());
+
         _matcher = new org.xhtmlrenderer.css.newmatch.Matcher(
                 new DOMTreeResolver(),
                 attRes, 
@@ -168,15 +171,19 @@ public class StyleReference {
     /**
      * Flushes any stylesheet associated with this stylereference (based on the user agent callback) that are in cache.
      */
-    public void flushStyleSheets() {
+    public void flushStyleSheets() 
+    {
         final String uri = _uac.getBaseURL();
-        final StylesheetInfo info = new StylesheetInfo();
-        info.setUri(uri);
-        info.setOrigin(StylesheetInfo.CSSOrigin.AUTHOR);
-        if (_stylesheetFactory.getUac().getStylesheetCache().containsStylesheet(uri)) {
-            _stylesheetFactory.getUac().getStylesheetCache().removeCachedStylesheet(uri);
+        final String media = null;
+        final StylesheetCacheKey key = new StylesheetCacheKey(uri, -1, -1, media);
+        
+        if (_stylesheetFactory.getUac().getStylesheetCache().containsStylesheet(key)) 
+        {
+            _stylesheetFactory.getUac().getStylesheetCache().removeCachedStylesheet(key);
             LOGGER.info("Removing stylesheet '" + uri + "' from cache by request.");
-        } else {
+        }
+        else 
+        {
             LOGGER.info("Requested removing stylesheet '" + uri + "', but it's not in cache.");
         }
     }

@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.extend.StylesheetFactory;
@@ -35,6 +36,7 @@ import org.xhtmlrenderer.css.sheet.StylesheetInfo;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.resource.CSSResource;
+import org.xhtmlrenderer.swing.StylesheetCache.StylesheetCacheKey;
 
 /**
  * A Factory class for Cascading Style Sheets. Sheets are parsed using a single
@@ -64,7 +66,9 @@ public class StylesheetFactoryImpl implements StylesheetFactory {
     public synchronized Stylesheet parse(final Reader reader, final StylesheetInfo info) {
         try {
         	final Stylesheet s1 = _cssParser.parseStylesheet(info.getUri(), info.getOrigin(), reader);
-        	_userAgentCallback.getStylesheetCache().putStylesheet(info.getUri(), s1);
+        	// TODO
+        	final StylesheetCacheKey key = new StylesheetCacheKey(info.getUri(), 0, 0, null);
+        	_userAgentCallback.getStylesheetCache().putStylesheet(key, s1);
             return s1; 
         } catch (final IOException e) {
             LOGGER.warn("Couldn't parse stylesheet at URI " + info.getUri() + ": " + e.getMessage(), e);
@@ -108,7 +112,9 @@ public class StylesheetFactoryImpl implements StylesheetFactory {
         
         // Give the user agent the chance to return a cached Stylesheet
         // instance.
-        final Stylesheet s1 = _userAgentCallback.getStylesheetCache().getStylesheet(info);
+        // TODO
+        final StylesheetCacheKey key = new StylesheetCacheKey(info.getUri(), 0, 0, null);
+        final Stylesheet s1 = _userAgentCallback.getStylesheetCache().getStylesheet(key);
 
         if (s1 == null)
         	return parse(info);
