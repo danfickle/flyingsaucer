@@ -35,7 +35,7 @@ import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
  * @author Torbjoern Gannholm
  */
 public interface StylesheetFactory {
-    Stylesheet parse(Reader reader, StylesheetInfo info);
+    Stylesheet parse(Reader reader, StylesheetInfo info, boolean isInline);
     Ruleset parseStyleDeclaration(CSSOrigin author, String style);
 
     Stylesheet getStylesheet(StylesheetInfo si);

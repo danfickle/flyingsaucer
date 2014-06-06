@@ -102,7 +102,7 @@ public class RootPanel extends JPanel implements ComponentListener, FSCanvas
 
         //have to do this first
         if (Configuration.isTrue("xr.cache.stylesheets", true)) {
-            getSharedContext().getCss().flushStyleSheets();
+			// NO-OP: We no longer cache inline style blocks.
         } else {
             getSharedContext().getCss().flushAllStyleSheets();
         }

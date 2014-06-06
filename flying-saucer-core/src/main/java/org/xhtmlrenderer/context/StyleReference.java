@@ -168,26 +168,6 @@ public class StyleReference {
         return _matcher.getPageCascadedStyle(pageName, pseudoPage);
     }
 
-    /**
-     * Flushes any stylesheet associated with this stylereference (based on the user agent callback) that are in cache.
-     */
-    public void flushStyleSheets() 
-    {
-        final String uri = _uac.getBaseURL();
-        final String media = null;
-        final StylesheetCacheKey key = new StylesheetCacheKey(uri, -1, -1, media);
-        
-        if (_stylesheetFactory.getUac().getStylesheetCache().containsStylesheet(key)) 
-        {
-            _stylesheetFactory.getUac().getStylesheetCache().removeCachedStylesheet(key);
-            LOGGER.info("Removing stylesheet '" + uri + "' from cache by request.");
-        }
-        else 
-        {
-            LOGGER.info("Requested removing stylesheet '" + uri + "', but it's not in cache.");
-        }
-    }
-    
     public void flushAllStyleSheets() {
         _stylesheetFactory.getUac().getStylesheetCache().flushCachedStylesheets();
     }
@@ -233,7 +213,7 @@ public class StyleReference {
                 } else {
                     refs.get(i).setUri(_uac.getBaseURL() + "#inline_style_" + (++inlineStyleCount));
                     final Stylesheet sheet = _stylesheetFactory.parse(
-                            new StringReader(refs.get(i).getContent()), refs.get(i));
+                            new StringReader(refs.get(i).getContent()), refs.get(i), true);
                     refs.get(i).setStylesheet(sheet);
                     refs.get(i).setUri(null);
                 }

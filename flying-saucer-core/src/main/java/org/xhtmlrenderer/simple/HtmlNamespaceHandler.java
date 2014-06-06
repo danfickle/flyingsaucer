@@ -717,7 +717,7 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
 			if (is == null)
 				return null;
 			
-			final Stylesheet sheet = factory.parse(new InputStreamReader(is), info);
+			final Stylesheet sheet = factory.parse(new InputStreamReader(is), info, false);
 			info.setStylesheet(sheet);
 
 		} catch (final Exception e) {

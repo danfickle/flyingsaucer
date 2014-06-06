@@ -320,7 +320,7 @@ public class Java2DRenderer {
 
 		sharedContext.reset();
 		if (Configuration.isTrue("xr.cache.stylesheets", true)) {
-			sharedContext.getCss().flushStyleSheets();
+			// NO-OP: We no longer cache inline style blocks.
 		} else {
 			sharedContext.getCss().flushAllStyleSheets();
 		}

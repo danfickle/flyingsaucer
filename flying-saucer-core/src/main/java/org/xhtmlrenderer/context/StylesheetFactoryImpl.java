@@ -63,14 +63,22 @@ public class StylesheetFactoryImpl implements StylesheetFactory {
         });
     }
 
-    public synchronized Stylesheet parse(final Reader reader, final StylesheetInfo info) {
-        try {
+    public synchronized Stylesheet parse(final Reader reader, final StylesheetInfo info, boolean isInline) {
+        try 
+        {
         	final Stylesheet s1 = _cssParser.parseStylesheet(info.getUri(), info.getOrigin(), reader);
-        	// TODO
-        	final StylesheetCacheKey key = new StylesheetCacheKey(info.getUri(), 0, 0, null);
-        	_userAgentCallback.getStylesheetCache().putStylesheet(key, s1);
-            return s1; 
-        } catch (final IOException e) {
+
+        	if (!isInline)
+        	{
+            	// TODO
+        		final StylesheetCacheKey key = new StylesheetCacheKey(info.getUri(), 0, 0, null);
+        	   	_userAgentCallback.getStylesheetCache().putStylesheet(key, s1);
+        	}
+
+        	return s1; 
+        }
+        catch (final IOException e) 
+        {
             LOGGER.warn("Couldn't parse stylesheet at URI " + info.getUri() + ": " + e.getMessage(), e);
             e.printStackTrace();
             return new Stylesheet(info.getUri(), info.getOrigin());
@@ -86,7 +94,7 @@ public class StylesheetFactoryImpl implements StylesheetFactory {
         // since the null resource stream is wrapped in a BufferedInputStream
         final InputStream is = cr.getResourceInputStream();
         try {
-            final Stylesheet s1 = parse(new InputStreamReader(is, "UTF-8"), info);
+            final Stylesheet s1 = parse(new InputStreamReader(is, "UTF-8"), info, false);
             return s1;
         } catch (final UnsupportedEncodingException e) {
             // Shouldn't happen
