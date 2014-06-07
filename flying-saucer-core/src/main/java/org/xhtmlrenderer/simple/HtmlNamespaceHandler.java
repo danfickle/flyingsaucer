@@ -126,7 +126,8 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
     protected StylesheetInfo readLinkElement(final Node link)
     {
     	if (link.hasAttr("rel") &&
-    		link.attr("rel").contains("alternate"))
+    		(link.attr("rel").contains("alternate") || 
+    		 !ciEquals(link.attr("rel"), "stylesheet")))
     		return null;
 
     	if (link.hasAttr("type") &&
