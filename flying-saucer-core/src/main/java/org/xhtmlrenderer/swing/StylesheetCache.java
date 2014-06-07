@@ -127,9 +127,9 @@ public class StylesheetCache
 	public Stylesheet getStylesheet(final StylesheetCacheKey key) 
 	{
 		if (_cache.containsKey(key))
-			LOGGER.info("Stylesheet hit for " + key.uri);
+			LOGGER.info("Stylesheet hit for " + key.toString());
 		else
-			LOGGER.info("Stylesheet miss for " + key.uri);
+			LOGGER.info("Stylesheet miss for " + key.toString());
 		
 		return _cache.get(key);
 	}

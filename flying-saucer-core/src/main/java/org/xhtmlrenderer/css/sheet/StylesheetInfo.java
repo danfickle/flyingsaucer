@@ -48,7 +48,7 @@ public class StylesheetInfo {
     /** Description of the Field */
     private String type;
     
-    private List<String> mediaTypes = new ArrayList<String>();
+    private List<String> mediaTypes = new ArrayList<>(1);
     
     private String content;
 

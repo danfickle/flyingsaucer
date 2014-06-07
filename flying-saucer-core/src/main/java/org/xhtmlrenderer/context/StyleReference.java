@@ -42,7 +42,6 @@ import org.xhtmlrenderer.css.sheet.StylesheetInfo;
 import org.xhtmlrenderer.extend.NamespaceHandler;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.layout.SharedContext;
-import org.xhtmlrenderer.swing.StylesheetCache.StylesheetCacheKey;
 
 
 /**
