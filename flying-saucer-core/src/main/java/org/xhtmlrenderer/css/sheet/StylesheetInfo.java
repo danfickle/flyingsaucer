@@ -21,8 +21,11 @@ package org.xhtmlrenderer.css.sheet;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xhtmlrenderer.util.GeneralUtil;
 
 /**
  * A reference to a stylesheet. If no stylesheet is set, the matcher will try to
@@ -37,19 +40,16 @@ import java.util.List;
  */
 public class StylesheetInfo {
 
-    /** Description of the Field */
-    private Stylesheet stylesheet = null;//just to be able to attach "dummy" stylesheets. Also might save a lookup if it's already looked up
-            /** Description of the Field */
-    private String title;
-    /** Description of the Field */
+	private static final Logger LOGGER = LoggerFactory.getLogger(StylesheetInfo.class);
+	
+	// Just to be able to attach "dummy" stylesheets. Also might save a lookup if it's already looked up
+	private Stylesheet stylesheet = null;
+
+	private String title;
     private String uri;
-    /** Description of the Field */
     private CSSOrigin origin = CSSOrigin.USER_AGENT;
-    /** Description of the Field */
     private String type;
-    
     private List<String> mediaTypes = new ArrayList<>(1);
-    
     private String content;
 
     public static enum CSSOrigin
@@ -68,9 +68,16 @@ public class StylesheetInfo {
      * @param m  a single media identifier
      * @return   true if the stylesheet referenced applies to the medium
      */
-    public boolean appliesToMedia(final String m) {
-        return m.toLowerCase().equals("all") || 
-            mediaTypes.contains("all") || mediaTypes.contains(m.toLowerCase());
+    public boolean appliesToMedia(final String m) 
+    {
+    	boolean ret = 
+    			GeneralUtil.ciEquals(m, "all") || 
+    				mediaTypes.contains("all") || 
+    				mediaTypes.contains(m.toLowerCase(Locale.US));
+
+    	LOGGER.info("Checking if '" + m + "' applies to " + mediaTypes.toString() + " => " + ret);
+    	
+    	return ret;
     }
 
     /**
@@ -89,10 +96,12 @@ public class StylesheetInfo {
      */
     public void setMedia( final String media ) {
         final String[] mediaTypes = media.split(",");
-        final List<String> l = new ArrayList<String>(mediaTypes.length);
+        final List<String> l = new ArrayList<>(mediaTypes.length);
+
         for (final String mediaType : mediaTypes) {
-            l.add(mediaType.trim().toLowerCase());
+            l.add(mediaType.trim().toLowerCase(Locale.US));
         }
+
         this.mediaTypes = l;
     }
     
@@ -101,7 +110,7 @@ public class StylesheetInfo {
     }
     
     public void addMedium(final String medium) {
-        mediaTypes.add(medium);
+        mediaTypes.add(medium.toLowerCase(Locale.US));
     }
 
     /**
@@ -116,7 +125,7 @@ public class StylesheetInfo {
     /**
      * Sets the type attribute of the StylesheetInfo object
      *
-     * @param type  The new type value
+     * Currently we only support "text/css".
      */
     public void setType( final String type ) {
         this.type = type;
