@@ -21,30 +21,34 @@ package org.xhtmlrenderer.css.sheet;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
 
-public class MediaRule implements RulesetContainer {
-    private final List<String> _mediaTypes = new ArrayList<String>();
-    private final List<Ruleset> _contents = new ArrayList<Ruleset>();
+public class MediaRule implements RulesetContainer 
+{
+	private static final Logger LOGGER = LoggerFactory.getLogger(MediaRule.class);
+	
+    private final List<Ruleset> _contents = new ArrayList<>();
+    private String mediaQuery;
     private final CSSOrigin _origin;
     
     public MediaRule(final CSSOrigin origin) {
         _origin = origin;
     }
     
-    public void addMedium(final String medium) {
-        _mediaTypes.add(medium);
+    public void setMediaQuery(final String query)
+    {
+    	mediaQuery = query;
+    	LOGGER.info("Set media query/type to: " + mediaQuery);
     }
     
     public boolean matches(final String medium) {
-        if (medium.equalsIgnoreCase("all") || _mediaTypes.contains("all")) {
-            return true;
-        } else {
-            return _mediaTypes.contains(medium.toLowerCase());
-        }
+    	// TODO
+    	return true;
     }
     
+    @Override
     public void addContent(final Ruleset ruleset) {
         _contents.add(ruleset);
     }
@@ -53,6 +57,7 @@ public class MediaRule implements RulesetContainer {
         return _contents;
     }
     
+    @Override
     public CSSOrigin getOrigin() {
         return _origin;
     }

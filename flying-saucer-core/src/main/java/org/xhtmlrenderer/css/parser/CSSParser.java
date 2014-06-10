@@ -400,53 +400,45 @@ public class CSSParser {
         Token t = next();
         try {
             if (t == Token.TK_MEDIA_SYM) {
-                final MediaRule mediaRule = new MediaRule(stylesheet.getOrigin());
+            	// We now just pass everything to the MediaRule and let it resolve
+            	// media queries and media types. Dan (2014-06-10).
+            	
+            	final MediaRule mediaRule = new MediaRule(stylesheet.getOrigin());
                 skip_whitespace();
-                t = la();
-                if (t == Token.TK_IDENT) {
-                    mediaRule.addMedium(medium());
-                    while (true) {
-                        t = la();
-                        if (t == Token.TK_COMMA) {
-                            next();
-                            skip_whitespace();
-                            t = la();
-                            if (t == Token.TK_IDENT) {
-                                mediaRule.addMedium(medium());
-                            } else {
-                                throw new CSSParseException(t, Token.TK_IDENT, getCurrentLine());
-                            }
-                        } else {
-                            break;
-                        }
-                    }
-                    t = next();
-                    if (t == Token.TK_LBRACE) {
-                        skip_whitespace();
-                        LOOP:
-                        while (true) {
-                            t = la();
-                            if (t == null) {
-                                break;
-                            }
-                            switch (t.getType()) {
-                                case Token.RBRACE:
-                                    next();
-                                    break LOOP;
-                                default:
-                                    ruleset(mediaRule);
-                            }
-                        }
-                        skip_whitespace();
-                    } else {
-                        push(t);
-                        throw new CSSParseException(t, Token.TK_LBRACE, getCurrentLine());
-                    }
-                } else {
-                    throw new CSSParseException(t, Token.TK_IDENT, getCurrentLine());
-                }
+                t = next();
+                final StringBuilder builder = new StringBuilder();
 
+                LOOP:
+				while (true)
+				{
+					builder.append(getTokenValue(t));
+					t = la();
+
+					if (t == Token.TK_LBRACE) {
+						mediaRule.setMediaQuery(builder.toString());
+						skip_whitespace();
+						next();
+						while (true) {
+							t = la();
+							if (t == null) {
+								skip_whitespace();
+								break LOOP;
+							}
+							switch (t.getType()) {
+							case Token.RBRACE:
+								next();
+								break LOOP;
+							default:
+								skip_whitespace();
+								ruleset(mediaRule);
+							}
+						}
+					}
+					next();
+				}
+				skip_whitespace();
                 stylesheet.addContent(mediaRule);
+
             } else {
                 push(t);
                 throw new CSSParseException(t, Token.TK_MEDIA_SYM, getCurrentLine());
