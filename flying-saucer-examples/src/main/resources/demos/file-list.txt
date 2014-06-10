@@ -18,4 +18,5 @@ Alice in Wonderland,demo:demos/alice/alice.xhtml
 Hamlet,demo:demos/hamlet.xhtml
 Game Screen,demo:demos/game/game-screen.xhtml
 Gradients,demo:demos/gradients.htm
+Media Queries,demo:demos/mediaquery.htm
 Unsupported,demo:demos/unsupported.xhtml
