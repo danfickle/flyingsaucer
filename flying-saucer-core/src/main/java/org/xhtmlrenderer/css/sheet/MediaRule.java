@@ -21,8 +21,10 @@ package org.xhtmlrenderer.css.sheet;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xhtmlrenderer.css.mediaquery.MediaQueryEvaluator;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
 
 public class MediaRule implements RulesetContainer 
@@ -30,7 +32,7 @@ public class MediaRule implements RulesetContainer
 	private static final Logger LOGGER = LoggerFactory.getLogger(MediaRule.class);
 	
     private final List<Ruleset> _contents = new ArrayList<>();
-    private String mediaQuery;
+    private MediaQueryEvaluator mediaQuery;
     private final CSSOrigin _origin;
     
     public MediaRule(final CSSOrigin origin) {
@@ -39,8 +41,9 @@ public class MediaRule implements RulesetContainer
     
     public void setMediaQuery(final String query)
     {
-    	mediaQuery = query;
-    	LOGGER.info("Set media query/type to: " + mediaQuery);
+    	LOGGER.info("Set media query/type to: " + query);
+    	
+    	mediaQuery = new MediaQueryEvaluator(query);
     }
     
     public boolean matches(final String medium) {
