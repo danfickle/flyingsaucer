@@ -178,6 +178,12 @@ public class MediaQueryExpression
     		_cssValue = null;
     		return;
     	}
+    	else if (valueList == null)
+    	{
+    		_isValid = false;
+    		_cssValue = null;
+    		return;
+    	}
     	
         if (valueList.size() == 1) 
         {
