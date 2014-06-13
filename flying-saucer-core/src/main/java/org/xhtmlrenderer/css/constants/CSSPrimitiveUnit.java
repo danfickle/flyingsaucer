@@ -1,5 +1,7 @@
 package org.xhtmlrenderer.css.constants;
 
+import java.util.Locale;
+
 
 /**
  * Aims to enumerate all CSS unit types. From Webkit, not all units
@@ -63,4 +65,61 @@ public enum CSSPrimitiveUnit
 
     CSS_PROPERTY_ID,
     CSS_VALUE_ID;
+
+	public static CSSPrimitiveUnit fromString(String unit) 
+	{
+		final String unitCompare = unit.toLowerCase(Locale.US);
+
+		switch (unitCompare)
+		{
+		case "em":
+			return CSSPrimitiveUnit.CSS_EMS;
+		case "ex":
+			return CSSPrimitiveUnit.CSS_EXS;
+		case "rem":
+			return CSSPrimitiveUnit.CSS_REMS;
+		case "ch":
+			return CSSPrimitiveUnit.CSS_CHS;
+		case "vw":
+			return CSSPrimitiveUnit.CSS_VW;
+		case "vh":
+			return CSSPrimitiveUnit.CSS_VH;
+		case "vmin":
+			return CSSPrimitiveUnit.CSS_VMIN;
+		case "vmax":
+			return CSSPrimitiveUnit.CSS_VMAX;
+		case "cm":
+			return CSSPrimitiveUnit.CSS_CM;
+		case "mm":
+			return CSSPrimitiveUnit.CSS_MM;
+		case "in":
+			return CSSPrimitiveUnit.CSS_IN;
+		case "pt":
+			return CSSPrimitiveUnit.CSS_PT;
+		case "px":
+			return CSSPrimitiveUnit.CSS_PX;
+		case "pc":
+			return CSSPrimitiveUnit.CSS_PC;
+		case "deg":
+			return CSSPrimitiveUnit.CSS_DEG;
+		case "rad":
+			return CSSPrimitiveUnit.CSS_RAD;
+		case "turn":
+			return CSSPrimitiveUnit.CSS_TURN;
+		case "grad":
+			return CSSPrimitiveUnit.CSS_GRAD;
+		case "hz":
+			return CSSPrimitiveUnit.CSS_HZ;
+		case "khz":
+			return CSSPrimitiveUnit.CSS_KHZ;
+		case "dpi":
+			return CSSPrimitiveUnit.CSS_DPI;
+		case "dpcm":
+			return CSSPrimitiveUnit.CSS_DPCM;
+		case "dppx":
+			return CSSPrimitiveUnit.CSS_DPPX;
+		default:
+			return CSSPrimitiveUnit.CSS_UNKNOWN;
+		}
+	}
 }

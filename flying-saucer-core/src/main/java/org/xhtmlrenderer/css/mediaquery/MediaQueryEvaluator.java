@@ -1,6 +1,8 @@
 package org.xhtmlrenderer.css.mediaquery;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -8,6 +10,10 @@ import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xhtmlrenderer.css.constants.CSSPrimitiveUnit;
+import org.xhtmlrenderer.css.parser.PropertyValue;
+import org.xhtmlrenderer.css.parser.PropertyValueImp;
+import org.xhtmlrenderer.css.parser.Token;
 
 public class MediaQueryEvaluator 
 {
@@ -37,14 +43,20 @@ public class MediaQueryEvaluator
 	// (max-width:600px)
 	// (color) and 
 	// (min-width: 500px) and
-	private static final Pattern EXPR_PATTERN = Pattern.compile("\\s*\\(\\s*([a-z\\-]+)\\s*(\\:?)\\s*([a-z0-9]*)\\s*\\)\\s*(and)?.*");
+	private static final Pattern EXPR_PATTERN = Pattern.compile("\\s*\\(\\s*([a-z\\-]+)\\s*(\\:?)\\s*([a-z0-9/\\s\\.]*)\\s*\\)\\s*(and)?.*");
 
 	// Matches 'not' or 'only'.
 	private static final Pattern NOT_ONLY_PATTERN = Pattern.compile("\\s*((not)|(only)).*");
 
 	// Matches an ascii media type optionally followed by 'and'.
 	private static final Pattern MEDIA_TYPE_PATTERN = Pattern.compile("\\s*([a-z]+)\\s*(and)?.*");
-	
+
+	// Matches a ratio value.
+	private static final Pattern RATIO_PATTERN = Pattern.compile("\\s*(\\d+)\\s*/\\s*(\\d+).*");
+
+	// Matches a measurement or number. Examples: 1cm, 1, landscape
+	private static final Pattern VALUE_PATTERN = Pattern.compile("\\s*([\\d\\.]*)\\s*([a-z]*)\\s*");
+
 	private static enum MediaQueryQualifier
 	{
 		NOT,
@@ -71,7 +83,7 @@ public class MediaQueryEvaluator
 	}
 
 	// Each media query is combined together with OR semantics.
-	private final List<MediaQueryItem> queryItems = new ArrayList<>();
+	private final List<MediaQueryItem> queryItems = new ArrayList<>(2);
 	
 	public MediaQueryEvaluator(String mediaQuery) 
 	{
@@ -137,9 +149,65 @@ public class MediaQueryEvaluator
 				String value = matcherQuery.group(3);
 				boolean hasAnd = matcherQuery.group(4) != null && !matcherQuery.group(4).isEmpty();
 
-				// TODO: Parse value.
-				queryItem.expressions.add(new MediaQueryExpression(exprName, null));
+				List<PropertyValue> values = Collections.emptyList();
 				
+				try
+				{
+					if (hasValue)
+					{
+						if (MediaFeatureName.isRatio(exprName))
+						{
+							Matcher matcherRatio = RATIO_PATTERN.matcher(value);
+
+							if (matcherRatio.matches())
+							{
+								float firstRatio = Float.parseFloat(matcherRatio.group(1));
+								float secondRatio = Float.parseFloat(matcherRatio.group(2));
+
+								PropertyValue valFirst = new PropertyValueImp(CSSPrimitiveUnit.CSS_NUMBER, firstRatio, matcherRatio.group(1));
+								PropertyValue valSecond = new PropertyValueImp(CSSPrimitiveUnit.CSS_NUMBER, secondRatio, matcherRatio.group(2));
+								valSecond.setOperator(Token.TK_VIRGULE);
+
+								values = Arrays.asList(valFirst, valSecond);
+							}
+						}
+						else
+						{
+							Matcher matcherValue = VALUE_PATTERN.matcher(value);
+
+							if (matcherValue.matches())
+							{
+								if (matcherValue.group(1) != null && !matcherValue.group(1).isEmpty())
+								{
+									float floatVal = Float.parseFloat(matcherValue.group(1));
+
+									CSSPrimitiveUnit unit = CSSPrimitiveUnit.CSS_NUMBER;
+
+									if (matcherValue.group(2) != null && !matcherValue.group(2).isEmpty())
+									{
+										unit = CSSPrimitiveUnit.fromString(matcherValue.group(2));
+									}
+
+									PropertyValue val = new PropertyValueImp(unit, floatVal, matcherValue.group(1) + matcherValue.group(2));
+									values = Collections.singletonList(val);
+								}
+								else
+								{
+									// No number means it is is an ident, such as 'landscape'.
+									PropertyValue val = new PropertyValueImp(CSSPrimitiveUnit.CSS_IDENT, matcherValue.group(2), matcherValue.group(2));
+									values = Collections.singletonList(val);
+								}
+							}
+						}
+					}
+				} catch (NumberFormatException e)
+				{
+					LOGGER.warn("Invalid media query expression value: " + value);
+					// Do nothing else. Values is already an empty list.
+				}
+
+				queryItem.expressions.add(new MediaQueryExpression(exprName, values));
+
 				if (!hasAnd)
 					break;
 

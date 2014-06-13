@@ -67,4 +67,16 @@ public enum MediaFeatureName
 	{
 		return map.get(mediaFeatureStr);
 	}
+	
+	public static boolean isRatio(final String mediaFeatureString)
+	{
+		MediaFeatureName mediaFeature = fsValueOf(mediaFeatureString);
+
+		return mediaFeature == MediaFeatureName.ASPECT_RATIO
+                || mediaFeature == MediaFeatureName.DEVICE_ASPECT_RATIO
+                || mediaFeature == MediaFeatureName.MIN_ASPECT_RATIO
+                || mediaFeature == MediaFeatureName.MAX_ASPECT_RATIO
+                || mediaFeature == MediaFeatureName.MIN_DEVICE_ASPECT_RATIO
+                || mediaFeature == MediaFeatureName.MAX_DEVICE_ASPECT_RATIO;
+	}
 }
