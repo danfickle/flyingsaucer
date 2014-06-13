@@ -118,6 +118,8 @@ public enum CSSPrimitiveUnit
 			return CSSPrimitiveUnit.CSS_DPCM;
 		case "dppx":
 			return CSSPrimitiveUnit.CSS_DPPX;
+		case "%":
+			return CSSPrimitiveUnit.CSS_PERCENTAGE;
 		default:
 			return CSSPrimitiveUnit.CSS_UNKNOWN;
 		}

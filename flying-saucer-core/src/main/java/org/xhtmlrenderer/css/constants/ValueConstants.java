@@ -25,8 +25,8 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.css.CSSValue;
 import org.xhtmlrenderer.css.parser.PropertyValue;
 import org.xhtmlrenderer.util.GeneralUtil;
-import org.xhtmlrenderer.util.XRRuntimeException;
 
+// TODO: Fix up below and move to CSSPrimitiveUnit enum.
 
 /**
  * Utility class for working with <code>CSSValue</code> instances.
@@ -36,57 +36,9 @@ import org.xhtmlrenderer.util.XRRuntimeException;
 public final class ValueConstants {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ValueConstants.class);
-     /**
-     * Description of the Method
-     *
-     * @param type PARAM
-     * @return Returns
-     */
-    public static CSSPrimitiveUnit sacPrimitiveTypeForString(final String type) {
-        if ("em".equals(type)) {
-            return CSSPrimitiveUnit.CSS_EMS;
-        } else if ("ex".equals(type)) {
-            return CSSPrimitiveUnit.CSS_EXS;
-        } else if ("px".equals(type)) {
-            return CSSPrimitiveUnit.CSS_PX;
-        } else if ("%".equals(type)) {
-            return CSSPrimitiveUnit.CSS_PERCENTAGE;
-        } else if ("in".equals(type)) {
-            return CSSPrimitiveUnit.CSS_IN;
-        } else if ("cm".equals(type)) {
-            return CSSPrimitiveUnit.CSS_CM;
-        } else if ("mm".equals(type)) {
-            return CSSPrimitiveUnit.CSS_MM;
-        } else if ("pt".equals(type)) {
-            return CSSPrimitiveUnit.CSS_PT;
-        } else if ("pc".equals(type)) {
-            return CSSPrimitiveUnit.CSS_PC;
-        } else if (type == null) {
-            //this is only valid if length is 0
-            return CSSPrimitiveUnit.CSS_PX;
-        } else {
-            throw new XRRuntimeException("Unknown type on CSS value: " + type);
-        }
-    }
 
     public static String stringForSACPrimitiveType(final CSSPrimitiveUnit type) {
         return type.toString();
-    }
-
-    /**
-     * Returns true if the specified value was absolute (even if we have a
-     * computed value for it), meaning that either the value can be used
-     * directly (e.g. pixels) or there is a fixed context-independent conversion
-     * for it (e.g. inches). Proportional types (e.g. %) return false.
-     *
-     * @param primitive The CSSValue instance to check.
-     * @return See desc.
-     */
-    //TODO: method may be unnecessary (tobe)
-    public static boolean isAbsoluteUnit(final PropertyValue primitive) {
-    	CSSPrimitiveUnit type;
-        type = primitive.getPrimitiveTypeN();
-        return isAbsoluteUnit(type);
     }
 
     /**
@@ -208,53 +160,5 @@ public final class ValueConstants {
             default:
                 return false;
         }
-    }
-
-    /**
-     * Incomplete routine to try and determine the
-     * CSSPrimitiveValue short code for a given value,
-     * e.g. 14pt is CSS_PT.
-     *
-     * @param value PARAM
-     * @return Returns
-     */
-    public static CSSPrimitiveUnit guessType(final String value) {
-    	CSSPrimitiveUnit type = CSSPrimitiveUnit.CSS_STRING;
-        if (value != null && value.length() > 1) {
-            if (value.endsWith("%")) {
-                type = CSSPrimitiveUnit.CSS_PERCENTAGE;
-            } else if (value.startsWith("rgb") || value.startsWith("#")) {
-                type = CSSPrimitiveUnit.CSS_RGBCOLOR;
-            } else {
-                final String hmm = value.substring(value.length() - 2);
-                if ("pt".equals(hmm)) {
-                    type = CSSPrimitiveUnit.CSS_PT;
-                } else if ("px".equals(hmm)) {
-                    type = CSSPrimitiveUnit.CSS_PX;
-                } else if ("em".equals(hmm)) {
-                    type = CSSPrimitiveUnit.CSS_EMS;
-                } else if ("ex".equals(hmm)) {
-                    type = CSSPrimitiveUnit.CSS_EXS;
-                } else if ("in".equals(hmm)) {
-                    type = CSSPrimitiveUnit.CSS_IN;
-                } else if ("cm".equals(hmm)) {
-                    type = CSSPrimitiveUnit.CSS_CM;
-                } else if ("mm".equals(hmm)) {
-                    type = CSSPrimitiveUnit.CSS_MM;
-                } else {
-                    if (Character.isDigit(value.charAt(value.length() - 1))) {
-                        try {
-                            new Float(value);
-                            type = CSSPrimitiveUnit.CSS_NUMBER;
-                        } catch (final NumberFormatException ex) {
-                            type = CSSPrimitiveUnit.CSS_STRING;
-                        }
-                    } else {
-                        type = CSSPrimitiveUnit.CSS_STRING;
-                    }
-                }
-            }
-        }
-        return type;
     }
 }
