@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.mediaquery.MediaQueryEvaluator;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
+import org.xhtmlrenderer.layout.SharedContext;
 
 public class MediaRule implements RulesetContainer 
 {
@@ -41,14 +42,14 @@ public class MediaRule implements RulesetContainer
     
     public void setMediaQuery(final String query)
     {
-    	LOGGER.info("Set media query/type to: " + query);
+    	LOGGER.info("Set media query/type to: {}", query);
     	
     	mediaQuery = new MediaQueryEvaluator(query);
     }
     
-    public boolean matches(final String medium) {
-    	// TODO
-    	return true;
+    public boolean matches(final SharedContext ctx) 
+    {
+    	return mediaQuery.eval(ctx);
     }
     
     @Override

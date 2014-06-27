@@ -91,7 +91,7 @@ public class StyleReference {
                 attRes, 
                 _stylesheetFactory, 
                 readAndParseAll(infos, _context.getMedia()), 
-                _context.getMedia());
+                _context);
     }
     
     private List<Stylesheet> readAndParseAll(final List<StylesheetInfo> infos, final String medium) {
@@ -113,10 +113,6 @@ public class StyleReference {
         }
         
         return result;
-    }
-    
-    public boolean isHoverStyled(final Element e) {
-        return _matcher.isHoverStyled(e);
     }
 
     /**

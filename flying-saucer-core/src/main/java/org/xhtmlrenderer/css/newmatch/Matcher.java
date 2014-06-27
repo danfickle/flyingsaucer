@@ -43,6 +43,7 @@ import org.xhtmlrenderer.css.sheet.PageRule;
 import org.xhtmlrenderer.css.sheet.PropertyDeclaration;
 import org.xhtmlrenderer.css.sheet.Ruleset;
 import org.xhtmlrenderer.css.sheet.Stylesheet;
+import org.xhtmlrenderer.layout.SharedContext;
 import org.xhtmlrenderer.util.Util;
 
 
@@ -61,16 +62,16 @@ public class Matcher {
     private java.util.Map<Object, Mapper> _map;
 
     //handle dynamic
-    private Set<Object> _hoverElements;
-    private Set<Object> _activeElements;
-    private Set<Object> _focusElements;
     private Set<Object> _visitElements;
     
     private final List<PageRule> _pageRules;
     private final List<FontFaceRule> _fontFaceRules;
     
     public Matcher(
-            final TreeResolver tr, final AttributeResolver ar, final StylesheetFactory factory, final List<Stylesheet> stylesheets, final String medium) {
+            final TreeResolver tr, final AttributeResolver ar,
+            final StylesheetFactory factory,
+            final List<Stylesheet> stylesheets, final SharedContext sharedCtx)
+    {
         newMaps();
         _treeRes = tr;
         _attRes = ar;
@@ -78,7 +79,7 @@ public class Matcher {
         
         _pageRules = new ArrayList<PageRule>();
         _fontFaceRules = new ArrayList<FontFaceRule>();
-        docMapper = createDocumentMapper(stylesheets, medium);
+        docMapper = createDocumentMapper(stylesheets, sharedCtx);
     }
     
     public void removeStyle(final Object e) {
@@ -109,8 +110,8 @@ public class Matcher {
     }
     
     public PageInfo getPageCascadedStyle(final String pageName, final String pseudoPage) {
-        final List<PropertyDeclaration> props = new ArrayList<PropertyDeclaration>();
-        final Map<MarginBoxName, List<PropertyDeclaration>> marginBoxes = new HashMap<MarginBoxName, List<PropertyDeclaration>>();
+        final List<PropertyDeclaration> props = new ArrayList<>();
+        final Map<MarginBoxName, List<PropertyDeclaration>> marginBoxes = new HashMap<>();
 
         for (final PageRule pageRule : _pageRules) {
             if (pageRule.applies(pageName, pseudoPage)) {
@@ -137,18 +138,6 @@ public class Matcher {
         return _visitElements.contains(e);
     }
 
-    public boolean isHoverStyled(final Object e) {
-        return _hoverElements.contains(e);
-    }
-
-    public boolean isActiveStyled(final Object e) {
-        return _activeElements.contains(e);
-    }
-
-    public boolean isFocusStyled(final Object e) {
-        return _focusElements.contains(e);
-    }
-
     protected Mapper matchElement(final Object e) {
         synchronized (e) {
             final Object parent = _treeRes.getParentElement(e);
@@ -163,14 +152,15 @@ public class Matcher {
         }
     }
 
-    Mapper createDocumentMapper(final List<Stylesheet> stylesheets, final String medium) {
-        final java.util.TreeMap<String, Selector> sorter = new java.util.TreeMap<String, Selector>();
-        addAllStylesheets(stylesheets, sorter, medium);
+    Mapper createDocumentMapper(final List<Stylesheet> stylesheets, final SharedContext sharedCtx) {
+        final java.util.TreeMap<String, Selector> sorter = new java.util.TreeMap<>();
+        addAllStylesheets(stylesheets, sorter, sharedCtx);
         LOGGER.info("Matcher created with " + sorter.size() + " selectors");
         return new Mapper(sorter.values());
     }
     
-    private void addAllStylesheets(final List<Stylesheet> stylesheets, final TreeMap<String, Selector> sorter, final String medium) {
+    private void addAllStylesheets(final List<Stylesheet> stylesheets, 
+    		final TreeMap<String, Selector> sorter, final SharedContext sharedCtx) {
         int count = 0;
         int pCount = 0;
         for (final Stylesheet stylesheet : stylesheets) {
@@ -185,7 +175,7 @@ public class Matcher {
                     _pageRules.add((PageRule) obj);
                 } else if (obj instanceof MediaRule) {
                     final MediaRule mediaRule = (MediaRule)obj;
-                    if (mediaRule.matches(medium)) {
+                    if (mediaRule.matches(sharedCtx)) {
                         for (final Ruleset ruleset : mediaRule.getContents()) {
                             for (final Selector selector : ruleset.getFSSelectors()) {
                                 selector.setPos(++count);
@@ -201,8 +191,8 @@ public class Matcher {
         
         Collections.sort(_pageRules, new Comparator<PageRule>() {
             public int compare(final PageRule o1, final PageRule o2) {
-                final PageRule p1 = (PageRule)o1;
-                final PageRule p2 = (PageRule)o2;
+                final PageRule p1 = o1;
+                final PageRule p2 = o2;
                 
                 if (p1.getOrder() - p2.getOrder() < 0) {
                     return -1;
@@ -221,9 +211,6 @@ public class Matcher {
 
     private void newMaps() {
         _map = Collections.synchronizedMap(new java.util.HashMap<Object, Mapper>());
-        _hoverElements = Collections.synchronizedSet(new java.util.HashSet<Object>());
-        _activeElements = Collections.synchronizedSet(new java.util.HashSet<Object>());
-        _focusElements = Collections.synchronizedSet(new java.util.HashSet<Object>());
         _visitElements = Collections.synchronizedSet(new java.util.HashSet<Object>());
     }
 
@@ -371,13 +358,13 @@ public class Matcher {
                     _visitElements.add(e);
                 }
                 if (sel.isPseudoClass(Selector.ACTIVE_PSEUDOCLASS)) {
-                    _activeElements.add(e);
+                    // Do nothing
                 }
                 if (sel.isPseudoClass(Selector.HOVER_PSEUDOCLASS)) {
-                    _hoverElements.add(e);
+                    // Do nothing
                 }
                 if (sel.isPseudoClass(Selector.FOCUS_PSEUDOCLASS)) {
-                    _focusElements.add(e);
+                    // Do nothing
                 }
                 if (!sel.matchesDynamic(e, _attRes, _treeRes)) {
                     continue;

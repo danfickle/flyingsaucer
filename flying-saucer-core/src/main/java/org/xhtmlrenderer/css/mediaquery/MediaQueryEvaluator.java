@@ -14,6 +14,7 @@ import org.xhtmlrenderer.css.constants.CSSPrimitiveUnit;
 import org.xhtmlrenderer.css.parser.PropertyValue;
 import org.xhtmlrenderer.css.parser.PropertyValueImp;
 import org.xhtmlrenderer.css.parser.Token;
+import org.xhtmlrenderer.layout.SharedContext;
 
 public class MediaQueryEvaluator 
 {
@@ -215,6 +216,12 @@ public class MediaQueryEvaluator
 			}
 		}
 		
-		LOGGER.info("The following media queries were parsed: " + queryItems.toString());
+		LOGGER.info("The following media queries were parsed: {}", queryItems);
+	}
+
+	public boolean eval(SharedContext ctx)
+	{
+		// TODO
+		return true;
 	}
 }
