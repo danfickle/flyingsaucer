@@ -9,6 +9,7 @@ import org.xhtmlrenderer.css.parser.PropertyValue;
 import org.xhtmlrenderer.css.parser.PropertyValueImp;
 import org.xhtmlrenderer.css.parser.Token;
 import org.xhtmlrenderer.css.parser.property.BuilderUtil;
+import org.xhtmlrenderer.layout.SharedContext;
 
 public class MediaQueryExpression 
 {
@@ -225,4 +226,12 @@ public class MediaQueryExpression
         
         _isValid = false;
     }
+
+	public boolean eval(SharedContext ctx)
+	{
+		if (_isValid)
+			return mediaFeature().eval(ctx, this._cssValue);
+		else
+			return false;
+	}
 }

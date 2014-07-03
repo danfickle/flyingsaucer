@@ -15,6 +15,7 @@ import org.xhtmlrenderer.css.parser.PropertyValue;
 import org.xhtmlrenderer.css.parser.PropertyValueImp;
 import org.xhtmlrenderer.css.parser.Token;
 import org.xhtmlrenderer.layout.SharedContext;
+import org.xhtmlrenderer.util.GeneralUtil;
 
 public class MediaQueryEvaluator 
 {
@@ -80,6 +81,40 @@ public class MediaQueryEvaluator
 		{
 			return "Qualifier: " + qualifier.toString() + ", Media Type: " + mediaType +
 					", Expressions: " + expressions.toString();
+		}
+		
+		public boolean eval(SharedContext ctx)
+		{
+			boolean res = false;
+			
+			// Webkit uses a case insensitive compare.
+			if (GeneralUtil.ciEquals(mediaType, "all") ||
+				GeneralUtil.ciEquals(mediaType, ctx.getMedia()) ||
+				GeneralUtil.ciEquals(ctx.getMedia(), "all"))
+			{
+				res = true;
+			}
+
+			if (res == true)
+			{
+				for (MediaQueryExpression expr : expressions)
+				{
+					// AND semantics.
+					
+					boolean exprRes = expr.eval(ctx);
+				
+					if (!exprRes)
+					{
+						res = false;
+						break;
+					}
+				}
+			}
+			
+			if (qualifier == MediaQueryQualifier.NOT)
+				res = !res;
+
+			return res;
 		}
 	}
 
@@ -221,7 +256,16 @@ public class MediaQueryEvaluator
 
 	public boolean eval(SharedContext ctx)
 	{
-		// TODO
-		return true;
+		if (queryItems.isEmpty())
+			return true;
+		
+		for (MediaQueryItem item : queryItems)
+		{
+			// OR Semantics.
+			if (item.eval(ctx))
+				return true;
+		}
+		
+		return false;
 	}
 }

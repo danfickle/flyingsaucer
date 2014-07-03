@@ -1,6 +1,11 @@
 <html>
 <head>
 <style>
+@media not print {
+  body {
+   background-color: yellow;
+  }
+}
 @media (min-width: 100px) { 
  body {
   background-color: red;
@@ -15,11 +20,6 @@
  body {
   background-color: green;
  }
-}
-@media not print {
-  body {
-   background-color: white;
-  }
 }
 @media (min-aspect-ratio: 1 / 1) and (min-device-height: 1.2cm) {
   body {
