@@ -24,7 +24,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -38,12 +40,12 @@ import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.extend.UserAgentCallback;
-import org.xhtmlrenderer.resource.CSSResource;
 import org.xhtmlrenderer.resource.ImageResource;
 import org.xhtmlrenderer.swing.AWTFSImage;
 import org.xhtmlrenderer.swing.ImageResourceLoader;
 import org.xhtmlrenderer.swing.StylesheetCache;
 import org.xhtmlrenderer.util.Uu;
+import org.xhtmlrenderer.util.XRRuntimeException;
 
 import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
 import com.github.neoflyingsaucer.defaultuseragent.ImageResourceLoaderImpl;
@@ -75,7 +77,8 @@ public class DemoUserAgent implements UserAgentCallback {
                 }
             };
 
-    public CSSResource getCSSResource(String uri) {
+    @Override
+    public Reader getCSSResource(String uri) {
         InputStream is = null;
         uri = resolveURI(uri);
         try {
@@ -87,9 +90,14 @@ public class DemoUserAgent implements UserAgentCallback {
         } catch (final IOException e) {
             LOGGER.error("IO problem for " + uri, e);
         }
-        return new CSSResource(is);
+        try {
+			return new InputStreamReader(is, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			throw new XRRuntimeException("UTF-8 not supported", e);
+		}
     }
 
+    @Override
     public ImageResource getImageResource(String uri) {
         ImageResource ir = null;
         uri = resolveURI(uri);
@@ -120,6 +128,7 @@ public class DemoUserAgent implements UserAgentCallback {
         return ir;
     }
     
+    @Override
     public byte[] getBinaryResource(final String uri) {
         InputStream is = null;
         try {
@@ -149,6 +158,7 @@ public class DemoUserAgent implements UserAgentCallback {
         }
     }    
 
+    @Override
     public Document getHTMLResource(String uri) {
         uri = resolveURI(uri);
         if (uri != null && uri.startsWith("file:")) {
@@ -185,12 +195,14 @@ public class DemoUserAgent implements UserAgentCallback {
         return xr.getDocument();
     }
 
+    @Override
     public boolean isVisited(String uri) {
         if (uri == null) return false;
         uri = resolveURI(uri);
         return history.contains(uri);
     }
 
+    @Override
     public void setBaseURL(final String url) {
         baseUrl = resolveURI(url);
         if (baseUrl == null) baseUrl = "error:FileNotFound";
@@ -204,6 +216,7 @@ public class DemoUserAgent implements UserAgentCallback {
         history.add(index, baseUrl);
     }
 
+    @Override
     public String resolveURI(final String uri) {
         URL ref = null;
         if (uri == null) return baseUrl;
@@ -237,6 +250,7 @@ public class DemoUserAgent implements UserAgentCallback {
             return ref.toExternalForm();
     }
 
+    @Override
     public String getBaseURL() {
         return baseUrl;
     }
@@ -277,8 +291,8 @@ public class DemoUserAgent implements UserAgentCallback {
 	protected ImageResourceLoader irl = new ImageResourceLoaderImpl();
 	
 	@Override
-	public ImageResourceLoader getImageResourceCache() {
-		// TODO Auto-generated method stub
+	public ImageResourceLoader getImageResourceCache()
+	{
 		return irl;
 	}
 }

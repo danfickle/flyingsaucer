@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.util.Uu;
 import org.xhtmlrenderer.util.GeneralUtil;
 
-import com.github.neoflyingsaucer.defaultuseragent.DelegatingUserAgent;
 import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
 import com.github.neoflyingsaucer.defaultuseragent.StreamResource;
 
@@ -53,6 +52,7 @@ public class PanelManager extends DelegatingUserAgent {
     /**
      * {@inheritdoc}.
      */
+    @Override
     public String resolveURI(final String uri) {
         final String burl = getBaseURL();
 
@@ -193,6 +193,7 @@ public class PanelManager extends DelegatingUserAgent {
 	/**
 	 * Returns true if the link has been visited by the user in this session. Visit tracking is not persisted.
 	 */
+	@Override
 	public boolean isVisited(String uri) {
         if (uri == null) return false;
         uri = resolveURI(uri);
@@ -202,6 +203,7 @@ public class PanelManager extends DelegatingUserAgent {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void setBaseURL (final String url) {
 		String burl = super.getBaseURL();
 		if(burl !=null &&  burl.startsWith("error:")) burl = null;

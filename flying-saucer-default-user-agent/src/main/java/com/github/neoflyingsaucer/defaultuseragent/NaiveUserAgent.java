@@ -26,6 +26,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
@@ -38,12 +41,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.event.DocumentListener;
 import org.xhtmlrenderer.extend.UserAgentCallback;
-import org.xhtmlrenderer.resource.CSSResource;
 import org.xhtmlrenderer.resource.ImageResource;
 import org.xhtmlrenderer.swing.AWTFSImage;
 import org.xhtmlrenderer.swing.ImageResourceLoader;
 import org.xhtmlrenderer.swing.StylesheetCache;
 import org.xhtmlrenderer.util.ImageUtil;
+import org.xhtmlrenderer.util.XRRuntimeException;
 
 /**
  * <p>NaiveUserAgent is a simple implementation of {@link UserAgentCallback} which places no restrictions on what
@@ -149,8 +152,13 @@ public class NaiveUserAgent implements UserAgentCallback, DocumentListener {
      * @param uri Location of the CSS source.
      * @return A CSSResource containing the parsed CSS.
      */
-    public CSSResource getCSSResource(final String uri) {
-        return new CSSResource(resolveAndOpenStream(uri));
+    @Override
+    public Reader getCSSResource(final String uri) {
+        try {
+			return new InputStreamReader(resolveAndOpenStream(uri), "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			throw new XRRuntimeException("UTF-8 not supported", e);
+		}
     }
 
     /**

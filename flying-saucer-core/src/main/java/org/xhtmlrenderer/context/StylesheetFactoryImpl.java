@@ -20,11 +20,7 @@
 package org.xhtmlrenderer.context;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.extend.StylesheetFactory;
@@ -35,7 +31,6 @@ import org.xhtmlrenderer.css.sheet.Stylesheet;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
 import org.xhtmlrenderer.extend.UserAgentCallback;
-import org.xhtmlrenderer.resource.CSSResource;
 import org.xhtmlrenderer.swing.StylesheetCacheKey;
 
 /**
@@ -89,20 +84,16 @@ public class StylesheetFactoryImpl implements StylesheetFactory {
      * @return Returns null if uri could not be loaded
      */
     private Stylesheet parse(final StylesheetInfo info) {
-        final CSSResource cr = _userAgentCallback.getCSSResource(info.getUri());
-        // Whether by accident or design, InputStream will never be null
-        // since the null resource stream is wrapped in a BufferedInputStream
-        final InputStream is = cr.getResourceInputStream();
+        final Reader cr = _userAgentCallback.getCSSResource(info.getUri());
+
         try {
-            final Stylesheet s1 = parse(new InputStreamReader(is, "UTF-8"), info, false);
+            final Stylesheet s1 = parse(cr, info, false);
             return s1;
-        } catch (final UnsupportedEncodingException e) {
-            // Shouldn't happen
-            throw new RuntimeException(e.getMessage(), e);
-        } finally {
-            if (is != null) {
+        }
+        finally {
+            if (cr != null) {
                 try {
-                    is.close();
+                    cr.close();
                 } catch (final IOException e) {
                     // ignore
                 }

@@ -17,21 +17,29 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  */
-package com.github.neoflyingsaucer.defaultuseragent;
+package org.xhtmlrenderer.demo.browser;
 
 import org.jsoup.nodes.Document;
 import org.xhtmlrenderer.event.DocumentListener;
 import org.xhtmlrenderer.extend.UserAgentCallback;
-import org.xhtmlrenderer.resource.CSSResource;
 import org.xhtmlrenderer.resource.ImageResource;
 import org.xhtmlrenderer.swing.ImageResourceLoader;
 import org.xhtmlrenderer.swing.StylesheetCache;
 import org.xhtmlrenderer.util.IOUtil;
+import org.xhtmlrenderer.util.XRRuntimeException;
+
+import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
+import com.github.neoflyingsaucer.defaultuseragent.StreamResource;
+import com.github.neoflyingsaucer.defaultuseragent.StylesheetCacheImpl;
+import com.github.neoflyingsaucer.defaultuseragent.UriResolver;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 
 
 /**
@@ -100,8 +108,13 @@ public class DelegatingUserAgent implements UserAgentCallback, DocumentListener 
      * @param uri Location of the CSS source.
      * @return A CSSResource containing the parsed CSS.
      */
-    public CSSResource getCSSResource(final String uri) {
-        return new CSSResource(resolveAndOpenStream(uri));
+    @Override
+    public Reader getCSSResource(final String uri) {
+        try {
+			return new InputStreamReader(resolveAndOpenStream(uri), "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			throw new XRRuntimeException("UTF-8 not supported", e);
+		}
     }
 
     /**
@@ -112,6 +125,7 @@ public class DelegatingUserAgent implements UserAgentCallback, DocumentListener 
      * @param uri Location of the image source.
      * @return An ImageResource containing the image.
      */
+    @Override
     public ImageResource getImageResource(final String uri) {
         return _imageResourceLoader.get(resolveURI(uri));
     }
@@ -138,6 +152,7 @@ public class DelegatingUserAgent implements UserAgentCallback, DocumentListener 
         }
     }
 
+    @Override
     public byte[] getBinaryResource(final String uri) {
         final String ruri = _uriResolver.resolve(uri);
         final StreamResource sr = new StreamResource(ruri);
@@ -166,6 +181,7 @@ public class DelegatingUserAgent implements UserAgentCallback, DocumentListener 
      * @param uri A URI which might have been visited.
      * @return Always false; visits are not tracked in the NaiveUserAgent.
      */
+    @Override
     public boolean isVisited(final String uri) {
         return false;
     }
@@ -175,6 +191,7 @@ public class DelegatingUserAgent implements UserAgentCallback, DocumentListener 
      *
      * @param uri A URI which anchors other, possibly relative URIs.
      */
+    @Override
     public void setBaseURL(final String uri) {
         _uriResolver.setBaseUri(uri);
     }
@@ -186,6 +203,7 @@ public class DelegatingUserAgent implements UserAgentCallback, DocumentListener 
      * @param uri A URI, possibly relative.
      * @return A URI as String, resolved, or null if there was an exception (for example if the URI is malformed).
      */
+    @Override
     public String resolveURI(final String uri) {
         return _uriResolver.resolve(uri);
     }
@@ -193,18 +211,23 @@ public class DelegatingUserAgent implements UserAgentCallback, DocumentListener 
     /**
      * Returns the current baseUrl for this class.
      */
+    @Override
     public String getBaseURL() {
         return _uriResolver.getBaseUri();
     }
 
+    @Override
     public void documentStarted() {
         shrinkImageCache();
     }
 
+    @Override
     public void documentLoaded() { /* ignore*/ }
 
+    @Override
     public void onLayoutException(final Throwable t) { /* ignore*/ }
 
+    @Override
     public void onRenderException(final Throwable t) { /* ignore*/ }
 
 	@Override

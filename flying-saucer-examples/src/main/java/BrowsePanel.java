@@ -18,6 +18,7 @@
 
 
 import org.jsoup.nodes.Document;
+import org.xhtmlrenderer.demo.browser.DelegatingUserAgent;
 import org.xhtmlrenderer.demo.browser.FSScrollPane;
 import org.xhtmlrenderer.event.DefaultDocumentListener;
 import org.xhtmlrenderer.extend.UserAgentCallback;
@@ -26,7 +27,6 @@ import org.xhtmlrenderer.swing.SwingReplacedElementFactory;
 import org.xhtmlrenderer.util.GeneralUtil;
 
 import com.github.danfickle.flyingsaucer.swing.XHTMLPanel;
-import com.github.neoflyingsaucer.defaultuseragent.DelegatingUserAgent;
 import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
 import com.github.neoflyingsaucer.defaultuseragent.ImageResourceLoaderImpl;
 
