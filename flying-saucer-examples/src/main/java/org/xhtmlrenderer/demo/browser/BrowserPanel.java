@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.event.DocumentListener;
 import org.xhtmlrenderer.layout.SharedContext;
 import org.xhtmlrenderer.resource.HTMLResource;
-import org.xhtmlrenderer.simple.FSScrollPane;
 import org.xhtmlrenderer.simple.PDFRenderer;
 import org.xhtmlrenderer.swing.ImageResourceLoader;
 import org.xhtmlrenderer.swing.SwingReplacedElementFactory;

@@ -17,11 +17,12 @@
  */
 
 
-import org.xhtmlrenderer.simple.FSScrollPane;
-
 import com.github.danfickle.flyingsaucer.swing.XHTMLPanel;
 
 import javax.swing.*;
+
+import org.xhtmlrenderer.demo.browser.FSScrollPane;
+
 import java.awt.*;
 import java.io.File;
 

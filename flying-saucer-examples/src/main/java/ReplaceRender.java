@@ -17,7 +17,7 @@
  */
 
 
-import org.xhtmlrenderer.simple.FSScrollPane;
+import org.xhtmlrenderer.demo.browser.FSScrollPane;
 import org.xhtmlrenderer.extend.ReplacedElementFactory;
 
 import com.github.danfickle.flyingsaucer.swing.XHTMLPanel;

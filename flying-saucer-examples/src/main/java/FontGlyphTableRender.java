@@ -48,11 +48,11 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import org.jsoup.nodes.Document;
+import org.xhtmlrenderer.demo.browser.FSScrollPane;
 import org.xhtmlrenderer.event.DefaultDocumentListener;
 import org.xhtmlrenderer.pdf.ITextFontResolver;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 import org.xhtmlrenderer.resource.HTMLResource;
-import org.xhtmlrenderer.simple.FSScrollPane;
 import org.xhtmlrenderer.simple.HtmlNamespaceHandler;
 
 import com.github.danfickle.flyingsaucer.swing.XHTMLPanel;

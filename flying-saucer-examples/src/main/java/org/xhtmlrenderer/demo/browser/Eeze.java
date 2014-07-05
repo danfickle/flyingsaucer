@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * }}}
  */
-package eeze;
+package org.xhtmlrenderer.demo.browser;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -34,7 +34,6 @@ import javax.swing.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xhtmlrenderer.simple.FSScrollPane;
 import com.github.danfickle.flyingsaucer.swing.Graphics2DRenderer;
 import com.github.danfickle.flyingsaucer.swing.XHTMLPanel;
 

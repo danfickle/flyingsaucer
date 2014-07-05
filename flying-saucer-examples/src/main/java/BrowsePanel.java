@@ -18,10 +18,10 @@
 
 
 import org.jsoup.nodes.Document;
+import org.xhtmlrenderer.demo.browser.FSScrollPane;
 import org.xhtmlrenderer.event.DefaultDocumentListener;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.resource.HTMLResource;
-import org.xhtmlrenderer.simple.FSScrollPane;
 import org.xhtmlrenderer.swing.DelegatingUserAgent;
 import org.xhtmlrenderer.swing.ImageResourceLoader;
 import org.xhtmlrenderer.swing.SwingReplacedElementFactory;

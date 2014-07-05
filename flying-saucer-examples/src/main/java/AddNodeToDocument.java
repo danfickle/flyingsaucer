@@ -20,12 +20,13 @@
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.xhtmlrenderer.simple.FSScrollPane;
+import org.xhtmlrenderer.demo.browser.FSScrollPane;
 import org.xhtmlrenderer.simple.HtmlNamespaceHandler;
 
 import com.github.danfickle.flyingsaucer.swing.XHTMLPanel;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
