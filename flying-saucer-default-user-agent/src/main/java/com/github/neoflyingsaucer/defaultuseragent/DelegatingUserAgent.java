@@ -26,7 +26,6 @@ import org.xhtmlrenderer.resource.ImageResource;
 import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.swing.ImageResourceLoader;
 import org.xhtmlrenderer.swing.StylesheetCache;
-import org.xhtmlrenderer.swing.UriResolver;
 import org.xhtmlrenderer.util.IOUtil;
 import org.xhtmlrenderer.util.StreamResource;
 
