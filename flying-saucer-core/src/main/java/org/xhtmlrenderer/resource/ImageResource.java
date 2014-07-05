@@ -23,13 +23,13 @@ import org.xhtmlrenderer.extend.FSImage;
 import org.xhtmlrenderer.swing.AWTFSImage;
 
 /**
- * @author Administrator
+ * Use this class to return an ImageResource from the user agent.
+ * 
  */
 public class ImageResource {
     private final String _imageUri;
     private final FSImage _img;
 
-    //HACK: at least for now, till we know what we want to do here
     public ImageResource(final String uri, final FSImage img) {
         _imageUri = uri;
         _img = img;

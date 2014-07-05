@@ -19,9 +19,10 @@
  */
 package org.xhtmlrenderer.demo.browser;
 
-import org.jsoup.nodes.Document;
 import org.xhtmlrenderer.event.DocumentListener;
 import org.xhtmlrenderer.extend.UserAgentCallback;
+import org.xhtmlrenderer.resource.CSSResource;
+import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.resource.ImageResource;
 import org.xhtmlrenderer.swing.ImageResourceLoader;
 import org.xhtmlrenderer.swing.StylesheetCache;
@@ -38,7 +39,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 
 
@@ -109,11 +109,23 @@ public class DelegatingUserAgent implements UserAgentCallback, DocumentListener 
      * @return A CSSResource containing the parsed CSS.
      */
     @Override
-    public Reader getCSSResource(final String uri) {
+    public CSSResource getCSSResource(final String uri) {
         try {
-			return new InputStreamReader(resolveAndOpenStream(uri), "UTF-8");
+        	StreamResource sr = new StreamResource(uri);
+        	sr.connect();
+        	final InputStream bs = sr.bufferedStream();
+        	return new CSSResource(sr.getFinalUri(),
+				new InputStreamReader(bs, "UTF-8")) {
+        		@Override
+        		public void onClose() throws IOException {
+        			bs.close();
+        		}
+        	};
 		} catch (UnsupportedEncodingException e) {
 			throw new XRRuntimeException("UTF-8 not supported", e);
+		} catch (IOException e) {
+			// TODO 
+			throw new XRRuntimeException("I/O problem", e); 
 		}
     }
 
@@ -138,13 +150,14 @@ public class DelegatingUserAgent implements UserAgentCallback, DocumentListener 
      * @param uri Location of the XML source.
      * @return An XMLResource containing the image.
      */
-    public Document getHTMLResource(final String uri) {
+    @Override
+    public HTMLResource getHTMLResource(final String uri) {
         final String ruri = _uriResolver.resolve(uri);
         final StreamResource sr = new StreamResource(ruri);
         try {
             sr.connect();
             final BufferedInputStream bis = sr.bufferedStream();
-            return HTMLResourceHelper.load(bis, sr.getFinalUri()).getDocument();
+            return new HTMLResource(sr.getFinalUri(), HTMLResourceHelper.load(bis, sr.getFinalUri()).getDocument());
         } catch (final IOException e) {
             return null;
         } finally {

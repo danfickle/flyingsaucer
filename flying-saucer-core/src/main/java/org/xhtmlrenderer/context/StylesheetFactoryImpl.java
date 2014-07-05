@@ -21,6 +21,7 @@ package org.xhtmlrenderer.context;
 
 import java.io.IOException;
 import java.io.Reader;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.extend.StylesheetFactory;
@@ -31,6 +32,7 @@ import org.xhtmlrenderer.css.sheet.Stylesheet;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
 import org.xhtmlrenderer.extend.UserAgentCallback;
+import org.xhtmlrenderer.resource.CSSResource;
 import org.xhtmlrenderer.swing.StylesheetCacheKey;
 
 /**
@@ -84,16 +86,23 @@ public class StylesheetFactoryImpl implements StylesheetFactory {
      * @return Returns null if uri could not be loaded
      */
     private Stylesheet parse(final StylesheetInfo info) {
-        final Reader cr = _userAgentCallback.getCSSResource(info.getUri());
+        final CSSResource cr = _userAgentCallback.getCSSResource(info.getUri());
 
+        // TODO
+        // Q: Do @import rules use the original URI as the base for importing
+        // other stylesheets or do they use the redirected URI.
+        // If the former, we should remove this call.
+        info.setUri(cr.getUri());
+        
         try {
-            final Stylesheet s1 = parse(cr, info, false);
+            final Stylesheet s1 = parse(cr.getReader(), info, false);
             return s1;
         }
         finally {
             if (cr != null) {
                 try {
-                    cr.close();
+                    cr.getReader().close();
+                    cr.onClose();
                 } catch (final IOException e) {
                     // ignore
                 }

@@ -31,14 +31,14 @@ import org.xhtmlrenderer.extend.FSImage;
 import org.xhtmlrenderer.layout.SharedContext;
 import org.xhtmlrenderer.resource.ImageResource;
 
-import com.github.neoflyingsaucer.defaultuseragent.NaiveUserAgent;
+import com.github.neoflyingsaucer.defaultuseragent.DefaultUserAgent;
 import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfReader;
 
 import org.xhtmlrenderer.util.ImageUtil;
 
-public class ITextUserAgent extends NaiveUserAgent {
+public class ITextUserAgent extends DefaultUserAgent {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ITextUserAgent.class);
     private static final int IMAGE_CACHE_CAPACITY = 32;

@@ -135,7 +135,7 @@ public class BrowsePanel {
                 final Document doc;
                 try {
                     if (panel != null ) panel.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-                    doc = getUAC().getHTMLResource(uri);
+                    doc = getUAC().getHTMLResource(uri).getDocument();
                 } catch (final Exception e) {
                     e.printStackTrace();
                     System.err.println("Can't load document");

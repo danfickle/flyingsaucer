@@ -27,7 +27,7 @@ import org.xhtmlrenderer.swing.Java2DRenderer;
 import org.xhtmlrenderer.util.FSImageWriter;
 
 import com.github.danfickle.flyingsaucer.swing.Graphics2DRenderer;
-import com.github.neoflyingsaucer.defaultuseragent.NaiveUserAgent;
+import com.github.neoflyingsaucer.defaultuseragent.DefaultUserAgent;
 
 /**
  */
@@ -48,7 +48,7 @@ public class ImageRender {
 			// maybe it's a file
 			final File f = new File(url);
 			if (f.exists()) {
-				final Java2DRenderer renderer = new Java2DRenderer(f, 1024, new NaiveUserAgent());
+				final Java2DRenderer renderer = new Java2DRenderer(f, 1024, new DefaultUserAgent());
 				renderer.setBufferedImageType(BufferedImage.TYPE_INT_RGB);
 				final BufferedImage image = renderer.getImage();
 

@@ -25,7 +25,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -36,10 +35,11 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
-import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.extend.UserAgentCallback;
+import org.xhtmlrenderer.resource.CSSResource;
+import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.resource.ImageResource;
 import org.xhtmlrenderer.swing.AWTFSImage;
 import org.xhtmlrenderer.swing.ImageResourceLoader;
@@ -49,6 +49,7 @@ import org.xhtmlrenderer.util.XRRuntimeException;
 
 import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
 import com.github.neoflyingsaucer.defaultuseragent.ImageResourceLoaderImpl;
+import com.github.neoflyingsaucer.defaultuseragent.StreamResource;
 import com.github.neoflyingsaucer.defaultuseragent.StylesheetCacheImpl;
 
 
@@ -78,22 +79,23 @@ public class DemoUserAgent implements UserAgentCallback {
             };
 
     @Override
-    public Reader getCSSResource(String uri) {
-        InputStream is = null;
-        uri = resolveURI(uri);
-        try {
-            final URLConnection uc = new URL(uri).openConnection();
-            uc.connect();
-            is = uc.getInputStream();
-        } catch (final MalformedURLException e) {
-            LOGGER.error("bad URL given: " + uri, e);
-        } catch (final IOException e) {
-            LOGGER.error("IO problem for " + uri, e);
-        }
-        try {
-			return new InputStreamReader(is, "UTF-8");
+    public CSSResource getCSSResource(String uri) {
+    	try {
+        	StreamResource sr = new StreamResource(uri);
+        	sr.connect();
+        	final InputStream bs = sr.bufferedStream();
+        	return new CSSResource(sr.getFinalUri(),
+				new InputStreamReader(bs, "UTF-8")) {
+        		@Override
+        		public void onClose() throws IOException {
+        			bs.close();
+        		}
+        	};
 		} catch (UnsupportedEncodingException e) {
 			throw new XRRuntimeException("UTF-8 not supported", e);
+		} catch (IOException e) {
+			// TODO 
+			throw new XRRuntimeException("I/O problem", e); 
 		}
     }
 
@@ -159,7 +161,7 @@ public class DemoUserAgent implements UserAgentCallback {
     }    
 
     @Override
-    public Document getHTMLResource(String uri) {
+    public HTMLResource getHTMLResource(String uri) {
         uri = resolveURI(uri);
         if (uri != null && uri.startsWith("file:")) {
             File file = null;
@@ -192,7 +194,8 @@ public class DemoUserAgent implements UserAgentCallback {
             final String notFound = "<h1>Document not found</h1>";
             xr = HTMLResourceHelper.load(notFound);
         }
-        return xr.getDocument();
+        // TODO: Need to find final uri.
+        return new HTMLResource(uri, xr.getDocument());
     }
 
     @Override

@@ -19,9 +19,8 @@
  */
 package org.xhtmlrenderer.extend;
 
-import java.io.Reader;
-
-import org.jsoup.nodes.Document;
+import org.xhtmlrenderer.resource.CSSResource;
+import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.resource.ImageResource;
 import org.xhtmlrenderer.swing.ImageResourceLoader;
 import org.xhtmlrenderer.swing.StylesheetCache;
@@ -56,9 +55,9 @@ public interface UserAgentCallback {
      * Retrieves the CSS at the given URI. This is a synchronous call.
      *
      * @param uri Location of the CSS
-     * @return A Reader for the CSS at the uri.
+     * @return A CSSResource for the CSS at the uri.
      */
-    Reader getCSSResource(String uri);
+    CSSResource getCSSResource(String uri);
 
     /**
      * Retrieves the Image at the given URI. This is a synchronous call.
@@ -73,9 +72,9 @@ public interface UserAgentCallback {
      * This is a synchronous call.
      *
      * @param uri Location of the HTML
-     * @return A JSoup Document for the content at the URI.
+     * @return A HTMLResource for the content at the URI.
      */
-    Document getHTMLResource(String uri);
+    HTMLResource getHTMLResource(String uri);
     
     /**
      * Retrieves a binary resource located at a given URI and returns its contents

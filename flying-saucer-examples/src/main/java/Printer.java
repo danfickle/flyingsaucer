@@ -22,7 +22,7 @@ import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.layout.SharedContext;
 import org.xhtmlrenderer.swing.Java2DRenderer;
 
-import com.github.neoflyingsaucer.defaultuseragent.NaiveUserAgent;
+import com.github.neoflyingsaucer.defaultuseragent.DefaultUserAgent;
 
 import javax.print.*;
 import javax.print.attribute.Attribute;
@@ -89,7 +89,7 @@ public class Printer implements Runnable, DocumentListener, Printable, PrintJobL
         base = System.getProperty("user.dir") + File.separator + "config"
                 + File.separator + "template" + File.separator;
 
-        uac = new NaiveUserAgent();
+        uac = new DefaultUserAgent();
         // </snip>
 
         log.info("template printing");
@@ -219,7 +219,7 @@ public class Printer implements Runnable, DocumentListener, Printable, PrintJobL
         try {
             if (j2dr == null) {
 
-                j2dr = new Java2DRenderer(file, 1024, new NaiveUserAgent());
+                j2dr = new Java2DRenderer(file, 1024, new DefaultUserAgent());
                 final SharedContext context = j2dr.getSharedContext();
                 context.setPrint(true);
                 context.setDPI(72f);

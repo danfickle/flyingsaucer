@@ -119,7 +119,7 @@ public class ITextRenderer {
     }
 
     private Document loadDocument(final String uri) {
-        return _sharedContext.getUac().getHTMLResource(uri);
+        return _sharedContext.getUac().getHTMLResource(uri).getDocument();
     }
 
     public void setDocument(final String uri) {

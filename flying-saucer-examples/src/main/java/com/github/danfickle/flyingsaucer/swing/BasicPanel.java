@@ -54,7 +54,7 @@ import org.xhtmlrenderer.util.Configuration;
 import org.xhtmlrenderer.util.Uu;
 
 import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
-import com.github.neoflyingsaucer.defaultuseragent.NaiveUserAgent;
+import com.github.neoflyingsaucer.defaultuseragent.DefaultUserAgent;
 
 /**
  * A Swing {@link javax.swing.JPanel} that encloses the Flying Saucer renderer
@@ -73,7 +73,7 @@ public abstract class BasicPanel extends RootPanel {
     private boolean centeredPagedView;
 
     public BasicPanel() {
-        this(new NaiveUserAgent());
+        this(new DefaultUserAgent());
     }
 
     public BasicPanel(final UserAgentCallback uac) {
@@ -392,7 +392,7 @@ public abstract class BasicPanel extends RootPanel {
                 return;
             }
         }
-        final Document dom = getSharedContext().getUac().getHTMLResource(url);
+        final Document dom = getSharedContext().getUac().getHTMLResource(url).getDocument();
         setDocument(dom, url);
     }
 
@@ -448,7 +448,7 @@ public abstract class BasicPanel extends RootPanel {
     }
 
     protected Document loadDocument(final String uri) {
-        return sharedContext.getUac().getHTMLResource(uri);
+        return sharedContext.getUac().getHTMLResource(uri).getDocument();
     }
 
     /* ====== hover and active utility methods

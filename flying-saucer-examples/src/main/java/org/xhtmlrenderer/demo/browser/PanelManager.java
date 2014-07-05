@@ -22,6 +22,7 @@ package org.xhtmlrenderer.demo.browser;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.util.Uu;
 import org.xhtmlrenderer.util.GeneralUtil;
 
@@ -105,7 +106,7 @@ public class PanelManager extends DelegatingUserAgent {
 	 * {@inheritDoc}
 	 */
     @Override
-	public Document getHTMLResource(String uri) {
+	public HTMLResource getHTMLResource(String uri) {
         uri = resolveURI(uri);
         if (uri != null && uri.startsWith("file:")) {
             File file = null;
@@ -117,11 +118,11 @@ public class PanelManager extends DelegatingUserAgent {
             } catch (final URISyntaxException
                     e) {
                 LOGGER.error("Invalid file URI " + uri, e);
-                return getNotFoundDocument(uri).getDocument();
+                return new HTMLResource(uri, getNotFoundDocument(uri).getDocument());
             }
             if (file.isDirectory()) {
                 final String dirlist = DirectoryLister.list(file);
-                return HTMLResourceHelper.load(new StringReader(dirlist)).getDocument();
+                return new HTMLResource(uri, HTMLResourceHelper.load(new StringReader(dirlist)).getDocument());
             }
         }
         HTMLResourceHelper xr = null;
@@ -169,7 +170,7 @@ public class PanelManager extends DelegatingUserAgent {
         if (xr == null) {
             xr = getNotFoundDocument(uri);
         }
-        return xr.getDocument();
+        return new HTMLResource(uri, xr.getDocument());
     }
 
 	/**

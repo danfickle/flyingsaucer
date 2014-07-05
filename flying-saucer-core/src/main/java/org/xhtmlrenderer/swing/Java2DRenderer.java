@@ -344,7 +344,8 @@ public class Java2DRenderer {
 	}
 
 	private Document loadDocument(final String uri) {
-		return sharedContext.getUac().getHTMLResource(uri);
+		// TODO: We shouldn't discard the final uri.
+		return sharedContext.getUac().getHTMLResource(uri).getDocument();
 	}
 
 	private LayoutContext newLayoutContext() {

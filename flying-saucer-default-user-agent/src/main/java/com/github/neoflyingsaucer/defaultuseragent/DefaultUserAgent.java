@@ -27,7 +27,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -36,11 +35,12 @@ import java.util.LinkedHashMap;
 
 import javax.imageio.ImageIO;
 
-import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.event.DocumentListener;
 import org.xhtmlrenderer.extend.UserAgentCallback;
+import org.xhtmlrenderer.resource.CSSResource;
+import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.resource.ImageResource;
 import org.xhtmlrenderer.swing.AWTFSImage;
 import org.xhtmlrenderer.swing.ImageResourceLoader;
@@ -65,8 +65,8 @@ import org.xhtmlrenderer.util.XRRuntimeException;
  *
  * @author Torbjoern Gannholm
  */
-public class NaiveUserAgent implements UserAgentCallback, DocumentListener {
-    private static final Logger LOGGER = LoggerFactory.getLogger(NaiveUserAgent.class);
+public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultUserAgent.class);
 
     private static final int DEFAULT_IMAGE_CACHE_SIZE = 16;
 
@@ -85,7 +85,7 @@ public class NaiveUserAgent implements UserAgentCallback, DocumentListener {
     /**
      * Creates a new instance of NaiveUserAgent with a max image cache of 16 images.
      */
-    public NaiveUserAgent() {
+    public DefaultUserAgent() {
         this(DEFAULT_IMAGE_CACHE_SIZE);
     }
 
@@ -94,7 +94,7 @@ public class NaiveUserAgent implements UserAgentCallback, DocumentListener {
      *
      * @param imgCacheSize Number of images to hold in cache before LRU images are released.
      */
-    public NaiveUserAgent(final int imgCacheSize) {
+    public DefaultUserAgent(final int imgCacheSize) {
         this._imageCacheCapacity = imgCacheSize;
 
         // note we do *not* override removeEldestEntry() here--users of this class must call shrinkImageCache().
@@ -153,11 +153,24 @@ public class NaiveUserAgent implements UserAgentCallback, DocumentListener {
      * @return A CSSResource containing the parsed CSS.
      */
     @Override
-    public Reader getCSSResource(final String uri) {
+    public CSSResource getCSSResource(final String uri) {
         try {
-			return new InputStreamReader(resolveAndOpenStream(uri), "UTF-8");
+        	StreamResource sr = new StreamResource(uri);
+        	sr.connect();
+        	final InputStream bs = sr.bufferedStream();
+        	
+        	return new CSSResource(sr.getFinalUri(),
+				new InputStreamReader(bs, "UTF-8")) {
+        		@Override
+        		public void onClose() throws IOException {
+        			bs.close();
+        		}
+        	};
 		} catch (UnsupportedEncodingException e) {
 			throw new XRRuntimeException("UTF-8 not supported", e);
+		} catch (IOException e) {
+			// TODO
+			throw new XRRuntimeException("I/O problem", e);
 		}
     }
 
@@ -228,21 +241,31 @@ public class NaiveUserAgent implements UserAgentCallback, DocumentListener {
      * @param uri Location of the XML source.
      * @return An XMLResource containing the image.
      */
-    public Document getHTMLResource(final String uri) {
-        final InputStream inputStream = resolveAndOpenStream(uri);
+    @Override
+    public HTMLResource getHTMLResource(final String uri) 
+    {
         HTMLResourceHelper xmlResource;
+        InputStream bs = null;
+        StreamResource sr;
+        
         try {
-            xmlResource = HTMLResourceHelper.load(inputStream, uri);
-        } finally {
-            if (inputStream != null) {
+        	sr = new StreamResource(uri);
+        	sr.connect();
+        	bs = sr.bufferedStream();
+        	xmlResource = HTMLResourceHelper.load(bs, uri);
+        } catch (IOException e) {
+			// TODO
+			throw new XRRuntimeException("I/O Problem", e);
+		} finally {
+            if (bs != null) {
                 try {
-                    inputStream.close();
+                    bs.close();
                 } catch (final IOException e) {
                     // swallow
                 }
             }
         }
-        return xmlResource.getDocument();
+        return new HTMLResource(sr.getFinalUri(), xmlResource.getDocument()); 
     }
 
     public byte[] getBinaryResource(final String uri) {
