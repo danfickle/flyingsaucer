@@ -52,10 +52,10 @@ import org.xhtmlrenderer.demo.browser.FSScrollPane;
 import org.xhtmlrenderer.event.DefaultDocumentListener;
 import org.xhtmlrenderer.pdf.ITextFontResolver;
 import org.xhtmlrenderer.pdf.ITextRenderer;
-import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.simple.HtmlNamespaceHandler;
 
 import com.github.danfickle.flyingsaucer.swing.XHTMLPanel;
+import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.BaseFont;
 
@@ -330,7 +330,7 @@ public class FontGlyphTableRender {
         }
         // DEBUG
         //System.out.println(page);
-        return HTMLResource.load(page).getDocument();
+        return HTMLResourceHelper.load(page).getDocument();
     }
 
     private Table buildGlyphTable(final int from, final int to) {

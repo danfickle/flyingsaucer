@@ -16,7 +16,6 @@ import org.xhtmlrenderer.extend.FSImage;
 import org.xhtmlrenderer.resource.ImageResource;
 import org.xhtmlrenderer.swing.AWTFSImage;
 import org.xhtmlrenderer.util.ImageUtil;
-import org.xhtmlrenderer.util.StreamResource;
 
 /**
  *

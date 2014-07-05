@@ -19,14 +19,15 @@
  */
 package org.xhtmlrenderer.demo.browser;
 
+import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xhtmlrenderer.resource.HTMLResource;
-import org.xhtmlrenderer.util.StreamResource;
 import org.xhtmlrenderer.util.Uu;
 import org.xhtmlrenderer.util.GeneralUtil;
 
 import com.github.neoflyingsaucer.defaultuseragent.DelegatingUserAgent;
+import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
+import com.github.neoflyingsaucer.defaultuseragent.StreamResource;
 
 import java.io.*;
 import java.net.*;
@@ -103,7 +104,8 @@ public class PanelManager extends DelegatingUserAgent {
 	/**
 	 * {@inheritDoc}
 	 */
-	public HTMLResource getXMLResource(String uri) {
+    @Override
+	public Document getHTMLResource(String uri) {
         uri = resolveURI(uri);
         if (uri != null && uri.startsWith("file:")) {
             File file = null;
@@ -115,14 +117,14 @@ public class PanelManager extends DelegatingUserAgent {
             } catch (final URISyntaxException
                     e) {
                 LOGGER.error("Invalid file URI " + uri, e);
-                return getNotFoundDocument(uri);
+                return getNotFoundDocument(uri).getDocument();
             }
             if (file.isDirectory()) {
                 final String dirlist = DirectoryLister.list(file);
-                return HTMLResource.load(new StringReader(dirlist));
+                return HTMLResourceHelper.load(new StringReader(dirlist)).getDocument();
             }
         }
-        HTMLResource xr = null;
+        HTMLResourceHelper xr = null;
         URLConnection uc = null;
         InputStream inputStream = null;
         try {
@@ -142,13 +144,13 @@ public class PanelManager extends DelegatingUserAgent {
             //Maybe should popup a choice when content/unknown!
             if (contentType == null || contentType.equals("text/plain") || contentType.equals("content/unknown")) {
                 inputStream = strm.bufferedStream();
-                xr = HTMLResource.load(inputStream, uri);
+                xr = HTMLResourceHelper.load(inputStream, uri);
             } else if (contentType.startsWith("image")) {
                 final String doc = "<img src='" + uri + "'/>";
-                xr = HTMLResource.load(doc);
+                xr = HTMLResourceHelper.load(doc);
             } else {
                 inputStream = strm.bufferedStream();
-                xr = HTMLResource.load(inputStream, uri);
+                xr = HTMLResourceHelper.load(inputStream, uri);
             }
         } catch (final MalformedURLException e) {
             LOGGER.error("bad URL given: " + uri, e);
@@ -167,7 +169,7 @@ public class PanelManager extends DelegatingUserAgent {
         if (xr == null) {
             xr = getNotFoundDocument(uri);
         }
-        return xr;
+        return xr.getDocument();
     }
 
 	/**
@@ -177,14 +179,14 @@ public class PanelManager extends DelegatingUserAgent {
 	 *
 	 * @return An XMLResource containing XML which about the failure.
 	 */
-	private HTMLResource getNotFoundDocument(final String uri) {
-        HTMLResource xr;
+	private HTMLResourceHelper getNotFoundDocument(final String uri) {
+        HTMLResourceHelper xr;
 
         // URI may contain & symbols which can "break" the XHTML we're creating
         final String cleanUri = GeneralUtil.escapeHTML(uri);
         final String notFound = "<html><h1>Document not found</h1><p>Could not access URI <pre>" + cleanUri + "</pre></p></html>";
 
-        xr = HTMLResource.load(new StringReader(notFound));
+        xr = HTMLResourceHelper.load(notFound);
         return xr;
     }
 

@@ -23,13 +23,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.event.DocumentListener;
 import org.xhtmlrenderer.layout.SharedContext;
-import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.simple.PDFRenderer;
 import org.xhtmlrenderer.swing.ImageResourceLoader;
 import org.xhtmlrenderer.swing.SwingReplacedElementFactory;
 import org.xhtmlrenderer.util.*;
 
 import com.github.danfickle.flyingsaucer.swing.ScalableXHTMLPanel;
+import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
 import com.github.neoflyingsaucer.defaultuseragent.ImageResourceLoaderImpl;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.PdfWriter;
@@ -406,7 +406,7 @@ public class BrowserPanel extends JPanel implements DocumentListener {
 	}
 
     private void handlePageLoadFailed(final String url_text, final XRRuntimeException ex) {
-        final HTMLResource xr;
+        final HTMLResourceHelper xr;
         final String rootCause = getRootCause(ex);
         final String msg = GeneralUtil.escapeHTML(addLineBreaks(rootCause, 80));
         final String notFound =
@@ -423,7 +423,7 @@ public class BrowserPanel extends JPanel implements DocumentListener {
                         "</body>\n" +
                         "</html>";
 
-        xr = HTMLResource.load(notFound);
+        xr = HTMLResourceHelper.load(notFound);
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 root.panel.view.setDocument(xr.getDocument(), null);

@@ -48,12 +48,12 @@ import org.xhtmlrenderer.layout.SharedContext;
 import org.xhtmlrenderer.render.Box;
 import org.xhtmlrenderer.render.PageBox;
 import org.xhtmlrenderer.render.RenderingContext;
-import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.simple.HtmlNamespaceHandler;
 import org.xhtmlrenderer.swing.Java2DOutputDevice;
 import org.xhtmlrenderer.util.Configuration;
 import org.xhtmlrenderer.util.Uu;
 
+import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
 import com.github.neoflyingsaucer.defaultuseragent.NaiveUserAgent;
 
 /**
@@ -338,13 +338,13 @@ public abstract class BasicPanel extends RootPanel {
 =========== set document utility methods =============== */
 
     public void setDocument(final InputStream stream, final String url, final NamespaceHandler nsh) {
-        final Document dom = HTMLResource.load(stream, url).getDocument();
+        final Document dom = HTMLResourceHelper.load(stream, url).getDocument();
 
         setDocument(dom, url, nsh);
     }
 
     public void setDocumentFromString(final String content, final String url, final NamespaceHandler nsh) {
-        final Document dom = HTMLResource.load(content).getDocument();
+        final Document dom = HTMLResourceHelper.load(content).getDocument();
 
         setDocument(dom, url, nsh);
     }
@@ -392,9 +392,8 @@ public abstract class BasicPanel extends RootPanel {
                 return;
             }
         }
-        final HTMLResource resource = loadResource(url);
-        final Document dom = resource.getDocument();
-        setDocument(dom, resource.getURI());
+        final Document dom = getSharedContext().getUac().getHTMLResource(url);
+        setDocument(dom, url);
     }
 
 
@@ -449,12 +448,7 @@ public abstract class BasicPanel extends RootPanel {
     }
 
     protected Document loadDocument(final String uri) {
-        final HTMLResource xmlResource = sharedContext.getUac().getXMLResource(uri);
-        return xmlResource.getDocument();
-    }
-
-    protected HTMLResource loadResource(final String uri) {
-        return sharedContext.getUac().getXMLResource(uri);
+        return sharedContext.getUac().getHTMLResource(uri);
     }
 
     /* ====== hover and active utility methods

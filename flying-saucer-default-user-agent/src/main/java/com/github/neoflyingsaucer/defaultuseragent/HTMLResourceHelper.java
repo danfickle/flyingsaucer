@@ -17,34 +17,37 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * }}}
  */
-package org.xhtmlrenderer.resource;
+package com.github.neoflyingsaucer.defaultuseragent;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xhtmlrenderer.resource.AbstractResource;
 import org.xhtmlrenderer.util.XRRuntimeException;
 
 /**
  * @author Patrick Wright
  */
-public class HTMLResource extends AbstractResource {
+// TODO Charsets.
+public class HTMLResourceHelper extends AbstractResource {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HTMLResource.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HTMLResourceHelper.class);
     private Document document;
     private final String _uri;
     
-    private HTMLResource(final String html)
+    private HTMLResourceHelper(final String html)
     {
     	setDocument(Jsoup.parse(html));
       _uri = null;
     }
 
-    private HTMLResource(final InputStream stream, final String uri) {
+    private HTMLResourceHelper(final InputStream stream, final String uri) {
       _uri = uri;
     	try {
 			document = Jsoup.parse(stream, null, "");
@@ -54,7 +57,7 @@ public class HTMLResource extends AbstractResource {
 		}
     }
     
-    private HTMLResource(final File file)
+    private HTMLResourceHelper(final File file)
     {
       _uri = null;
     	try {
@@ -65,19 +68,19 @@ public class HTMLResource extends AbstractResource {
 		}
     }
 
-    public static HTMLResource load(final String html)
+    public static HTMLResourceHelper load(final String html)
     {
-    	return new HTMLResource(html);
+    	return new HTMLResourceHelper(html);
     }
     
-    public static HTMLResource load(final InputStream stream, final String uri) {
-        return new HTMLResource(stream, uri);
+    public static HTMLResourceHelper load(final InputStream stream, final String uri) {
+        return new HTMLResourceHelper(stream, uri);
     }
 
     public String getURI() {
       return _uri;
     }
-    public static HTMLResource load(final Reader reader) {
+    public static HTMLResourceHelper load(final Reader reader) {
     	final char[] cbuf = new char[4096];
     	int numChars;
     	
@@ -92,7 +95,7 @@ public class HTMLResource extends AbstractResource {
 			throw new XRRuntimeException("Unable to parse reader", e);
 		}
 
-    	return new HTMLResource(builder.toString());
+    	return new HTMLResourceHelper(builder.toString());
     }
  
     public Document getDocument() {
@@ -103,7 +106,7 @@ public class HTMLResource extends AbstractResource {
         this.document = document;
     }
 
-	public static HTMLResource load(final File file) {
-		return new HTMLResource(file);
+	public static HTMLResourceHelper load(final File file) {
+		return new HTMLResourceHelper(file);
 	}
 }

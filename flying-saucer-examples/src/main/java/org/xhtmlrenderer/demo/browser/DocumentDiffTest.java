@@ -29,9 +29,11 @@ import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.render.Box;
+
 import com.github.danfickle.flyingsaucer.swing.Graphics2DRenderer;
+import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
+
 import org.xhtmlrenderer.util.Uu;
-import org.xhtmlrenderer.util.XMLUtil;
 
 /**
  * Description of the Class
@@ -132,7 +134,7 @@ public class DocumentDiffTest {
      */
     public static String xhtmlToDiff(final String xhtml, final int width, final int height)
             throws Exception {
-        final Document doc = XMLUtil.documentFromFile(xhtml);
+        final Document doc = HTMLResourceHelper.load(xhtml).getDocument();
         final Graphics2DRenderer renderer = new Graphics2DRenderer();
         renderer.setDocument(doc, new File(xhtml).toURL().toString());
 

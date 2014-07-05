@@ -19,15 +19,14 @@
  */
 package com.github.neoflyingsaucer.defaultuseragent;
 
+import org.jsoup.nodes.Document;
 import org.xhtmlrenderer.event.DocumentListener;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.resource.CSSResource;
 import org.xhtmlrenderer.resource.ImageResource;
-import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.swing.ImageResourceLoader;
 import org.xhtmlrenderer.swing.StylesheetCache;
 import org.xhtmlrenderer.util.IOUtil;
-import org.xhtmlrenderer.util.StreamResource;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -125,13 +124,13 @@ public class DelegatingUserAgent implements UserAgentCallback, DocumentListener 
      * @param uri Location of the XML source.
      * @return An XMLResource containing the image.
      */
-    public HTMLResource getXMLResource(final String uri) {
+    public Document getHTMLResource(final String uri) {
         final String ruri = _uriResolver.resolve(uri);
         final StreamResource sr = new StreamResource(ruri);
         try {
             sr.connect();
             final BufferedInputStream bis = sr.bufferedStream();
-            return HTMLResource.load(bis, sr.getFinalUri());
+            return HTMLResourceHelper.load(bis, sr.getFinalUri()).getDocument();
         } catch (final IOException e) {
             return null;
         } finally {

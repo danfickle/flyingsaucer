@@ -33,13 +33,13 @@ import java.util.LinkedHashMap;
 
 import javax.imageio.ImageIO;
 
+import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.event.DocumentListener;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.resource.CSSResource;
 import org.xhtmlrenderer.resource.ImageResource;
-import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.swing.AWTFSImage;
 import org.xhtmlrenderer.swing.ImageResourceLoader;
 import org.xhtmlrenderer.swing.StylesheetCache;
@@ -220,11 +220,11 @@ public class NaiveUserAgent implements UserAgentCallback, DocumentListener {
      * @param uri Location of the XML source.
      * @return An XMLResource containing the image.
      */
-    public HTMLResource getXMLResource(final String uri) {
+    public Document getHTMLResource(final String uri) {
         final InputStream inputStream = resolveAndOpenStream(uri);
-        HTMLResource xmlResource;
+        HTMLResourceHelper xmlResource;
         try {
-            xmlResource = HTMLResource.load(inputStream, uri);
+            xmlResource = HTMLResourceHelper.load(inputStream, uri);
         } finally {
             if (inputStream != null) {
                 try {
@@ -234,7 +234,7 @@ public class NaiveUserAgent implements UserAgentCallback, DocumentListener {
                 }
             }
         }
-        return xmlResource;
+        return xmlResource.getDocument();
     }
 
     public byte[] getBinaryResource(final String uri) {

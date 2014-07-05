@@ -44,11 +44,11 @@ import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.render.PageBox;
 import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.render.ViewportBox;
-import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.simple.HtmlNamespaceHandler;
 import org.xhtmlrenderer.util.Configuration;
 import org.xhtmlrenderer.util.JsoupUtil;
 
+import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.PdfWriter;
 
@@ -119,7 +119,7 @@ public class ITextRenderer {
     }
 
     private Document loadDocument(final String uri) {
-        return _sharedContext.getUac().getXMLResource(uri).getDocument();
+        return _sharedContext.getUac().getHTMLResource(uri);
     }
 
     public void setDocument(final String uri) {
@@ -142,7 +142,7 @@ public class ITextRenderer {
 
     public void setDocumentFromString(final String content, final String baseUrl) 
     {
-        final Document dom = HTMLResource.load(content).getDocument();
+        final Document dom = HTMLResourceHelper.load(content).getDocument();
         setDocument(dom, baseUrl);
     }
 

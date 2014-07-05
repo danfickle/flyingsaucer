@@ -34,17 +34,18 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
+import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.resource.CSSResource;
 import org.xhtmlrenderer.resource.ImageResource;
-import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.swing.AWTFSImage;
 import org.xhtmlrenderer.swing.ImageResourceLoader;
 import org.xhtmlrenderer.swing.StylesheetCache;
 import org.xhtmlrenderer.util.Uu;
 
+import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
 import com.github.neoflyingsaucer.defaultuseragent.ImageResourceLoaderImpl;
 import com.github.neoflyingsaucer.defaultuseragent.StylesheetCacheImpl;
 
@@ -148,7 +149,7 @@ public class DemoUserAgent implements UserAgentCallback {
         }
     }    
 
-    public HTMLResource getXMLResource(String uri) {
+    public Document getHTMLResource(String uri) {
         uri = resolveURI(uri);
         if (uri != null && uri.startsWith("file:")) {
             File file = null;
@@ -158,14 +159,14 @@ public class DemoUserAgent implements UserAgentCallback {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
         }
-        HTMLResource xr = null;
+        HTMLResourceHelper xr = null;
         InputStream inputStream = null;
         try {
             final URLConnection uc = new URL(uri).openConnection();
             uc.connect();
             // TODO: String contentType = uc.getContentType(); Maybe should popup a choice when content/unknown!
             inputStream = uc.getInputStream();
-            xr = HTMLResource.load(inputStream, uri);
+            xr = HTMLResourceHelper.load(inputStream, uri);
         } catch (final MalformedURLException e) {
             LOGGER.error("bad URL given: " + uri, e);
         } catch (final IOException e) {
@@ -179,9 +180,9 @@ public class DemoUserAgent implements UserAgentCallback {
         }
         if (xr == null) {
             final String notFound = "<h1>Document not found</h1>";
-            xr = HTMLResource.load(new StringReader(notFound));
+            xr = HTMLResourceHelper.load(notFound);
         }
-        return xr;
+        return xr.getDocument();
     }
 
     public boolean isVisited(String uri) {

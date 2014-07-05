@@ -21,13 +21,13 @@ import org.jsoup.nodes.Document;
 import org.xhtmlrenderer.demo.browser.FSScrollPane;
 import org.xhtmlrenderer.event.DefaultDocumentListener;
 import org.xhtmlrenderer.extend.UserAgentCallback;
-import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.swing.ImageResourceLoader;
 import org.xhtmlrenderer.swing.SwingReplacedElementFactory;
 import org.xhtmlrenderer.util.GeneralUtil;
 
 import com.github.danfickle.flyingsaucer.swing.XHTMLPanel;
 import com.github.neoflyingsaucer.defaultuseragent.DelegatingUserAgent;
+import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
 import com.github.neoflyingsaucer.defaultuseragent.ImageResourceLoaderImpl;
 
 import javax.swing.*;
@@ -120,11 +120,11 @@ public class BrowsePanel {
         });
     }
 
-    private HTMLResource getErrorDocument(final String reason) {
-        HTMLResource xr;
+    private HTMLResourceHelper getErrorDocument(final String reason) {
+        HTMLResourceHelper xr;
         final String cleanUri = GeneralUtil.escapeHTML(uri);
         final String notFound = "<html><h1>Document not found</h1><p>Could not load URI <pre>" + cleanUri + "</pre>, because: " + reason + "</p></html>";
-        xr = HTMLResource.load(new StringReader(notFound));
+        xr = HTMLResourceHelper.load(new StringReader(notFound));
         return xr;
     }
 
@@ -135,9 +135,7 @@ public class BrowsePanel {
                 final Document doc;
                 try {
                     if (panel != null ) panel.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-                    final HTMLResource resource = getUAC().getXMLResource(uri);
-                    uri = resource.getURI();
-                    doc = resource.getDocument();
+                    doc = getUAC().getHTMLResource(uri);
                 } catch (final Exception e) {
                     e.printStackTrace();
                     System.err.println("Can't load document");

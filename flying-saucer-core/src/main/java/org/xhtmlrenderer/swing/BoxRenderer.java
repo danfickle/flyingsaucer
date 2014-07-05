@@ -301,7 +301,7 @@ public class BoxRenderer {
 	}
 
 	private Document loadDocument(final String uri) {
-		return sharedContext.getUac().getXMLResource(uri).getDocument();
+		return sharedContext.getUac().getHTMLResource(uri);
 	}
 
 	private LayoutContext newLayoutContext() {

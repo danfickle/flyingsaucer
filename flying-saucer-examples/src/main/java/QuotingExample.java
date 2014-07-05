@@ -1,9 +1,8 @@
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import org.xhtmlrenderer.util.XMLUtil;
-
 import com.github.danfickle.flyingsaucer.swing.XHTMLPanel;
+import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
 
 
 public class QuotingExample extends JFrame {
@@ -37,7 +36,7 @@ public class QuotingExample extends JFrame {
         
         final XHTMLPanel xr = new XHTMLPanel();
         try {
-            xr.setDocument(XMLUtil.documentFromString(DOCUMENT));
+            xr.setDocument(HTMLResourceHelper.load(DOCUMENT).getDocument());
         } catch (final Exception e) {
             throw new ExceptionInInitializerError(e);
         }

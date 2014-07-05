@@ -17,13 +17,13 @@
  */
 
 
+import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
 import com.lowagie.text.DocumentException;
 
 import org.jsoup.nodes.Document;
 import org.xhtmlrenderer.pdf.ITextOutputDevice;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 import org.xhtmlrenderer.pdf.ITextUserAgent;
-import org.xhtmlrenderer.resource.HTMLResource;
 
 import java.io.*;
 
@@ -64,7 +64,7 @@ public class PDFRender {
             renderer.getSharedContext ().setUserAgentCallback(callback);
 
             // TODO
-            final Document doc = HTMLResource.load("<body>TODO</body>").getDocument();
+            final Document doc = HTMLResourceHelper.load("<body>TODO</body>").getDocument();
 
             renderer.setDocument(doc, url);
             renderer.layout();
