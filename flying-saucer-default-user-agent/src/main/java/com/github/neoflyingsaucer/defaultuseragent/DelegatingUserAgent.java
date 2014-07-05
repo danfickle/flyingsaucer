@@ -17,13 +17,16 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  */
-package org.xhtmlrenderer.swing;
+package com.github.neoflyingsaucer.defaultuseragent;
 
 import org.xhtmlrenderer.event.DocumentListener;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.resource.CSSResource;
 import org.xhtmlrenderer.resource.ImageResource;
 import org.xhtmlrenderer.resource.HTMLResource;
+import org.xhtmlrenderer.swing.ImageResourceLoader;
+import org.xhtmlrenderer.swing.StylesheetCache;
+import org.xhtmlrenderer.swing.UriResolver;
 import org.xhtmlrenderer.util.IOUtil;
 import org.xhtmlrenderer.util.StreamResource;
 

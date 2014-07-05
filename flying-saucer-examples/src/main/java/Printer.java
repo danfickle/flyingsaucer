@@ -21,7 +21,8 @@ import org.xhtmlrenderer.event.DocumentListener;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.layout.SharedContext;
 import org.xhtmlrenderer.swing.Java2DRenderer;
-import org.xhtmlrenderer.swing.NaiveUserAgent;
+
+import com.github.neoflyingsaucer.defaultuseragent.NaiveUserAgent;
 
 import javax.print.*;
 import javax.print.attribute.Attribute;
@@ -33,6 +34,7 @@ import javax.print.attribute.standard.OrientationRequested;
 import javax.print.attribute.standard.PrintQuality;
 import javax.print.event.PrintJobEvent;
 import javax.print.event.PrintJobListener;
+
 import java.awt.*;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
@@ -217,7 +219,7 @@ public class Printer implements Runnable, DocumentListener, Printable, PrintJobL
         try {
             if (j2dr == null) {
 
-                j2dr = new Java2DRenderer(file, 1024);
+                j2dr = new Java2DRenderer(file, 1024, new NaiveUserAgent());
                 final SharedContext context = j2dr.getSharedContext();
                 context.setPrint(true);
                 context.setDPI(72f);

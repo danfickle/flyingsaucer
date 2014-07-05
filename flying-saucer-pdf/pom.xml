@@ -28,5 +28,10 @@
 			<artifactId>flying-saucer-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+		      <groupId>org.xhtmlrenderer</groupId>
+		      <artifactId>flying-saucer-default-user-agent</artifactId>
+		      <version>${project.version}</version>
+		</dependency>
 	</dependencies>
 </project>

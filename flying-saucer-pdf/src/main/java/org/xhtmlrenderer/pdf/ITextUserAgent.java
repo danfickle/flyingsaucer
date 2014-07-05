@@ -30,11 +30,12 @@ import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.extend.FSImage;
 import org.xhtmlrenderer.layout.SharedContext;
 import org.xhtmlrenderer.resource.ImageResource;
-import org.xhtmlrenderer.swing.NaiveUserAgent;
 
+import com.github.neoflyingsaucer.defaultuseragent.NaiveUserAgent;
 import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfReader;
+
 import org.xhtmlrenderer.util.ImageUtil;
 
 public class ITextUserAgent extends NaiveUserAgent {

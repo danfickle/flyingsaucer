@@ -22,10 +22,11 @@ package org.xhtmlrenderer.demo.browser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.resource.HTMLResource;
-import org.xhtmlrenderer.swing.DelegatingUserAgent;
 import org.xhtmlrenderer.util.StreamResource;
 import org.xhtmlrenderer.util.Uu;
 import org.xhtmlrenderer.util.GeneralUtil;
+
+import com.github.neoflyingsaucer.defaultuseragent.DelegatingUserAgent;
 
 import java.io.*;
 import java.net.*;

@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  */
-package org.xhtmlrenderer.swing;
+package com.github.neoflyingsaucer.defaultuseragent;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -30,6 +30,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+
 import javax.imageio.ImageIO;
 
 import org.slf4j.Logger;
@@ -39,6 +40,8 @@ import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.resource.CSSResource;
 import org.xhtmlrenderer.resource.ImageResource;
 import org.xhtmlrenderer.resource.HTMLResource;
+import org.xhtmlrenderer.swing.AWTFSImage;
+import org.xhtmlrenderer.swing.StylesheetCache;
 import org.xhtmlrenderer.util.ImageUtil;
 
 /**

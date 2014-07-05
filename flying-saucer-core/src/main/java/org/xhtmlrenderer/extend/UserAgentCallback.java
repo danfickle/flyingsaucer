@@ -43,7 +43,7 @@ import org.xhtmlrenderer.swing.StylesheetCache;
  * retrieved from external sources; that's one of the purposes of the UAC.</p>
  *
  * <p>To understand how to create your own UAC, it's best to look at some of the
- * implemetations shipped with the library, like the {@link org.xhtmlrenderer.swing.NaiveUserAgent}.
+ * implemetations shipped with the library, like the {@link com.github.neoflyingsaucer.defaultuseragent.NaiveUserAgent}.
  * </p>
  *
  * @author Torbjoern Gannholm

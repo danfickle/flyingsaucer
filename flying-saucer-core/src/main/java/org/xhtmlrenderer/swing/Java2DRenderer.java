@@ -109,9 +109,9 @@ public class Java2DRenderer {
 	 * @param dotsPerPoint Layout XML at so many dots per point
 	 * @param dotsPerPixel Layout XML at so many dots per pixel
 	 */
-	private Java2DRenderer(final float dotsPerPoint, final int dotsPerPixel) {
+	private Java2DRenderer(final float dotsPerPoint, final int dotsPerPixel, final UserAgentCallback userAgent) {
 		this();
-		init(dotsPerPoint, dotsPerPixel);
+		init(dotsPerPoint, dotsPerPixel, userAgent);
 	}
 
 	/**
@@ -122,11 +122,11 @@ public class Java2DRenderer {
 	 * @param baseurl The base url for the document, against which  relative paths are resolved.
 	 * @param width Target width, in pixels, for the image; required to provide horizontal bounds for the layout.
 	 */
-	public Java2DRenderer(final String url, final String baseUrl, final int width, final int height) {
+	public Java2DRenderer(final String url, final String baseUrl, final int width, final int height, final UserAgentCallback userAgent) {
 		// bypass scaling routines based on DPI -- see PDFRenderer and compare--dotsPerPoint is not implemented
 		// in all subordinate classes and interfaces for Java2D, so leaving it out
 		// leaving this constructor call here as a TODO
-		this(DEFAULT_DOTS_PER_POINT, DEFAULT_DOTS_PER_PIXEL);
+		this(DEFAULT_DOTS_PER_POINT, DEFAULT_DOTS_PER_PIXEL, userAgent);
 
 		this.sourceDocument = url;
 		this.sourceDocumentBase = baseUrl;
@@ -142,8 +142,8 @@ public class Java2DRenderer {
 	 * @param width Target width, in pixels, for the image; required to provide horizontal bounds for the layout.
 	 * @param height Target height, in pixels, for the image
 	 */
-	public Java2DRenderer(final File file, final int width, final int height) throws IOException {
-		this(file.toURI().toURL().toExternalForm(), width, height);
+	public Java2DRenderer(final File file, final int width, final int height, final UserAgentCallback userAgent) throws IOException {
+		this(file.toURI().toURL().toExternalForm(), width, height, userAgent);
 	}
    
    
@@ -155,8 +155,8 @@ public class Java2DRenderer {
          * @param width Target width, in pixels, for the image; required to provide horizontal bounds for the layout.
          * @param height Target height, in pixels, for the image.
          */
-        public Java2DRenderer(final Document doc, final int width, final int height) {
-            this(DEFAULT_DOTS_PER_POINT, DEFAULT_DOTS_PER_PIXEL);
+        public Java2DRenderer(final Document doc, final int width, final int height, final UserAgentCallback userAgent) {
+            this(DEFAULT_DOTS_PER_POINT, DEFAULT_DOTS_PER_PIXEL, userAgent);
             this.doc = doc;
             this.width = width;
             this.height = height;
@@ -172,8 +172,8 @@ public class Java2DRenderer {
          * @param width Target width, in pixels, for the image; required to provide horizontal bounds for the layout.
          * @param height Target height, in pixels, for the image.
          */
-        public Java2DRenderer(final Document doc, final String baseUrl, final int width, final int height) {
-            this(doc, width, height);
+        public Java2DRenderer(final Document doc, final String baseUrl, final int width, final int height, final UserAgentCallback userAgent) {
+            this(doc, width, height, userAgent);
             this.sourceDocumentBase = baseUrl;
         }
 
@@ -185,8 +185,8 @@ public class Java2DRenderer {
 	 * @param width Target width, in pixels, for the image; required to provide horizontal bounds for the layout.
 	 * Heght is calculated based on content
 	 */
-	public Java2DRenderer(final File file, final int width) throws IOException {
-		this(file.toURI().toURL().toExternalForm(), width);
+	public Java2DRenderer(final File file, final int width, final UserAgentCallback userAgent) throws IOException {
+		this(file.toURI().toURL().toExternalForm(), width, userAgent);
 	}
 
 
@@ -198,8 +198,8 @@ public class Java2DRenderer {
 	 * @param width Target width, in pixels, for the image; required to provide horizontal bounds for the layout.
 	 * Heght is calculated based on content
 	 */
-	public Java2DRenderer(final String url, final int width) {
-		this(url, url, width, NO_HEIGHT);
+	public Java2DRenderer(final String url, final int width, final UserAgentCallback userAgent) {
+		this(url, url, width, NO_HEIGHT, userAgent);
 	}
 
 	/**
@@ -211,8 +211,8 @@ public class Java2DRenderer {
 	 * @param width Target width, in pixels, for the image; required to provide horizontal bounds for the layout.
 	 * Heght is calculated based on content
 	 */
-	public Java2DRenderer(final String url, final String baseurl, final int width) {
-		this(url, baseurl, width, NO_HEIGHT);
+	public Java2DRenderer(final String url, final String baseurl, final int width, final UserAgentCallback userAgent) {
+		this(url, baseurl, width, NO_HEIGHT, userAgent);
 	}
 
 	/**
@@ -224,8 +224,8 @@ public class Java2DRenderer {
 	 * @param width Target width, in pixels, for the image; required to provide horizontal bounds for the layout.
 	 * @param height Target height, in pixels, for the image
 	 */
-	public Java2DRenderer(final String url, final int width, final int height) {
-		this(url, url, width, height);
+	public Java2DRenderer(final String url, final int width, final int height, final UserAgentCallback userAgent) {
+		this(url, url, width, height, userAgent);
 	}
 
 	/**
@@ -356,13 +356,12 @@ public class Java2DRenderer {
 		return result;
 	}
 
-	private void init(final float dotsPerPoint, final int dotsPerPixel) {
+	private void init(final float dotsPerPoint, final int dotsPerPixel, final UserAgentCallback userAgent) {
 		this.dotsPerPoint = dotsPerPoint;
 
 		outputImage = ImageUtil.createCompatibleBufferedImage(DEFAULT_DOTS_PER_POINT, DEFAULT_DOTS_PER_POINT);
 		outputDevice = new Java2DOutputDevice(outputImage);
 
-		final UserAgentCallback userAgent = new NaiveUserAgent();
 		sharedContext = new SharedContext(userAgent);
 
 		final AWTFontResolver fontResolver = new AWTFontResolver();

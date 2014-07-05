@@ -22,12 +22,12 @@ import org.xhtmlrenderer.demo.browser.FSScrollPane;
 import org.xhtmlrenderer.event.DefaultDocumentListener;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.resource.HTMLResource;
-import org.xhtmlrenderer.swing.DelegatingUserAgent;
 import org.xhtmlrenderer.swing.ImageResourceLoader;
 import org.xhtmlrenderer.swing.SwingReplacedElementFactory;
 import org.xhtmlrenderer.util.GeneralUtil;
 
 import com.github.danfickle.flyingsaucer.swing.XHTMLPanel;
+import com.github.neoflyingsaucer.defaultuseragent.DelegatingUserAgent;
 
 import javax.swing.*;
 

@@ -14,7 +14,7 @@
 
 	<packaging>jar</packaging>
 
-	<name>flying-saucer-swing</name>
+	<name>flying-saucer-default-user-agent</name>
 	<description>Flying Saucer is a CSS 2.1 renderer written in Java.  This artifact is a default user agent implementation.</description>
 
 	<dependencies>
