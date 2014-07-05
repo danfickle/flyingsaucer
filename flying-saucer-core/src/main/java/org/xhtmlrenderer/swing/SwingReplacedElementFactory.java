@@ -20,7 +20,6 @@
 package org.xhtmlrenderer.swing;
 
 import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.extend.ReplacedElement;
@@ -28,8 +27,6 @@ import org.xhtmlrenderer.extend.ReplacedElementFactory;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
-import org.xhtmlrenderer.simple.extend.XhtmlForm;
-import org.xhtmlrenderer.simple.extend.form.FormField;
 import org.xhtmlrenderer.swing.AWTFSImage;
 import org.xhtmlrenderer.swing.EmptyReplacedElement;
 import org.xhtmlrenderer.swing.ImageReplacedElement;
@@ -37,11 +34,9 @@ import org.xhtmlrenderer.swing.ImageResourceLoader;
 import org.xhtmlrenderer.util.ImageUtil;
 import org.xhtmlrenderer.resource.ImageResource;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -53,10 +48,6 @@ public class SwingReplacedElementFactory implements ReplacedElementFactory {
      * Cache of image components (ReplacedElements) for quick lookup, keyed by Element.
      */
     protected Map<CacheKey, ReplacedElement> imageComponents;
-    /**
-     * Cache of XhtmlForms keyed by Element.
-     */
-    protected LinkedHashMap<Element, XhtmlForm> forms;
 
     private final ImageResourceLoader imageResourceLoader;
 
@@ -88,30 +79,7 @@ public class SwingReplacedElementFactory implements ReplacedElementFactory {
         if (context.getNamespaceHandler().isImageElement(e)) {
             return replaceImage(uac, context, e, cssWidth, cssHeight);
         } else {
-            //form components
-            final Element parentForm = getParentForm(e, context);
-            //parentForm may be null! No problem! Assume action is this document and method is get.
-            XhtmlForm form = getForm(parentForm);
-            if (form == null) {
-                form = new XhtmlForm(uac, parentForm);
-                addForm(parentForm, form);
-            }
-
-            final FormField formField = form.addComponent(e, context, box);
-            if (formField == null) {
-                return null;
-            }
-
-            final JComponent cc = formField.getComponent();
-
-            if (cc == null) {
-                return new EmptyReplacedElement(0, 0);
-            }
-
-            final SwingReplacedElement result = new SwingReplacedElement(cc);
-            result.setIntrinsicSize(formField.getIntrinsicSize());
-
-            return result;
+        	return null;
         }
     }
 
@@ -221,68 +189,6 @@ public class SwingReplacedElementFactory implements ReplacedElementFactory {
         return lookupImageReplacedElement(e, uri, -1, -1);
     }
 
-    /**
-     * Adds a form to a local cache for quick lookup.
-     *
-     * @param e The element under which the form is keyed (e.g. "<form>" in HTML)
-     * @param f The form element being stored.
-     */
-    protected void addForm(final Element e, final XhtmlForm f) {
-        if (forms == null) {
-            forms = new LinkedHashMap<Element, XhtmlForm>();
-        }
-        forms.put(e, f);
-    }
-
-    /**
-     * Returns the XhtmlForm associated with an Element in cache, or null if not found.
-     *
-     * @param e The Element to which the form is keyed
-     * @return The form, or null if not found.
-     */
-    protected XhtmlForm getForm(final Element e) {
-        if (forms == null) {
-            return null;
-        }
-        return forms.get(e);
-    }
-
-    /**
-     * @param e
-     */
-    protected Element getParentForm(final Element e, final LayoutContext context) {
-        Node node = e;
-
-        do {
-            node = node.parentNode();
-        } while (node instanceof Element &&
-                !context.getNamespaceHandler().isFormElement((Element) node));
-
-        if (!(node instanceof Element)) {
-            return null;
-        }
-
-        return (Element) node;
-    }
-
-    /**
-     * Clears out any references to elements or items created by this factory so far.
-     */
-    public void reset() {
-        forms = null;
-        //imageComponents = null;
-    }
-
-    public void remove(final Element e) {
-        if (forms != null) {
-            forms.remove(e);
-        }
-
-        if (imageComponents != null) {
-            imageComponents.remove(e);
-        }
-    }
-
     private static class CacheKey {
         final Element elem;
         final String uri;
@@ -318,5 +224,15 @@ public class SwingReplacedElementFactory implements ReplacedElementFactory {
             return result;
         }
     }
+
+	@Override
+	public void reset() { }
+
+	@Override
+	public void remove(Element e)
+	{
+        if (imageComponents != null)
+            imageComponents.remove(e);
+	}
 
 }

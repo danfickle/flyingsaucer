@@ -42,7 +42,6 @@ import org.xhtmlrenderer.css.extend.TreeResolver;
 import org.xhtmlrenderer.css.sheet.Stylesheet;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo;
 import org.xhtmlrenderer.extend.NamespaceHandler;
-import org.xhtmlrenderer.simple.xhtml.XhtmlForm;
 import org.xhtmlrenderer.util.Configuration;
 
 import static org.xhtmlrenderer.util.GeneralUtil.ciEquals;
@@ -523,18 +522,6 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
         }
         
         return null;
-    }
-    
-    public XhtmlForm createForm(final Element e)
-    {
-        if(e == null) {
-            return new XhtmlForm("", "get");
-        } else if(isFormElement(e)) {
-            return new XhtmlForm(e.attr("action"),
-                e.attr("method"));
-        } else {
-            return null;
-        }
     }
     
     protected String convertToLength(final String value)
