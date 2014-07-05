@@ -25,7 +25,7 @@ import org.xhtmlrenderer.swing.AWTFSImage;
 /**
  * @author Administrator
  */
-public class ImageResource extends AbstractResource {
+public class ImageResource {
     private final String _imageUri;
     private final FSImage _img;
 

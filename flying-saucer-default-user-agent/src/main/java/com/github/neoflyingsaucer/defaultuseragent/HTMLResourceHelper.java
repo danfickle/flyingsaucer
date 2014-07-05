@@ -28,14 +28,13 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xhtmlrenderer.resource.AbstractResource;
 import org.xhtmlrenderer.util.XRRuntimeException;
 
 /**
  * @author Patrick Wright
  */
 // TODO Charsets.
-public class HTMLResourceHelper extends AbstractResource {
+public class HTMLResourceHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HTMLResourceHelper.class);
     private Document document;
