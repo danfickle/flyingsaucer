@@ -217,7 +217,7 @@ public class BrowserMenuBar extends JMenuBar {
                     final JFrame frame = root.validation_console;
                     final JTextArea jta = new JTextArea();
 
-                    root.error_handler.setTextArea(jta);
+                    //root.error_handler.setTextArea(jta);
 
                     jta.setEditable(false);
                     jta.setLineWrap(true);

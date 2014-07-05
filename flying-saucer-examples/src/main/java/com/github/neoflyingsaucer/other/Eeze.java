@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * }}}
  */
-package org.xhtmlrenderer.demo.browser;
+package com.github.neoflyingsaucer.other;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -29,11 +29,14 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xhtmlrenderer.demo.browser.FSScrollPane;
+
 import com.github.danfickle.flyingsaucer.swing.Graphics2DRenderer;
 import com.github.danfickle.flyingsaucer.swing.XHTMLPanel;
 

@@ -63,7 +63,7 @@ public class BrowserStartup {
     /**
      * Description of the Field
      */
-    protected ValidationHandler error_handler = new ValidationHandler();
+    //protected ValidationHandler error_handler = new ValidationHandler();
 
     /**
      * Constructor for the BrowserStartup object

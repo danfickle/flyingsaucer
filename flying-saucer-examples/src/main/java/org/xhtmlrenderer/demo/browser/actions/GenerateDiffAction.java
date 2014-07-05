@@ -1,8 +1,9 @@
 package org.xhtmlrenderer.demo.browser.actions;
 
 import org.xhtmlrenderer.demo.browser.BrowserStartup;
-import org.xhtmlrenderer.demo.browser.DocumentDiffTest;
 import org.xhtmlrenderer.util.Uu;
+
+import com.github.neoflyingsaucer.other.DocumentDiffTest;
 
 import javax.swing.*;
 

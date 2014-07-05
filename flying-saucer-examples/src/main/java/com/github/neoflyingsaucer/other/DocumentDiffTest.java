@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * }}}
  */
-package org.xhtmlrenderer.demo.browser;
+package com.github.neoflyingsaucer.other;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
