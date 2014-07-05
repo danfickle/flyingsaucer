@@ -56,7 +56,7 @@ import java.io.InputStream;
 public class DelegatingUserAgent implements UserAgentCallback, DocumentListener {
     private final UriResolver _uriResolver;
     private ImageResourceLoader _imageResourceLoader;
-    protected StylesheetCache _styleCache = new StylesheetCache();
+    protected StylesheetCache _styleCache = new StylesheetCacheImpl();
 
     /**
      * Creates a new instance of NaiveUserAgent with a max image cache of 16 images.

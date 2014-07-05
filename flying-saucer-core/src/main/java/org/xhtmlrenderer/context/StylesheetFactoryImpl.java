@@ -36,7 +36,7 @@ import org.xhtmlrenderer.css.sheet.StylesheetInfo;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.resource.CSSResource;
-import org.xhtmlrenderer.swing.StylesheetCache.StylesheetCacheKey;
+import org.xhtmlrenderer.swing.StylesheetCacheKey;
 
 /**
  * A Factory class for Cascading Style Sheets. Sheets are parsed using a single

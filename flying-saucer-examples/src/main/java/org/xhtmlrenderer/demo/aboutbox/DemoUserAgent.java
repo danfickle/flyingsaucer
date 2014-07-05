@@ -44,6 +44,8 @@ import org.xhtmlrenderer.swing.AWTFSImage;
 import org.xhtmlrenderer.swing.StylesheetCache;
 import org.xhtmlrenderer.util.Uu;
 
+import com.github.neoflyingsaucer.defaultuseragent.StylesheetCacheImpl;
+
 
 /**
  * Created by IntelliJ IDEA.
@@ -58,7 +60,7 @@ public class DemoUserAgent implements UserAgentCallback {
     private String baseUrl;
     private int index = -1;
     private final ArrayList history = new ArrayList();
-    protected StylesheetCache _styleCache = new StylesheetCache();
+    protected StylesheetCache _styleCache = new StylesheetCacheImpl();
     /**
      * an LRU cache
      */

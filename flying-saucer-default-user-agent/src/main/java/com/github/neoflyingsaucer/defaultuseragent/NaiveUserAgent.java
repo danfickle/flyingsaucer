@@ -71,7 +71,7 @@ public class NaiveUserAgent implements UserAgentCallback, DocumentListener {
      */
     protected LinkedHashMap<String, ImageResource> _imageCache;
 
-    protected StylesheetCache _styleCache = new StylesheetCache();
+    protected StylesheetCache _styleCache = new StylesheetCacheImpl();
     
     private final int _imageCacheCapacity;
     private String _baseURL;

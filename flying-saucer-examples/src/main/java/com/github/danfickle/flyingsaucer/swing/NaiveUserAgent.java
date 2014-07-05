@@ -30,6 +30,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+
 import javax.imageio.ImageIO;
 
 import org.slf4j.Logger;
@@ -42,6 +43,8 @@ import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.swing.AWTFSImage;
 import org.xhtmlrenderer.swing.StylesheetCache;
 import org.xhtmlrenderer.util.ImageUtil;
+
+import com.github.neoflyingsaucer.defaultuseragent.StylesheetCacheImpl;
 
 /**
  * <p>NaiveUserAgent is a simple implementation of {@link UserAgentCallback} which places no restrictions on what
@@ -71,7 +74,7 @@ public class NaiveUserAgent implements UserAgentCallback, DocumentListener {
      */
     protected LinkedHashMap<String, ImageResource> _imageCache;
 
-    protected StylesheetCache _styleCache = new StylesheetCache();
+    protected StylesheetCache _styleCache = new StylesheetCacheImpl();
     
     private final int _imageCacheCapacity;
     private String _baseURL;
