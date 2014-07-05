@@ -27,7 +27,7 @@ import org.xhtmlrenderer.swing.Java2DRenderer;
 import org.xhtmlrenderer.util.FSImageWriter;
 
 import com.github.danfickle.flyingsaucer.swing.Graphics2DRenderer;
-import com.github.danfickle.flyingsaucer.swing.NaiveUserAgent;
+import com.github.neoflyingsaucer.defaultuseragent.NaiveUserAgent;
 
 /**
  */

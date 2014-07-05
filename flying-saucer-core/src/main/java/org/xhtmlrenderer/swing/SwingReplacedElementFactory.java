@@ -30,7 +30,6 @@ import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.swing.AWTFSImage;
 import org.xhtmlrenderer.swing.EmptyReplacedElement;
 import org.xhtmlrenderer.swing.ImageReplacedElement;
-import org.xhtmlrenderer.swing.ImageResourceLoader;
 import org.xhtmlrenderer.util.ImageUtil;
 import org.xhtmlrenderer.resource.ImageResource;
 
@@ -49,15 +48,8 @@ public class SwingReplacedElementFactory implements ReplacedElementFactory {
      */
     protected Map<CacheKey, ReplacedElement> imageComponents;
 
-    private final ImageResourceLoader imageResourceLoader;
-
-    public SwingReplacedElementFactory() {
-        this(new ImageResourceLoader());
-    }
-
-    public SwingReplacedElementFactory(final ImageResourceLoader irl) 
+    public SwingReplacedElementFactory() 
     {
-        this.imageResourceLoader = irl;
     }
 
     /**
@@ -114,7 +106,7 @@ public class SwingReplacedElementFactory implements ReplacedElementFactory {
             if (re == null) {
                 LOGGER.debug("Swing: Image " + ruri + " requested at " + " to " + cssWidth + ", " + cssHeight);
 
-                final ImageResource imageResource = imageResourceLoader.get(ruri, cssWidth, cssHeight);
+                final ImageResource imageResource = uac.getImageResourceCache().get(ruri, cssWidth, cssHeight);
                 re = new ImageReplacedElement(((AWTFSImage) imageResource.getImage()).getImage(), cssWidth, cssHeight);
                 storeImageReplacedElement(elem, re, ruri, cssWidth, cssHeight);
             }

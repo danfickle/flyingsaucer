@@ -28,6 +28,7 @@ import org.xhtmlrenderer.util.GeneralUtil;
 
 import com.github.danfickle.flyingsaucer.swing.XHTMLPanel;
 import com.github.neoflyingsaucer.defaultuseragent.DelegatingUserAgent;
+import com.github.neoflyingsaucer.defaultuseragent.ImageResourceLoaderImpl;
 
 import javax.swing.*;
 
@@ -88,11 +89,11 @@ public class BrowsePanel {
     private void setupUserAgentCallback(final XHTMLPanel panel) {
         uac = new DelegatingUserAgent();
 
-        final ImageResourceLoader irl = new ImageResourceLoader();
+        final ImageResourceLoader irl = new ImageResourceLoaderImpl();
         ((DelegatingUserAgent) uac).setImageResourceLoader(irl);
         
         panel.getSharedContext().setUserAgentCallback(uac);
-        panel.getSharedContext().setReplacedElementFactory(new SwingReplacedElementFactory(irl));
+        panel.getSharedContext().setReplacedElementFactory(new SwingReplacedElementFactory());
     }
 
     private void setupDocumentListener(final XHTMLPanel panel) {

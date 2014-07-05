@@ -30,6 +30,7 @@ import org.xhtmlrenderer.swing.SwingReplacedElementFactory;
 import org.xhtmlrenderer.util.*;
 
 import com.github.danfickle.flyingsaucer.swing.ScalableXHTMLPanel;
+import com.github.neoflyingsaucer.defaultuseragent.ImageResourceLoaderImpl;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.PdfWriter;
 
@@ -154,9 +155,9 @@ public class BrowserPanel extends JPanel implements DocumentListener {
 
 		manager = new PanelManager();
         view = new ScalableXHTMLPanel(manager);
-        final ImageResourceLoader irl = new ImageResourceLoader();
+        final ImageResourceLoader irl = new ImageResourceLoaderImpl();
         manager.setImageResourceLoader(irl);
-        view.getSharedContext().setReplacedElementFactory(new SwingReplacedElementFactory(irl));
+        view.getSharedContext().setReplacedElementFactory(new SwingReplacedElementFactory());
         view.addDocumentListener(manager);
         view.setCenteredPagedView(true);
         view.setBackground(Color.LIGHT_GRAY);

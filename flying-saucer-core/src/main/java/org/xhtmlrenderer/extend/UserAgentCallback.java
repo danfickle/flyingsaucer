@@ -22,6 +22,7 @@ package org.xhtmlrenderer.extend;
 import org.xhtmlrenderer.resource.CSSResource;
 import org.xhtmlrenderer.resource.ImageResource;
 import org.xhtmlrenderer.resource.HTMLResource;
+import org.xhtmlrenderer.swing.ImageResourceLoader;
 import org.xhtmlrenderer.swing.StylesheetCache;
 
 
@@ -116,4 +117,6 @@ public interface UserAgentCallback {
      * null.
      */
 	StylesheetCache getStylesheetCache();
+	
+	ImageResourceLoader getImageResourceCache();
 }

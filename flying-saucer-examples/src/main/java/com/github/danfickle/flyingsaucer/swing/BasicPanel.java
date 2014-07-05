@@ -54,6 +54,8 @@ import org.xhtmlrenderer.swing.Java2DOutputDevice;
 import org.xhtmlrenderer.util.Configuration;
 import org.xhtmlrenderer.util.Uu;
 
+import com.github.neoflyingsaucer.defaultuseragent.NaiveUserAgent;
+
 /**
  * A Swing {@link javax.swing.JPanel} that encloses the Flying Saucer renderer
  * for easy integration into Swing applications.

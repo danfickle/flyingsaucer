@@ -210,7 +210,14 @@ public class DelegatingUserAgent implements UserAgentCallback, DocumentListener 
     public void onRenderException(final Throwable t) { /* ignore*/ }
 
 	@Override
-	public StylesheetCache getStylesheetCache() {
+	public StylesheetCache getStylesheetCache() 
+	{
 		return _styleCache;
+	}
+
+	@Override
+	public ImageResourceLoader getImageResourceCache() 
+	{
+		return _imageResourceLoader;
 	}
 }

@@ -41,9 +41,11 @@ import org.xhtmlrenderer.resource.CSSResource;
 import org.xhtmlrenderer.resource.ImageResource;
 import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.swing.AWTFSImage;
+import org.xhtmlrenderer.swing.ImageResourceLoader;
 import org.xhtmlrenderer.swing.StylesheetCache;
 import org.xhtmlrenderer.util.Uu;
 
+import com.github.neoflyingsaucer.defaultuseragent.ImageResourceLoaderImpl;
 import com.github.neoflyingsaucer.defaultuseragent.StylesheetCacheImpl;
 
 
@@ -268,5 +270,14 @@ public class DemoUserAgent implements UserAgentCallback {
 	@Override
 	public StylesheetCache getStylesheetCache() {
 		return _styleCache;
+	}
+
+	// TODO
+	protected ImageResourceLoader irl = new ImageResourceLoaderImpl();
+	
+	@Override
+	public ImageResourceLoader getImageResourceCache() {
+		// TODO Auto-generated method stub
+		return irl;
 	}
 }

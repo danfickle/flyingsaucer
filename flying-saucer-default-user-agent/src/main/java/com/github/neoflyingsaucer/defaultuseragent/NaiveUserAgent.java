@@ -41,6 +41,7 @@ import org.xhtmlrenderer.resource.CSSResource;
 import org.xhtmlrenderer.resource.ImageResource;
 import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.swing.AWTFSImage;
+import org.xhtmlrenderer.swing.ImageResourceLoader;
 import org.xhtmlrenderer.swing.StylesheetCache;
 import org.xhtmlrenderer.util.ImageUtil;
 
@@ -72,6 +73,8 @@ public class NaiveUserAgent implements UserAgentCallback, DocumentListener {
     protected LinkedHashMap<String, ImageResource> _imageCache;
 
     protected StylesheetCache _styleCache = new StylesheetCacheImpl();
+    protected ImageResourceLoader _imageCache2 = new ImageResourceLoaderImpl();
+    
     
     private final int _imageCacheCapacity;
     private String _baseURL;
@@ -346,5 +349,11 @@ public class NaiveUserAgent implements UserAgentCallback, DocumentListener {
 	@Override
 	public StylesheetCache getStylesheetCache() {
 		return _styleCache;
+	}
+
+	@Override
+	public ImageResourceLoader getImageResourceCache() 
+	{
+		return _imageCache2;
 	}
 }
