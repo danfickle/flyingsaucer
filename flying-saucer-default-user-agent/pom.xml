@@ -10,23 +10,18 @@
 		<version>9.0.5-SNAPSHOTX</version>
 	</parent>
 
-	<artifactId>flying-saucer-swing</artifactId>
+	<artifactId>flying-saucer-default-user-agent</artifactId>
 
 	<packaging>jar</packaging>
 
 	<name>flying-saucer-swing</name>
-	<description>Flying Saucer is a CSS 2.1 renderer written in Java.  This artifact supports Swing output.</description>
+	<description>Flying Saucer is a CSS 2.1 renderer written in Java.  This artifact is a default user agent implementation.</description>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.xhtmlrenderer</groupId>
 			<artifactId>flying-saucer-core</artifactId>
 			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.ning</groupId>
-			<artifactId>async-http-client</artifactId>
-			<version>1.8.3</version>
 		</dependency>
 	</dependencies>
 </project>

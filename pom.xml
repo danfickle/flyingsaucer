@@ -11,7 +11,7 @@
   <packaging>pom</packaging>
 
   <name>Flying Saucer</name>
-  <description>Flying Saucer is a CSS 2.1 renderer written in Java.  It supports Java2D, PDF, and SWT output.</description>
+  <description>Flying Saucer is a CSS 2.1 renderer written in Java.  It supports Java2D and PDF output.</description>
 
   <url>http://code.google.com/p/flying-saucer/</url>
 
@@ -26,7 +26,7 @@
     <module>flying-saucer-core</module>
     <module>flying-saucer-pdf</module>
     <module>flying-saucer-examples</module>
-    <module>flying-saucer-swing</module>
+    <module>flying-saucer-default-user-agent</module>
   </modules>
 
 
