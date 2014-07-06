@@ -32,6 +32,7 @@ import org.xhtmlrenderer.layout.SharedContext;
 import org.xhtmlrenderer.resource.ImageResource;
 
 import com.github.neoflyingsaucer.defaultuseragent.DefaultUserAgent;
+import com.github.neoflyingsaucer.defaultuseragent.StreamResource;
 import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfReader;
@@ -68,36 +69,42 @@ public class ITextUserAgent extends DefaultUserAgent {
         if (ImageUtil.isEmbeddedBase64Image(uri)) {
             resource = loadEmbeddedBase64ImageResource(uri);
         } else {
-            uri = resolveURI(uri);
             resource = _imageCache.get(uri);
             if (resource == null) {
-                final InputStream is = resolveAndOpenStream(uri);
-                if (is != null) {
-                    try {
-                        final URL url = new URL(uri);
-                        if (url.getPath() != null && url.getPath().toLowerCase().endsWith(".pdf")) {
-                            final PdfReader reader = _outputDevice.getReader(url);
-                            final PDFAsImage image = new PDFAsImage(url);
-                            final Rectangle rect = reader.getPageSizeWithRotation(1);
-                            image.setInitialWidth(rect.getWidth() * _outputDevice.getDotsPerPoint());
-                            image.setInitialHeight(rect.getHeight() * _outputDevice.getDotsPerPoint());
-                            resource = new ImageResource(uri, image);
-                        } else {
-                            final Image image = Image.getInstance(readStream(is));
-                            scaleToOutputResolution(image);
-                            resource = new ImageResource(uri, new ITextFSImage(image));
-                        }
-                        _imageCache.put(uri, resource);
-                    } catch (final Exception e) {
-                        LOGGER.error("Can't read image file; unexpected problem for URI '" + uri + "'", e);
-                    } finally {
-                        try {
-                            is.close();
-                        } catch (final IOException e) {
-                            // ignore
-                        }
-                    }
-                }
+                StreamResource sr = new StreamResource(uri);
+                InputStream is = null;
+				try {
+					is = sr.bufferedStream();
+					final URL url = new URL(uri);
+					if (url.getPath() != null
+							&& url.getPath().toLowerCase().endsWith(".pdf")) {
+						final PdfReader reader = _outputDevice.getReader(url);
+						final PDFAsImage image = new PDFAsImage(url);
+						final Rectangle rect = reader
+								.getPageSizeWithRotation(1);
+						image.setInitialWidth(rect.getWidth()
+								* _outputDevice.getDotsPerPoint());
+						image.setInitialHeight(rect.getHeight()
+								* _outputDevice.getDotsPerPoint());
+						resource = new ImageResource(uri, image);
+					} else {
+						final Image image = Image.getInstance(readStream(is));
+						scaleToOutputResolution(image);
+						resource = new ImageResource(uri, new ITextFSImage(
+								image));
+					}
+					_imageCache.put(uri, resource);
+				} catch (final Exception e) {
+					LOGGER.error(
+							"Can't read image file; unexpected problem for URI '"
+									+ uri + "'", e);
+				} finally {
+					try {
+						is.close();
+					} catch (final IOException e) {
+						// ignore
+					}
+				}
             }
 
             if (resource != null) {

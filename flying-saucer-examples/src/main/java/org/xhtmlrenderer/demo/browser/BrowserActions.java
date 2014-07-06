@@ -20,7 +20,6 @@
 package org.xhtmlrenderer.demo.browser;
 
 import org.xhtmlrenderer.demo.browser.actions.FontSizeAction;
-import org.xhtmlrenderer.demo.browser.actions.GenerateDiffAction;
 import org.xhtmlrenderer.layout.SharedContext;
 import org.xhtmlrenderer.util.Uu;
 
@@ -267,7 +266,7 @@ public class BrowserActions {
             }
         };
 
-        generate_diff = new GenerateDiffAction(root);
+        //generate_diff = new GenerateDiffAction(root);
 
         increase_font = new FontSizeAction(root, FontSizeAction.INCREMENT);
         increase_font.putValue(Action.ACCELERATOR_KEY,

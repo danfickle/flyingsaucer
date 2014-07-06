@@ -54,7 +54,7 @@ public interface UserAgentCallback {
 	/**
      * Retrieves the CSS at the given URI. This is a synchronous call.
      *
-     * @param uri Location of the CSS
+     * @param uri Location of the CSS (returned from resolveURI).
      * @return A CSSResource for the CSS at the uri.
      */
     CSSResource getCSSResource(String uri);
@@ -62,7 +62,7 @@ public interface UserAgentCallback {
     /**
      * Retrieves the Image at the given URI. This is a synchronous call.
      *
-     * @param uri Location of the image
+     * @param uri Location of the image (returned from resolveURI).
      * @return An ImageResource for the content at the URI.
      */
     ImageResource getImageResource(String uri);
@@ -71,10 +71,12 @@ public interface UserAgentCallback {
      * Retrieves the HTML at the given URI.
      * This is a synchronous call.
      *
-     * @param uri Location of the HTML
+     * @param uri Location of the HTML (returned from resolveURI).
      * @return A HTMLResource for the content at the URI.
      */
     HTMLResource getHTMLResource(String uri);
+    
+    HTMLResource getErrorDocument(String uri, int errorCode);
     
     /**
      * Retrieves a binary resource located at a given URI and returns its contents
@@ -86,33 +88,20 @@ public interface UserAgentCallback {
      * Normally, returns true if the user agent has visited this URI. UserAgent should consider
      * if it should answer truthfully or not for privacy reasons.
      *  
-     * @param uri A URI which may have been visited by this user agent.
+     * @param uri A URI which may have been visited by this user agent (returned from resolveURI).
      * @return The visited value
      */
     boolean isVisited(String uri);
 
     /**
-     * Does not need to be a correct URL, only an identifier that the
-     * implementation can resolve.
-     *
-     * @param url A URL against which relative references can be resolved.
-     */
-    void setBaseURL(String url);
-
-    /**
-     * @return the base uri, possibly in the implementations private uri-space
-     */
-    String getBaseURL();
-
-    /**
-     * Used to find a uri that may be relative to the BaseURL.
+     * Used to find a uri that may be relative to the baseUri.
      * The returned value will always only be used via methods in the same
      * implementation of this interface, therefore may be a private uri-space.
      *
-     * @param uri an absolute or relative (to baseURL) uri to be resolved.
+     * @param uri an absolute or relative uri to be resolved.
      * @return the full uri in uri-spaces known to the current implementation.
      */
-    String resolveURI(String uri);
+    String resolveURI(String baseUri, String uri);
 
     /**
      * Used to return a stylesheet instance from cache. If not possible, should return 

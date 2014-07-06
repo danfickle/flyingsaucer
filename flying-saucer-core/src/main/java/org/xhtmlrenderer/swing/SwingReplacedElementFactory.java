@@ -101,7 +101,8 @@ public class SwingReplacedElementFactory implements ReplacedElementFactory {
             }
         } else {
             // lookup in cache, or instantiate
-            final String ruri = uac.resolveURI(imageSrc);
+        	// TODO: Make sure we have the correct base uri.
+            final String ruri = uac.resolveURI(context.getSharedContext().getBaseURL(), imageSrc);
             re = lookupImageReplacedElement(elem, ruri, cssWidth, cssHeight);
             if (re == null) {
                 LOGGER.debug("Swing: Image " + ruri + " requested at " + " to " + cssWidth + ", " + cssHeight);

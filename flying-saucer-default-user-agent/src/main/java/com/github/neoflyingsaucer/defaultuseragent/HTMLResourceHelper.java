@@ -38,16 +38,13 @@ public class HTMLResourceHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HTMLResourceHelper.class);
     private Document document;
-    private final String _uri;
     
     private HTMLResourceHelper(final String html)
     {
     	setDocument(Jsoup.parse(html));
-      _uri = null;
     }
 
-    private HTMLResourceHelper(final InputStream stream, final String uri) {
-      _uri = uri;
+    private HTMLResourceHelper(final InputStream stream) {
     	try {
 			document = Jsoup.parse(stream, null, "");
 		} catch (final IOException e) {
@@ -58,7 +55,6 @@ public class HTMLResourceHelper {
     
     private HTMLResourceHelper(final File file)
     {
-      _uri = null;
     	try {
 			document = Jsoup.parse(file, null);
 		} catch (final IOException e) {
@@ -72,13 +68,10 @@ public class HTMLResourceHelper {
     	return new HTMLResourceHelper(html);
     }
     
-    public static HTMLResourceHelper load(final InputStream stream, final String uri) {
-        return new HTMLResourceHelper(stream, uri);
+    public static HTMLResourceHelper load(final InputStream stream) {
+        return new HTMLResourceHelper(stream);
     }
 
-    public String getURI() {
-      return _uri;
-    }
     public static HTMLResourceHelper load(final Reader reader) {
     	final char[] cbuf = new char[4096];
     	int numChars;

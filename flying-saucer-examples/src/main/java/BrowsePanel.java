@@ -18,18 +18,15 @@
 
 
 import org.jsoup.nodes.Document;
-import org.xhtmlrenderer.demo.browser.DelegatingUserAgent;
 import org.xhtmlrenderer.demo.browser.FSScrollPane;
 import org.xhtmlrenderer.event.DefaultDocumentListener;
 import org.xhtmlrenderer.extend.UserAgentCallback;
-import org.xhtmlrenderer.swing.ImageResourceLoader;
 import org.xhtmlrenderer.swing.SwingReplacedElementFactory;
 import org.xhtmlrenderer.util.GeneralUtil;
 
 import com.github.danfickle.flyingsaucer.swing.XHTMLPanel;
+import com.github.neoflyingsaucer.defaultuseragent.DefaultUserAgent;
 import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
-import com.github.neoflyingsaucer.defaultuseragent.ImageResourceLoaderImpl;
-
 import javax.swing.*;
 
 import java.awt.*;
@@ -87,11 +84,8 @@ public class BrowsePanel {
     }
 
     private void setupUserAgentCallback(final XHTMLPanel panel) {
-        uac = new DelegatingUserAgent();
+        uac = new DefaultUserAgent();
 
-        final ImageResourceLoader irl = new ImageResourceLoaderImpl();
-        ((DelegatingUserAgent) uac).setImageResourceLoader(irl);
-        
         panel.getSharedContext().setUserAgentCallback(uac);
         panel.getSharedContext().setReplacedElementFactory(new SwingReplacedElementFactory());
     }

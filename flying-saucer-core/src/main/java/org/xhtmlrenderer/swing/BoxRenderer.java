@@ -29,6 +29,7 @@ import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.render.Box;
 import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.render.ViewportBox;
+import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.simple.HtmlNamespaceHandler;
 import org.xhtmlrenderer.util.Configuration;
 import org.xhtmlrenderer.util.ImageUtil;
@@ -301,8 +302,10 @@ public class BoxRenderer {
 	}
 
 	private Document loadDocument(final String uri) {
-		// TODO: We shouldn't discard the final uri.
-		return sharedContext.getUac().getHTMLResource(uri).getDocument();
+    	String resolved = sharedContext.getUac().resolveURI(null, uri);
+    	HTMLResource rs = sharedContext.getUac().getHTMLResource(resolved);
+    	sharedContext.setDocumentURI(rs.getURI());
+    	return rs.getDocument();
 	}
 
 	private LayoutContext newLayoutContext() {

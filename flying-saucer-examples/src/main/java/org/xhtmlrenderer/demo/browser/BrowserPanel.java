@@ -24,13 +24,11 @@ import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.event.DocumentListener;
 import org.xhtmlrenderer.layout.SharedContext;
 import org.xhtmlrenderer.simple.PDFRenderer;
-import org.xhtmlrenderer.swing.ImageResourceLoader;
 import org.xhtmlrenderer.swing.SwingReplacedElementFactory;
 import org.xhtmlrenderer.util.*;
 
 import com.github.danfickle.flyingsaucer.swing.ScalableXHTMLPanel;
 import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
-import com.github.neoflyingsaucer.defaultuseragent.ImageResourceLoaderImpl;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.PdfWriter;
 
@@ -116,6 +114,8 @@ public class BrowserPanel extends JPanel implements DocumentListener {
 	JButton goToPage;
 	public JToolBar toolbar;
 
+	private String currentUri = null;
+	
 	/**
 	 * Constructor for the BrowserPanel object
 	 *
@@ -155,8 +155,8 @@ public class BrowserPanel extends JPanel implements DocumentListener {
 
 		manager = new PanelManager();
         view = new ScalableXHTMLPanel(manager);
-        final ImageResourceLoader irl = new ImageResourceLoaderImpl();
-        manager.setImageResourceLoader(irl);
+        //final ImageResourceLoader irl = new ImageResourceLoaderImpl();
+        //manager.setImageResourceLoader(irl);
         view.getSharedContext().setReplacedElementFactory(new SwingReplacedElementFactory());
         view.addDocumentListener(manager);
         view.setCenteredPagedView(true);
@@ -322,8 +322,8 @@ public class BrowserPanel extends JPanel implements DocumentListener {
 	 */
 	public void reloadPage() {
 		LOGGER.info("Reloading Page: ");
-		if (manager.getBaseURL() != null) {
-			loadPage(manager.getBaseURL());
+		if (currentUri != null) {
+			loadPage(currentUri);
 		}
 	}
 
@@ -337,6 +337,7 @@ public class BrowserPanel extends JPanel implements DocumentListener {
 		try {
 			LOGGER.info("Loading Page: " + url_text);
 			view.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+			currentUri = url_text;
 			view.setDocument(url_text);
 			view.addDocumentListener(BrowserPanel.this);
 
@@ -360,7 +361,7 @@ public class BrowserPanel extends JPanel implements DocumentListener {
 	public void exportToPdf( final String path )
 	{
 		try {
-			PDFRenderer.renderToPDF(manager.getBaseURL(), path, PdfWriter.VERSION_1_7);
+			PDFRenderer.renderToPDF(currentUri, path, PdfWriter.VERSION_1_7);
 		} catch (final IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -495,7 +496,7 @@ public class BrowserPanel extends JPanel implements DocumentListener {
 			root.actions.forward.setEnabled(false);
 		}
 
-		url.setText(manager.getBaseURL());
+		url.setText(currentUri);
 	}
 
 

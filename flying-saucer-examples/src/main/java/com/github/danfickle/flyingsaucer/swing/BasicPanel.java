@@ -30,8 +30,6 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.print.PrinterGraphics;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 
@@ -39,7 +37,6 @@ import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.style.CalculatedStyle;
-import org.xhtmlrenderer.css.style.derived.RectPropertySet;
 import org.xhtmlrenderer.event.DocumentListener;
 import org.xhtmlrenderer.extend.NamespaceHandler;
 import org.xhtmlrenderer.extend.UserAgentCallback;
@@ -48,6 +45,7 @@ import org.xhtmlrenderer.layout.SharedContext;
 import org.xhtmlrenderer.render.Box;
 import org.xhtmlrenderer.render.PageBox;
 import org.xhtmlrenderer.render.RenderingContext;
+import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.simple.HtmlNamespaceHandler;
 import org.xhtmlrenderer.swing.Java2DOutputDevice;
 import org.xhtmlrenderer.util.Configuration;
@@ -338,7 +336,7 @@ public abstract class BasicPanel extends RootPanel {
 =========== set document utility methods =============== */
 
     public void setDocument(final InputStream stream, final String url, final NamespaceHandler nsh) {
-        final Document dom = HTMLResourceHelper.load(stream, url).getDocument();
+        final Document dom = HTMLResourceHelper.load(stream).getDocument();
 
         setDocument(dom, url, nsh);
     }
@@ -367,34 +365,34 @@ public abstract class BasicPanel extends RootPanel {
         setDocument(stream, url, new HtmlNamespaceHandler());
     }
 
-    /**
-     * Sets the new current document, where the new document
-     * is located relative, e.g using a relative URL.
-     *
-     * @param filename The new document to load
-     */
-    protected void setDocumentRelative(final String filename) {
-        final String url = getSharedContext().getUac().resolveURI(filename);
-        if (isAnchorInCurrentDocument(filename)) {
-            final String id = getAnchorId(filename);
-            final Box box = getSharedContext().getBoxById(id);
-            if (box != null) {
-                Point pt;
-                if (box.getStyle().isInline()) {
-                    pt = new Point(box.getAbsX(), box.getAbsY());
-                } else {
-                    final RectPropertySet margin = box.getMargin(getLayoutContext());
-                    pt = new Point(
-                            box.getAbsX() + (int)margin.left(),
-                            box.getAbsY() + (int)margin.top());
-                }
-                scrollTo(pt);
-                return;
-            }
-        }
-        final Document dom = getSharedContext().getUac().getHTMLResource(url).getDocument();
-        setDocument(dom, url);
-    }
+//    /**
+//     * Sets the new current document, where the new document
+//     * is located relative, e.g using a relative URL.
+//     *
+//     * @param filename The new document to load
+//     */
+//    protected void setDocumentRelative(final String filename) {
+//        final String url = getSharedContext().getUac().resolveURI(filename);
+//        if (isAnchorInCurrentDocument(filename)) {
+//            final String id = getAnchorId(filename);
+//            final Box box = getSharedContext().getBoxById(id);
+//            if (box != null) {
+//                Point pt;
+//                if (box.getStyle().isInline()) {
+//                    pt = new Point(box.getAbsX(), box.getAbsY());
+//                } else {
+//                    final RectPropertySet margin = box.getMargin(getLayoutContext());
+//                    pt = new Point(
+//                            box.getAbsX() + (int)margin.left(),
+//                            box.getAbsY() + (int)margin.top());
+//                }
+//                scrollTo(pt);
+//                return;
+//            }
+//        }
+//        final Document dom = getSharedContext().getUac().getHTMLResource(url).getDocument();
+//        setDocument(dom, url);
+//    }
 
 
     /**
@@ -422,16 +420,6 @@ public abstract class BasicPanel extends RootPanel {
         setDocument(this.doc, getSharedContext().getBaseURL(), getSharedContext().getNamespaceHandler());
     }
 
-    public URL getURL() {
-        URL base = null;
-        try {
-            base = new URL(getSharedContext().getUac().getBaseURL());
-        } catch (final MalformedURLException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        return base;
-    }
-
     public Document getDocument() {
         return doc;
     }
@@ -448,7 +436,10 @@ public abstract class BasicPanel extends RootPanel {
     }
 
     protected Document loadDocument(final String uri) {
-        return sharedContext.getUac().getHTMLResource(uri).getDocument();
+    	String resolved = sharedContext.getUac().resolveURI(null, uri);
+    	HTMLResource rs = sharedContext.getUac().getHTMLResource(resolved);
+        sharedContext.setDocumentURI(rs.getURI());
+        return rs.getDocument();
     }
 
     /* ====== hover and active utility methods

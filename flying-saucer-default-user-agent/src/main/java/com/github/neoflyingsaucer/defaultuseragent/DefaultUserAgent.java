@@ -22,14 +22,13 @@ package com.github.neoflyingsaucer.defaultuseragent;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 
@@ -45,6 +44,7 @@ import org.xhtmlrenderer.resource.ImageResource;
 import org.xhtmlrenderer.swing.AWTFSImage;
 import org.xhtmlrenderer.swing.ImageResourceLoader;
 import org.xhtmlrenderer.swing.StylesheetCache;
+import org.xhtmlrenderer.util.GeneralUtil;
 import org.xhtmlrenderer.util.ImageUtil;
 import org.xhtmlrenderer.util.XRRuntimeException;
 
@@ -80,7 +80,6 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
     
     
     private final int _imageCacheCapacity;
-    private String _baseURL;
 
     /**
      * Creates a new instance of NaiveUserAgent with a max image cache of 16 images.
@@ -123,52 +122,37 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
     }
 
     /**
-     * Gets a Reader for the resource identified
-     *
-     * @param uri PARAM
-     * @return The stylesheet value
-     */
-    //TOdO:implement this with nio.
-    protected InputStream resolveAndOpenStream(String uri) {
-        java.io.InputStream is = null;
-        uri = resolveURI(uri);
-        try {
-            is = new URL(uri).openStream();
-        } catch (final java.net.MalformedURLException e) {
-            LOGGER.error("bad URL given: " + uri, e);
-        } catch (final java.io.FileNotFoundException e) {
-            LOGGER.error("item at URI " + uri + " not found");
-        } catch (final java.io.IOException e) {
-            LOGGER.error("IO problem for " + uri, e);
-        }
-        return is;
-    }
-
-    /**
      * Retrieves the CSS located at the given URI.  It's assumed the URI does point to a CSS file--the URI will
      * be accessed (using java.io or java.net), opened, read and then passed into the CSS parser.
      * The result is packed up into an CSSResource for later consumption.
      *
-     * @param uri Location of the CSS source.
+     * @param uri Location of the CSS source (returned from resolveURI).
      * @return A CSSResource containing the parsed CSS.
      */
     @Override
-    public CSSResource getCSSResource(final String uri) {
-        try {
+    public CSSResource getCSSResource(String uri)
+    {
+        try
+        {
         	StreamResource sr = new StreamResource(uri);
         	sr.connect();
         	final InputStream bs = sr.bufferedStream();
         	
-        	return new CSSResource(sr.getFinalUri(),
-				new InputStreamReader(bs, "UTF-8")) {
+        	return new CSSResource(sr.getFinalUri(), new InputStreamReader(bs, "UTF-8"))
+        	{
         		@Override
-        		public void onClose() throws IOException {
+        		public void onClose() throws IOException 
+        		{
         			bs.close();
         		}
         	};
-		} catch (UnsupportedEncodingException e) {
+		}
+        catch (UnsupportedEncodingException e) 
+        {
 			throw new XRRuntimeException("UTF-8 not supported", e);
-		} catch (IOException e) {
+		}
+        catch (IOException e) 
+        {
 			// TODO
 			throw new XRRuntimeException("I/O problem", e);
 		}
@@ -179,40 +163,52 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
      * be accessed (using java.io or java.net), opened, read and then passed into the JDK image-parsing routines.
      * The result is packed up into an ImageResource for later consumption.
      *
-     * @param uri Location of the image source.
+     * @param uri Location of the image source (returned from resolveURI).
      * @return An ImageResource containing the image.
      */
+    @Override
     public ImageResource getImageResource(String uri) {
         ImageResource ir;
         if (ImageUtil.isEmbeddedBase64Image(uri)) {
             final BufferedImage image = ImageUtil.loadEmbeddedBase64Image(uri);
             ir = createImageResource(null, image);
         } else {
-            uri = resolveURI(uri);
             ir = _imageCache.get(uri);
             //TODO: check that cached image is still valid
             if (ir == null) {
-                final InputStream is = resolveAndOpenStream(uri);
-                if (is != null) {
-                    try {
-                        final BufferedImage img = ImageIO.read(is);
-                        if (img == null) {
-                            throw new IOException("ImageIO.read() returned null");
-                        }
-                        ir = createImageResource(uri, img);
-                        _imageCache.put(uri, ir);
-                    } catch (final FileNotFoundException e) {
-                        LOGGER.error("Can't read image file; image at URI '" + uri + "' not found");
-                    } catch (final IOException e) {
-                        LOGGER.error("Can't read image file; unexpected problem for URI '" + uri + "'", e);
-                    } finally {
-                        try {
-                            is.close();
-                        } catch (final IOException e) {
-                            // ignore
-                        }
-                    }
-                }
+            	StreamResource sr = new StreamResource(uri);
+            	sr.connect();
+            	InputStream is = null;
+				try 
+				{
+					is = sr.bufferedStream();
+					final BufferedImage img = ImageIO.read(is);
+
+					if (img == null) 
+						throw new IOException("ImageIO.read() returned null");
+
+					ir = createImageResource(uri, img);
+					_imageCache.put(uri, ir);
+				}
+				catch (final FileNotFoundException e)
+				{
+					LOGGER.error("Can't read image file; image at URI '" + uri
+							+ "' not found");
+				} 
+				catch (final IOException e) 
+				{
+					LOGGER.error(
+							"Can't read image file; unexpected problem for URI '"
+									+ uri + "'", e);
+				}
+				finally {
+					try {
+						if (is != null)
+							is.close();
+					} catch (final IOException e) {
+						// ignore
+					}
+				}
             }
             if (ir == null) {
                 ir = createImageResource(uri, null);
@@ -242,7 +238,7 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
      * @return An XMLResource containing the image.
      */
     @Override
-    public HTMLResource getHTMLResource(final String uri) 
+    public HTMLResource getHTMLResource(String uri) 
     {
         HTMLResourceHelper xmlResource;
         InputStream bs = null;
@@ -252,7 +248,7 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
         	sr = new StreamResource(uri);
         	sr.connect();
         	bs = sr.bufferedStream();
-        	xmlResource = HTMLResourceHelper.load(bs, uri);
+        	xmlResource = HTMLResourceHelper.load(bs);
         } catch (IOException e) {
 			// TODO
 			throw new XRRuntimeException("I/O Problem", e);
@@ -268,10 +264,17 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
         return new HTMLResource(sr.getFinalUri(), xmlResource.getDocument()); 
     }
 
-    public byte[] getBinaryResource(final String uri) {
-        InputStream is = resolveAndOpenStream(uri);
+    @Override
+    public byte[] getBinaryResource(String uri) {
+
+    	StreamResource sr = new StreamResource(uri);
+    	sr.connect();
+    	InputStream is = null;
+    	
         try {
-            final ByteArrayOutputStream result = new ByteArrayOutputStream();
+        	is = sr.bufferedStream();
+        	final ByteArrayOutputStream result = new ByteArrayOutputStream();
+
             final byte[] buf = new byte[10240];
             int i;
             while ((i = is.read(buf)) != -1) {
@@ -301,66 +304,59 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
      * @return Always false; visits are not tracked in the NaiveUserAgent.
      */
     @Override
-    public boolean isVisited(final String uri) {
+    public boolean isVisited(String uri) 
+    {
         return false;
     }
 
     /**
-     * URL relative to which URIs are resolved.
-     *
-     * @param url A URI which anchors other, possibly relative URIs.
-     */
-    @Override
-    public void setBaseURL(final String url) {
-        _baseURL = url;
-    }
-
-    /**
-     * Resolves the URI; if absolute, leaves as is, if relative, returns an absolute URI based on the baseUrl for
-     * the agent.
-     *
+     * Resolves the base URI/absolute URI pair.
+     * If absolute, leaves as is, if relative, returns an absolute URI
+     * based on the baseUri and uri.
+     * You may need to only override this method if your URIs resolve to 
+     * to one of the following URL protocols: HTTP, HTTPS, JAR, FILE.
+	 * This method is always called before requesting a resource.
+	 * 
+     * @param baseUri A base URI. May be null, in which case the uri must be absolute.
      * @param uri A URI, possibly relative.
-     *
+	 *
      * @return A URI as String, resolved, or null if there was an exception (for example if the URI is malformed).
      */
     @Override
-    public String resolveURI(final String uri) {
-        if (uri == null) return null;
-        String ret = null;
-        if (_baseURL == null) {//first try to set a base URL
-            try {
-                final URL result = new URL(uri);
-                setBaseURL(result.toExternalForm());
-            } catch (final MalformedURLException e) {
-                try {
-                    setBaseURL(new File(".").toURI().toURL().toExternalForm());
-                } catch (final Exception e1) {
-                    LOGGER.error("The default NaiveUserAgent doesn't know how to resolve the base URL for " + uri);
-                    return null;
-                }
-            }
-        }
-        // test if the URI is valid; if not, try to assign the base url as its parent
-        try {
-            return new URL(uri).toString();
-        } catch (final MalformedURLException e) {
-            LOGGER.info(uri + " is not a URL; may be relative. Testing using parent URL " + _baseURL);
-            try {
-                final URL result = new URL(new URL(_baseURL), uri);
-                ret = result.toString();
-            } catch (final MalformedURLException e1) {
-                LOGGER.error("The default NaiveUserAgent cannot resolve the URL " + uri + " with base URL " + _baseURL);
-            }
-        }
-        return ret;
-    }
+    public String resolveURI(String baseUri, String uri) 
+    {
+        if (uri == null && baseUri == null)
+        	return null;
 
-    /**
-     * Returns the current baseUrl for this class.
-     */
-    @Override
-    public String getBaseURL() {
-        return _baseURL;
+        if (baseUri == null) 
+        {
+        	try 
+        	{
+        		URI result = new URI(uri);
+        		return result.normalize().toString();
+        	}
+        	catch (URISyntaxException e)
+        	{
+        		LOGGER.warn("Unable to parse URI: {}", uri, e);
+        		return null;
+        	}
+        }
+        else
+        {
+        	try
+        	{
+        		URI base = new URI(baseUri);
+        		URI rel = new URI(uri);
+
+        		URI absolute = base.resolve(rel);
+        		return absolute.normalize().toString();
+        	}
+        	catch (URISyntaxException e)
+        	{
+        		LOGGER.warn("Unable to parse URI base/rel pair: {} => {}", baseUri, uri, e);
+        		return null;
+        	}
+        }
     }
 
     @Override
@@ -387,4 +383,24 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
 	{
 		return _imageCache2;
 	}
+
+	/**
+	 * Used internally when a document can't be loaded--returns XHTML as an XMLResource indicating that fact.
+	 *
+	 * @param uri The URI which could not be loaded.
+	 *
+	 * @return An XMLResource containing XML which about the failure.
+	 */
+	@Override
+	public HTMLResource getErrorDocument(final String uri, int errorCode) 
+	{
+        HTMLResourceHelper xr;
+
+        // URI may contain & symbols which can "break" the XHTML we're creating
+        final String cleanUri = GeneralUtil.escapeHTML(uri);
+        final String notFound = "<html><h1>Document not found</h1><h2>" + errorCode + "</h2>" + "<p>Could not access URI <pre>" + cleanUri + "</pre></p></html>";
+
+        xr = HTMLResourceHelper.load(notFound);
+        return new HTMLResource("about:error", xr.getDocument());
+    }
 }

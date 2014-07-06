@@ -203,10 +203,12 @@ public class StyleReference {
                 String uri;
                 
                 if (! refs.get(i).isInline()) {
-                    uri = _uac.resolveURI(refs.get(i).getUri());
+                	// TODO: Make sure we have the correct base url.
+                	uri = _uac.resolveURI(_context.getBaseURL(), refs.get(i).getUri());
                     refs.get(i).setUri(uri);
                 } else {
-                    refs.get(i).setUri(_uac.getBaseURL() + "#inline_style_" + (++inlineStyleCount));
+                	// TODO: Make sure we have the correct base url.
+                	refs.get(i).setUri(_context.getBaseURL() + "#inline_style_" + (++inlineStyleCount));
                     final Stylesheet sheet = _stylesheetFactory.parse(
                             new StringReader(refs.get(i).getContent()), refs.get(i), true);
                     refs.get(i).setStylesheet(sheet);

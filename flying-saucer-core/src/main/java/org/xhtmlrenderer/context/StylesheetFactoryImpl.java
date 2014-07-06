@@ -88,10 +88,13 @@ public class StylesheetFactoryImpl implements StylesheetFactory {
     private Stylesheet parse(final StylesheetInfo info) {
         final CSSResource cr = _userAgentCallback.getCSSResource(info.getUri());
 
-        // TODO
         // Q: Do @import rules use the original URI as the base for importing
         // other stylesheets or do they use the redirected URI.
         // If the former, we should remove this call.
+        // A: According to:
+        // http://stackoverflow.com/questions/7350994/ie-not-using-redirected-url-for-resolving-relative-urls
+        // IE uses the previous URI while other browsers use the redirected URI.
+        // So we'll go with the majority and screw IE.
         info.setUri(cr.getUri());
         
         try {

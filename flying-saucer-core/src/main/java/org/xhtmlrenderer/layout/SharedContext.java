@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.nodes.Document;
@@ -74,6 +75,7 @@ public class SharedContext {
 
     public static final ThreadLocal<ResourceBundle> ERRS = new ThreadLocal<>();    
     
+    private String _uri;
     /*
      * used to adjust fonts, ems, points, into screen resolution
      */
@@ -445,7 +447,7 @@ public class SharedContext {
      * @return The baseURL value
      */
     public String getBaseURL() {
-        return uac.getBaseURL();
+        return _uri;
     }
 
     /**
@@ -454,7 +456,7 @@ public class SharedContext {
      * @param url The new baseURL value
      */
     public void setBaseURL(final String url) {
-        uac.setBaseURL(url);
+        // TODO
     }
 
     /**
@@ -652,5 +654,10 @@ public class SharedContext {
 
 	public void setLocale(final Locale locale) {
 		this.localeTextBreaker = locale;
+	}
+
+	public void setDocumentURI(String uri) 
+	{
+		_uri = uri;
 	}
 }

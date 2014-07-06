@@ -44,6 +44,7 @@ import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.render.PageBox;
 import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.render.ViewportBox;
+import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.simple.HtmlNamespaceHandler;
 import org.xhtmlrenderer.util.Configuration;
 import org.xhtmlrenderer.util.JsoupUtil;
@@ -119,7 +120,10 @@ public class ITextRenderer {
     }
 
     private Document loadDocument(final String uri) {
-        return _sharedContext.getUac().getHTMLResource(uri).getDocument();
+    	String resolved = _sharedContext.getUac().resolveURI(null, uri);
+    	HTMLResource rs = _sharedContext.getUac().getHTMLResource(resolved);
+    	_sharedContext.setDocumentURI(rs.getURI());
+    	return rs.getDocument();
     }
 
     public void setDocument(final String uri) {

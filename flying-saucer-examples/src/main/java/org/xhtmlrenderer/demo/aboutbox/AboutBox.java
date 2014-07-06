@@ -33,6 +33,7 @@ import javax.swing.JFrame;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 
+import org.xhtmlrenderer.demo.browser.PanelManager;
 import org.xhtmlrenderer.util.Uu;
 
 import com.github.danfickle.flyingsaucer.swing.XHTMLPanel;
@@ -74,7 +75,7 @@ public class AboutBox extends JDialog implements Runnable {
         super();
         Uu.p("starting the about box");
         setTitle(text);
-        final XHTMLPanel panel = new XHTMLPanel(new DemoUserAgent());
+        final XHTMLPanel panel = new XHTMLPanel(new PanelManager());
         final int w = 400;
         final int h = 500;
         panel.setPreferredSize(new Dimension(w, h));

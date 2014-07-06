@@ -19,19 +19,17 @@
  */
 package org.xhtmlrenderer.demo.browser;
 
-import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.resource.HTMLResource;
-import org.xhtmlrenderer.util.Uu;
 import org.xhtmlrenderer.util.GeneralUtil;
 
+import com.github.neoflyingsaucer.defaultuseragent.DefaultUserAgent;
 import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
-import com.github.neoflyingsaucer.defaultuseragent.StreamResource;
 
-import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -43,186 +41,59 @@ import java.util.ArrayList;
  * events (like a RootPanel subclass).
  *  
  */
-public class PanelManager extends DelegatingUserAgent {
+public class PanelManager extends DefaultUserAgent {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PanelManager.class);
     private int index = -1;
-    private final ArrayList history = new ArrayList();
+    private final List<String> history = new ArrayList<>();
 
 
     /**
-     * {@inheritdoc}.
+     * This is a sample of converting a private URI namespace to
+     * a public one: demo: to jar:.
      */
     @Override
-    public String resolveURI(final String uri) {
-        final String burl = getBaseURL();
+    public String resolveURI(String baseUri, String uriRel) {
 
-        URL ref = null;
-
-        if (uri == null) return burl;
-        if (uri.trim().equals("")) return burl; //jar URLs don't resolve this right
-
-        if (uri.startsWith("demo:")) {
+    	String resolvedUri = super.resolveURI(baseUri, uriRel);
+    	
+    	if (resolvedUri == null)
+    	{
+    		return null;
+    	}
+    	else if (resolvedUri.startsWith("demo:")) 
+        {
             final DemoMarker marker = new DemoMarker();
-            String short_url = uri.substring(5);
-            if (!short_url.startsWith("/")) {
-                short_url = "/" + short_url;
+            String shortUrl = resolvedUri.substring(5);
+            if (!shortUrl.startsWith("/")) {
+                shortUrl = "/" + shortUrl;
             }
-            ref = marker.getClass().getResource(short_url);
-            Uu.p("ref = " + ref);
-        } else if (uri.startsWith("demoNav:")) {
-            final DemoMarker marker = new DemoMarker();
-            String short_url = uri.substring("demoNav:".length());
-            if (!short_url.startsWith("/")) {
-                short_url = "/" + short_url;
-            }
-            ref = marker.getClass().getResource(short_url);
-            Uu.p("Demo navigation URI, ref = " + ref);
-        } else if (uri.startsWith("javascript")) {
-            Uu.p("Javascript URI, ignoring: " + uri);
-        } else if (uri.startsWith("news")) {
-            Uu.p("News URI, ignoring: " + uri);
-        } else {
-            try {
-                URL base;
-                if (burl == null || burl.length() == 0) {
-                    base = new File(".").toURL();
-                } else {
-                    base = new URL(burl);
-                }
-                ref = new URL(base, uri);
-            } catch (final MalformedURLException e) {
-                Uu.p("URI/URL is malformed: " + burl + " or " + uri);
-            }
+            URL ref = marker.getClass().getResource(shortUrl);
+            return ref.toString();
         }
-
-        if (ref == null)
-            return null;
+        else if (resolvedUri.startsWith("demoNav:")) 
+        {
+            final DemoMarker marker = new DemoMarker();
+            String shortUrl = resolvedUri.substring(8);
+            if (!shortUrl.startsWith("/")) {
+                shortUrl = "/" + shortUrl;
+            }
+            URL ref = marker.getClass().getResource(shortUrl);
+            return ref.toString();
+        }
         else
-            return ref.toExternalForm();
+        {
+        	return resolvedUri;
+        }
     }
 
-	/**
-	 * {@inheritDoc}
-	 */
     @Override
-	public HTMLResource getHTMLResource(String uri) {
-        uri = resolveURI(uri);
-        if (uri != null && uri.startsWith("file:")) {
-            File file = null;
-            try {
-                final StringBuffer sbURI = GeneralUtil.htmlEscapeSpace(uri);
-
-                LOGGER.info("Encoded URI: " + sbURI);
-                file = new File(new URI(sbURI.toString()));
-            } catch (final URISyntaxException
-                    e) {
-                LOGGER.error("Invalid file URI " + uri, e);
-                return new HTMLResource(uri, getNotFoundDocument(uri).getDocument());
-            }
-            if (file.isDirectory()) {
-                final String dirlist = DirectoryLister.list(file);
-                return new HTMLResource(uri, HTMLResourceHelper.load(new StringReader(dirlist)).getDocument());
-            }
-        }
-        HTMLResourceHelper xr = null;
-        URLConnection uc = null;
-        InputStream inputStream = null;
-        try {
-        	final StreamResource strm = new StreamResource(uri);
-        	strm.connect();
-        	uc = strm.getUrlConnection();
-            final String contentType = uc.getContentType();
-
-            LOGGER.info("Content-Type = " + contentType);
-
-            if (uc instanceof HttpURLConnection)
-            {
-            	LOGGER.info( "Response Code = " + ((HttpURLConnection) uc).getResponseCode());
-            	LOGGER.info( "Response Message = " + ((HttpURLConnection) uc).getResponseMessage());
-            }
-            
-            //Maybe should popup a choice when content/unknown!
-            if (contentType == null || contentType.equals("text/plain") || contentType.equals("content/unknown")) {
-                inputStream = strm.bufferedStream();
-                xr = HTMLResourceHelper.load(inputStream, uri);
-            } else if (contentType.startsWith("image")) {
-                final String doc = "<img src='" + uri + "'/>";
-                xr = HTMLResourceHelper.load(doc);
-            } else {
-                inputStream = strm.bufferedStream();
-                xr = HTMLResourceHelper.load(inputStream, uri);
-            }
-        } catch (final MalformedURLException e) {
-            LOGGER.error("bad URL given: " + uri, e);
-        } catch (final IOException e) {
-            LOGGER.error("IO problem for " + uri, e);
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (final IOException e) {
-                    // swallow
-                }
-            }
-        }
-
-        if (xr == null) {
-            xr = getNotFoundDocument(uri);
-        }
-        return new HTMLResource(uri, xr.getDocument());
+    public HTMLResource getHTMLResource(String uri) 
+    {
+    	history.add(uri);
+    	return super.getHTMLResource(uri);
     }
 
-	/**
-	 * Used internally when a document can't be loaded--returns XHTML as an XMLResource indicating that fact.
-	 *
-	 * @param uri The URI which could not be loaded.
-	 *
-	 * @return An XMLResource containing XML which about the failure.
-	 */
-	private HTMLResourceHelper getNotFoundDocument(final String uri) {
-        HTMLResourceHelper xr;
-
-        // URI may contain & symbols which can "break" the XHTML we're creating
-        final String cleanUri = GeneralUtil.escapeHTML(uri);
-        final String notFound = "<html><h1>Document not found</h1><p>Could not access URI <pre>" + cleanUri + "</pre></p></html>";
-
-        xr = HTMLResourceHelper.load(notFound);
-        return xr;
-    }
-
-	/**
-	 * Returns true if the link has been visited by the user in this session. Visit tracking is not persisted.
-	 */
-	@Override
-	public boolean isVisited(String uri) {
-        if (uri == null) return false;
-        uri = resolveURI(uri);
-        return history.contains(uri);
-    }
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setBaseURL (final String url) {
-		String burl = super.getBaseURL();
-		if(burl !=null &&  burl.startsWith("error:")) burl = null;
-        
-        burl = resolveURI(url);
-        if (burl == null) burl = "error:FileNotFound";
-
-		super.setBaseURL(burl);
-
-		// setBaseURL is called by view when document is loaded
-        if (index >= 0) {
-            final String historic = (String) history.get(index);
-            if (historic.equals(burl)) return; //moved in history
-        }
-        index++;
-        for (final int i = index; i < history.size(); history.remove(i)) ;
-        history.add(index, burl);
-    }
 
 
 	/**
@@ -231,7 +102,7 @@ public class PanelManager extends DelegatingUserAgent {
 	 */
 	public String getForward() {
         index++;
-        return (String) history.get(index);
+        return history.get(index);
     }
 
 	/**
@@ -240,7 +111,7 @@ public class PanelManager extends DelegatingUserAgent {
 	 */
 	public String getBack() {
         index--;
-        return (String) history.get(index);
+        return history.get(index);
     }
 
 	/**

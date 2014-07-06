@@ -88,11 +88,5 @@ public class PDFRender {
         public ResourceLoaderUserAgent(final ITextOutputDevice outputDevice) {
             super(outputDevice);
         }
-
-        protected InputStream resolveAndOpenStream(final String uri) {
-            final InputStream is = super.resolveAndOpenStream(uri);
-            System.out.println("IN resolveAndOpenStream() " + uri);
-            return is;
-        }
     }
 }
