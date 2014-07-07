@@ -1760,7 +1760,7 @@ public enum CSSName {
             public void error(final String uri, final String message) {
                 LOGGER.info("(" + uri + ") " + message);
             }
-        });
+        }, null);
         for (final CSSName cssName : ALL_PRIMITIVE_PROPERTY_NAMES.values()) {
             if (cssName.initialValue.charAt(0) != '=' && cssName.implemented) {
                 final PropertyValue value = parser.parsePropertyValue(

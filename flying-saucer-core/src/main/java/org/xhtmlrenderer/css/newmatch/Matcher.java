@@ -43,6 +43,7 @@ import org.xhtmlrenderer.css.sheet.PageRule;
 import org.xhtmlrenderer.css.sheet.PropertyDeclaration;
 import org.xhtmlrenderer.css.sheet.Ruleset;
 import org.xhtmlrenderer.css.sheet.Stylesheet;
+import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
 import org.xhtmlrenderer.layout.SharedContext;
 import org.xhtmlrenderer.util.Util;
 
@@ -86,7 +87,7 @@ public class Matcher {
         _map.remove(e);
     }
 
-    public CascadedStyle getCascadedStyle(final Object e, final boolean restyle) {
+    public CascadedStyle getCascadedStyle(final String uri, final Object e, final boolean restyle) {
         synchronized (e) {
             Mapper em;
             if (!restyle) {
@@ -94,7 +95,7 @@ public class Matcher {
             } else {
                 em = matchElement(e);
             }
-            return em.getCascadedStyle(e);
+            return em.getCascadedStyle(uri, e);
         }
     }
 
@@ -270,7 +271,7 @@ public class Matcher {
                 };
     }
 
-    private org.xhtmlrenderer.css.sheet.Ruleset getElementStyle(final Object e) {
+    private org.xhtmlrenderer.css.sheet.Ruleset getElementStyle(final String uri, final Object e) {
         synchronized (e) {
             if (_attRes == null || _styleFactory == null) {
                 return null;
@@ -281,11 +282,11 @@ public class Matcher {
                 return null;
             }
             
-            return _styleFactory.parseStyleDeclaration(org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin.AUTHOR, style);
+            return _styleFactory.parseStyleDeclaration(uri, CSSOrigin.AUTHOR, style);
         }
     }
 
-    private org.xhtmlrenderer.css.sheet.Ruleset getNonCssStyle(final Object e) {
+    private org.xhtmlrenderer.css.sheet.Ruleset getNonCssStyle(final String uri, final Object e) {
         synchronized (e) {
             if (_attRes == null || _styleFactory == null) {
                 return null;
@@ -294,7 +295,8 @@ public class Matcher {
             if (Util.isNullOrEmpty(style)) {
                 return null;
             }
-            return _styleFactory.parseStyleDeclaration(org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin.AUTHOR, style);
+
+            return _styleFactory.parseStyleDeclaration(uri, CSSOrigin.AUTHOR, style);
         }
     }
 
@@ -392,12 +394,12 @@ public class Matcher {
             return childMapper;
         }
 
-        CascadedStyle getCascadedStyle(final Object e) {
+        CascadedStyle getCascadedStyle(final String uri, final Object e) {
             CascadedStyle result;
             synchronized (e) {
                 CascadedStyle cs = null;
-                final org.xhtmlrenderer.css.sheet.Ruleset elementStyling = getElementStyle(e);
-                final org.xhtmlrenderer.css.sheet.Ruleset nonCssStyling = getNonCssStyle(e);
+                final org.xhtmlrenderer.css.sheet.Ruleset elementStyling = getElementStyle(uri, e);
+                final org.xhtmlrenderer.css.sheet.Ruleset nonCssStyling = getNonCssStyle(uri, e);
                 final List<PropertyDeclaration> propList = new LinkedList<PropertyDeclaration>();
                 //specificity 0,0,0,0
                 if (nonCssStyling != null) {

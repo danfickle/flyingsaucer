@@ -24,6 +24,8 @@ import java.awt.Shape;
 import java.util.Iterator;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.CSSPrimitiveUnit;
 import org.xhtmlrenderer.css.constants.IdentValue;
@@ -49,7 +51,9 @@ import org.xhtmlrenderer.util.Uu;
  */
 public abstract class AbstractOutputDevice implements OutputDevice {
 
-    private FontSpecification _fontSpec;
+	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractOutputDevice.class);
+
+	private FontSpecification _fontSpec;
 
     protected abstract void drawLine(int x1, int y1, int x2, int y2);
     
@@ -178,7 +182,8 @@ public abstract class AbstractOutputDevice implements OutputDevice {
     	if (! style.isIdent(CSSName.BACKGROUND_IMAGE, IdentValue.NONE)) {
             final String uri = style.getStringProperty(CSSName.BACKGROUND_IMAGE);
             try {
-                return c.getUac().getImageResource(uri).getImage();
+            	LOGGER.debug("get bg image: " + uri);
+            	return c.getUac().getImageResource(uri).getImage();
             } catch (final Exception ex) {
                 ex.printStackTrace();
                 Uu.p(ex);

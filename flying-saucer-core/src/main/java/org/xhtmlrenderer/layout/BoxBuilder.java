@@ -589,7 +589,7 @@ public class BoxBuilder {
                 table.setFloatedBoxData(null);
 
                 final CascadedStyle original = c.getSharedContext().getCss().getCascadedStyle(
-                        table.getElement(), false);
+                        c.getSharedContext().getBaseURL(), table.getElement(), false);
                 final CascadedStyle modified = CascadedStyle.createLayoutStyle(
                         original,
                         new PropertyDeclaration[]{

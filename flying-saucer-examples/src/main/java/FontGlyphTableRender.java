@@ -303,7 +303,7 @@ public class FontGlyphTableRender {
                             try {
                                 curFrom = startAt;
                                 xpanel.setDocument(doc, null, new HtmlNamespaceHandler());
-                                xpanel.getSharedContext().getCss().getCascadedStyle(null, false);
+                                xpanel.getSharedContext().getCss().getCascadedStyle(xpanel.getSharedContext().getBaseURL(), null, false);
                             } catch (final Throwable e) {
                                 JOptionPane.showMessageDialog(frame, "Can't load document (table of glyphs). Err: " + e.getMessage());
                             }

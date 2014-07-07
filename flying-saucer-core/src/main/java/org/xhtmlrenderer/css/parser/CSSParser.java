@@ -24,8 +24,6 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -48,7 +46,9 @@ import org.xhtmlrenderer.css.sheet.RulesetContainer;
 import org.xhtmlrenderer.css.sheet.Stylesheet;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
+import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.util.LangId;
+
 import static org.xhtmlrenderer.service.UserLogger.*;
 
 public class CSSParser {
@@ -74,13 +74,16 @@ public class CSSParser {
 
     private CSSErrorHandler _errorHandler;
     private String _URI;
+    private final UserAgentCallback _uac; // May be null.
 
     private final Map<String, String> _namespaces = new HashMap<>();
     private boolean _supportCMYKColors;
 
-    public CSSParser(final CSSErrorHandler errorHandler) {
+    public CSSParser(final CSSErrorHandler errorHandler, final UserAgentCallback uac) 
+    {
         _lexer = new Lexer(new StringReader(""));
         _errorHandler = errorHandler;
+        _uac = uac;
     }
 
     public Stylesheet parseStylesheet(final String uri, final CSSOrigin origin, final Reader reader)
@@ -94,10 +97,10 @@ public class CSSParser {
         return result;
     }
 
-    public Ruleset parseDeclaration(final CSSOrigin origin, final String text) {
+    public Ruleset parseDeclaration(final String uri, final CSSOrigin origin, final String text) 
+    {
         try {
-            // XXX Set this to something more reasonable
-            _URI = "style attribute";
+            _URI = uri;
             reset(new StringReader(text));
 
             skipWhitespace();
@@ -275,30 +278,10 @@ public class CSSParser {
                 switch (t.getType()) {
                     case Token.STRING:
                     case Token.URI:
-                        // first see if we can set URI via URL
-                        try {
-                            info.setUri(new URL(new URL(stylesheet.getURI()), getTokenValue(t)).toString());
-                        } catch (final MalformedURLException mue) {
-                            // not a valid URL, may be a custom protocol which the user expects to handle
-                            // in the user agent
-                            //
-                            // FIXME: using URI like this will not work for some cases of parent URI, depends
-                            // on whether the URI class can parse the parent and child correctly
-                            // This can lead to a bug where a stylesheet imported from another stylesheet ends
-                            // up unresolved. This will be fixed in a later release by passing Stylesheet info
-                            // all the way down to the UAC so that the end user can code for it
-                            try {
-                                final URI parent = new URI(stylesheet.getURI());
-                                final String tokenValue = getTokenValue(t);
-                                final String resolvedUri = parent.resolve(tokenValue).toString();
-                                System.out.println("Token: " + tokenValue + " resolved " + resolvedUri);
-                                info.setUri(resolvedUri);
-                            } catch (final URISyntaxException use) {
-                                throw new CSSParseException("Invalid URL, " + use.getMessage(), getCurrentLine());
-                            }
+                    	// @imports are resolved relative to the current stylesheet.
+                    	info.setUri(_uac.resolveURI(_URI, getTokenValue(t)));
 
-                        }
-                        skipWhitespace();
+                    	skipWhitespace();
                         t = la();
                         if (t == Token.TK_IDENT) {
                             info.addMedium(medium());
@@ -2103,7 +2086,11 @@ public class CSSParser {
                 String uriResult = processEscapes(ch, start, end+1);
 
                 // Relative URIs are resolved relative to CSS file, not XHTML file
-                if (isRelativeURI(uriResult)) {
+                if (_uac != null) 
+                {
+                	uriResult = _uac.resolveURI(_URI, uriResult);
+                }
+                else if (isRelativeURI(uriResult)) {
                     final int lastSlash = _URI.lastIndexOf('/');
                     if (lastSlash != -1) {
                         uriResult = _URI.substring(0, lastSlash+1) + uriResult;

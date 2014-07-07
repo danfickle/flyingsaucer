@@ -124,8 +124,8 @@ public class StyleReference {
      * @param e The DOM Element for which to find properties
      * @return Map of CSS property names to CSSValue instance assigned to it.
      */
-    public java.util.Map<String, PropertyValue> getCascadedPropertiesMap(final Element e) {
-        final CascadedStyle cs = _matcher.getCascadedStyle(e, false);//this is only for debug, I think
+    public java.util.Map<String, PropertyValue> getCascadedPropertiesMap(final String uri, final Element e) {
+        final CascadedStyle cs = _matcher.getCascadedStyle(uri, e, false);//this is only for debug, I think
         final java.util.LinkedHashMap<String, PropertyValue> props = new java.util.LinkedHashMap<>();
         for (final java.util.Iterator<PropertyDeclaration> i = cs.getCascadedPropertyDeclarations(); i.hasNext();) {
             final PropertyDeclaration pd = i.next();
@@ -154,9 +154,9 @@ public class StyleReference {
      * Gets the CascadedStyle for an element. This must then be converted in the
      * current context to a CalculatedStyle (use getDerivedStyle)
      */
-    public CascadedStyle getCascadedStyle(final Element e, final boolean restyle) {
+    public CascadedStyle getCascadedStyle(final String uri, final Element e, final boolean restyle) {
         if (e == null) return CascadedStyle.emptyCascadedStyle;
-        return _matcher.getCascadedStyle(e, restyle);
+        return _matcher.getCascadedStyle(uri, e, restyle);
     }
     
     public PageInfo getPageStyle(final String pageName, final String pseudoPage) {

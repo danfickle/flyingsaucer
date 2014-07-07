@@ -24,6 +24,9 @@ import org.xhtmlrenderer.render.Box;
 import org.xhtmlrenderer.swing.BoxRenderer;
 import org.xhtmlrenderer.swing.Java2DRenderer;
 import org.xhtmlrenderer.util.FSImageWriter;
+
+import com.github.neoflyingsaucer.defaultuseragent.DefaultUserAgent;
+
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Arrays;
@@ -137,7 +140,7 @@ public class Regress {
 
     private void saveImage(final File page, final File outputDir, final int width) throws IOException {
         try {
-            final Java2DRenderer j2d = new Java2DRenderer(page, width);
+            final Java2DRenderer j2d = new Java2DRenderer(page, width, new DefaultUserAgent());
 
             // this renders and returns the image, which is stored in the J2R; will not
             // be re-rendered, calls to getImage() return the same instance
@@ -162,7 +165,7 @@ public class Regress {
     }
 
     private void saveBoxModel(final File page, final File outputDir, final int width) throws IOException {
-        final BoxRenderer renderer = new BoxRenderer(page, width);
+        final BoxRenderer renderer = new BoxRenderer(page, width, new DefaultUserAgent());
         Box box;
         try {
             box = renderer.render();

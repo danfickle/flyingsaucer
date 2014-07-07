@@ -1773,7 +1773,7 @@ public class BlockBox extends Box implements InlinePaintable {
                         CascadedStyle cs = null;
                         if (iB.getElement() != null) {
                             if (iB.getPseudoElementOrClass() == null) {
-                                cs = c.getCss().getCascadedStyle(iB.getElement(), false);
+                                cs = c.getCss().getCascadedStyle(c.getSharedContext().getBaseURL(), iB.getElement(), false);
                             } else {
                                 cs = c.getCss().getPseudoElementStyle(
                                         iB.getElement(), iB.getPseudoElementOrClass());

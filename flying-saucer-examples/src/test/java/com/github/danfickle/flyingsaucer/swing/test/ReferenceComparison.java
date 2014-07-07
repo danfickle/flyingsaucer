@@ -5,6 +5,8 @@ import org.xhtmlrenderer.render.Box;
 import org.xhtmlrenderer.swing.BoxRenderer;
 import org.xhtmlrenderer.util.IOUtil;
 
+import com.github.neoflyingsaucer.defaultuseragent.DefaultUserAgent;
+
 import java.io.*;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -107,7 +109,7 @@ public class ReferenceComparison {
         log("Comparing " + source.getPath());
         stat.checking(source);
         // TODO: reuse code from Regress
-        final BoxRenderer renderer = new BoxRenderer(source, width);
+        final BoxRenderer renderer = new BoxRenderer(source, width, new DefaultUserAgent());
         Box box;
         try {
             log("rendering");

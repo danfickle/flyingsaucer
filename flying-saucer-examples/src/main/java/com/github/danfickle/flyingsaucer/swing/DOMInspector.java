@@ -297,7 +297,8 @@ class ElementPropertiesPanel extends JPanel {
             Toolkit.getDefaultToolkit().beep();
             return _defaultTableModel;
         }
-        final Map<String, PropertyValue> props = _sr.getCascadedPropertiesMap((Element) node);
+        // TODO: A valid uri.
+        final Map<String, PropertyValue> props = _sr.getCascadedPropertiesMap("", (Element) node);
         return new PropertiesTableModel(props);
     }
 

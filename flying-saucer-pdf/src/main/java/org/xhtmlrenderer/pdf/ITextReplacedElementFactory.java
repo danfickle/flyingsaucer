@@ -59,7 +59,8 @@ public class ITextReplacedElementFactory implements ReplacedElementFactory {
 
             if (srcAttr != null && srcAttr.length() > 0) 
             {
-            	final FSImage fsImage = uac.getImageResource(srcAttr).getImage();
+            	final String resolved = uac.resolveURI(c.getSharedContext().getBaseURL(), srcAttr);
+            	final FSImage fsImage = uac.getImageResource(resolved).getImage();
 
             	if (fsImage != null) {
                     if (cssWidth != -1 || cssHeight != -1) {

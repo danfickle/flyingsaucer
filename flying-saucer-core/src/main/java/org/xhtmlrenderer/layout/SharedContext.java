@@ -577,7 +577,7 @@ public class SharedContext {
         		}
         	}
 
-            result = parentCalculatedStyle.deriveStyle(getCss().getCascadedStyle(e, restyle));
+            result = parentCalculatedStyle.deriveStyle(getCss().getCascadedStyle(getBaseURL(), e, restyle));
 
             styleMap.put(e, result);
         }

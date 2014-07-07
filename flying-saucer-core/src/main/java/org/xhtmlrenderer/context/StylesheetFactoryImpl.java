@@ -57,7 +57,7 @@ public class StylesheetFactoryImpl implements StylesheetFactory {
             public void error(final String uri, final String message) {
                 LOGGER.warn("(" + uri + ") " + message);
             }
-        });
+        }, _userAgentCallback);
     }
 
     public synchronized Stylesheet parse(final Reader reader, final StylesheetInfo info, boolean isInline) {
@@ -113,8 +113,9 @@ public class StylesheetFactoryImpl implements StylesheetFactory {
         }
     }
 
-    public synchronized Ruleset parseStyleDeclaration(final CSSOrigin origin, final String styleDeclaration) {
-        return _cssParser.parseDeclaration(origin, styleDeclaration);
+    public Ruleset parseStyleDeclaration(final String uri, final CSSOrigin origin, final String styleDeclaration) 
+    {
+        return _cssParser.parseDeclaration(uri, origin, styleDeclaration);
     }
 
     public Stylesheet getStylesheet(final StylesheetInfo info) 
