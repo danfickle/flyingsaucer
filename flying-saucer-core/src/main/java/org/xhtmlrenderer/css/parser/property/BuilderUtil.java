@@ -3,12 +3,14 @@ package org.xhtmlrenderer.css.parser.property;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.CSSPrimitiveUnit;
 import org.xhtmlrenderer.css.constants.IdentValue;
 import org.xhtmlrenderer.css.parser.CSSParseException;
+import org.xhtmlrenderer.css.parser.FSFunction;
 import org.xhtmlrenderer.css.parser.PropertyValue;
 import org.xhtmlrenderer.css.parser.PropertyValueImp.CSSValueType;
 import org.xhtmlrenderer.css.sheet.PropertyDeclaration;
@@ -231,6 +233,17 @@ public class BuilderUtil {
 				&& !inheritAllowed) {
 			cssThrowError(LangId.INVALID_INHERIT);
 		}
+	}
+	
+	public static void checkFunctionsAllowed(final FSFunction func, String... allowed)
+	{
+		for (String allow : allowed)
+		{
+			if (allow.equals(func.getName()))
+				return;
+		}
+
+		cssThrowError(LangId.FUNCTION_NOT_SUPPORTED, func.getName());
 	}
 
 	public static List<PropertyDeclaration> checkInheritAll(final CSSName[] all,

@@ -504,6 +504,8 @@ public class PrimitivePropertyBuilders {
 						important, inheritAllowed);
 			}
 
+			checkFunctionsAllowed(value.getFunction(), "linear-gradient");
+			
 			return Collections.singletonList(new PropertyDeclaration(cssName,
 					value, important, origin));
 		}
