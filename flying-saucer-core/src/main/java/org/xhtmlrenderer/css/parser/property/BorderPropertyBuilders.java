@@ -32,6 +32,7 @@ import org.xhtmlrenderer.css.parser.PropertyValueImp;
 import org.xhtmlrenderer.css.parser.PropertyValueImp.CSSValueType;
 import org.xhtmlrenderer.css.sheet.PropertyDeclaration;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
+import org.xhtmlrenderer.util.LangId;
 
 import static org.xhtmlrenderer.css.parser.property.BuilderUtil.*;
 
@@ -72,7 +73,7 @@ public class BorderPropertyBuilders {
                     final PropertyValue borderWidth = convertToBorderWidth(value);
                     if (borderWidth != null) {
                         if (haveBorderWidth) {
-                            throw new CSSParseException("A border width cannot be set twice", -1);
+                            throw new CSSParseException(LangId.NO_TWICE, -1, "border width");
                         }
                         haveBorderWidth = true;
                         matched = true;
@@ -81,7 +82,7 @@ public class BorderPropertyBuilders {
                     
                     if (isBorderStyle(value)) {
                         if (haveBorderStyle) {
-                            throw new CSSParseException("A border style cannot be set twice", -1);
+                            throw new CSSParseException(LangId.NO_TWICE, -1, "border style");
                         }
                         haveBorderStyle = true;
                         matched = true;
@@ -91,7 +92,7 @@ public class BorderPropertyBuilders {
                     final PropertyValue borderColor = convertToBorderColor(value);
                     if (borderColor != null) {
                         if (haveBorderColor) {
-                            throw new CSSParseException("A border color cannot be set twice", -1);
+                            throw new CSSParseException(LangId.NO_TWICE, -1, "border color");
                         }
                         haveBorderColor = true;
                         matched = true;
@@ -99,7 +100,7 @@ public class BorderPropertyBuilders {
                     }
                     
                     if (! matched) {
-                        throw new CSSParseException(value.getCssText() + " is not a border width, style, or color", -1);
+                        throw new CSSParseException(LangId.BORDER_VALUE_INVALID, -1, value.getCssText());
                     }
                 }
                 

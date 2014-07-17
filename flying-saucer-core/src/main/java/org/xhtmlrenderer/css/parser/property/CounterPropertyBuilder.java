@@ -32,6 +32,8 @@ import org.xhtmlrenderer.css.parser.PropertyValueImp;
 import org.xhtmlrenderer.css.parser.PropertyValueImp.CSSValueType;
 import org.xhtmlrenderer.css.sheet.PropertyDeclaration;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
+import org.xhtmlrenderer.util.LangId;
+
 import static org.xhtmlrenderer.css.parser.property.BuilderUtil.*;
 
 public abstract class CounterPropertyBuilder implements PropertyBuilder {
@@ -63,7 +65,7 @@ public abstract class CounterPropertyBuilder implements PropertyBuilder {
                 }
             }
             
-            throw new CSSParseException("The syntax of the " + cssName + " property is invalid", -1);
+            throw new CSSParseException(LangId.INVALID_SYNTAX, -1, cssName);
         } else {
             final List<CounterData> result = new ArrayList<CounterData>();
             for (int i = 0; i < values.size(); i++) {
@@ -85,7 +87,7 @@ public abstract class CounterPropertyBuilder implements PropertyBuilder {
                     }
                     result.add(new CounterData(name, cValue));
                 } else {
-                    throw new CSSParseException("The syntax of the " + cssName + " property is invalid", -1);
+                    throw new CSSParseException(LangId.INVALID_SYNTAX, -1, cssName);
                 }
             }
             
@@ -97,8 +99,7 @@ public abstract class CounterPropertyBuilder implements PropertyBuilder {
     private void checkNumberIsInteger(final CSSName cssName, final PropertyValue value) {
         if ((int)value.getFloatValue() !=
                     Math.round(value.getFloatValue())) {
-            throw new CSSParseException("The value " + value.getFloatValue() + " in " + 
-                    cssName + " must be an integer", -1);
+            throw new CSSParseException(LangId.MUST_BE_INT, -1, cssName);
         }
     }
     

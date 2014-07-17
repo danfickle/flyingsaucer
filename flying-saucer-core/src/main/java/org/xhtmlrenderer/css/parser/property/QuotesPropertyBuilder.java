@@ -32,6 +32,7 @@ import org.xhtmlrenderer.css.parser.PropertyValueImp;
 import org.xhtmlrenderer.css.parser.PropertyValueImp.CSSValueType;
 import org.xhtmlrenderer.css.sheet.PropertyDeclaration;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
+import org.xhtmlrenderer.util.LangId;
 
 import static org.xhtmlrenderer.css.parser.property.BuilderUtil.*;
 
@@ -52,33 +53,27 @@ public class QuotesPropertyBuilder implements PropertyBuilder {
         }
         
         if (values.size() % 2 == 1) {
-            throw new CSSParseException(
-                    "Mismatched quotes " + values, -1);
+            throw new CSSParseException(LangId.MISMATCHED_QUOTES, -1);
         }
         
         final List<String> resultValues = new ArrayList<String>();
         for (final PropertyValue value : values) {
             
             if (value.getOperator() != null) {
-                throw new CSSParseException(
-                        "Found unexpected operator, " + value.getOperator().getExternalName(), -1);
+                throw new CSSParseException(LangId.UNEXPECTED_OPERATOR, -1, value.getOperator().getExternalName()); 
             }
             
             final CSSPrimitiveUnit type = value.getPrimitiveTypeN();
             if (type == CSSPrimitiveUnit.CSS_STRING) {
                 resultValues.add(value.getStringValue());
             } else if (type == CSSPrimitiveUnit.CSS_URI) {
-                throw new CSSParseException(
-                        "URI is not allowed here", -1);
+                throw new CSSParseException(LangId.INVALID_VALUE, -1, "uri", "quotes");
             } else if (value.getPropertyValueType() == PropertyValueImp.VALUE_TYPE_FUNCTION) {
-                throw new CSSParseException(
-                        "Function " + value.getFunction().getName() + " is not allowed here", -1);
+                throw new CSSParseException(LangId.FUNCTION_NOT_SUPPORTED, -1, value.getFunction().getName());
             } else if (type == CSSPrimitiveUnit.CSS_IDENT) {
-                throw new CSSParseException(
-                        "Identifier is not a valid value for the quotes property", -1);
+                throw new CSSParseException(LangId.INVALID_VALUE, -1, "identifier", "quotes");
             } else {
-                throw new CSSParseException(
-                        value.getCssText() + " is not a value value for the quotes property", -1);
+                throw new CSSParseException(LangId.INVALID_VALUE, -1, value.getCssText(), "quotes");
             }
         }
         

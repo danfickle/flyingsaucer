@@ -19,6 +19,8 @@
  */
 package org.xhtmlrenderer.css.parser;
 
+import org.xhtmlrenderer.util.LangId;
+
 public interface CSSErrorHandler {
-    public void error(String uri, String message);
+    public void error(String uri, int line, LangId msgId, Object... args);
 }

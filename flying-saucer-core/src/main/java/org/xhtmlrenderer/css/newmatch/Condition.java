@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 import org.xhtmlrenderer.css.extend.AttributeResolver;
 import org.xhtmlrenderer.css.extend.TreeResolver;
 import org.xhtmlrenderer.css.parser.CSSParseException;
+import org.xhtmlrenderer.util.LangId;
 
 
 /**
@@ -437,7 +438,7 @@ abstract class Condition {
                     final Matcher m = pattern.matcher(number);
 
                     if (!m.matches()) {
-                        throw new CSSParseException("Invalid nth-child selector: " + number, -1);
+                        throw new CSSParseException(LangId.INVALID_NTH_CHILD, -1, number);
                     } else {
                         int a = m.group(2).equals("") ? 1 : Integer.parseInt(m.group(2));
                         int b = (m.group(5) == null) ? 0 : Integer.parseInt(m.group(5));

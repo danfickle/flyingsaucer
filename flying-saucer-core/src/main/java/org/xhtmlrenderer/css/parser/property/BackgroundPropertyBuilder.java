@@ -32,6 +32,8 @@ import org.xhtmlrenderer.css.parser.PropertyValue;
 import org.xhtmlrenderer.css.parser.PropertyValueImp;
 import org.xhtmlrenderer.css.sheet.PropertyDeclaration;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
+import org.xhtmlrenderer.util.LangId;
+
 import static org.xhtmlrenderer.css.parser.property.BuilderUtil.*;
 
 public class BackgroundPropertyBuilder implements PropertyBuilder {
@@ -78,7 +80,7 @@ public class BackgroundPropertyBuilder implements PropertyBuilder {
                 final FSRGBColor color = Conversions.getColor(value.getStringValue());
                 if (color != null) {
                     if (backgroundColor != null) {
-                        throw new CSSParseException("A background-color value cannot be set twice", -1);
+                        throw new CSSParseException(LangId.NO_TWICE, -1, "background-color");
                     }
                     
                     backgroundColor = new PropertyDeclaration(
@@ -92,7 +94,7 @@ public class BackgroundPropertyBuilder implements PropertyBuilder {
                 
                 if (PrimitivePropertyBuilders.BACKGROUND_REPEATS.contains(ident)) {
                     if (backgroundRepeat != null) {
-                        throw new CSSParseException("A background-repeat value cannot be set twice", -1);
+                        throw new CSSParseException(LangId.NO_TWICE, -1, "background-repeat");
                     }
                     
                     backgroundRepeat = new PropertyDeclaration(
@@ -101,7 +103,7 @@ public class BackgroundPropertyBuilder implements PropertyBuilder {
                 
                 if (PrimitivePropertyBuilders.BACKGROUND_ATTACHMENTS.contains(ident)) {
                     if (backgroundAttachment != null) {
-                        throw new CSSParseException("A background-attachment value cannot be set twice", -1);
+                        throw new CSSParseException(LangId.NO_TWICE, -1, "background-attachment");
                     }
                     
                     backgroundAttachment = new PropertyDeclaration(
@@ -110,7 +112,7 @@ public class BackgroundPropertyBuilder implements PropertyBuilder {
                 
                 if (ident == IdentValue.TRANSPARENT) {
                     if (backgroundColor != null) {
-                        throw new CSSParseException("A background-color value cannot be set twice", -1);
+                        throw new CSSParseException(LangId.NO_TWICE, -1, "background-color");
                     }
                     
                     backgroundColor = new PropertyDeclaration(
@@ -119,7 +121,7 @@ public class BackgroundPropertyBuilder implements PropertyBuilder {
                 
                 if (ident == IdentValue.NONE) {
                     if (backgroundImage != null) {
-                        throw new CSSParseException("A background-image value cannot be set twice", -1);
+                        throw new CSSParseException(LangId.NO_TWICE, -1, "background-image");
                     }
                     
                     backgroundImage = new PropertyDeclaration(
@@ -131,14 +133,14 @@ public class BackgroundPropertyBuilder implements PropertyBuilder {
                 }
             } else if (type == CSSPrimitiveUnit.CSS_RGBCOLOR) {
                 if (backgroundColor != null) {
-                    throw new CSSParseException("A background-color value cannot be set twice", -1);
+                    throw new CSSParseException(LangId.NO_TWICE, -1, "background-color");
                 }
                 
                 backgroundColor = new PropertyDeclaration(
                         CSSName.BACKGROUND_COLOR, value, important, origin);
             } else if (type == CSSPrimitiveUnit.CSS_URI || value.toString().toLowerCase(Locale.US).startsWith(IdentValue.LINEAR_GRADIENT.asString())) {
                 if (backgroundImage != null) {
-                    throw new CSSParseException("A background-image value cannot be set twice", -1);
+                    throw new CSSParseException(LangId.NO_TWICE, -1, "background-image");
                 }
                 
                 backgroundImage = new PropertyDeclaration(
@@ -147,7 +149,7 @@ public class BackgroundPropertyBuilder implements PropertyBuilder {
             
             if (processingBackgroundPosition || isLength(value) || type == CSSPrimitiveUnit.CSS_PERCENTAGE) {
                 if (backgroundPosition != null) {
-                    throw new CSSParseException("A background-position value cannot be set twice", -1);
+                    throw new CSSParseException(LangId.NO_TWICE, -1, "background-position");
                 }
                 
                 final List<PropertyValue> v = new ArrayList<PropertyValue>(2);

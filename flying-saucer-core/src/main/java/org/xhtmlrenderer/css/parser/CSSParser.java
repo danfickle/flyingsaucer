@@ -49,8 +49,6 @@ import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.util.LangId;
 
-import static org.xhtmlrenderer.service.UserLogger.*;
-
 public class CSSParser {
     private static final Set<String> SUPPORTED_PSEUDO_ELEMENTS;
     private static final Set<String> CSS21_PSEUDO_ELEMENTS;
@@ -139,8 +137,7 @@ public class CSSParser {
             }
 
             if (props.size() != 1) {
-                throw new CSSParseException(
-                        "Builder created " + props.size() + "properties, expected 1", getCurrentLine());
+            	throw new CSSParseException(LangId.BUILDER_BUG, getCurrentLine(), cssName);
             }
 
             final PropertyDeclaration decl = (PropertyDeclaration)props.get(0);
@@ -176,15 +173,11 @@ public class CSSParser {
                         t = next();
                         if (t != Token.TK_SEMICOLON) {
                             push(t);
-                            LCSS.warn(i18n(LangId.EXPECTED_TOKEN, t, Token.TK_SEMICOLON, getCurrentLine()));
                             throw new CSSParseException(t, Token.TK_SEMICOLON, getCurrentLine());
                         }
-
-                        LCSS.warn(i18n(LangId.CHARSET_NOT_SUPPORTED, getCurrentLine()));
-                        // Do something
+                        // TODO: Do something
                     } else {
                         push(t);
-                        LCSS.warn(i18n(LangId.EXPECTED_TOKEN, t, Token.TK_STRING, getCurrentLine()));
                         throw new CSSParseException(t, Token.TK_STRING, getCurrentLine());
                     }
                 } catch (final CSSParseException e) {
@@ -228,23 +221,19 @@ public class CSSParser {
                         break;
                     case Token.IMPORT_SYM:
                         next();
-                        LCSS.warn(i18n(LangId.AT_RULE_NOT_SUPPORTED_HERE, "import", getCurrentLine()));
-                        error(new CSSParseException("@import not allowed here", getCurrentLine()),
+                        error(new CSSParseException(LangId.AT_RULE_NOT_SUPPORTED_HERE, getCurrentLine(), "import"),
                                 "@import rule", true);
                         recover(false, false);
                         break;
                     case Token.NAMESPACE_SYM:
                         next();
-                        LCSS.warn(i18n(LangId.AT_RULE_NOT_SUPPORTED_HERE, "namespace", getCurrentLine()));
-                        error(new CSSParseException("@namespace not allowed here", getCurrentLine()),
+                        error(new CSSParseException(LangId.AT_RULE_NOT_SUPPORTED_HERE, getCurrentLine(), "namespace"),
                                 "@namespace rule", true);
                         recover(false, false);
                         break;
                     case Token.AT_RULE:
                         next();
-                        LCSS.warn(i18n(LangId.AT_RULE_NOT_SUPPORTED_HERE, "", getCurrentLine()));
-                        error(new CSSParseException(
-                                "Invalid at-rule", getCurrentLine()), "at-rule", true);
+                        error(new CSSParseException(LangId.AT_RULE_NOT_SUPPORTED_HERE, getCurrentLine(), "@"), "at-rule", true);
                         recover(false, false);
                         // fall through
                     default:
@@ -516,7 +505,7 @@ public class CSSParser {
                 if (t == Token.TK_IDENT) {
                     final String pageName = getTokenValue(t);
                     if (pageName.equals("auto")) {
-                        throw new CSSParseException("page name may not be auto", getCurrentLine());
+                    	throw new CSSParseException(LangId.PAGE_NAME_NO_AUTO, getCurrentLine());
                     }
                     next();
                     pageRule.setName(pageName);
@@ -574,7 +563,7 @@ public class CSSParser {
         final String name = getTokenValue(t);
         final MarginBoxName marginBoxName = MarginBoxName.valueOf(name);
         if (marginBoxName == null) {
-            error(new CSSParseException(name + " is not a valid margin box name", getCurrentLine()), "at rule", true);
+            error(new CSSParseException(LangId.MARGIN_BOX_NAME, getCurrentLine(), name), "at rule", true);
             recover(true, false);
             return;
         }
@@ -615,7 +604,7 @@ public class CSSParser {
             if (t == Token.TK_IDENT) {
                 result = getTokenValue(t);
                 if (! (result.equals("first") || result.equals("left") || result.equals("right"))) {
-                    throw new CSSParseException("Pseudo page must be one of first, left, or right", getCurrentLine());
+                	throw new CSSParseException(LangId.PAGE_NAME_MUST_BE, getCurrentLine(), result);
                 }
             } else {
                 push(t);
@@ -833,9 +822,7 @@ public class CSSParser {
             final Token combinator = combinators.get(i);
 
             if (first.getPseudoElement() != null) {
-                throw new CSSParseException(
-                        "A simple selector with a pseudo element cannot be " +
-                        "combined with another simple selector", getCurrentLine());
+            	throw new CSSParseException(LangId.NO_DUEL_PSEUDOS, getCurrentLine());
             }
 
             boolean sibling = false;
@@ -998,15 +985,14 @@ public class CSSParser {
         if (prefix != null && prefix != TreeResolver.NO_NAMESPACE) {
             namespaceURI = _namespaces.get(prefix.toLowerCase());
             if (namespaceURI == null) {
-                throw new CSSParseException("There is no namespace with prefix " + prefix + " defined",
-                        getCurrentLine());
+            	throw new CSSParseException(LangId.NO_NAMESPACE_FOUND, getCurrentLine(), prefix);
             }
         } else if (prefix == null && ! matchAttribute) {
             namespaceURI = _namespaces.get(null);
         }
 
         if (matchAttribute && name == null) {
-            throw new CSSParseException("An attribute name is required", getCurrentLine());
+            throw new CSSParseException(LangId.ATTR_REQUIRED, getCurrentLine());
         }
 
         return new NamespacePair(namespaceURI, name);
@@ -1160,7 +1146,7 @@ public class CSSParser {
         } else if (CSS21_PSEUDO_ELEMENTS.contains(value)){
             selector.setPseudoElement(value);
         } else {
-            throw new CSSParseException(value + " is not a recognized pseudo-class", getCurrentLine());
+            throw new CSSParseException(LangId.UNRECOGNIZED_PSEUDO, getCurrentLine(), value);
         }
     }
 
@@ -1195,7 +1181,7 @@ public class CSSParser {
             }
         } else {
             push(t);
-            throw new CSSParseException(f + " is not a valid function in this context", getCurrentLine());
+            throw new CSSParseException(LangId.FUNCTION_NOT_SUPPORTED, getCurrentLine(), f.toString());
         }
 
         if (t != Token.TK_RPAREN) {
@@ -1209,7 +1195,7 @@ public class CSSParser {
         if (SUPPORTED_PSEUDO_ELEMENTS.contains(value)) {
             selector.setPseudoElement(value);
         } else {
-            throw new CSSParseException(value + " is not a recognized psuedo-element", getCurrentLine());
+        	throw new CSSParseException(LangId.UNRECOGNIZED_PSEUDO, getCurrentLine(), value);
         }
     }
 
@@ -1247,16 +1233,16 @@ public class CSSParser {
         if (cssName == null) {
             _errorHandler.error(
                     _URI,
-                    propertyName + " is an unrecognized CSS property at line "
-                        + getCurrentLine() + ". Ignoring declaration.");
+                    getCurrentLine(),
+                    LangId.UNRECOGNIZED_PROPERTY, propertyName);
             return false;
         }
 
         if (! CSSName.isImplemented(cssName)) {
             _errorHandler.error(
                     _URI,
-                    propertyName + " is not implemented at line "
-                        + getCurrentLine() + ". Ignoring declaration.");
+                    getCurrentLine(),
+                    LangId.UNIMPLEMENTED_PROPERTY, propertyName);
             return false;
         }
 
@@ -1264,8 +1250,8 @@ public class CSSParser {
         if (builder == null) {
             _errorHandler.error(
                     _URI,
-                    "(bug) No property builder defined for " + propertyName
-                        + " at line " + getCurrentLine() + ". Ignoring declaration.");
+                    getCurrentLine(),
+                    LangId.NO_PROPERTY_BUILDER, propertyName);
             return false;
         }
 
@@ -1479,8 +1465,7 @@ public class CSSParser {
             	}
             	else
             	{
-            		LCSS.warn(i18n(LangId.UNSUPPORTED_CSS_UNIT, unit, getCurrentLine()));
-                    throw new CSSParseException("Unsupported CSS unit " + unit, getCurrentLine());
+            		throw new CSSParseException(LangId.UNSUPPORTED_CSS_UNIT, getCurrentLine(), unit);
             	}
  
             	result = new PropertyValueImp(type,
@@ -1494,8 +1479,7 @@ public class CSSParser {
             case Token.TIME:
             case Token.FREQ:
             case Token.DIMENSION:
-        		LCSS.warn(i18n(LangId.UNSUPPORTED_CSS_UNIT, extractUnit(t), getCurrentLine()));
-            	throw new CSSParseException("Unsupported CSS unit " + extractUnit(t), getCurrentLine());
+            	throw new CSSParseException(LangId.UNSUPPORTED_CSS_UNIT, getCurrentLine(), extractUnit(t));
             case Token.NUMBER:
                 result = new PropertyValueImp(
                         CSSPrimitiveUnit.CSS_NUMBER,
@@ -1641,7 +1625,6 @@ public class CSSParser {
 		if (t != Token.TK_RPAREN) 
 		{
 			push(t);
-			LCSS.warn(i18n(LangId.EXPECTED_TOKEN, t, Token.TK_RPAREN, getCurrentLine()));
 			throw new CSSParseException(t, Token.TK_RPAREN, getCurrentLine());
 		}
 
@@ -1657,11 +1640,7 @@ public class CSSParser {
 		{
 			if (!isSupportCMYKColors()) 
 			{
-				LCSS.warn(i18n(LangId.FUNCTION_NOT_SUPPORTED, "cmyk", getCurrentLine()));
-
-				throw new CSSParseException(
-						"The current output device does not support CMYK colors",
-						getCurrentLine());
+				throw new CSSParseException(LangId.CMYK_NOT_SUPPORTED, getCurrentLine());
 			}
 			// in accordance to http://www.w3.org/TR/css3-gcpm/#cmyk-colors
 			result = new PropertyValueImp(createCMYKColorFromFunction(params));
@@ -1681,11 +1660,7 @@ public class CSSParser {
      */
     private FSCMYKColor createCMYKColorFromFunction(final List<PropertyValue> params) {
         if (params.size() != 4) {
-        	LCSS.warn(i18n(LangId.EXACTLY_PARAMS_REQUIRED, "cmyk", 4, getCurrentLine()));
-        	
-        	throw new CSSParseException(
-                    "The cmyk() function must have exactly four parameters",
-                    getCurrentLine());
+        	throw new CSSParseException(LangId.EXACTLY_PARAMS_REQUIRED, getCurrentLine(), "cmyk", 4);
         }
 
         final float[] colorComponents = new float[4];
@@ -1708,18 +1683,11 @@ public class CSSParser {
         } else if (type == CSSPrimitiveUnit.CSS_PERCENTAGE) {
             result = value.getFloatValue() / 100.0f;
         } else {
-        	LCSS.warn(i18n(LangId.COLOR_FUNC_COMPONENT_INVALID, paramNo, getCurrentLine()));
-        	
-        	throw new CSSParseException(
-                    "Parameter " + paramNo + " to the cmyk() function is " +
-                    "not a number or a percentage", getCurrentLine());
+        	throw new CSSParseException(LangId.COLOR_FUNC_COMPONENT_INVALID, getCurrentLine(), paramNo, "cmyk");
         }
 
         if (result < 0.0f || result > 1.0f) {
-        	LCSS.warn(i18n(LangId.COLOR_FUNC_COLOR_CLAMPED, getCurrentLine()));
-        	
-        	throw new CSSParseException(
-                    "Parameter " + paramNo + " to the cmyk() function must be between zero and one", getCurrentLine());
+        	throw new CSSParseException(LangId.COLOR_FUNC_COMPONENT_INVALID, getCurrentLine(), paramNo, "cmyk");
         }
 
         return result;
@@ -1732,11 +1700,7 @@ public class CSSParser {
     {
     	if (params.size() != 4) 
     	{
-    		LCSS.warn(i18n(LangId.EXACTLY_PARAMS_REQUIRED, "rgba", 4, getCurrentLine()));
-    		
-    		throw new CSSParseException(
-                    "The rgba() function must have four parameters",
-                    getCurrentLine());
+    		throw new CSSParseException(LangId.EXACTLY_PARAMS_REQUIRED, getCurrentLine(), "rgba", 4);
         }
     
     	return createRGBColorFromFunction(params);
@@ -1749,11 +1713,7 @@ public class CSSParser {
     {
     	if (params.size() != 3) 
     	{
-    		LCSS.warn(i18n(LangId.EXACTLY_PARAMS_REQUIRED, "rgb", 3, getCurrentLine()));
-    		
-    		throw new CSSParseException(
-                    "The rgb() function must have three parameters",
-                    getCurrentLine());
+    		throw new CSSParseException(LangId.EXACTLY_PARAMS_REQUIRED, getCurrentLine(), "rgb", 3);
         }
     
     	return createRGBColorFromFunction(params);
@@ -1777,23 +1737,15 @@ public class CSSParser {
             final PropertyValue value = params.get(i);
             final CSSPrimitiveUnit type = value.getPrimitiveTypeN();
             if (type != CSSPrimitiveUnit.CSS_PERCENTAGE &&
-                    type != CSSPrimitiveUnit.CSS_NUMBER) 
+                type != CSSPrimitiveUnit.CSS_NUMBER) 
             {
-            	LCSS.warn(i18n(LangId.COLOR_FUNC_COMPONENT_INVALID, i + 1, getCurrentLine()));
-            	
-            	throw new CSSParseException(
-                        "Parameter " + (i+1) + " to the rgb() or rgba() function is " +
-                        "not a number or percentage", getCurrentLine());
+            	throw new CSSParseException(LangId.COLOR_FUNC_COMPONENT_INVALID, getCurrentLine(), (i + 1), "rgb/rgba");
             }
 
 			if (type != CSSPrimitiveUnit.CSS_PERCENTAGE &&
 				type != CSSPrimitiveUnit.CSS_NUMBER && i == 3) 
 			{
-				LCSS.warn(i18n(LangId.COLOR_FUNC_COMPONENT_INVALID, 4, getCurrentLine()));
-				
-				throw new CSSParseException(
-						"Parameter alpha to the rgba() function is " + "not a number or percentage",
-							getCurrentLine());
+				throw new CSSParseException(LangId.COLOR_FUNC_COMPONENT_INVALID, getCurrentLine(), (i + 1), "rgba");
 			}
             
             float f = value.getFloatValue();
@@ -1803,8 +1755,6 @@ public class CSSParser {
 
             if (f < 0 || (i == 3 && f > 1) || f > 255) 
             {
-				LCSS.warn(i18n(LangId.COLOR_FUNC_COLOR_CLAMPED, getCurrentLine()));
-
 				if (f < 0)
 					f = 0;
 				else if (i == 3 && f > 1)
@@ -1853,11 +1803,7 @@ public class CSSParser {
         if ((s.length() != 3 && s.length() != 6) || !isHexString(s)) 
         {
 			push(t);
-
-			LCSS.warn(i18n(LangId.INVALID_HEX_COLOR, s, getCurrentLine()));
-
-			throw new CSSParseException('#' + s
-					+ " is not a valid color definition", getCurrentLine());
+			throw new CSSParseException(LangId.INVALID_HEX_COLOR, getCurrentLine(), s);
 		}
 
         FSRGBColor color;
@@ -1985,8 +1931,7 @@ public class CSSParser {
 
     private void error(final CSSParseException e, final String what, final boolean rethrowEOF) {
         if (! e.isCallerNotified()) {
-            final String message = e.getMessage() + " Skipping " + what + ".";
-            _errorHandler.error(_URI, message);
+            _errorHandler.error(_URI, e.getLine(), e.getMessageId(), e.getMessageArguments());
         }
         e.setCallerNotified(true);
         if (e.isEOF() && rethrowEOF) {

@@ -31,9 +31,11 @@ import org.xhtmlrenderer.css.sheet.Ruleset;
 import org.xhtmlrenderer.css.sheet.Stylesheet;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
+import org.xhtmlrenderer.extend.FSErrorType;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.resource.CSSResource;
 import org.xhtmlrenderer.swing.StylesheetCacheKey;
+import org.xhtmlrenderer.util.LangId;
 
 /**
  * A Factory class for Cascading Style Sheets. Sheets are parsed using a single
@@ -54,9 +56,14 @@ public class StylesheetFactoryImpl implements StylesheetFactory {
     public StylesheetFactoryImpl(final UserAgentCallback userAgentCallback) {
         _userAgentCallback = userAgentCallback;
         _cssParser = new CSSParser(new CSSErrorHandler() {
-            public void error(final String uri, final String message) {
-                LOGGER.warn("(" + uri + ") " + message);
-            }
+        	@Override
+        	public void error(String uri, int line, LangId msgId, Object... args) {
+        		if (_userAgentCallback != null)
+        		{
+        			// Send it back to the user agent to decide what to do with it.
+        			_userAgentCallback.onError(msgId, line, FSErrorType.CSS_ERROR, args);
+        		}
+        	}
         }, _userAgentCallback);
     }
 

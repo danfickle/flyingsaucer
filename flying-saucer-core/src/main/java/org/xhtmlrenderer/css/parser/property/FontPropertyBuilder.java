@@ -33,6 +33,8 @@ import org.xhtmlrenderer.css.parser.PropertyValueImp;
 import org.xhtmlrenderer.css.parser.Token;
 import org.xhtmlrenderer.css.sheet.PropertyDeclaration;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
+import org.xhtmlrenderer.util.LangId;
+
 import static org.xhtmlrenderer.css.parser.property.BuilderUtil.*;
 
 public class FontPropertyBuilder implements PropertyBuilder {
@@ -74,17 +76,17 @@ public class FontPropertyBuilder implements PropertyBuilder {
                 }
                 if (PrimitivePropertyBuilders.FONT_STYLES.contains(ident)) {
                     if (fontStyle != null) {
-                        throw new CSSParseException("font-style cannot be set twice", -1);
+                        throw new CSSParseException(LangId.NO_TWICE, -1, "font-style");
                     }
                     fontStyle = new PropertyDeclaration(CSSName.FONT_STYLE, value, important, origin);
                 } else if (PrimitivePropertyBuilders.FONT_VARIANTS.contains(ident)) {
                     if (fontVariant != null) {
-                        throw new CSSParseException("font-variant cannot be set twice", -1);
+                        throw new CSSParseException(LangId.NO_TWICE, -1, "font-variant");
                     }
                     fontVariant = new PropertyDeclaration(CSSName.FONT_VARIANT, value, important, origin);
                 } else if (PrimitivePropertyBuilders.FONT_WEIGHTS.contains(ident)) {
                     if (fontWeight != null) {
-                        throw new CSSParseException("font-weight cannot be set twice", -1);
+                        throw new CSSParseException(LangId.NO_TWICE, -1, "font-weight");
                     }
                     fontWeight = new PropertyDeclaration(CSSName.FONT_WEIGHT, value, important, origin);
                 } else {
@@ -93,12 +95,12 @@ public class FontPropertyBuilder implements PropertyBuilder {
                 }
             } else if (type == CSSPrimitiveUnit.CSS_NUMBER && value.getFloatValue() > 0) {
                 if (fontWeight != null) {
-                    throw new CSSParseException("font-weight cannot be set twice", -1);
+                    throw new CSSParseException(LangId.NO_TWICE, -1, "font-weight");
                 }
                 
                 final IdentValue weight = Conversions.getNumericFontWeight(value.getFloatValue());
                 if (weight == null) {
-                    throw new CSSParseException(value + " is not a valid font weight", -1);
+                    throw new CSSParseException(LangId.INVALID_FONT_WEIGHT, -1, value.getCssText());
                 }
                 
                 final PropertyValue replacement = new PropertyValueImp(
@@ -167,7 +169,7 @@ public class FontPropertyBuilder implements PropertyBuilder {
         }
         
         if (fontSize == null) {
-            throw new CSSParseException("A font-size value is required", -1);
+            throw new CSSParseException(LangId.FONT_SIZE_REQUIRED, -1);
         }
         
         if (lineHeight == null) {

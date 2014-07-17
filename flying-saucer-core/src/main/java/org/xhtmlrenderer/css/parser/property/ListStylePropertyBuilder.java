@@ -29,6 +29,7 @@ import org.xhtmlrenderer.css.parser.CSSParseException;
 import org.xhtmlrenderer.css.parser.PropertyValue;
 import org.xhtmlrenderer.css.sheet.PropertyDeclaration;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
+import org.xhtmlrenderer.util.LangId;
 
 import static org.xhtmlrenderer.css.parser.property.BuilderUtil.*;
 
@@ -64,14 +65,14 @@ public class ListStylePropertyBuilder implements PropertyBuilder {
                     }
                 } else if (PrimitivePropertyBuilders.LIST_STYLE_POSITIONS.contains(ident)) {
                     if (listStylePosition != null) {
-                        throw new CSSParseException("A list-style-position value cannot be set twice", -1);
+                        throw new CSSParseException(LangId.NO_TWICE, -1, "list-style-position");
                     }
                     
                     listStylePosition = new PropertyDeclaration(
                             CSSName.LIST_STYLE_POSITION, value, important, origin);
                 } else if (PrimitivePropertyBuilders.LIST_STYLE_TYPES.contains(ident)) {
                     if (listStyleType != null) {
-                        throw new CSSParseException("A list-style-type value cannot be set twice", -1);
+                        throw new CSSParseException(LangId.NO_TWICE, -1, "list-style-type");
                     }
                     
                     listStyleType = new PropertyDeclaration(
@@ -79,7 +80,7 @@ public class ListStylePropertyBuilder implements PropertyBuilder {
                 }
             } else if (type == CSSPrimitiveUnit.CSS_URI) {
                 if (listStyleImage != null) {
-                    throw new CSSParseException("A list-style-image value cannot be set twice", -1);
+                    throw new CSSParseException(LangId.NO_TWICE, -1, "list-style-image");
                 }
                 
                 listStyleImage = new PropertyDeclaration(

@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.CSSPrimitiveUnit;
 import org.xhtmlrenderer.css.constants.IdentValue;
@@ -15,7 +13,6 @@ import org.xhtmlrenderer.css.parser.PropertyValue;
 import org.xhtmlrenderer.css.parser.PropertyValueImp.CSSValueType;
 import org.xhtmlrenderer.css.sheet.PropertyDeclaration;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
-import org.xhtmlrenderer.layout.SharedContext;
 import org.xhtmlrenderer.util.LangId;
 
 /**
@@ -23,12 +20,9 @@ import org.xhtmlrenderer.util.LangId;
  */
 public class BuilderUtil {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BuilderUtil.class);
-
 	private BuilderUtil() {
 	}
 
-	
 	public static final EnumSet<CSSPrimitiveUnit> LENGTH_UNITS = EnumSet.of(
 			CSSPrimitiveUnit.CSS_EMS,
 			CSSPrimitiveUnit.CSS_EXS,
@@ -41,16 +35,9 @@ public class BuilderUtil {
 	
 	public static void cssThrowError(final LangId key, final Object... args) 
 	{
-		final String msg = String.format(SharedContext.ERRS.get().getString(key.toString()), args);
-		throw new CSSParseException(msg, -1);
+		throw new CSSParseException(key, -1, args);
 	}
 
-	public static void cssNoThrowError(final LangId key, final Object... args) 
-	{
-		final String msg = String.format(SharedContext.ERRS.get().getString(key.toString()), args);
-		LOGGER.warn(msg);
-	}
-	
 	public static void checkValueType(final CSSName cssName, final PropertyValue value, final EnumSet<CSSPrimitiveUnit> in)
 	{
 		if (!in.contains(value.getPrimitiveTypeN()))

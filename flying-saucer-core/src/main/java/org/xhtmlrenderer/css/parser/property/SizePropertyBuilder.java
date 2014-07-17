@@ -31,6 +31,8 @@ import org.xhtmlrenderer.css.parser.PropertyValueImp;
 import org.xhtmlrenderer.css.parser.PropertyValueImp.CSSValueType;
 import org.xhtmlrenderer.css.sheet.PropertyDeclaration;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
+import org.xhtmlrenderer.util.LangId;
+
 import static org.xhtmlrenderer.css.parser.property.BuilderUtil.*;
 
 public class SizePropertyBuilder implements PropertyBuilder {
@@ -78,11 +80,11 @@ public class SizePropertyBuilder implements PropertyBuilder {
                             CSSName.FS_PAGE_HEIGHT, value, important, origin));
                     return result;
                 } else {
-                    throw new CSSParseException("Identifier " + ident + " is not a valid value for " + cssName, -1);
+                    throw new CSSParseException(LangId.UNSUPPORTED_IDENTIFIER, -1, value.getCssText(), cssName);
                 }
             } else if (isLength(value)) {
                 if (value.getFloatValue() < 0.0f) {
-                    throw new CSSParseException("A page dimension may not be negative", -1);
+                    throw new CSSParseException(LangId.NO_NEGATIVE, -1 , "page dimension");
                 }
                 
                 result.add(new PropertyDeclaration(
@@ -94,7 +96,7 @@ public class SizePropertyBuilder implements PropertyBuilder {
                 
                 return result;
             } else {
-                throw new CSSParseException("Value for " + cssName + " must be a length or identifier", -1);
+                throw new CSSParseException(LangId.MUST_BE_LENGTH_OR_IDENTIFIER, -1, cssName);
             }
         } else { /* values.size == 2 */
             PropertyValue value1 = (PropertyValue)values.get(0);
@@ -104,11 +106,11 @@ public class SizePropertyBuilder implements PropertyBuilder {
             
             if (isLength(value1) && isLength(value2)) {
                 if (value1.getFloatValue() < 0.0f) {
-                    throw new CSSParseException("A page dimension may not be negative", -1);
+                    throw new CSSParseException(LangId.NO_NEGATIVE, -1, "page dimension");
                 }
                 
                 if (value2.getFloatValue() < 0.0f) {
-                    throw new CSSParseException("A page dimension may not be negative", -1);
+                    throw new CSSParseException(LangId.NO_NEGATIVE, -1, "page dimension");
                 }
                 
                 result.add(new PropertyDeclaration(
@@ -129,7 +131,7 @@ public class SizePropertyBuilder implements PropertyBuilder {
                 }
                 
                 if (! (value1.toString().equals("landscape") || value1.toString().equals("portrait"))) {
-                    throw new CSSParseException("Value " + value1 + " is not a valid page orientation", -1);
+                    throw new CSSParseException(LangId.INVALID_PAGE_ORIENTATION, -1, value1);
                 }
                 
                 result.add(new PropertyDeclaration(
@@ -137,7 +139,7 @@ public class SizePropertyBuilder implements PropertyBuilder {
                 
                 final PageSize pageSize = PageSize.getPageSize(value2.getStringValue());
                 if (pageSize == null) {
-                    throw new CSSParseException("Value " + value1 + " is not a valid page size", -1);
+                    throw new CSSParseException(LangId.INVALID_PAGE_SIZE, -1, value1);
                 }
                 
                 result.add(new PropertyDeclaration(
@@ -147,7 +149,7 @@ public class SizePropertyBuilder implements PropertyBuilder {
                 
                 return result;
             } else {
-                throw new CSSParseException("Invalid value for size property", -1);
+                throw new CSSParseException(LangId.INVALID_SYNTAX, -1, "size");
             }
         }
     }

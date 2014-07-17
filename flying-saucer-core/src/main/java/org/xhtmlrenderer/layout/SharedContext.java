@@ -26,8 +26,6 @@ import java.awt.Toolkit;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
-
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.nodes.Document;
@@ -71,10 +69,7 @@ public class SharedContext {
     private StylesheetInfo defaultStylesheet;
     private boolean lookedUpDefaultStylesheet;
     private Locale localeTextBreaker = Locale.US;
-    private final Locale localeErrorMessages = Locale.US;
 
-    public static final ThreadLocal<ResourceBundle> ERRS = new ThreadLocal<>();    
-    
     private String _uri;
     /*
      * used to adjust fonts, ems, points, into screen resolution
@@ -108,8 +103,6 @@ public class SharedContext {
 
     public SharedContext()
     {
-    	ERRS.remove();
-    	ERRS.set(ResourceBundle.getBundle("languages.ErrorMessages", localeErrorMessages));
     }
 
     /**

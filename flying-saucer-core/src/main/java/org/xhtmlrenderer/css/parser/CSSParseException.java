@@ -19,66 +19,53 @@
  */
 package org.xhtmlrenderer.css.parser;
 
+import org.xhtmlrenderer.util.LangId;
+
 public class CSSParseException extends RuntimeException {
     private static final long serialVersionUID = 1L;
-    
-    private final Token _found;
-    private final Token[] _expected;
+
+    private final LangId _msgId;
+    private final Object[] _msgArguments;
+
+    private Token _found;
     private int _line;
-    
-    private final String _genericMessage;
-    
     private boolean _callerNotified;
     
-    public CSSParseException(final String message, final int line) {
-        _found = null;
-        _expected = null;
-        _line = line;
-        _genericMessage = message;
+    public CSSParseException(final LangId msg, final int line, Object... args)
+    {
+    	_msgId = msg;
+    	_msgArguments = args;
+    	_line = line;
+    }
+
+    public LangId getMessageId()
+    {
+    	return _msgId;
+    }
+    
+    public Object[] getMessageArguments()
+    {
+    	return _msgArguments;
     }
     
     public CSSParseException(final Token found, final Token expected, final int line) {
-        _found = found;
-        _expected = new Token[] { expected };
-        _line = line;
-        _genericMessage = null;
+    	this(found, new Token[] { expected }, line);
     }
     
     public CSSParseException(final Token found, final Token[] expected, final int line) {
+        this(LangId.EXPECTED_TOKEN, line, descr(expected), found.getExternalName());
         _found = found;
-        _expected = expected == null ? new Token[]{} : (Token[]) expected.clone(); 
-        _line = line;
-        _genericMessage = null;
     }
     
-    public String getMessage() {
-        if (_genericMessage != null) {
-            return _genericMessage + " at line " + (_line+1) + ".";
-        } else {
-            final String found = _found == null ? "end of file" : _found.getExternalName();
-            return "Found " + found + " where " + 
-                descr(_expected) + " was expected at line " + (_line+1) + "."; 
-        }
-    }
-    
-    private String descr(final Token[] tokens) {
+    private static String descr(final Token[] tokens) {
         if (tokens.length == 1) {
             return tokens[0].getExternalName();
         } else {
-            final StringBuffer result = new StringBuffer();
-            if (tokens.length > 2) {
-                result.append("one of ");
-            }
+            final StringBuilder result = new StringBuilder();
             for (int i = 0; i < tokens.length; i++) {
                 result.append(tokens[i].getExternalName());
-                if (i < tokens.length - 2) {
+                if (i < tokens.length - 1) {
                     result.append(", ");
-                } else if (i == tokens.length - 2) {
-                    if (tokens.length > 2) {
-                        result.append(", or ");
-                    } else {
-                        result.append(" or ");
-                    }
                 }
             }
             return result.toString();

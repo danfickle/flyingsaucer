@@ -22,6 +22,7 @@ package org.xhtmlrenderer.css.parser;
 import java.io.StringReader;
 
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
+import org.xhtmlrenderer.util.LangId;
 
 public class ParserTest {
     public static void main(final String[] args) throws Exception {
@@ -32,9 +33,10 @@ public class ParserTest {
         }
         
         final CSSErrorHandler errorHandler = new CSSErrorHandler() {
-            public void error(final String uri, final String message) {
-                System.out.println(message);
-            }
+			@Override
+			public void error(String uri, int line, LangId msgId, Object... args) 
+			{
+			}
         };
         
         long total = 0;

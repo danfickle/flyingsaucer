@@ -29,14 +29,18 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import javax.imageio.ImageIO;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.event.DocumentListener;
+import org.xhtmlrenderer.extend.FSErrorType;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.resource.CSSResource;
 import org.xhtmlrenderer.resource.HTMLResource;
@@ -46,6 +50,7 @@ import org.xhtmlrenderer.swing.ImageResourceLoader;
 import org.xhtmlrenderer.swing.StylesheetCache;
 import org.xhtmlrenderer.util.GeneralUtil;
 import org.xhtmlrenderer.util.ImageUtil;
+import org.xhtmlrenderer.util.LangId;
 import org.xhtmlrenderer.util.XRRuntimeException;
 
 /**
@@ -74,9 +79,11 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
      * a (simple) LRU cache
      */
     protected LinkedHashMap<String, ImageResource> _imageCache;
-
     protected StylesheetCache _styleCache = new StylesheetCacheImpl();
     protected ImageResourceLoader _imageCache2 = new ImageResourceLoaderImpl();
+
+    // TODO: Customize resource locale.
+    protected ResourceBundle messages = ResourceBundle.getBundle("languages.ErrorMessages", Locale.US);
     
     
     private final int _imageCacheCapacity;
@@ -403,4 +410,28 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
         xr = HTMLResourceHelper.load(notFound);
         return new HTMLResource("about:error", xr.getDocument());
     }
+
+	@Override
+	public void onError(LangId msgId, int line, FSErrorType errorType, Object[] args) 
+	{
+		if (msgId == null)
+		{
+			LOGGER.error("NO error message here");
+			return;
+		}
+		
+		String msgUnformatted = messages.getString(msgId.toString());
+		String msg = MessageFormat.format(msgUnformatted, args);
+		
+		if (errorType == FSErrorType.CSS_ERROR)
+		{
+			String cssUnformattedMsg = messages.getString(LangId.CSS_ERROR.toString());
+			String cssMsg = MessageFormat.format(cssUnformattedMsg, line);
+			LOGGER.warn(cssMsg + " " + msg);
+		}
+		else
+		{
+			LOGGER.warn(msg);
+		}
+	}
 }

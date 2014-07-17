@@ -24,6 +24,7 @@ import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.resource.ImageResource;
 import org.xhtmlrenderer.swing.ImageResourceLoader;
 import org.xhtmlrenderer.swing.StylesheetCache;
+import org.xhtmlrenderer.util.LangId;
 
 
 /**
@@ -110,4 +111,6 @@ public interface UserAgentCallback {
 	StylesheetCache getStylesheetCache();
 	
 	ImageResourceLoader getImageResourceCache();
+	
+	void onError(LangId msgId, int line, FSErrorType errorType, Object[] args);
 }

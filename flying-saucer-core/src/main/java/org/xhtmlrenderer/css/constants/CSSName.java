@@ -44,6 +44,7 @@ import org.xhtmlrenderer.css.parser.property.SizePropertyBuilder;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo;
 import org.xhtmlrenderer.css.style.FSDerivedValue;
 import org.xhtmlrenderer.css.style.derived.DerivedValueFactory;
+import org.xhtmlrenderer.util.LangId;
 
 
 /**
@@ -1757,9 +1758,8 @@ public enum CSSName {
 
     static {
         final CSSParser parser = new CSSParser(new CSSErrorHandler() {
-            public void error(final String uri, final String message) {
-                LOGGER.info("(" + uri + ") " + message);
-            }
+			@Override
+			public void error(String uri, int line, LangId msgId, Object... args) { }
         }, null);
         for (final CSSName cssName : ALL_PRIMITIVE_PROPERTY_NAMES.values()) {
             if (cssName.initialValue.charAt(0) != '=' && cssName.implemented) {

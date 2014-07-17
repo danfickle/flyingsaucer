@@ -33,6 +33,7 @@ import org.xhtmlrenderer.css.parser.PropertyValueImp;
 import org.xhtmlrenderer.css.parser.PropertyValueImp.CSSValueType;
 import org.xhtmlrenderer.css.sheet.PropertyDeclaration;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
+import org.xhtmlrenderer.util.LangId;
 
 import static org.xhtmlrenderer.css.parser.property.BuilderUtil.*;
 
@@ -56,8 +57,7 @@ public class ContentPropertyBuilder implements PropertyBuilder {
         final List<PropertyValue> resultValues = new ArrayList<PropertyValue>();
         for (final PropertyValue value : values) {
             if (value.getOperator() != null) {
-                throw new CSSParseException(
-                        "Found unexpected operator, " + value.getOperator().getExternalName(), -1);
+                throw new CSSParseException(LangId.UNEXPECTED_OPERATOR, -1, value.getOperator().getExternalName());
             }
             
             final CSSPrimitiveUnit type = value.getPrimitiveTypeN();
@@ -67,8 +67,7 @@ public class ContentPropertyBuilder implements PropertyBuilder {
                 resultValues.add(value);
             } else if (value.getPropertyValueType() == PropertyValueImp.VALUE_TYPE_FUNCTION) {
                 if (! isFunctionAllowed(value.getFunction())) {
-                    throw new CSSParseException(
-                            "Function " + value.getFunction().getName() + " is not allowed here", -1);
+                    throw new CSSParseException(LangId.FUNCTION_NOT_SUPPORTED, -1, value.getFunction().getName());
                 }
                 resultValues.add(value);
             } else if (type == CSSPrimitiveUnit.CSS_IDENT) {
@@ -77,12 +76,10 @@ public class ContentPropertyBuilder implements PropertyBuilder {
                         ident == IdentValue.NO_CLOSE_QUOTE || ident == IdentValue.NO_OPEN_QUOTE) {
                     resultValues.add(value);
                 } else {
-                    throw new CSSParseException(
-                            "Identifier " + ident + " is not a valid value for the content property", -1);
+                    throw new CSSParseException(LangId.INVALID_VALUE, -1, ident.toString(), "content");
                 }
             } else {
-                throw new CSSParseException(
-                        value.getCssText() + " is not a value value for the content property", -1);
+                throw new CSSParseException(LangId.INVALID_VALUE, -1, value.getCssText(), "content");
             }
         }
         

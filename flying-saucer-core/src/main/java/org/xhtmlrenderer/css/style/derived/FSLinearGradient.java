@@ -185,7 +185,8 @@ public class FSLinearGradient
 	
 	private void constructZero()
 	{
-		BuilderUtil.cssNoThrowError(LangId.FUNCTION_GENERAL, "linear-gradient");
+		// TODO
+		//BuilderUtil.cssNoThrowError(LangId.FUNCTION_GENERAL, "linear-gradient");
 		
 		// Just return a 1px wide (nearly) transparent gradient.
 		x1 = 0;
