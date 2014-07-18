@@ -392,6 +392,7 @@ public class CSSParser {
 
                 // TODO: Are we allowed @ rules here?
                 ruleset(mediaRule);
+                next();
                 stylesheet.addContent(mediaRule);
 
             } else {
@@ -453,7 +454,6 @@ public class CSSParser {
     		mediaQueryList.addMediaQueryItem(mediaQuery());
     		t = next();
     	}
-
     	return mediaQueryList;
     }
 
@@ -486,8 +486,6 @@ public class CSSParser {
     	// [ONLY | NOT]?
     	if (t == Token.TK_IDENT)
     	{
-    		t = next();
-    		
     		if (GeneralUtil.ciEquals("only", getTokenValue(t)))
     		{
     			qualifier = MediaQueryQualifier.ONLY;
@@ -500,6 +498,10 @@ public class CSSParser {
     		{
     			push(t);
     		}
+    	}
+    	else
+    	{
+    		push(t);
     	}
     	
     	// S*
@@ -520,13 +522,13 @@ public class CSSParser {
     	
     	if (type == null && expressions.isEmpty())
     	{
-    		return new MediaQueryItem(MediaQueryQualifier.NONE, "all", Collections.<MediaQueryExpression>emptyList());
+    		return new MediaQueryItem(qualifier, "all", Collections.<MediaQueryExpression>emptyList());
     	}
     	
     	skipWhitespaceAndCdocdc();
     	
-    	t = la();
-    	
+    	t = next();
+
     	while (t == Token.TK_IDENT)
     	{
     		// AND S*
@@ -535,14 +537,14 @@ public class CSSParser {
     			throw new CSSParseException(Token.TK_IDENT, Token.TK_IDENT, getCurrentLine());
     		}
 
-    		next();
-    		
     		skipWhitespaceAndCdocdc();
     		
     		expressions.add(mediaQueryExpression());
     		
-    		t = la();
+    		t = next();
     	}
+    	
+    	push(t);
     	
     	return new MediaQueryItem(qualifier, type == null ? "all" : type, expressions);
     }
@@ -554,7 +556,7 @@ public class CSSParser {
      */
     private MediaQueryExpression mediaQueryExpression() throws IOException
     {
-    	Token t = la();
+    	Token t = next();
     	List<PropertyValue> expr = Collections.emptyList();
     	
     	if (t != Token.TK_LPAREN)
@@ -562,8 +564,6 @@ public class CSSParser {
     		throw new CSSParseException(t, Token.TK_LPAREN, getCurrentLine());    		
     	}
 
-    	t = next();
-    	
     	skipWhitespaceAndCdocdc();
     	
     	MediaFeatureName feature = mediaQueryFeature();
@@ -576,10 +576,10 @@ public class CSSParser {
     	{
     		skipWhitespaceAndCdocdc();
     		t = next();
+    		skipWhitespaceAndCdocdc();
     		expr = expr(false);
+    		t = la();
     	}
-    	
-    	t = la();
     	
     	if (t != Token.TK_RPAREN)
     	{
@@ -605,6 +605,7 @@ public class CSSParser {
     		throw new CSSParseException(t, Token.TK_IDENT, getCurrentLine());
     	}
     	
+    	t = next();
     	String val = getTokenValue(t);
     	
     	MediaFeatureName nm = MediaFeatureName.fsValueOf(val);
