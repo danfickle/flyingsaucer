@@ -419,7 +419,8 @@ public class CSSParser {
        	return parser.parseMediaQueryListInternal(mediaQueryList);
     }
     
-    private MediaQueryList parseMediaQueryListInternal(String mediaQueryList)
+    // public only for testing.
+    public MediaQueryList parseMediaQueryListInternal(String mediaQueryList)
     {
     	reset(new StringReader(mediaQueryList));
     	try {

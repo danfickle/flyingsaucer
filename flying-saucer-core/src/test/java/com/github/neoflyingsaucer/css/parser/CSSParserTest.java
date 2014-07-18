@@ -23,6 +23,30 @@ public class CSSParserTest
 		
 		parser.parseDeclaration("", CSSOrigin.AUTHOR, declaration); 
 	}
+	
+	private void parseMediaQuery(String query)
+	{
+		CSSParser parser = new CSSParser(new CSSErrorHandler() {
+			@Override
+			public void error(String uri, int line, LangId msgId, Object... args) {
+				throw new RuntimeException(msgId.toString());
+			}
+		}, null);
+		
+		parser.parseMediaQueryListInternal(query); 
+	}
+	
+	
+	@Test
+	public void testCss3MediaQueries()
+	{
+		parseMediaQuery("not print");
+		parseMediaQuery("(min-width: 100px)");
+		parseMediaQuery("screen and (min-width: 600px)");
+		parseMediaQuery("(min-width: 1000px) and (color)");
+		parseMediaQuery("(min-aspect-ratio: 1 / 1) and (min-device-height: 1.2cm)");
+		parseMediaQuery("(color) , (monochrome)");
+	}
 
 	@Test
 	public void testRelativeUrlBackgroundImage()
