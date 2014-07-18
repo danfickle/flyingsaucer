@@ -25,6 +25,7 @@ import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -35,6 +36,11 @@ import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.CSSPrimitiveUnit;
 import org.xhtmlrenderer.css.constants.MarginBoxName;
 import org.xhtmlrenderer.css.extend.TreeResolver;
+import org.xhtmlrenderer.css.mediaquery.MediaFeatureName;
+import org.xhtmlrenderer.css.mediaquery.MediaQueryExpression;
+import org.xhtmlrenderer.css.mediaquery.MediaQueryItem;
+import org.xhtmlrenderer.css.mediaquery.MediaQueryList;
+import org.xhtmlrenderer.css.mediaquery.MediaQueryItem.MediaQueryQualifier;
 import org.xhtmlrenderer.css.newmatch.Selector;
 import org.xhtmlrenderer.css.parser.property.PropertyBuilder;
 import org.xhtmlrenderer.css.sheet.FontFaceRule;
@@ -47,6 +53,7 @@ import org.xhtmlrenderer.css.sheet.Stylesheet;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
 import org.xhtmlrenderer.extend.UserAgentCallback;
+import org.xhtmlrenderer.util.GeneralUtil;
 import org.xhtmlrenderer.util.LangId;
 
 public class CSSParser {
@@ -273,7 +280,7 @@ public class CSSParser {
                     	skipWhitespace();
                         t = la();
                         if (t == Token.TK_IDENT) {
-                            info.addMedium(medium());
+                            info.setMediaQueryList(mediaQueryList());
                             while (true) {
                                 t = la();
                                 if (t == Token.TK_COMMA) {
@@ -281,7 +288,7 @@ public class CSSParser {
                                     skipWhitespace();
                                     t = la();
                                     if (t == Token.TK_IDENT) {
-                                        info.addMedium(medium());
+                                        info.setMediaQueryList(mediaQueryList());
                                     } else {
                                         throw new CSSParseException(
                                                 t, Token.TK_IDENT, getCurrentLine());
@@ -306,9 +313,6 @@ public class CSSParser {
                             t, new Token[] { Token.TK_STRING, Token.TK_URI }, getCurrentLine());
                 }
 
-                if (info.getMedia().size() == 0) {
-                    info.addMedium("all");
-                }
                 stylesheet.addImportRule(info);
             } else {
                 push(t);
@@ -370,51 +374,24 @@ public class CSSParser {
         }
     }
 
-//  media
-//  : MEDIA_SYM S* medium [ COMMA S* medium ]* LBRACE S* ruleset* '}' S*
-//  ;
+    /*
+     * media
+     * : MEDIA_SYM S* media_query_list S* '{' S* ruleset* '}' S*
+     * ;
+     */
     private void media(final Stylesheet stylesheet) throws IOException {
         //System.out.println("media()");
         Token t = next();
         try {
             if (t == Token.TK_MEDIA_SYM) {
-            	// We now just pass everything to the MediaRule and let it resolve
-            	// media queries and media types. Dan (2014-06-10).
-            	
             	final MediaRule mediaRule = new MediaRule(stylesheet.getOrigin());
+
+            	skipWhitespace();
+               	mediaRule.setMediaQueryList(mediaQueryList());
                 skipWhitespace();
-                t = next();
-                final StringBuilder builder = new StringBuilder();
 
-                LOOP:
-				while (true)
-				{
-					builder.append(getTokenValue(t));
-					t = la();
-
-					if (t == Token.TK_LBRACE) {
-						mediaRule.setMediaQuery(builder.toString());
-						skipWhitespace();
-						next();
-						while (true) {
-							t = la();
-							if (t == null) {
-								skipWhitespace();
-								break LOOP;
-							}
-							switch (t.getType()) {
-							case Token.RBRACE:
-								next();
-								break LOOP;
-							default:
-								skipWhitespace();
-								ruleset(mediaRule);
-							}
-						}
-					}
-					next();
-				}
-				skipWhitespace();
+                // TODO: Are we allowed @ rules here?
+                ruleset(mediaRule);
                 stylesheet.addContent(mediaRule);
 
             } else {
@@ -427,23 +404,219 @@ public class CSSParser {
         }
     }
 
-//  medium
-//  : IDENT S*
-//  ;
-    private String medium() throws IOException {
+
+    public static MediaQueryList parseMediaQueryList(String mediaQueryList)
+    {
+       	CSSParser parser = new CSSParser(new CSSErrorHandler() {
+			@Override
+			public void error(String uri, int line, LangId msgId, Object... args) 
+			{
+				// TODO: get a uac here.
+			}
+		}, null);
+    	
+       	return parser.parseMediaQueryListInternal(mediaQueryList);
+    }
+    
+    private MediaQueryList parseMediaQueryListInternal(String mediaQueryList)
+    {
+    	reset(new StringReader(mediaQueryList));
+    	try {
+			return mediaQueryList();
+		} catch (IOException e) {
+			assert(false);
+			return null;
+		}
+    }
+    
+    /*
+     * media_query_list
+     * : S* [media_query [ ',' S* media_query ]* ]?
+     * ;
+     */
+    private MediaQueryList mediaQueryList() throws IOException {
         //System.out.println("medium()");
-        String result = null;
-        final Token t = next();
-        if (t == Token.TK_IDENT) {
-            result = getTokenValue(t);
-            skipWhitespace();
-        } else {
-            push(t);
-            throw new CSSParseException(t, Token.TK_IDENT, getCurrentLine());
+    	MediaQueryList mediaQueryList = new MediaQueryList();
+
+    	skipWhitespaceAndCdocdc();
+
+    	Token t = la();
+
+    	if (t == Token.TK_IDENT || t == Token.TK_LPAREN) {
+    		mediaQueryList.addMediaQueryItem(mediaQuery());
         }
-        return result;
+    	
+    	t = next();
+    	while (t == Token.TK_COMMA)
+    	{
+    		skipWhitespaceAndCdocdc();
+    		mediaQueryList.addMediaQueryItem(mediaQuery());
+    		t = next();
+    	}
+
+    	return mediaQueryList;
     }
 
+    /*
+     * media_type
+     * : IDENT
+     * ;
+     */
+    private String mediaType() throws IOException
+    {
+    	final Token t = next();
+    	assert(t == Token.TK_IDENT);
+    	return getTokenValue(t);
+    }
+    
+    
+    /*
+     * media_query
+     * : [ONLY | NOT]? S* media_type S* [ AND S* expression ]*
+     * | expression [ AND S* expression ]*
+     * ;
+     */
+    private MediaQueryItem mediaQuery() throws IOException
+    {
+    	Token t = next();
+    	MediaQueryQualifier qualifier = MediaQueryQualifier.NONE;
+    	String type = null;
+    	List<MediaQueryExpression> expressions = new ArrayList<>(2);
+    	
+    	// [ONLY | NOT]?
+    	if (t == Token.TK_IDENT)
+    	{
+    		t = next();
+    		
+    		if (GeneralUtil.ciEquals("only", getTokenValue(t)))
+    		{
+    			qualifier = MediaQueryQualifier.ONLY;
+    		}
+    		else if (GeneralUtil.ciEquals("not", getTokenValue(t)))
+    		{
+    			qualifier = MediaQueryQualifier.NOT;
+    		}
+    		else
+    		{
+    			push(t);
+    		}
+    	}
+    	
+    	// S*
+    	skipWhitespaceAndCdocdc();
+    	
+    	t = la();
+
+    	if (t == Token.TK_IDENT)
+    	{
+        	// media_type
+    		type = mediaType();
+    	}
+    	else if (t == Token.TK_LPAREN)
+    	{
+    		// expression
+    		expressions.add(mediaQueryExpression());
+    	}
+    	
+    	if (type == null && expressions.isEmpty())
+    	{
+    		return new MediaQueryItem(MediaQueryQualifier.NONE, "all", Collections.<MediaQueryExpression>emptyList());
+    	}
+    	
+    	skipWhitespaceAndCdocdc();
+    	
+    	t = la();
+    	
+    	while (t == Token.TK_IDENT)
+    	{
+    		// AND S*
+    		if (!GeneralUtil.ciEquals(getTokenValue(t), "and"))
+    		{
+    			throw new CSSParseException(Token.TK_IDENT, Token.TK_IDENT, getCurrentLine());
+    		}
+
+    		next();
+    		
+    		skipWhitespaceAndCdocdc();
+    		
+    		expressions.add(mediaQueryExpression());
+    		
+    		t = la();
+    	}
+    	
+    	return new MediaQueryItem(qualifier, type == null ? "all" : type, expressions);
+    }
+    
+    /*
+     * expression
+     * : '(' S* media_feature S* [ ':' S* expr ]? ')' S*
+     * ;
+     */
+    private MediaQueryExpression mediaQueryExpression() throws IOException
+    {
+    	Token t = la();
+    	List<PropertyValue> expr = Collections.emptyList();
+    	
+    	if (t != Token.TK_LPAREN)
+    	{
+    		throw new CSSParseException(t, Token.TK_LPAREN, getCurrentLine());    		
+    	}
+
+    	t = next();
+    	
+    	skipWhitespaceAndCdocdc();
+    	
+    	MediaFeatureName feature = mediaQueryFeature();
+
+    	skipWhitespaceAndCdocdc();
+    	
+    	t = la();
+    	
+    	if (t == Token.TK_COLON)
+    	{
+    		skipWhitespaceAndCdocdc();
+    		t = next();
+    		expr = expr(false);
+    	}
+    	
+    	t = la();
+    	
+    	if (t != Token.TK_RPAREN)
+    	{
+    		throw new CSSParseException(t, Token.TK_RPAREN, getCurrentLine());
+    	}
+    	
+    	t = next();
+    	
+    	return new MediaQueryExpression(feature, expr);
+    }
+    
+    /*
+     * media_feature
+     * : IDENT
+     * ;
+     */ 
+    private MediaFeatureName mediaQueryFeature() throws IOException
+    {
+    	Token t = la();
+    	
+    	if (t != Token.TK_IDENT)
+    	{
+    		throw new CSSParseException(t, Token.TK_IDENT, getCurrentLine());
+    	}
+    	
+    	String val = getTokenValue(t);
+    	
+    	MediaFeatureName nm = MediaFeatureName.fsValueOf(val);
+    	
+    	if (nm == null)
+    	{
+    		throw new CSSParseException(LangId.UNRECOGNIZED_IDENTIFIER, getCurrentLine(), val, "media feature name");
+    	}
+
+    	return nm;
+    }
+    
 //  font_face
 //    : FONT_FACE_SYM S*
 //      '{' S* declaration [ ';' S* declaration ]* '}' S*

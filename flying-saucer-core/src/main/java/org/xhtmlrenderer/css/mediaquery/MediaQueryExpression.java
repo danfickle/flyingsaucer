@@ -167,9 +167,9 @@ public class MediaQueryExpression
         return result.toString();
     }
     
-    public MediaQueryExpression(final String mediaFeatureStr, final List<PropertyValue> valueList)
+    public MediaQueryExpression(final MediaFeatureName mediaFeatureStr, final List<PropertyValue> valueList)
     {
-    	_mediaFeature = MediaFeatureName.fsValueOf(mediaFeatureStr);
+    	_mediaFeature = mediaFeatureStr;
 
     	// Initialize media query expression that must have 1 or more values.
     	if (valueList == null &&

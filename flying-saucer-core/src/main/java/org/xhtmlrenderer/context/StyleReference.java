@@ -97,7 +97,7 @@ public class StyleReference {
     private List<Stylesheet> readAndParseAll(final List<StylesheetInfo> infos, final String medium) {
         final List<Stylesheet> result = new ArrayList<Stylesheet>(infos.size() + 15);
         for (final StylesheetInfo info : infos) {
-            if (info.appliesToMedia(medium)) {
+            if (info.appliesToMedia(_context)) {
                 Stylesheet sheet = info.getStylesheet();
                 
                 if (sheet == null) {

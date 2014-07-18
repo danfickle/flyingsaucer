@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
@@ -39,11 +40,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.extend.StylesheetFactory;
 import org.xhtmlrenderer.css.extend.TreeResolver;
+import org.xhtmlrenderer.css.parser.CSSParser;
 import org.xhtmlrenderer.css.sheet.Stylesheet;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo;
 import org.xhtmlrenderer.extend.NamespaceHandler;
 import org.xhtmlrenderer.util.Configuration;
-
 import static org.xhtmlrenderer.util.GeneralUtil.ciEquals;
 
 /**
@@ -141,9 +142,13 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
         info.setTitle(link.attr("title"));
         
         if (!link.hasAttr("media") || link.attr("media").isEmpty()) 
-            info.setMedia("all");
+        {
+        	info.setMediaQueryList(null);
+        }
         else
-        	info.setMedia(link.attr("media"));
+        {
+        	info.setMediaQueryList(CSSParser.parseMediaQueryList(link.attr("media")));
+        }
 
         return info;
     }
@@ -196,9 +201,9 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
 
            	if (piNode.hasAttr("media") &&
             	!piNode.attr("media").isEmpty())
-            	info.setMedia(piNode.attr("media"));
+            	info.setMediaQueryList(CSSParser.parseMediaQueryList(piNode.attr("media")));
             else
-            	info.setMedia("all");
+            	info.setMediaQueryList(null);
 
             // Deal with the common case first.
             if (piNode.childNodeSize() == 1 &&
@@ -695,7 +700,7 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
     {
 		final StylesheetInfo info = new StylesheetInfo();
 		info.setOrigin(StylesheetInfo.CSSOrigin.USER_AGENT);
-		info.setMedia("all");
+		info.setMediaQueryList(null);
 		info.setType("text/css");
 
 		InputStream is = null;

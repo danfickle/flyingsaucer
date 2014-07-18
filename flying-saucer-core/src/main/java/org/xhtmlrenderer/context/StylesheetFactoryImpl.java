@@ -75,7 +75,7 @@ public class StylesheetFactoryImpl implements StylesheetFactory {
         	if (!isInline)
         	{
             	// TODO
-        		final StylesheetCacheKey key = new StylesheetCacheKey(info.getUri(), 0, 0, info.getMedia().toString());
+        		final StylesheetCacheKey key = new StylesheetCacheKey(info.getUri(), 0, 0, null);
         	   	_userAgentCallback.getStylesheetCache().putStylesheet(key, s1);
         	}
 
@@ -130,7 +130,7 @@ public class StylesheetFactoryImpl implements StylesheetFactory {
         // Give the user agent the chance to return a cached Stylesheet
         // instance.
         // TODO
-        final StylesheetCacheKey key = new StylesheetCacheKey(info.getUri(), 0, 0, info.getMedia().toString());
+        final StylesheetCacheKey key = new StylesheetCacheKey(info.getUri(), 0, 0, null);
         final Stylesheet s1 = _userAgentCallback.getStylesheetCache().getStylesheet(key);
 
         if (s1 == null)

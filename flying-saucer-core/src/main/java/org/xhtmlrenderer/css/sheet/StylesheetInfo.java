@@ -19,13 +19,10 @@
  */
 package org.xhtmlrenderer.css.sheet;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xhtmlrenderer.util.GeneralUtil;
+import org.xhtmlrenderer.css.mediaquery.MediaQueryList;
+import org.xhtmlrenderer.layout.SharedContext;
 
 /**
  * A reference to a stylesheet. If no stylesheet is set, the matcher will try to
@@ -49,7 +46,7 @@ public class StylesheetInfo {
     private String uri;
     private CSSOrigin origin = CSSOrigin.USER_AGENT;
     private String type;
-    private List<String> mediaTypes = new ArrayList<>(1);
+    private MediaQueryList mediaQueryList;
     private String content;
 
     public static enum CSSOrigin
@@ -66,18 +63,16 @@ public class StylesheetInfo {
 
     /**
      * @param m  a single media identifier
+     * @param _context 
      * @return   true if the stylesheet referenced applies to the medium
      */
-    public boolean appliesToMedia(final String m) 
+    public boolean appliesToMedia(SharedContext context) 
     {
-    	boolean ret = 
-    			GeneralUtil.ciEquals(m, "all") || 
-    				mediaTypes.contains("all") || 
-    				mediaTypes.contains(m.toLowerCase(Locale.US));
-
-    	LOGGER.info("Checking if '" + m + "' applies to " + mediaTypes.toString() + " => " + ret);
-    	
-    	return ret;
+    	// mediaQueryList may be null.
+    	if (mediaQueryList == null)
+    		return true;
+    	else
+    		return mediaQueryList.eval(context);
     }
 
     /**
@@ -87,30 +82,6 @@ public class StylesheetInfo {
      */
     public void setUri( final String uri ) {
         this.uri = uri;
-    }
-
-    /**
-     * Sets the media attribute of the StylesheetInfo object
-     *
-     * @param media  The new media value
-     */
-    public void setMedia( final String media ) {
-        final String[] mediaTypes = media.split(",");
-        final List<String> l = new ArrayList<>(mediaTypes.length);
-
-        for (final String mediaType : mediaTypes) {
-            l.add(mediaType.trim().toLowerCase(Locale.US));
-        }
-
-        this.mediaTypes = l;
-    }
-    
-    public void setMedia(final List<String> mediaTypes) {
-        this.mediaTypes = mediaTypes;
-    }
-    
-    public void addMedium(final String medium) {
-        mediaTypes.add(medium.toLowerCase(Locale.US));
     }
 
     /**
@@ -158,13 +129,8 @@ public class StylesheetInfo {
         return uri;
     }
 
-    /**
-     * Gets the media attribute of the StylesheetInfo object
-     *
-     * @return   The media value
-     */
-    public List<String> getMedia() {
-        return mediaTypes;
+    public MediaQueryList getMediaQueryList() {
+        return mediaQueryList;
     }
 
     /**
@@ -214,5 +180,10 @@ public class StylesheetInfo {
     public boolean isInline() {
         return this.content != null;
     }
+
+	public void setMediaQueryList(MediaQueryList mediaQueryList) 
+	{
+		this.mediaQueryList = mediaQueryList;
+	}
 }
 

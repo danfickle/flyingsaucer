@@ -74,7 +74,8 @@ public class Token {
     public static final int ASTERISK = 52;
     public static final int VERTICAL_BAR = 53;
     public static final int EOF = 54;
-
+    public static final int LPAREN = 55;
+    
     public static final Token TK_S = new Token(S, "S", "whitespace");
     public static final Token TK_CDO = new Token(CDO, "CDO", "<!--");
     public static final Token TK_CDC = new Token(CDC, "CDC", "-->");
@@ -129,7 +130,7 @@ public class Token {
     public static final Token TK_ASTERISK = new Token(ASTERISK, "ASTERISK", "*");
     public static final Token TK_VERTICAL_BAR = new Token(VERTICAL_BAR, "VERTICAL_BAR", "|");
     public static final Token TK_EOF = new Token(EOF, "EOF", "end of file");
-
+    public static final Token TK_LPAREN = new Token(LPAREN, "LPAREN", "(");
   
     private final int _type;
     private final String _name;
