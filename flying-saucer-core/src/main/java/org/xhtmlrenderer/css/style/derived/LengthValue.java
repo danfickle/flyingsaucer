@@ -25,10 +25,12 @@ import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.CSSPrimitiveUnit;
 import org.xhtmlrenderer.css.constants.ValueConstants;
 import org.xhtmlrenderer.css.parser.PropertyValue;
+import org.xhtmlrenderer.css.parser.PropertyValueImp.CSSValueType;
 import org.xhtmlrenderer.css.style.CalculatedStyle;
 import org.xhtmlrenderer.css.style.CssContext;
 import org.xhtmlrenderer.css.style.DerivedValue;
 import org.xhtmlrenderer.css.value.FontSpecification;
+import org.xhtmlrenderer.layout.SharedContext;
 
 public class LengthValue extends DerivedValue {
 
@@ -109,6 +111,7 @@ public class LengthValue extends DerivedValue {
         // values we shouldn't be caching, unless we also check if the DPI is changed, which
         // would seem to obviate the advantage of caching anyway.
         switch (primitiveType) {
+        	// TODO: Other primitive types.
             case CSS_PX:
                 absVal = relVal * ctx.getDotsPerPixel();
                 break;
@@ -204,4 +207,62 @@ public class LengthValue extends DerivedValue {
     private CalculatedStyle getStyle() {
         return _style;
     }
+
+    /**
+     * Convert a value to pixels. Used for media query values.
+     */
+	public static float calcFloatProportionalValue(PropertyValue cssValue, SharedContext ctx) 
+	{
+	       float absVal = Float.MIN_VALUE;
+
+	       if (cssValue.getCssValueTypeN() == CSSValueType.CSS_PRIMITIVE_VALUE)
+	       {
+	    	   CSSPrimitiveUnit primitiveType = cssValue.getPrimitiveTypeN();
+	    	   float relVal = cssValue.getFloatValue();
+	    	   
+	    	   switch (primitiveType) {
+	    	   // TODO: Other types that are needed for media queries.
+	           case CSS_PX:
+	                absVal = relVal * ctx.getDotsPerPixel();
+	                break;
+	           case CSS_IN:
+	                absVal = (((relVal * CM__PER__IN) * MM__PER__CM) / (ctx.getMmPerPx() * ctx.getDotsPerPixel()));
+	                break;
+	           case CSS_CM:
+	                absVal = ((relVal * MM__PER__CM) / (ctx.getMmPerPx() * ctx.getDotsPerPixel()));
+	                break;
+	           case CSS_MM:
+	                absVal = relVal / (ctx.getMmPerPx() * ctx.getDotsPerPixel());
+	                break;
+	           case CSS_PT:
+	                absVal = (((relVal * PT__PER__IN) * CM__PER__IN) * MM__PER__CM) / (ctx.getMmPerPx() * ctx.getDotsPerPixel());
+	                break;
+	           case CSS_PC:
+	                absVal = ((((relVal * PC__PER__PT) * PT__PER__IN) * CM__PER__IN) * MM__PER__CM) / (ctx.getMmPerPx() * ctx.getDotsPerPixel());
+	                break;
+	           case CSS_NUMBER:
+	                absVal = relVal;
+	                break;
+	           case CSS_DPPX:
+	        	    absVal = relVal;
+	        	    break;
+	           case CSS_DPI:
+	        	    absVal = relVal / (CM__PER__IN * MM__PER__CM);
+	        	    break;
+	           case CSS_DPCM:
+	        	    absVal = relVal / MM__PER__CM;
+	        	    break;
+	           default:
+	        	   LOGGER.warn("Asked to convert value for media query: {}", ValueConstants.stringForSACPrimitiveType(primitiveType));
+	    	   }
+	       }
+	       else
+	       {
+	    	   LOGGER.warn("Asked to convert value for media query: {}", cssValue.getCssValueTypeN().toString());
+	       }
+	       
+	       final double d = Math.round((double) absVal);
+	       absVal = new Float(d).floatValue();
+	       return absVal;
+	}
 }

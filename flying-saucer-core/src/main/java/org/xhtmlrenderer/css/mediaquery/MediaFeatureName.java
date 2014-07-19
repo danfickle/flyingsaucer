@@ -1,11 +1,13 @@
 package org.xhtmlrenderer.css.mediaquery;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.xhtmlrenderer.css.constants.CSSPrimitiveUnit;
 import org.xhtmlrenderer.css.parser.PropertyValue;
 import org.xhtmlrenderer.css.parser.PropertyValueImp.CSSValueType;
+import org.xhtmlrenderer.css.style.derived.LengthValue;
 import org.xhtmlrenderer.layout.SharedContext;
 
 public enum MediaFeatureName
@@ -17,7 +19,6 @@ public enum MediaFeatureName
 			// Indicates the number of bits per color component
 			// of the output device.
 			// We assume we only support color and 32bit colors.
-			// TODO: We don't yet support alpha for PDF output.
 			if (_cssValue == null)
 				return true;
 			else
@@ -64,56 +65,91 @@ public enum MediaFeatureName
 		@Override
 		public boolean eval(SharedContext ctx, PropertyValue _cssValue)
 		{
-			// TODO Auto-generated method stub
+			float pixels = LengthValue.calcFloatProportionalValue(_cssValue, ctx);
+			
+			if (pixels == ctx.getFixedRectangle().height)
+				return true;
+			
 			return false;
 		}
 	},
 	HOVER("hover") {
 		@Override
 		public boolean eval(SharedContext ctx, PropertyValue _cssValue) {
-			// TODO Auto-generated method stub
+			// We're a static renderer so don't support hover.
 			return false;
 		}
 	},
 	WIDTH("width") {
 		@Override
-		public boolean eval(SharedContext ctx, PropertyValue _cssValue) {
-			// TODO Auto-generated method stub
+		public boolean eval(SharedContext ctx, PropertyValue _cssValue)
+		{
+			float pixels = LengthValue.calcFloatProportionalValue(_cssValue, ctx);
+			
+			if (pixels == ctx.getFixedRectangle().width)
+				return true;
+			
 			return false;
 		}
 	},
 	ORIENTATION("orientation") {
 		@Override
-		public boolean eval(SharedContext ctx, PropertyValue _cssValue) {
-			// TODO Auto-generated method stub
-			return false;
+		public boolean eval(SharedContext ctx, PropertyValue _cssValue) 
+		{
+			boolean portrait = false;
+
+			if (ctx.getFixedRectangle().height > ctx.getFixedRectangle().width)
+				portrait = true;
+			
+			String test = _cssValue.getStringValue();
+			
+			if ("portrait".equals(test))
+				return portrait;
+			else if ("landscape".equals(test))
+				return !portrait;
+			else
+				return false;
 		}
 	},
 	ASPECT_RATIO("aspect-ratio") {
 		@Override
-		public boolean eval(SharedContext ctx, PropertyValue _cssValue) {
-			// TODO Auto-generated method stub
-			return false;
+		public boolean eval(SharedContext ctx, PropertyValue _cssValue) 
+		{
+			float desiredAspectRatio = calcDesiredRatio(_cssValue);
+			float actualAspectRatio = ctx.getFixedRectangle().width / ctx.getFixedRectangle().height;
+			return desiredAspectRatio == actualAspectRatio;
 		}
 	},
 	DEVICE_ASPECT_RATIO("device-aspect-ratio") {
 		@Override
-		public boolean eval(SharedContext ctx, PropertyValue _cssValue) {
-			// TODO Auto-generated method stub
-			return false;
+		public boolean eval(SharedContext ctx, PropertyValue _cssValue) 
+		{
+			float desiredAspectRatio = calcDesiredRatio(_cssValue);
+			float actualAspectRatio = ctx.getDeviceDimension().width / ctx.getDeviceDimension().height;
+			return desiredAspectRatio == actualAspectRatio;
 		}
 	},
 	DEVICE_HEIGHT("device-height") {
 		@Override
-		public boolean eval(SharedContext ctx, PropertyValue _cssValue) {
-			// TODO Auto-generated method stub
+		public boolean eval(SharedContext ctx, PropertyValue _cssValue) 
+		{
+			float pixels = LengthValue.calcFloatProportionalValue(_cssValue, ctx);
+			
+			if (pixels == ctx.getDeviceDimension().height)
+				return true;
+			
 			return false;
 		}
 	},
 	DEVICE_WIDTH("device-width") {
 		@Override
-		public boolean eval(SharedContext ctx, PropertyValue _cssValue) {
-			// TODO Auto-generated method stub
+		public boolean eval(SharedContext ctx, PropertyValue _cssValue) 
+		{
+			float pixels = LengthValue.calcFloatProportionalValue(_cssValue, ctx);
+			
+			if (pixels == ctx.getDeviceDimension().width)
+				return true;
+			
 			return false;
 		}
 	},
@@ -139,36 +175,55 @@ public enum MediaFeatureName
 	},
 	MAX_ASPECT_RATIO("max-aspect-ratio") {
 		@Override
-		public boolean eval(SharedContext ctx, PropertyValue _cssValue) {
-			// TODO Auto-generated method stub
-			return false;
+		public boolean eval(SharedContext ctx, PropertyValue _cssValue) 
+		{
+			float desiredAspectRatio = calcDesiredRatio(_cssValue);
+			float actualAspectRatio = ctx.getFixedRectangle().width / ctx.getFixedRectangle().height;
+			return actualAspectRatio <= desiredAspectRatio;
 		}
 	},
 	MAX_DEVICE_ASPECT_RATIO("max-device-aspect-ratio") {
 		@Override
-		public boolean eval(SharedContext ctx, PropertyValue _cssValue) {
-			// TODO Auto-generated method stub
-			return false;
+		public boolean eval(SharedContext ctx, PropertyValue _cssValue) 
+		{
+			float desiredAspectRatio = calcDesiredRatio(_cssValue);
+			float actualAspectRatio = ctx.getDeviceDimension().width / ctx.getDeviceDimension().height;
+			return actualAspectRatio >= desiredAspectRatio;
 		}
 	},
 	MAX_DEVICE_HEIGHT("max-device-height") {
 		@Override
-		public boolean eval(SharedContext ctx, PropertyValue _cssValue) {
-			// TODO Auto-generated method stub
+		public boolean eval(SharedContext ctx, PropertyValue _cssValue)
+		{
+			float pixels = LengthValue.calcFloatProportionalValue(_cssValue, ctx);
+			
+			if (ctx.getDeviceDimension().height <= pixels)
+				return true;
+			
 			return false;
 		}
 	},
 	MAX_DEVICE_WIDTH("max-device-width") {
 		@Override
-		public boolean eval(SharedContext ctx, PropertyValue _cssValue) {
-			// TODO Auto-generated method stub
+		public boolean eval(SharedContext ctx, PropertyValue _cssValue)
+		{
+			float pixels = LengthValue.calcFloatProportionalValue(_cssValue, ctx);
+			
+			if (ctx.getDeviceDimension().width <= pixels)
+				return true;
+				
 			return false;
 		}
 	},
 	MAX_HEIGHT("max-height") {
 		@Override
-		public boolean eval(SharedContext ctx, PropertyValue _cssValue) {
-			// TODO Auto-generated method stub
+		public boolean eval(SharedContext ctx, PropertyValue _cssValue)
+		{
+			float pixels = LengthValue.calcFloatProportionalValue(_cssValue, ctx);
+				
+			if (ctx.getFixedRectangle().height <= pixels)
+				return true;
+				
 			return false;
 		}
 	},
@@ -184,15 +239,26 @@ public enum MediaFeatureName
 	},
 	MAX_WIDTH("max-width") {
 		@Override
-		public boolean eval(SharedContext ctx, PropertyValue _cssValue) {
-			// TODO Auto-generated method stub
+		public boolean eval(SharedContext ctx, PropertyValue _cssValue)
+		{
+			float pixels = LengthValue.calcFloatProportionalValue(_cssValue, ctx);
+				
+			if (ctx.getFixedRectangle().width <= pixels)
+				return true;
+				
 			return false;
 		}
 	},
 	MAX_RESOLUTION("max-resolution") {
 		@Override
-		public boolean eval(SharedContext ctx, PropertyValue _cssValue) {
-			// TODO Auto-generated method stub
+		public boolean eval(SharedContext ctx, PropertyValue _cssValue)
+		{
+			float actualResolution = ctx.getDotsPerPixel();
+			float desiredResolution = LengthValue.calcFloatProportionalValue(_cssValue, ctx);
+			
+			if (actualResolution <= desiredResolution)
+				return true;
+			
 			return false;
 		}
 	},
@@ -218,36 +284,55 @@ public enum MediaFeatureName
 	},
 	MIN_ASPECT_RATIO("min-aspect-ratio") {
 		@Override
-		public boolean eval(SharedContext ctx, PropertyValue _cssValue) {
-			// TODO Auto-generated method stub
-			return false;
+		public boolean eval(SharedContext ctx, PropertyValue _cssValue) 
+		{
+			float desiredAspectRatio = calcDesiredRatio(_cssValue);
+			float actualAspectRatio = ctx.getFixedRectangle().width / ctx.getFixedRectangle().height;
+			return actualAspectRatio >= desiredAspectRatio;
 		}
 	},
 	MIN_DEVICE_ASPECT_RATIO("min-device-aspect-ratio") {
 		@Override
-		public boolean eval(SharedContext ctx, PropertyValue _cssValue) {
-			// TODO Auto-generated method stub
-			return false;
+		public boolean eval(SharedContext ctx, PropertyValue _cssValue) 
+		{
+			float desiredAspectRatio = calcDesiredRatio(_cssValue);
+			float actualAspectRatio = ctx.getDeviceDimension().width / ctx.getDeviceDimension().height;
+			return actualAspectRatio >= desiredAspectRatio;
 		}
 	},
 	MIN_DEVICE_HEIGHT("min-device-height") {
 		@Override
-		public boolean eval(SharedContext ctx, PropertyValue _cssValue) {
-			// TODO Auto-generated method stub
+		public boolean eval(SharedContext ctx, PropertyValue _cssValue)
+		{
+			float pixels = LengthValue.calcFloatProportionalValue(_cssValue, ctx);
+			
+			if (ctx.getDeviceDimension().height >= pixels)
+				return true;
+			
 			return false;
 		}
 	},
 	MIN_DEVICE_WIDTH("min-device-width") {
 		@Override
-		public boolean eval(SharedContext ctx, PropertyValue _cssValue) {
-			// TODO Auto-generated method stub
+		public boolean eval(SharedContext ctx, PropertyValue _cssValue) 
+		{
+			float pixels = LengthValue.calcFloatProportionalValue(_cssValue, ctx);
+			
+			if (ctx.getDeviceDimension().width >= pixels)
+				return true;
+				
 			return false;
 		}
 	},
 	MIN_HEIGHT("min-height") {
 		@Override
-		public boolean eval(SharedContext ctx, PropertyValue _cssValue) {
-			// TODO Auto-generated method stub
+		public boolean eval(SharedContext ctx, PropertyValue _cssValue) 
+		{
+			float pixels = LengthValue.calcFloatProportionalValue(_cssValue, ctx);
+			
+			if (ctx.getFixedRectangle().height >= pixels)
+				return true;
+			
 			return false;
 		}
 	},
@@ -263,15 +348,26 @@ public enum MediaFeatureName
 	},
 	MIN_WIDTH("min-width") {
 		@Override
-		public boolean eval(SharedContext ctx, PropertyValue _cssValue) {
-			// TODO Auto-generated method stub
+		public boolean eval(SharedContext ctx, PropertyValue _cssValue)
+		{
+			float pixels = LengthValue.calcFloatProportionalValue(_cssValue, ctx);
+				
+			if (ctx.getFixedRectangle().width >= pixels)
+				return true;
+				
 			return false;
 		}
 	},
 	MIN_RESOLUTION("min-resolution") {
 		@Override
-		public boolean eval(SharedContext ctx, PropertyValue _cssValue) {
-			// TODO Auto-generated method stub
+		public boolean eval(SharedContext ctx, PropertyValue _cssValue) 
+		{
+			float actualResolution = ctx.getDotsPerPixel();
+			float desiredResolution = LengthValue.calcFloatProportionalValue(_cssValue, ctx);
+			
+			if (actualResolution >= desiredResolution)
+				return true;
+			
 			return false;
 		}
 	},
@@ -288,8 +384,14 @@ public enum MediaFeatureName
 	},
 	RESOLUTION("resolution") {
 		@Override
-		public boolean eval(SharedContext ctx, PropertyValue _cssValue) {
-			// TODO Auto-generated method stub
+		public boolean eval(SharedContext ctx, PropertyValue _cssValue) 
+		{
+			float actualResolution = ctx.getDotsPerPixel();
+			float desiredResolution = LengthValue.calcFloatProportionalValue(_cssValue, ctx);
+			
+			if (actualResolution == desiredResolution)
+				return true;
+			
 			return false;
 		}
 	},
@@ -342,19 +444,35 @@ public enum MediaFeatureName
                 || mediaFeature == MediaFeatureName.MAX_DEVICE_ASPECT_RATIO;
 	}
 
+	private static float calcDesiredRatio(PropertyValue val)
+	{
+		@SuppressWarnings("unchecked")
+		List<PropertyValue> values = (List<PropertyValue>) val.getValues();
+		
+		float width = values.get(0).getFloatValue();
+		float height = values.get(1).getFloatValue();
+
+		if (height == 0)
+			return 0f;
+		
+		float desiredAspectRatio = width / height;
+		
+		return desiredAspectRatio;
+	}
+	
 	private static boolean evalNumber(PropertyValue val, float number, char op)
 	{
 		if (op == '>') // min-prefix (greater or equal to)
 		{
 			return (val.getCssValueTypeN() == CSSValueType.CSS_PRIMITIVE_VALUE &&
 					val.getPrimitiveTypeN() == CSSPrimitiveUnit.CSS_NUMBER &&
-					val.getFloatValue() >= number);
+					number >= val.getFloatValue());
 		}
 		else if (op == '<') // max-prefix (less than or equal to)
 		{
 			return (val.getCssValueTypeN() == CSSValueType.CSS_PRIMITIVE_VALUE &&
 					val.getPrimitiveTypeN() == CSSPrimitiveUnit.CSS_NUMBER &&
-					val.getFloatValue() <= number);	
+					number <= val.getFloatValue());	
 		}
 		else // no-prefix
 		{
@@ -362,7 +480,6 @@ public enum MediaFeatureName
 			return (val.getCssValueTypeN() == CSSValueType.CSS_PRIMITIVE_VALUE &&
 					val.getPrimitiveTypeN() == CSSPrimitiveUnit.CSS_NUMBER &&
 					val.getFloatValue() == number);	
-			
 		}
 	}
 	

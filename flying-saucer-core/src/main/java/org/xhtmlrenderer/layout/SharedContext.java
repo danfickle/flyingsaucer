@@ -19,6 +19,7 @@
  */
 package org.xhtmlrenderer.layout;
 
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.HeadlessException;
 import java.awt.Rectangle;
@@ -26,6 +27,7 @@ import java.awt.Toolkit;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.nodes.Document;
@@ -100,6 +102,8 @@ public class SharedContext {
 
     private ReplacedElementFactory replacedElementFactory;
     private Rectangle temp_canvas;
+    
+    private Dimension _deviceDimension;
 
     public SharedContext()
     {
@@ -297,6 +301,18 @@ public class SharedContext {
         this.temp_canvas = rect;
     }
 
+    public void setDeviceDimension(Dimension dim)
+    {
+    	_deviceDimension = dim;
+    }
+    
+    public Dimension getDeviceDimension()
+    {
+    	if (_deviceDimension == null)
+    		return new Dimension(getFixedRectangle().width, getFixedRectangle().height);
+    	
+    	return _deviceDimension;
+    }
 
     public Rectangle getFixedRectangle() {
         //Uu.p("this = " + canvas);
