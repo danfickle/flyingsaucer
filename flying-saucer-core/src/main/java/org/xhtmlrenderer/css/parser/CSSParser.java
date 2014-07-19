@@ -1653,8 +1653,37 @@ public class CSSParser {
             }
             case Token.TIME:
             case Token.FREQ:
-            case Token.DIMENSION:
             	throw new CSSParseException(LangId.UNSUPPORTED_CSS_UNIT, getCurrentLine(), extractUnit(t));
+            case Token.DIMENSION:
+            {
+            	String unit = extractUnit(t);
+            	CSSPrimitiveUnit type;
+            	
+            	if ("dppx".equals(unit))
+            	{
+            		type = CSSPrimitiveUnit.CSS_DPPX;
+            	}
+            	else if ("dpi".equals(unit))
+            	{
+            		type = CSSPrimitiveUnit.CSS_DPI;
+            	}
+            	else if ("dpcm".equals(unit))
+            	{
+            		type = CSSPrimitiveUnit.CSS_DPCM;
+            	}
+            	else
+            	{
+            		throw new CSSParseException(LangId.UNSUPPORTED_CSS_UNIT, getCurrentLine(), unit);
+            	}
+ 
+            	result = new PropertyValueImp(type,
+                        sign * Float.parseFloat(extractNumber(t)),
+                        sign(sign) + getTokenValue(t));
+
+            	next();
+                skipWhitespace();
+                break;
+            }
             case Token.NUMBER:
                 result = new PropertyValueImp(
                         CSSPrimitiveUnit.CSS_NUMBER,

@@ -29,60 +29,6 @@ public class CSSParserFailureTest
 		parser.parseDeclaration("", CSSOrigin.AUTHOR, declaration); 
 	}
 	
-	private void parseMediaQuery(String query)
-	{
-		CSSParser parser = new CSSParser(new CSSErrorHandler() {
-			@Override
-			public void error(String uri, int line, LangId msgId, Object... args) {
-				throw new RuntimeException(msgId.toString());
-			}
-		}, null);
-		
-		parser.parseMediaQueryListInternal(query); 
-	}
-	
-	@Test
-	public void testCss3MediaQueriesa()
-	{
-		expected.expect(RuntimeException.class);
-		parseMediaQuery("(min-width: {100px})");
-	}
-	
-	@Test
-	public void testCss3MediaQueriesb()
-	{
-		expected.expect(RuntimeException.class);
-		parseMediaQuery("(min-width: 100px: 200px)");
-	}
-	
-	@Test
-	public void testCss3MediaQueriesc()
-	{
-		expected.expect(RuntimeException.class);
-		parseMediaQuery("screen garbage (min-width: 600px)");
-	}
-	
-	@Test
-	public void testCss3MediaQueriesd()
-	{
-		expected.expect(RuntimeException.class);
-		parseMediaQuery("(min-width: 1000px) and (garbage)");
-	}
-	
-	@Test
-	public void testCss3MediaQueriese()
-	{
-		expected.expect(RuntimeException.class);
-		parseMediaQuery("(garbage: 1 / 1) and (min-device-height: 1.2cm)");
-	}
-	
-	@Test
-	public void testCss3MediaQueriesf()
-	{
-		expected.expect(RuntimeException.class);
-		parseMediaQuery("(color) separator (monochrome)");
-	}
-	
 	@Test
 	public void testWebkitGradientBackgroundImage()
 	{

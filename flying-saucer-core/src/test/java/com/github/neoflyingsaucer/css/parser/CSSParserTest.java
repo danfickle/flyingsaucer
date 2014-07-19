@@ -1,8 +1,10 @@
 package com.github.neoflyingsaucer.css.parser;
 
 import org.junit.Test;
+import static org.junit.Assert.*;
 import org.xhtmlrenderer.css.parser.CSSErrorHandler;
 import org.xhtmlrenderer.css.parser.CSSParser;
+import org.xhtmlrenderer.css.sheet.Ruleset;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
 import org.xhtmlrenderer.util.LangId;
 
@@ -12,7 +14,7 @@ import org.xhtmlrenderer.util.LangId;
  */
 public class CSSParserTest
 {
-	private void parseDeclaration(String declaration)
+	private Ruleset parseDeclaration(String declaration)
 	{
 		CSSParser parser = new CSSParser(new CSSErrorHandler() {
 			@Override
@@ -21,52 +23,53 @@ public class CSSParserTest
 			}
 		}, null);
 		
-		parser.parseDeclaration("", CSSOrigin.AUTHOR, declaration); 
+		return parser.parseDeclaration("", CSSOrigin.AUTHOR, declaration); 
 	}
 	
-	private void parseMediaQuery(String query)
-	{
-		CSSParser parser = new CSSParser(new CSSErrorHandler() {
-			@Override
-			public void error(String uri, int line, LangId msgId, Object... args) {
-				throw new RuntimeException(msgId.toString());
-			}
-		}, null);
-		
-		parser.parseMediaQueryListInternal(query); 
-	}
-	
-	
-	@Test
-	public void testCss3MediaQueries()
-	{
-		parseMediaQuery("not print");
-		parseMediaQuery("(min-width: 100px)");
-		parseMediaQuery("screen and (min-width: 600px)");
-		parseMediaQuery("(min-width: 1000px) and (color)");
-		parseMediaQuery("(min-aspect-ratio: 1 / 1) and (min-device-height: 1.2cm)");
-		parseMediaQuery("(color) , (monochrome)");
-	}
-
 	@Test
 	public void testRelativeUrlBackgroundImage()
 	{
-		parseDeclaration("background-image:url(test.png)");
-		parseDeclaration("background-image: url('test.png')");
-		parseDeclaration("background-image :url(\"test.png\")");
+		Ruleset rs;
+		
+		rs = parseDeclaration("background-image:url(test.png)");
+		assertEquals(1, rs.getPropertyDeclarations().size());
+		assertEquals("background-image", rs.getPropertyDeclarations().get(0).getPropertyName());
+		assertEquals("test.png", rs.getPropertyDeclarations().get(0).getValue().getStringValue());
+	
+		rs = parseDeclaration("background-image: url('test.png')");
+		assertEquals(1, rs.getPropertyDeclarations().size());
+		assertEquals("test.png", rs.getPropertyDeclarations().get(0).getValue().getStringValue());
+
+		rs = parseDeclaration("background-image :url(\"test.png\")");
+		assertEquals(1, rs.getPropertyDeclarations().size());
+		assertEquals("test.png", rs.getPropertyDeclarations().get(0).getValue().getStringValue());
 	}
 	
 	@Test
 	public void testAbsoluteUrlBackgroundImage()
 	{
-		parseDeclaration("background-image:url(http://example.com/test.png)");
-		parseDeclaration("background-image: url('http://example.com/test.png')");
-		parseDeclaration("background-image :url(\"http://example.com/test.png\")");
-	}
+		Ruleset rs;
+		
+		rs = parseDeclaration("background-image:url(http://example.com/test.png)");
+		assertEquals(1, rs.getPropertyDeclarations().size());
+		assertEquals("http://example.com/test.png", rs.getPropertyDeclarations().get(0).getValue().getStringValue());
+		
+		rs = parseDeclaration("background-image: url('http://example.com/test.png')");
+		assertEquals(1, rs.getPropertyDeclarations().size());
+		assertEquals("http://example.com/test.png", rs.getPropertyDeclarations().get(0).getValue().getStringValue());
+		
+		rs = parseDeclaration("background-image :url(\"http://example.com/test.png\")");
+		assertEquals(1, rs.getPropertyDeclarations().size());
+		assertEquals("http://example.com/test.png", rs.getPropertyDeclarations().get(0).getValue().getStringValue());	}
 	
 	@Test
 	public void testLinearGradientBackgroundImage()
 	{
-		parseDeclaration("background-image: linear-gradient(to top, red, blue);");
+		Ruleset rs = parseDeclaration("background-image: linear-gradient(to top, red, blue);");
+		assertEquals(1, rs.getPropertyDeclarations().size());
+		assertEquals("linear-gradient", rs.getPropertyDeclarations().get(0).getValue().getFunction().getName());
+		// NOTE: Curretly each token in a function is reported as a parameter.
+		assertEquals(4, rs.getPropertyDeclarations().get(0).getValue().getFunction().getParameters().size());
+		assertEquals("[to, top, red, blue]", rs.getPropertyDeclarations().get(0).getValue().getFunction().getParameters().toString());
 	}
 }

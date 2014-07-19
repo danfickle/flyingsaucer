@@ -116,7 +116,7 @@ public enum MediaFeatureName
 		public boolean eval(SharedContext ctx, PropertyValue _cssValue) 
 		{
 			float desiredAspectRatio = calcDesiredRatio(_cssValue);
-			float actualAspectRatio = ctx.getFixedRectangle().width / ctx.getFixedRectangle().height;
+			float actualAspectRatio = (float) ctx.getFixedRectangle().width / (float) ctx.getFixedRectangle().height;
 			return desiredAspectRatio == actualAspectRatio;
 		}
 	},
@@ -125,7 +125,7 @@ public enum MediaFeatureName
 		public boolean eval(SharedContext ctx, PropertyValue _cssValue) 
 		{
 			float desiredAspectRatio = calcDesiredRatio(_cssValue);
-			float actualAspectRatio = ctx.getDeviceDimension().width / ctx.getDeviceDimension().height;
+			float actualAspectRatio = (float) ctx.getDeviceDimension().width / (float) ctx.getDeviceDimension().height;
 			return desiredAspectRatio == actualAspectRatio;
 		}
 	},
@@ -178,7 +178,7 @@ public enum MediaFeatureName
 		public boolean eval(SharedContext ctx, PropertyValue _cssValue) 
 		{
 			float desiredAspectRatio = calcDesiredRatio(_cssValue);
-			float actualAspectRatio = ctx.getFixedRectangle().width / ctx.getFixedRectangle().height;
+			float actualAspectRatio = (float) ctx.getFixedRectangle().width / (float) ctx.getFixedRectangle().height;
 			return actualAspectRatio <= desiredAspectRatio;
 		}
 	},
@@ -187,7 +187,7 @@ public enum MediaFeatureName
 		public boolean eval(SharedContext ctx, PropertyValue _cssValue) 
 		{
 			float desiredAspectRatio = calcDesiredRatio(_cssValue);
-			float actualAspectRatio = ctx.getDeviceDimension().width / ctx.getDeviceDimension().height;
+			float actualAspectRatio = (float) ctx.getDeviceDimension().width / (float) ctx.getDeviceDimension().height;
 			return actualAspectRatio >= desiredAspectRatio;
 		}
 	},
@@ -287,7 +287,7 @@ public enum MediaFeatureName
 		public boolean eval(SharedContext ctx, PropertyValue _cssValue) 
 		{
 			float desiredAspectRatio = calcDesiredRatio(_cssValue);
-			float actualAspectRatio = ctx.getFixedRectangle().width / ctx.getFixedRectangle().height;
+			float actualAspectRatio = (float) ctx.getFixedRectangle().width / (float) ctx.getFixedRectangle().height;
 			return actualAspectRatio >= desiredAspectRatio;
 		}
 	},
@@ -296,7 +296,7 @@ public enum MediaFeatureName
 		public boolean eval(SharedContext ctx, PropertyValue _cssValue) 
 		{
 			float desiredAspectRatio = calcDesiredRatio(_cssValue);
-			float actualAspectRatio = ctx.getDeviceDimension().width / ctx.getDeviceDimension().height;
+			float actualAspectRatio = (float) ctx.getDeviceDimension().width / (float) ctx.getDeviceDimension().height;
 			return actualAspectRatio >= desiredAspectRatio;
 		}
 	},
@@ -364,7 +364,7 @@ public enum MediaFeatureName
 		{
 			float actualResolution = ctx.getDotsPerPixel();
 			float desiredResolution = LengthValue.calcFloatProportionalValue(_cssValue, ctx);
-			
+
 			if (actualResolution >= desiredResolution)
 				return true;
 			
@@ -388,7 +388,7 @@ public enum MediaFeatureName
 		{
 			float actualResolution = ctx.getDotsPerPixel();
 			float desiredResolution = LengthValue.calcFloatProportionalValue(_cssValue, ctx);
-			
+
 			if (actualResolution == desiredResolution)
 				return true;
 			

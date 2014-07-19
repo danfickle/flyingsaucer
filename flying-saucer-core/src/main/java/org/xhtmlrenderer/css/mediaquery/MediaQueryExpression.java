@@ -172,7 +172,7 @@ public class MediaQueryExpression
     	_mediaFeature = mediaFeatureStr;
 
     	// Initialize media query expression that must have 1 or more values.
-    	if (valueList == null &&
+    	if ((valueList == null || valueList.isEmpty()) &&
     		featureWithoutValue(_mediaFeature))
     	{
     		_isValid = true;

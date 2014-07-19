@@ -247,10 +247,10 @@ public class LengthValue extends DerivedValue {
 	        	    absVal = relVal;
 	        	    break;
 	           case CSS_DPI:
-	        	    absVal = relVal / (CM__PER__IN * MM__PER__CM);
-	        	    break;
+	        	    relVal = relVal / CM__PER__IN;
+	        	    // Fallthrough
 	           case CSS_DPCM:
-	        	    absVal = relVal / MM__PER__CM;
+	        	    absVal = (relVal / MM__PER__CM) / ctx.getMmPerPx();
 	        	    break;
 	           default:
 	        	   LOGGER.warn("Asked to convert value for media query: {}", ValueConstants.stringForSACPrimitiveType(primitiveType));
@@ -260,9 +260,7 @@ public class LengthValue extends DerivedValue {
 	       {
 	    	   LOGGER.warn("Asked to convert value for media query: {}", cssValue.getCssValueTypeN().toString());
 	       }
-	       
-	       final double d = Math.round((double) absVal);
-	       absVal = new Float(d).floatValue();
+
 	       return absVal;
 	}
 }

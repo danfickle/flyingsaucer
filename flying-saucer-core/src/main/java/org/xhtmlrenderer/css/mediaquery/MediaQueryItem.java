@@ -55,7 +55,7 @@ public class MediaQueryItem
 				// AND semantics.
 				
 				boolean exprRes = expr.eval(ctx);
-			
+
 				if (!exprRes)
 				{
 					res = false;
