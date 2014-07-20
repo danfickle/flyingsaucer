@@ -21,8 +21,6 @@ package org.xhtmlrenderer.css.parser.property;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.CSSPrimitiveUnit;
 import org.xhtmlrenderer.css.constants.IdentValue;
@@ -138,13 +136,23 @@ public class BackgroundPropertyBuilder implements PropertyBuilder {
                 
                 backgroundColor = new PropertyDeclaration(
                         CSSName.BACKGROUND_COLOR, value, important, origin);
-            } else if (type == CSSPrimitiveUnit.CSS_URI || value.toString().toLowerCase(Locale.US).startsWith(IdentValue.LINEAR_GRADIENT.asString())) {
+            } else if (type == CSSPrimitiveUnit.CSS_URI) {
                 if (backgroundImage != null) {
                     throw new CSSParseException(LangId.NO_TWICE, -1, "background-image");
                 }
                 
                 backgroundImage = new PropertyDeclaration(
                         CSSName.BACKGROUND_IMAGE, value, important, origin);
+            }
+            else if (value.getFunction() != null)
+            {
+                if (backgroundImage != null) {
+                    throw new CSSParseException(LangId.NO_TWICE, -1, "background-image");
+                }
+
+                checkFunctionsAllowed(value.getFunction(), "linear-gradient");
+                backgroundImage = new PropertyDeclaration(
+                		CSSName.BACKGROUND_IMAGE, value, important, origin);
             }
             
             if (processingBackgroundPosition || isLength(value) || type == CSSPrimitiveUnit.CSS_PERCENTAGE) {

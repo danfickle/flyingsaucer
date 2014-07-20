@@ -68,8 +68,14 @@ public class CSSParserTest
 		Ruleset rs = parseDeclaration("background-image: linear-gradient(to top, red, blue);");
 		assertEquals(1, rs.getPropertyDeclarations().size());
 		assertEquals("linear-gradient", rs.getPropertyDeclarations().get(0).getValue().getFunction().getName());
-		// NOTE: Curretly each token in a function is reported as a parameter.
+		// NOTE: Currently each token in a function is reported as a parameter.
 		assertEquals(4, rs.getPropertyDeclarations().get(0).getValue().getFunction().getParameters().size());
 		assertEquals("[to, top, red, blue]", rs.getPropertyDeclarations().get(0).getValue().getFunction().getParameters().toString());
+	}
+	
+	@Test
+	public void testLinearGradientBackground()
+	{
+		parseDeclaration("background: linear-gradient(to top, red, blue);");
 	}
 }

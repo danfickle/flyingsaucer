@@ -42,6 +42,15 @@ public class CSSParserFailureTest
 	{
 		expected.expect(RuntimeException.class);
 		expected.expectMessage(LangId.FUNCTION_NOT_SUPPORTED.toString());
-		parseDeclaration("background-image: radial-gradient(0);");
+		parseDeclaration("background-image: radial-gradient(closest-corner circle at 600px 600px, #001b24 0%, #000 100%);");
 	}
+
+	@Test
+	public void testRadialGradientBackground()
+	{
+		expected.expect(RuntimeException.class);
+		expected.expectMessage(LangId.FUNCTION_NOT_SUPPORTED.toString());
+		parseDeclaration("background: radial-gradient(closest-corner circle at 600px 600px, #001b24 0%, #000 100%);");
+	}
+
 }
