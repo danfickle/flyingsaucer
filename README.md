@@ -60,8 +60,8 @@ in our distributions and in our source tree.
 
 RELATED PROJECTS
 ----------------
-[PHP - dompdf](https://github.com/dompdf/dompdf)
-[Python - WeasyPrint](https://github.com/Kozea/WeasyPrint)
-[C++ - wkHtmlToPdf](https://github.com/wkhtmltopdf/wkhtmltopdf)
-[Java - CSSBox](http://cssbox.sourceforge.net/)
++ [PHP - dompdf](https://github.com/dompdf/dompdf)
++ [Python - WeasyPrint](https://github.com/Kozea/WeasyPrint)
++ [C++ - wkHtmlToPdf](https://github.com/wkhtmltopdf/wkhtmltopdf)
++ [Java - CSSBox](http://cssbox.sourceforge.net/)
 
