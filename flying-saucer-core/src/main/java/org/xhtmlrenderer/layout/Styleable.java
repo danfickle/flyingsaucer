@@ -19,7 +19,7 @@
  */
 package org.xhtmlrenderer.layout;
 
-import org.jsoup.nodes.Element;
+import org.w3c.dom.Element;
 import org.xhtmlrenderer.css.style.CalculatedStyle;
 
 /**

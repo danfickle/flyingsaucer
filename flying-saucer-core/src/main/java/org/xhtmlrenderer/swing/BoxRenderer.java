@@ -19,7 +19,7 @@
  */
 package org.xhtmlrenderer.swing;
 
-import org.jsoup.nodes.Document;
+import org.w3c.dom.Document;
 import org.xhtmlrenderer.extend.NamespaceHandler;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.layout.BoxBuilder;

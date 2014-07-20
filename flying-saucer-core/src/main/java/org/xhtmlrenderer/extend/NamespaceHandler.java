@@ -21,8 +21,8 @@ package org.xhtmlrenderer.extend;
 
 import java.util.List;
 
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.xhtmlrenderer.css.extend.StylesheetFactory;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo;
 

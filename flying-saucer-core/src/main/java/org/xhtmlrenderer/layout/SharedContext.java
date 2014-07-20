@@ -28,11 +28,12 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
-import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xhtmlrenderer.context.AWTFontResolver;
 import org.xhtmlrenderer.context.StyleReference;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo;
@@ -577,7 +578,7 @@ public class SharedContext {
         	}
         	else
         	{
-        		final Node parent = e.parentNode();
+        		final Node parent = e.getParentNode();
 
         		if (parent instanceof Document) {
         			parentCalculatedStyle = new EmptyStyle();
@@ -628,9 +629,13 @@ public class SharedContext {
         getCss().removeStyle(e);
         getReplacedElementFactory().remove(e);
 
-        if (e.childNodeSize() > 0) {
-            for (final Node child : e.childNodes())  {
-            	if (child instanceof Element) {
+        if (e.hasChildNodes()) {
+        	final NodeList children = e.getChildNodes();
+        	final int childrenCount = children.getLength();
+        	
+        	for (int i = 0; i < childrenCount; i++)  {
+        		final Node child = children.item(i);
+        		if (child instanceof Element) {
             		removeElementReferences((Element) child);
             	}
             }

@@ -21,7 +21,7 @@ package org.xhtmlrenderer.pdf;
 
 import java.awt.Point;
 
-import org.jsoup.nodes.Element;
+import org.w3c.dom.Element;
 import org.xhtmlrenderer.css.parser.FSCMYKColor;
 import org.xhtmlrenderer.css.parser.FSColor;
 import org.xhtmlrenderer.css.parser.FSRGBColor;
@@ -81,7 +81,7 @@ public abstract class AbstractFormField implements ITextReplacedElement {
 
     protected String getFieldName(final ITextOutputDevice outputDevice, final Element e) {
         if (_fieldName == null) {
-            final String result = e.attr("name");
+            final String result = e.getAttribute("name");
 
             if (Util.isNullOrEmpty(result)) {
                 _fieldName = getFieldType()
@@ -95,7 +95,7 @@ public abstract class AbstractFormField implements ITextReplacedElement {
     }
 
     protected String getValue(final Element e) {
-        final String result = e.attr("value");
+        final String result = e.getAttribute("value");
 
         if (Util.isNullOrEmpty(result)) {
             return DEFAULT_CHECKED_STATE;
@@ -105,15 +105,15 @@ public abstract class AbstractFormField implements ITextReplacedElement {
     }
 
     protected boolean isChecked(final Element e) {
-        return !Util.isNullOrEmpty(e.attr("checked"));
+        return !Util.isNullOrEmpty(e.getAttribute("checked"));
     }
 
     protected boolean isReadOnly(final Element e) {
-        return !Util.isNullOrEmpty(e.attr("readonly"));
+        return !Util.isNullOrEmpty(e.getAttribute("readonly"));
     }
     
     protected boolean isSelected(final Element e) {
-        return Util.isNullOrEmpty(e.attr("selected"));
+        return Util.isNullOrEmpty(e.getAttribute("selected"));
     }
 
     public void detach(final LayoutContext c) {

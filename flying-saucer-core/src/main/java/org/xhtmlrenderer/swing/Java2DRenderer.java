@@ -25,7 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
-import org.jsoup.nodes.Document;
+import org.w3c.dom.Document;
 import org.xhtmlrenderer.extend.NamespaceHandler;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.layout.BoxBuilder;

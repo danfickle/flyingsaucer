@@ -19,7 +19,7 @@
  */
 package com.github.danfickle.flyingsaucer.swing;
 
-import org.jsoup.nodes.Document;
+import org.w3c.dom.Document;
 import org.xhtmlrenderer.layout.SharedContext;
 
 import java.awt.*;

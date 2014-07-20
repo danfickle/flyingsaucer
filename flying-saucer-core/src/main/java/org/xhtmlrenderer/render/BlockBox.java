@@ -128,7 +128,7 @@ public class BlockBox extends Box implements InlinePaintable {
         result.append(": ");
         if (getElement() != null && ! isAnonymous()) {
             result.append("<");
-            result.append(getElement().nodeName());
+            result.append(getElement().getNodeName());
             result.append("> ");
         }
         if (isAnonymous()) {

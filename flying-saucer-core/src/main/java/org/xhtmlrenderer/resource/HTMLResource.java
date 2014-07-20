@@ -1,6 +1,6 @@
 package org.xhtmlrenderer.resource;
 
-import org.jsoup.nodes.Document;
+import org.w3c.dom.Document;
 
 /**
  * Use this container to return a final URI and a Jsoup Document

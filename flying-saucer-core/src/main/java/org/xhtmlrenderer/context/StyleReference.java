@@ -24,11 +24,11 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.extend.AttributeResolver;
 import org.xhtmlrenderer.css.extend.lib.DOMTreeResolver;
@@ -145,7 +145,7 @@ public class StyleReference {
         if (node instanceof Element) {
             e = (Element) node;
         } else {
-            e = (Element) node.parent();
+            e = (Element) node.getParentNode();
         }
         return _matcher.getPECascadedStyle(e, pseudoElement);
     }

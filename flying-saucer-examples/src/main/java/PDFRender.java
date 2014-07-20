@@ -20,7 +20,7 @@
 import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
 import com.lowagie.text.DocumentException;
 
-import org.jsoup.nodes.Document;
+import org.w3c.dom.Document;
 import org.xhtmlrenderer.pdf.ITextOutputDevice;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 import org.xhtmlrenderer.pdf.ITextUserAgent;

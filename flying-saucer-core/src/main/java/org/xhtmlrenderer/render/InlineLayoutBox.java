@@ -29,7 +29,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jsoup.nodes.Element;
+import org.w3c.dom.Element;
 import org.xhtmlrenderer.css.constants.IdentValue;
 import org.xhtmlrenderer.css.parser.FSRGBColor;
 import org.xhtmlrenderer.css.style.CalculatedStyle;
@@ -804,7 +804,7 @@ public class InlineLayoutBox extends Box implements InlinePaintable {
         result.append("InlineLayoutBox: ");
         if (getElement() != null) {
             result.append("<");
-            result.append(getElement().nodeName());
+            result.append(getElement().getNodeName());
             result.append("> ");
         } else {
             result.append("(anonymous) ");

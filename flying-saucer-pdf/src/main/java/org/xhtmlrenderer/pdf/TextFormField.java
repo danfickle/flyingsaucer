@@ -22,7 +22,7 @@ package org.xhtmlrenderer.pdf;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.*;
 
-import org.jsoup.nodes.Element;
+import org.w3c.dom.Element;
 import org.xhtmlrenderer.css.parser.FSColor;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
@@ -146,7 +146,7 @@ public class TextFormField extends AbstractFormField
 
   private int getSize(final Element elem)
   {
-    final String sSize = elem.attr("size");
+    final String sSize = elem.getAttribute("size");
     if (Util.isNullOrEmpty(sSize))
     {
       return DEFAULT_SIZE;
@@ -165,7 +165,7 @@ public class TextFormField extends AbstractFormField
 
   private int getMaxLength(final Element elem)
   {
-    final String sMaxLen = elem.attr("maxlength");
+    final String sMaxLen = elem.getAttribute("maxlength");
     if (Util.isNullOrEmpty(sMaxLen))
     {
       return 0;
@@ -184,7 +184,7 @@ public class TextFormField extends AbstractFormField
 
   protected String getValue(final Element e)
   {
-    final String result = e.attr("value");
+    final String result = e.getAttribute("value");
     if (Util.isNullOrEmpty(result))
     {
       return "";

@@ -50,11 +50,10 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.IdentValue;
 import org.xhtmlrenderer.css.parser.FSCMYKColor;
@@ -80,7 +79,7 @@ import org.xhtmlrenderer.render.JustificationInfo;
 import org.xhtmlrenderer.render.PageBox;
 import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.util.Configuration;
-import org.xhtmlrenderer.util.JsoupUtil;
+import org.xhtmlrenderer.util.NodeHelper;
 import org.xhtmlrenderer.util.XRRuntimeException;
 
 import com.lowagie.text.DocumentException;
@@ -999,11 +998,11 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
     }
 
     private void loadBookmarks(final Document doc) {
-        final Element head = doc.head();
+        final Element head = NodeHelper.getHead(doc);
         if (head != null) {
-            final Element bookmarks = JsoupUtil.firstChild(head.select("bookmarks"));
+            final Element bookmarks = NodeHelper.getFirstMatchingDeepChildByTagName(head, "bookmarks");
             if (bookmarks != null) {
-                final Elements l = bookmarks.select("bookmark");
+                final List<Element> l = NodeHelper.getMatchingChildrenByTagName(bookmarks, "bookmark");
                 if (l != null) {
                     for (final Element e : l) {
                         loadBookmark(null, e);
@@ -1014,13 +1013,13 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
     }
 
     private void loadBookmark(final Bookmark parent, final Element bookmark) {
-        final Bookmark us = new Bookmark(bookmark.attr("name"), bookmark.attr("href"));
+        final Bookmark us = new Bookmark(bookmark.getAttribute("name"), bookmark.getAttribute("href"));
         if (parent == null) {
             _bookmarks.add(us);
         } else {
             parent.addChild(us);
         }
-        final Elements l = bookmark.select("bookmark");
+        final List<Element> l = NodeHelper.getMatchingChildrenByTagName(bookmark, "bookmark");
         if (l != null) {
             for (final Element e : l) {
                 loadBookmark(us, e);
@@ -1141,14 +1140,14 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
      *            the Document level node of the parsed xhtml file.
      */
     private void loadMetadata(final Document doc) {
-        final Element head = doc.head();
+        final Element head = NodeHelper.getHead(doc);
         if (head != null) {
-            final Elements l = head.select("meta");
+            final List<Element> l = NodeHelper.getMatchingChildrenByTagName(head, "meta");
             if (l != null) {
                 for (final Element e : l) {
-                    final String name = e.attr("name");
+                    final String name = e.getAttribute("name");
                     if (name != null) { // ignore non-name metadata data
-                        final String content = e.attr("content");
+                        final String content = e.getAttribute("content");
                         final Metadata m = new Metadata(name, content);
                         _metadata.add(m);
                     }
@@ -1157,9 +1156,9 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
             // If there is no title meta data attribute, use the document title.
             String title = getMetadataByName("title");
             if (title == null) {
-                final Element t = JsoupUtil.firstChild(head.select("title"));
+                final Element t = NodeHelper.getFirstMatchingChildByTagName(head, "title");
                 if (t != null) {
-                    title = t.text().trim();
+                    title = t.getTextContent().trim();
                     final Metadata m = new Metadata("title", title);
                     _metadata.add(m);
                 }

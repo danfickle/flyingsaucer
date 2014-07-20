@@ -24,11 +24,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
 import org.xhtmlrenderer.util.XRRuntimeException;
+
+import com.github.neoflyingsaucer.jsouptodom.Parser;
 
 /**
  * @author Patrick Wright
@@ -41,12 +42,12 @@ public class HTMLResourceHelper {
     
     private HTMLResourceHelper(final String html)
     {
-    	setDocument(Jsoup.parse(html));
+    	setDocument(Parser.parseHtml(html));
     }
 
     private HTMLResourceHelper(final InputStream stream) {
     	try {
-			document = Jsoup.parse(stream, null, "");
+			document = Parser.parseHtml(stream);
 		} catch (final IOException e) {
 			LOGGER.warn("Unable to parse input stream", e);
 			throw new XRRuntimeException("Unable to parse input stream", e);
@@ -56,7 +57,7 @@ public class HTMLResourceHelper {
     private HTMLResourceHelper(final File file)
     {
     	try {
-			document = Jsoup.parse(file, null);
+			document = Parser.parseHtml(file);
 		} catch (final IOException e) {
 			LOGGER.warn("Unable to parse file", e);
 			throw new XRRuntimeException("Unable to parse file", e);

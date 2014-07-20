@@ -27,6 +27,7 @@
     <module>flying-saucer-pdf</module>
     <module>flying-saucer-examples</module>
     <module>flying-saucer-default-user-agent</module>
+    <module>neo-flying-saucer-jsoup-to-dom</module>
   </modules>
 
 

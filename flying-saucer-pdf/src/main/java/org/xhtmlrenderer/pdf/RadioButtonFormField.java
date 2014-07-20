@@ -22,7 +22,7 @@ package org.xhtmlrenderer.pdf;
 import java.awt.Rectangle;
 import java.util.List;
 
-import org.jsoup.nodes.Element;
+import org.w3c.dom.Element;
 import org.xhtmlrenderer.css.parser.FSColor;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;

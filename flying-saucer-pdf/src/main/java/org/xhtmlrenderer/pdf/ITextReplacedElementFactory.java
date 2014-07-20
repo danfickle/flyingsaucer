@@ -24,15 +24,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.Text;
 import org.xhtmlrenderer.extend.FSImage;
 import org.xhtmlrenderer.extend.ReplacedElement;
 import org.xhtmlrenderer.extend.ReplacedElementFactory;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
-import org.xhtmlrenderer.util.JsoupUtil;
 
 import static org.xhtmlrenderer.util.GeneralUtil.ciEquals;
 
@@ -53,9 +53,9 @@ public class ITextReplacedElementFactory implements ReplacedElementFactory {
             return null;
         }
 
-        final String nodeName = e.nodeName();
+        final String nodeName = e.getNodeName();
         if (nodeName.equals("img")) {
-            final String srcAttr = e.attr("src");
+            final String srcAttr = e.getAttribute("src");
 
             if (srcAttr != null && srcAttr.length() > 0) 
             {
@@ -71,7 +71,7 @@ public class ITextReplacedElementFactory implements ReplacedElementFactory {
             }
 
         } else if (nodeName.equals("input")) {
-            final String type = e.attr("type");
+            final String type = e.getAttribute("type");
             if (ciEquals(type, "hidden")) {
                 return new EmptyReplacedElement(1, 1);
             } else if (ciEquals(type, "checkbox")) {
@@ -96,8 +96,8 @@ public class ITextReplacedElementFactory implements ReplacedElementFactory {
         } else if (ciEquals(nodeName, "bookmark")) {
             // HACK Add box as named anchor and return placeholder
             final BookmarkElement result = new BookmarkElement();
-            if (e.hasAttr("name")) {
-                final String name = e.attr("name");
+            if (e.hasAttribute("name")) {
+                final String name = e.getAttribute("name");
                 c.addBoxId(name, box);
                 result.setAnchorName(name);
             }
@@ -108,17 +108,17 @@ public class ITextReplacedElementFactory implements ReplacedElementFactory {
     }
 
     private boolean isTextarea(final Element e) {
-        if (!ciEquals(e.nodeName(), "textarea"))
+        if (!ciEquals(e.getNodeName(), "textarea"))
             return false;
 
-        Node n = JsoupUtil.firstChild(e);
+        Node n = e.getFirstChild();
 
         while (n != null) 
         {
-        	if (!JsoupUtil.isText(n)) 
+        	if (!(e instanceof Text)) 
                 return false;
 
-        	n = n.nextSibling();
+        	n = n.getNextSibling();
         }
 
         return true;

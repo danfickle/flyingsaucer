@@ -16,8 +16,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-
-import org.jsoup.nodes.Document;
+import org.w3c.dom.Document;
 import org.xhtmlrenderer.demo.browser.FSScrollPane;
 import org.xhtmlrenderer.event.DefaultDocumentListener;
 import org.xhtmlrenderer.extend.UserAgentCallback;
@@ -27,6 +26,7 @@ import org.xhtmlrenderer.util.GeneralUtil;
 import com.github.danfickle.flyingsaucer.swing.XHTMLPanel;
 import com.github.neoflyingsaucer.defaultuseragent.DefaultUserAgent;
 import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
+
 import javax.swing.*;
 
 import java.awt.*;

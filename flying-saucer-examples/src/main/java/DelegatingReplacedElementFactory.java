@@ -19,7 +19,7 @@
  */
 
 
-import org.jsoup.nodes.Element;
+import org.w3c.dom.Element;
 import org.xhtmlrenderer.extend.ReplacedElement;
 import org.xhtmlrenderer.extend.ReplacedElementFactory;
 import org.xhtmlrenderer.extend.UserAgentCallback;
@@ -48,7 +48,7 @@ public class DelegatingReplacedElementFactory implements ReplacedElementFactory 
                                                  final int cssWidth,
                                                  final int cssHeight
     ) {
-        final ElementReplacer nameReplacer = byNameReplacers.get(box.getElement().nodeName());
+        final ElementReplacer nameReplacer = byNameReplacers.get(box.getElement().getNodeName());
         if (nameReplacer != null) {
             return replaceUsing(context, box, uac, cssWidth, cssHeight, nameReplacer);
         }

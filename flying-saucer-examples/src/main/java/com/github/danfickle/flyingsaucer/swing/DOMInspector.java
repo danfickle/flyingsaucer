@@ -19,11 +19,12 @@
  */
 package com.github.danfickle.flyingsaucer.swing;
 
-import org.jsoup.nodes.Comment;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
-import org.jsoup.nodes.TextNode;
+import org.w3c.dom.Comment;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 import org.xhtmlrenderer.context.StyleReference;
 import org.xhtmlrenderer.css.constants.ValueConstants;
 import org.xhtmlrenderer.css.parser.PropertyValue;
@@ -38,6 +39,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -553,9 +555,13 @@ class DOMTreeModel implements TreeModel {
 
     private void setRoot(final String rootNodeName) {
         final Node tempRoot = doc;
-        for (final Node node : tempRoot.childNodes())
+        NodeList nl = tempRoot.getChildNodes();
+        
+        for (int i = 0; i < nl.getLength(); i++)
         {
-            if (node.nodeName().toLowerCase(Locale.US).equals(rootNodeName))
+        	final Node node = nl.item(i);
+        	
+        	if (node.getNodeName().toLowerCase(Locale.US).equals(rootNodeName))
             {
                 this.root = node;
             }
@@ -702,7 +708,7 @@ class DOMTreeModel implements TreeModel {
 
         final Node node = (Node) nd;
 
-        return (node.childNodeSize() <= 0);
+        return !node.hasChildNodes();
     }
 
     // only adds displayable nodes--not stupid DOM text filler nodes
@@ -717,12 +723,15 @@ class DOMTreeModel implements TreeModel {
         if (children == null) {
             children = new ArrayList<Node>();
             this.displayableNodes.put(parent, children);
-            for (final Node child : parent.childNodes())
+            NodeList nl = parent.getChildNodes();
+            for (int i = 0; i < nl.getLength(); i++)
             {
+            	final Node child = nl.item(i);
+            	
             	if (child instanceof Element ||
             		child instanceof Comment ||
-            		(child instanceof TextNode &&
-            		 !((TextNode) child).text().trim().isEmpty()))
+            		(child instanceof Text &&
+            		 !((Text) child).getTextContent().trim().isEmpty()))
             	{
             		children.add(child);
             	}
@@ -764,22 +773,22 @@ class DOMTreeCellRenderer extends DefaultTreeCellRenderer {
         final Node node = (Node) value;
 
         if (node instanceof Element) {
-
+        	Element el = (Element) node;
             String cls = "";
-            if (node.attributes().size() > 0) {
-                final String cn = node.attr("class");
+            if (el.hasAttributes()) {
+                final String cn = el.getAttribute("class");
                 if (cn != null) {
                     cls = " class='" + cn + "'";
                 }
             }
-            value = "<" + node.nodeName() + cls + ">";
+            value = "<" + el.getNodeName() + cls + ">";
 
         }
 
-        if (node instanceof TextNode) {
+        if (node instanceof Text) {
 
-            if (((TextNode) node).text().trim().length() > 0) {
-                value = "\"" + ((TextNode) node).text() + "\"";
+            if (((Text) node).getWholeText().trim().length() > 0) {
+                value = "\"" + ((Text) node).getWholeText() + "\"";
             }
         }
 

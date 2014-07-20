@@ -3,7 +3,7 @@ package org.xhtmlrenderer.swing;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jsoup.nodes.Document;
+import org.w3c.dom.Document;
 
 public class ContentStore
 {

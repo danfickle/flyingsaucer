@@ -33,9 +33,9 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
 import org.xhtmlrenderer.css.style.CalculatedStyle;
 import org.xhtmlrenderer.event.DocumentListener;
 import org.xhtmlrenderer.extend.NamespaceHandler;

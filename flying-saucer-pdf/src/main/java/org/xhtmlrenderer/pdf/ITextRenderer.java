@@ -30,9 +30,9 @@ import java.io.Writer;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.xhtmlrenderer.context.StyleReference;
 import org.xhtmlrenderer.css.style.CalculatedStyle;
 import org.xhtmlrenderer.extend.NamespaceHandler;
@@ -47,7 +47,7 @@ import org.xhtmlrenderer.render.ViewportBox;
 import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.simple.HtmlNamespaceHandler;
 import org.xhtmlrenderer.util.Configuration;
-import org.xhtmlrenderer.util.JsoupUtil;
+import org.xhtmlrenderer.util.NodeHelper;
 
 import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
 import com.lowagie.text.DocumentException;
@@ -421,19 +421,19 @@ public class ITextRenderer {
             return null;
 
         // TODO: I think we need valid xml here.
-        return target.html();
+        return target.getTextContent();
     }
 
     private static Element getFirstChildElement(final Element element) 
     {
-        Node n = JsoupUtil.firstChild(element);
+        Node n = element.getFirstChild();
 
         while (n != null) 
         {
-            if (JsoupUtil.isElement(n))
+            if (NodeHelper.isElement(n))
                 return (Element) n;
 
-            n = n.nextSibling();
+            n = n.getNextSibling();
         }
         
         return null;
