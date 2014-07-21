@@ -3,7 +3,7 @@ package org.xhtmlrenderer.resource;
 import org.w3c.dom.Document;
 
 /**
- * Use this container to return a final URI and a Jsoup Document
+ * Use this container to return a final URI and a w3c Document
  * from the user-agent when required.
  */
 public class HTMLResource 

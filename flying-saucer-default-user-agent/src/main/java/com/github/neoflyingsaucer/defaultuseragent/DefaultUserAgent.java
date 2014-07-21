@@ -45,13 +45,12 @@ import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.resource.CSSResource;
 import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.resource.ImageResource;
+import org.xhtmlrenderer.resource.ResourceCache;
 import org.xhtmlrenderer.swing.AWTFSImage;
 import org.xhtmlrenderer.swing.ImageResourceLoader;
-import org.xhtmlrenderer.swing.StylesheetCache;
 import org.xhtmlrenderer.util.GeneralUtil;
 import org.xhtmlrenderer.util.ImageUtil;
 import org.xhtmlrenderer.util.LangId;
-import org.xhtmlrenderer.util.XRRuntimeException;
 
 /**
  * <p>NaiveUserAgent is a simple implementation of {@link UserAgentCallback} which places no restrictions on what
@@ -79,7 +78,9 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
      * a (simple) LRU cache
      */
     protected LinkedHashMap<String, ImageResource> _imageCache;
-    protected StylesheetCache _styleCache = new StylesheetCacheImpl();
+
+    // TODO: Make this configurable.
+    protected ResourceCache _resourceCache = new ResourceCacheImpl(32, 5);
     protected ImageResourceLoader _imageCache2 = new ImageResourceLoaderImpl();
 
     // TODO: Customize resource locale.
@@ -156,12 +157,13 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
 		}
         catch (UnsupportedEncodingException e) 
         {
-			throw new XRRuntimeException("UTF-8 not supported", e);
+			LOGGER.warn("UTF-8 not supported", e);
+			return null;
 		}
         catch (IOException e) 
         {
-			// TODO
-			throw new XRRuntimeException("I/O problem", e);
+        	LOGGER.warn("I/O problem", e);
+			return null;
 		}
     }
 
@@ -258,7 +260,8 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
         	xmlResource = HTMLResourceHelper.load(bs);
         } catch (IOException e) {
 			// TODO
-			throw new XRRuntimeException("I/O Problem", e);
+			LOGGER.error("I/O Problem", e);
+			return null;
 		} finally {
             if (bs != null) {
                 try {
@@ -381,11 +384,6 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
     public void onRenderException(final Throwable t) { /* ignore*/ }
 
 	@Override
-	public StylesheetCache getStylesheetCache() {
-		return _styleCache;
-	}
-
-	@Override
 	public ImageResourceLoader getImageResourceCache() 
 	{
 		return _imageCache2;
@@ -433,5 +431,11 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
 		{
 			LOGGER.warn(msg);
 		}
+	}
+
+	@Override
+	public ResourceCache getResourceCache() 
+	{
+		return _resourceCache;
 	}
 }

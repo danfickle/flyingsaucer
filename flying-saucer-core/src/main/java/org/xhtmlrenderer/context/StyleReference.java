@@ -104,11 +104,15 @@ public class StyleReference {
                     sheet = _stylesheetFactory.getStylesheet(info);
                 }
                 
-                if (sheet.getImportRules().size() > 0) {
-                    result.addAll(readAndParseAll(sheet.getImportRules(), medium));
+                if (sheet != null)
+                {
+                	if (sheet.getImportRules().size() > 0) 
+                	{
+                		result.addAll(readAndParseAll(sheet.getImportRules(), medium));
+                	}
+
+                	result.add(sheet);
                 }
-                
-                result.add(sheet);
             }
         }
         
@@ -161,10 +165,6 @@ public class StyleReference {
     
     public PageInfo getPageStyle(final String pageName, final String pseudoPage) {
         return _matcher.getPageCascadedStyle(pageName, pseudoPage);
-    }
-
-    public void flushAllStyleSheets() {
-        _stylesheetFactory.getUac().getStylesheetCache().flushCachedStylesheets();
     }
 
     /**

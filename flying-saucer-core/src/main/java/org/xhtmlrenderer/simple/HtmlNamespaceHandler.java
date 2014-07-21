@@ -707,6 +707,7 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
 		info.setOrigin(StylesheetInfo.CSSOrigin.USER_AGENT);
 		info.setMediaQueryList(null);
 		info.setType("text/css");
+		info.setUri("about:defaultstylesheet");
 
 		InputStream is = null;
 		try {

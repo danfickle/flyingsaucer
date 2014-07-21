@@ -86,7 +86,10 @@ public class StreamResource {
     }
 
     public BufferedInputStream bufferedStream() throws IOException {
-        _inputStream = _conn.getInputStream();
+    	if (_conn == null)
+    		return null;
+    	
+    	_inputStream = _conn.getInputStream();
 
         // Check for redirects
         if (!_conn.getURL().toString().equals(_uri)) {

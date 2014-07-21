@@ -66,7 +66,6 @@ import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.render.ViewportBox;
 import org.xhtmlrenderer.swing.Java2DFontContext;
 import org.xhtmlrenderer.swing.Java2DOutputDevice;
-import org.xhtmlrenderer.util.Configuration;
 import org.xhtmlrenderer.util.Uu;
 
 public class RootPanel extends JPanel implements ComponentListener, FSCanvas
@@ -100,13 +99,6 @@ public class RootPanel extends JPanel implements ComponentListener, FSCanvas
 		resetScrollPosition();
         setRootBox(null);
         this.doc = doc;
-
-        //have to do this first
-        if (Configuration.isTrue("xr.cache.stylesheets", true)) {
-			// NO-OP: We no longer cache inline style blocks.
-        } else {
-            getSharedContext().getCss().flushAllStyleSheets();
-        }
 
         getSharedContext().reset();
         getSharedContext().setBaseURL(url);

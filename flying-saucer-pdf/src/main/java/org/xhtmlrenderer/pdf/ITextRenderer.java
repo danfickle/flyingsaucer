@@ -45,8 +45,8 @@ import org.xhtmlrenderer.render.PageBox;
 import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.render.ViewportBox;
 import org.xhtmlrenderer.resource.HTMLResource;
+import org.xhtmlrenderer.resource.ResourceLoadHelper;
 import org.xhtmlrenderer.simple.HtmlNamespaceHandler;
-import org.xhtmlrenderer.util.Configuration;
 import org.xhtmlrenderer.util.NodeHelper;
 
 import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
@@ -120,8 +120,7 @@ public class ITextRenderer {
     }
 
     private Document loadDocument(final String uri) {
-    	String resolved = _sharedContext.getUac().resolveURI(null, uri);
-    	HTMLResource rs = _sharedContext.getUac().getHTMLResource(resolved);
+    	HTMLResource rs = ResourceLoadHelper.loadHtmlDocument(uri, _sharedContext.getUac());
     	_sharedContext.setDocumentURI(rs.getURI());
     	return rs.getDocument();
     }
@@ -156,11 +155,6 @@ public class ITextRenderer {
         getFontResolver().flushFontFaceFonts();
 
         _sharedContext.reset();
-        if (Configuration.isTrue("xr.cache.stylesheets", true)) {
-			// NO-OP: We no longer cache inline style blocks.
-        } else {
-            _sharedContext.getCss().flushAllStyleSheets();
-        }
         _sharedContext.setBaseURL(url);
         _sharedContext.setNamespaceHandler(nsh);
         _sharedContext.getCss().setDocumentContext(_sharedContext, _sharedContext.getNamespaceHandler(), doc);

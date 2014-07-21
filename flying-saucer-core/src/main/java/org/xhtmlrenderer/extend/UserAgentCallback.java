@@ -22,8 +22,8 @@ package org.xhtmlrenderer.extend;
 import org.xhtmlrenderer.resource.CSSResource;
 import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.resource.ImageResource;
+import org.xhtmlrenderer.resource.ResourceCache;
 import org.xhtmlrenderer.swing.ImageResourceLoader;
-import org.xhtmlrenderer.swing.StylesheetCache;
 import org.xhtmlrenderer.util.LangId;
 
 
@@ -56,7 +56,7 @@ public interface UserAgentCallback {
      * Retrieves the CSS at the given URI. This is a synchronous call.
      *
      * @param uri Location of the CSS (returned from resolveURI).
-     * @return A CSSResource for the CSS at the uri.
+     * @return A CSSResource for the CSS at the uri or null if not available.
      */
     CSSResource getCSSResource(String uri);
 
@@ -103,14 +103,13 @@ public interface UserAgentCallback {
      * @return the full uri in uri-spaces known to the current implementation.
      */
     String resolveURI(String baseUri, String uri);
-
-    /**
-     * Used to return a stylesheet instance from cache. If not possible, should return 
-     * null.
-     */
-	StylesheetCache getStylesheetCache();
 	
 	ImageResourceLoader getImageResourceCache();
 	
 	void onError(LangId msgId, int line, FSErrorType errorType, Object[] args);
+
+	/**
+	 * May NOT return null.
+	 */
+	ResourceCache getResourceCache();
 }

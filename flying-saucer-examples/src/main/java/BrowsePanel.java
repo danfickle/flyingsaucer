@@ -20,6 +20,7 @@ import org.w3c.dom.Document;
 import org.xhtmlrenderer.demo.browser.FSScrollPane;
 import org.xhtmlrenderer.event.DefaultDocumentListener;
 import org.xhtmlrenderer.extend.UserAgentCallback;
+import org.xhtmlrenderer.resource.ResourceLoadHelper;
 import org.xhtmlrenderer.swing.SwingReplacedElementFactory;
 import org.xhtmlrenderer.util.GeneralUtil;
 
@@ -129,7 +130,7 @@ public class BrowsePanel {
                 final Document doc;
                 try {
                     if (panel != null ) panel.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-                    doc = getUAC().getHTMLResource(uri).getDocument();
+                    doc = ResourceLoadHelper.loadHtmlDocument(uri, getUAC()).getDocument();
                 } catch (final Exception e) {
                     e.printStackTrace();
                     System.err.println("Can't load document");

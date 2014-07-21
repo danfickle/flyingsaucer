@@ -30,8 +30,8 @@ import org.xhtmlrenderer.render.Box;
 import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.render.ViewportBox;
 import org.xhtmlrenderer.resource.HTMLResource;
+import org.xhtmlrenderer.resource.ResourceLoadHelper;
 import org.xhtmlrenderer.simple.HtmlNamespaceHandler;
-import org.xhtmlrenderer.util.Configuration;
 import org.xhtmlrenderer.util.ImageUtil;
 
 import java.awt.*;
@@ -278,11 +278,6 @@ public class BoxRenderer {
 		this.doc = doc;
 
 		sharedContext.reset();
-		if (Configuration.isTrue("xr.cache.stylesheets", true)) {
-			// NO-OP: We no longer cache inline style blocks.
-		} else {
-			sharedContext.getCss().flushAllStyleSheets();
-		}
 		sharedContext.setBaseURL(url);
 		sharedContext.setNamespaceHandler(nsh);
 		sharedContext.getCss().setDocumentContext(
@@ -302,8 +297,7 @@ public class BoxRenderer {
 	}
 
 	private Document loadDocument(final String uri) {
-    	String resolved = sharedContext.getUac().resolveURI(null, uri);
-    	HTMLResource rs = sharedContext.getUac().getHTMLResource(resolved);
+		HTMLResource rs = ResourceLoadHelper.loadHtmlDocument(uri, sharedContext.getUac());
     	sharedContext.setDocumentURI(rs.getURI());
     	return rs.getDocument();
 	}

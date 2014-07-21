@@ -34,7 +34,6 @@ import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
 import org.xhtmlrenderer.extend.FSErrorType;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.resource.CSSResource;
-import org.xhtmlrenderer.swing.StylesheetCacheKey;
 import org.xhtmlrenderer.util.LangId;
 
 /**
@@ -67,24 +66,26 @@ public class StylesheetFactoryImpl implements StylesheetFactory {
         }, _userAgentCallback);
     }
 
-    public synchronized Stylesheet parse(final Reader reader, final StylesheetInfo info, boolean isInline) {
+    /**
+     * The caller is responsible for closing the Reader.
+     */
+    public Stylesheet parse(final Reader reader, final StylesheetInfo info, boolean isInline) 
+    {
         try 
         {
         	final Stylesheet s1 = _cssParser.parseStylesheet(info.getUri(), info.getOrigin(), reader);
 
-        	if (!isInline)
+        	// We only cache external stylesheets.
+        	if (!isInline && s1 != null)
         	{
-            	// TODO
-        		final StylesheetCacheKey key = new StylesheetCacheKey(info.getUri(), 0, 0, null);
-        	   	_userAgentCallback.getStylesheetCache().putStylesheet(key, s1);
+        	   	_userAgentCallback.getResourceCache().putCssStylesheet(info.getUri(), s1);
         	}
 
         	return s1; 
         }
         catch (final IOException e) 
         {
-            LOGGER.warn("Couldn't parse stylesheet at URI " + info.getUri() + ": " + e.getMessage(), e);
-            e.printStackTrace();
+            LOGGER.warn("Couldn't parse stylesheet at URI {}", info.getUri(), e);
             return new Stylesheet(info.getUri(), info.getOrigin());
         }
     }
@@ -95,6 +96,12 @@ public class StylesheetFactoryImpl implements StylesheetFactory {
     private Stylesheet parse(final StylesheetInfo info) {
         final CSSResource cr = _userAgentCallback.getCSSResource(info.getUri());
 
+        if (cr == null)
+        {
+        	LOGGER.warn("Unable to retrieve stylesheet at url({})", info.getUri());
+        	return null;
+        }
+        
         // Q: Do @import rules use the original URI as the base for importing
         // other stylesheets or do they use the redirected URI.
         // If the former, we should remove this call.
@@ -109,13 +116,11 @@ public class StylesheetFactoryImpl implements StylesheetFactory {
             return s1;
         }
         finally {
-            if (cr != null) {
-                try {
-                    cr.getReader().close();
-                    cr.onClose();
-                } catch (final IOException e) {
-                    // ignore
-                }
+            try {
+            	cr.getReader().close();
+                cr.onClose();
+            } catch (final IOException e) {
+                // ignore
             }
         }
     }
@@ -127,16 +132,20 @@ public class StylesheetFactoryImpl implements StylesheetFactory {
 
     public Stylesheet getStylesheet(final StylesheetInfo info) 
     {
-        // Give the user agent the chance to return a cached Stylesheet
-        // instance.
-        // TODO
-        final StylesheetCacheKey key = new StylesheetCacheKey(info.getUri(), 0, 0, null);
-        final Stylesheet s1 = _userAgentCallback.getStylesheetCache().getStylesheet(key);
+        // Give the user agent the chance to return a cached
+    	// Stylesheet instance.
+        final Stylesheet s1 = _userAgentCallback.getResourceCache().getCssStylesheet(info.getUri());
 
-        if (s1 == null)
-        	return parse(info);
-
-        return s1;
+        if (s1 != null)
+        {
+        	LOGGER.info("Stylesheet HIT for " + info.getUri());
+        	return s1;
+        }
+        
+        // Otherwise, we have to try to get it from the 
+        // user agent proper.        
+        LOGGER.info("Stylesheet MISS for " + info.getUri());
+        return parse(info);
     }
 
     public void setUserAgentCallback(final UserAgentCallback userAgent) {
