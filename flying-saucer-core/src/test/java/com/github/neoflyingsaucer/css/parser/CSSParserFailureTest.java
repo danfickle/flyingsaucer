@@ -29,28 +29,34 @@ public class CSSParserFailureTest
 		parser.parseDeclaration("", CSSOrigin.AUTHOR, declaration); 
 	}
 	
+	private void assertDeclarationFailure(String declaration, LangId expectedMsgId)
+	{
+		expected.expect(RuntimeException.class);
+		expected.expectMessage(expectedMsgId.toString());
+		parseDeclaration(declaration);
+	}
+	
 	@Test
 	public void testWebkitGradientBackgroundImage()
 	{
-		expected.expect(RuntimeException.class);
-		expected.expectMessage(LangId.FUNCTION_NOT_SUPPORTED.toString());
-		parseDeclaration("background-image: -webkit-gradient(0);");
+		assertDeclarationFailure(
+				"background-image: -webkit-gradient(0);",
+				LangId.FUNCTION_NOT_SUPPORTED);
 	}
 	
 	@Test
 	public void testRadialGradientBackgroundImage()
 	{
-		expected.expect(RuntimeException.class);
-		expected.expectMessage(LangId.FUNCTION_NOT_SUPPORTED.toString());
-		parseDeclaration("background-image: radial-gradient(closest-corner circle at 600px 600px, #001b24 0%, #000 100%);");
+		assertDeclarationFailure(
+				"background-image: radial-gradient(closest-corner circle at 600px 600px, #001b24 0%, #000 100%);",
+				LangId.FUNCTION_NOT_SUPPORTED);
 	}
 
 	@Test
 	public void testRadialGradientBackground()
 	{
-		expected.expect(RuntimeException.class);
-		expected.expectMessage(LangId.FUNCTION_NOT_SUPPORTED.toString());
-		parseDeclaration("background: radial-gradient(closest-corner circle at 600px 600px, #001b24 0%, #000 100%);");
+		assertDeclarationFailure(
+				"background: radial-gradient(closest-corner circle at 600px 600px, #001b24 0%, #000 100%);",
+				LangId.FUNCTION_NOT_SUPPORTED);
 	}
-
 }
