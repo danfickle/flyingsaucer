@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
 import java.util.List;
+
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.IdentValue;
 import org.xhtmlrenderer.css.style.CssContext;
@@ -110,15 +111,9 @@ public class TableRowBox extends BlockBox {
             return false;
         }
         
-        for (final Iterator<Box> i = getChildIterator(); i.hasNext(); ) {
-            final TableCellBox cell = (TableCellBox)i.next();
-            final int baseline = cell.calcBlockBaseline(c);
-            if (baseline != BlockBox.NO_BASELINE && baseline < page.getBottom()) {
-                return false;
-            }
-        }
-        
-        return true;
+        return !getChildren().stream()
+        		.map(cell -> ((TableCellBox) cell).calcBlockBaseline(c))
+        		.anyMatch(baseline -> baseline != BlockBox.NO_BASELINE && baseline < page.getBottom()); 
     }
     
     public void analyzePageBreaks(final LayoutContext c, final ContentLimitContainer container) {
