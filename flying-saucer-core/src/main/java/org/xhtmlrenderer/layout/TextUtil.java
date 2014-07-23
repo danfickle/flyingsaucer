@@ -39,6 +39,7 @@ public class TextUtil {
      * @param style
      * @return       Returns
      */
+	// TODO: Locale to use.
     public static String transformText( String text, final CalculatedStyle style ) {
         final IdentValue transform = style.getIdent( CSSName.TEXT_TRANSFORM );
         if ( transform == IdentValue.LOWERCASE ) {

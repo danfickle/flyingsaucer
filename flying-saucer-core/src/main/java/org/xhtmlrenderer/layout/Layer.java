@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.xhtmlrenderer.css.constants.CSSName;
@@ -384,14 +385,15 @@ public class Layer {
             }
         }
         
-        for (int i = 0; i < getFloats().size(); i++) {
-            final Box floater = (Box)getFloats().get(i);
-            result = floater.find(cssCtx, absX, absY, findAnonymous);
-            if (result != null) {
-                return result;
-            }
-        }
-        
+        Optional<Box> res = 
+        getFloats().stream()
+          .map(floater -> floater.find(cssCtx, absX, absY, findAnonymous))
+          .filter(box -> box != null)
+          .findFirst();
+
+        if (res.isPresent())
+        	return res.get();
+
         result = getMaster().find(cssCtx, absX, absY, findAnonymous);
         if (result != null) {
             return result;
@@ -569,21 +571,16 @@ public class Layer {
         }
     }
     
-    private PaintingInfo calcPaintingDimension(final LayoutContext c) {
+    private PaintingInfo calcPaintingDimension(final LayoutContext c) 
+    {
         getMaster().calcPaintingInfo(c, true);
         final PaintingInfo result = getMaster().getPaintingInfo().copyOf();
-        
-        final List<Layer> children = getChildren();
-        for (int i = 0; i < children.size(); i++) {
-            final Layer child = children.get(i);
-            
-            if (child.getMaster().getStyle().isFixed()) {
-                continue;
-            } else if (child.getMaster().getStyle().isAbsolute()) {
-                final PaintingInfo info = child.calcPaintingDimension(c);
-                moveIfGreater(result.getOuterMarginCorner(), info.getOuterMarginCorner());
-            } 
-        }
+
+        getChildren().stream()
+         .filter(child -> !child.getMaster().getStyle().isFixed() &&
+        		           child.getMaster().getStyle().isAbsolute())
+         .map(child -> child.calcPaintingDimension(c))
+         .forEachOrdered(info -> moveIfGreater(result.getOuterMarginCorner(), info.getOuterMarginCorner()));
         
         return result;
     }
@@ -987,14 +984,7 @@ public class Layer {
         
         blocks.add(block);
         
-        Collections.sort(blocks, new Comparator<BlockBox>() {
-            public int compare(final BlockBox o1, final BlockBox o2) {
-                final BlockBox b1 = o1;
-                final BlockBox b2 = o2;
-                
-                return b1.getAbsY() - b2.getAbsY();
-            }
-        });
+        Collections.sort(blocks, (b1, b2) -> b1.getAbsY() - b2.getAbsY());
     }
     
     public void removeRunningBlock(final BlockBox block) {
@@ -1088,16 +1078,7 @@ public class Layer {
         
         if (_sortedPageSequences == null) {
             final List<BlockBox> result = new ArrayList<>(_pageSequences);
-            
-            Collections.sort(result, new Comparator<BlockBox>() {
-                public int compare(final BlockBox o1, final BlockBox o2) {
-                    final BlockBox b1 = o1;
-                    final BlockBox b2 = o2;
-                    
-                    return b1.getAbsY() - b2.getAbsY();
-                }
-            });
-            
+            Collections.sort(result, (b1, b2) -> b1.getAbsY() - b2.getAbsY());
             _sortedPageSequences  = result;
         }
         

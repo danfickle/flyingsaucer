@@ -185,13 +185,8 @@ public class BoxCollector {
             }
 
             if (container.getLayer() == null || container == master) {
-                for (int i = 0; i < container.getChildCount(); i++) {
-                    final Box child = container.getChild(i);
-                    final boolean possibleResult = intersectsAny(c, clip, master, child);
-                    if (possibleResult) {
-                        return true;
-                    }
-                }
+            	return container.getChildren().stream().anyMatch(
+            			child -> intersectsAny(c, clip, master, child));
             }
         }
         

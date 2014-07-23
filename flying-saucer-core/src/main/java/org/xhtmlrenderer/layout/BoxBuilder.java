@@ -311,13 +311,7 @@ public class BoxBuilder {
     }
 
     private static boolean isAllProperTableNesting(final IdentValue parentDisplay, final List<Styleable> children) {
-        for (final Styleable child : children) {
-            if (!isProperTableNesting(parentDisplay, child.getStyle().getIdent(CSSName.DISPLAY))) {
-                return false;
-            }
-        }
-
-        return true;
+    	return children.stream().allMatch(child -> isProperTableNesting(parentDisplay, child.getStyle().getIdent(CSSName.DISPLAY)));
     }
 
     /**
@@ -608,12 +602,12 @@ public class BoxBuilder {
 
     private static ChildBoxInfo lookForBlockContent(final List<Styleable> styleables) {
         final ChildBoxInfo result = new ChildBoxInfo();
-        for (final Styleable s : styleables) {
-            if (!s.getStyle().isLayedOutInInlineContext()) {
-                result.setContainsBlockLevelContent(true);
-                break;
-            }
-        }
+
+        final boolean containsBlockLevelContent = styleables.stream()
+          .anyMatch(s -> !s.getStyle().isLayedOutInInlineContext());
+        
+        result.setContainsBlockLevelContent(containsBlockLevelContent);
+
         return result;
     }
 

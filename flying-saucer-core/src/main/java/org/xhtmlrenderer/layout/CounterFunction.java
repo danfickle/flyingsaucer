@@ -21,8 +21,8 @@ package org.xhtmlrenderer.layout;
 
 import org.xhtmlrenderer.css.constants.IdentValue;
 
-import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CounterFunction {
     private final IdentValue _listStyleType;
@@ -45,13 +45,10 @@ public class CounterFunction {
         if (_counterValues == null) {
             return createCounterText(_listStyleType, _counterValue);
         }
-        final StringBuffer sb = new StringBuffer();
-        for (final Iterator<Integer> i = _counterValues.iterator(); i.hasNext();) {
-            final Integer value = (Integer) i.next();
-            sb.append(createCounterText(_listStyleType, value.intValue()));
-            if (i.hasNext()) sb.append(_separator);
-        }
-        return sb.toString();
+        
+        return _counterValues.stream()
+        		.map(value -> createCounterText(_listStyleType, value.intValue()))
+        		.collect(Collectors.joining(_separator));
     }
 
     public static String createCounterText(final IdentValue listStyle, final int listCounter) {
