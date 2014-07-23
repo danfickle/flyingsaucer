@@ -19,6 +19,8 @@
  */
 package org.xhtmlrenderer.css.extend;
 
+import java.util.Optional;
+
 
 /**
  * In XML, an application may or may not know how to find the ID and/or class
@@ -40,13 +42,13 @@ public interface AttributeResolver {
      * May return null. Required to return null if attribute does not exist and
      * not null if attribute exists.
      */
-    public String getAttributeValue(Object e, String attrName);
+    public Optional<String> getAttributeValue(Object e, String attrName);
     
     /**
      * May return null. Required to return null if attribute does not exist and
      * not null if attribute exists.
      */
-    public String getAttributeValue(Object e, String namespaceURI, String attrName);
+    public Optional<String> getAttributeValue(Object e, String namespaceURI, String attrName);
 
     /**
      * may return null
@@ -54,7 +56,7 @@ public interface AttributeResolver {
      * @param e PARAM
      * @return The class value
      */
-    public String getClass(Object e);
+    public Optional<String> getClass(Object e);
 
     /**
      * may return null
@@ -62,10 +64,10 @@ public interface AttributeResolver {
      * @param e PARAM
      * @return The iD value
      */
-    public String getID(Object e);
+    public Optional<String> getID(Object e);
 
     /**
-     * may return null
+     * may NOT return null
      *
      * @param e PARAM
      * @return The non css styling (specificity 0,0,0,0 on author styles, according to css 2.1)

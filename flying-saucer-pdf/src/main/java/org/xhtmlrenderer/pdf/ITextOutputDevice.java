@@ -46,8 +46,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
@@ -267,9 +267,10 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
         final Element elem = box.getElement();
         if (elem != null) {
             final NamespaceHandler handler = _sharedContext.getNamespaceHandler();
-            final String uri = handler.getLinkUri(elem);
-            if (uri != null) {
-                if (uri.length() > 1 && uri.charAt(0) == '#') {
+            final Optional<String> ouri = handler.getLinkUri(elem);
+            if (ouri.isPresent()) {
+            	String uri = ouri.get();
+            	if (uri.length() > 1 && uri.charAt(0) == '#') {
                     final String anchor = uri.substring(1);
                     final Box target = _sharedContext.getBoxById(anchor);
                     if (target != null) {
@@ -277,8 +278,8 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
 
                         if (dest != null) {
                             PdfAction action = new PdfAction();
-                            if (!"".equals(handler.getAttributeValue(elem, "onclick"))) {
-                                action = PdfAction.javaScript(handler.getAttributeValue(elem, "onclick"), _writer);
+                            if (handler.getAttributeValue(elem, "onclick").isPresent()) {
+                                action = PdfAction.javaScript(handler.getAttributeValue(elem, "onclick").get(), _writer);
                             } else {
                                 action.put(PdfName.S, PdfName.GOTO);
                                 action.put(PdfName.D, dest);
@@ -997,34 +998,36 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
         writeBookmarks(c, root, outline, bookmark.getChildren());
     }
 
-    private void loadBookmarks(final Document doc) {
-        final Element head = NodeHelper.getHead(doc);
-        if (head != null) {
-            final Element bookmarks = NodeHelper.getFirstMatchingDeepChildByTagName(head, "bookmarks");
-            if (bookmarks != null) {
-                final List<Element> l = NodeHelper.getMatchingChildrenByTagName(bookmarks, "bookmark");
-                if (l != null) {
-                    for (final Element e : l) {
-                        loadBookmark(null, e);
-                    }
-                }
-            }
+    private void loadBookmarks(final Document doc)
+    {
+        final Optional<Element> head = NodeHelper.getHead(doc);
+
+        if (head.isPresent()) 
+        {
+        	Optional<Element> bookmarks = 
+        	 NodeHelper
+        	  .childElemStream(head.get(), "bookmarks")
+        	  .findFirst();
+        			
+        	bookmarks.ifPresent(
+        		bks -> NodeHelper
+        		      .childElemStream(bks, "bookmark")
+        		      .forEach(e -> loadBookmark(null, e)));
         }
     }
 
-    private void loadBookmark(final Bookmark parent, final Element bookmark) {
+    private void loadBookmark(final Bookmark parent, final Element bookmark) 
+    {
         final Bookmark us = new Bookmark(bookmark.getAttribute("name"), bookmark.getAttribute("href"));
-        if (parent == null) {
+
+        if (parent == null) 
             _bookmarks.add(us);
-        } else {
+        else
             parent.addChild(us);
-        }
-        final List<Element> l = NodeHelper.getMatchingChildrenByTagName(bookmark, "bookmark");
-        if (l != null) {
-            for (final Element e : l) {
-                loadBookmark(us, e);
-            }
-        }
+
+        NodeHelper
+          .childElemStream(bookmark, "bookmark")
+          .forEach(e -> loadBookmark(us, e));
     }
 
     private static class Bookmark {
@@ -1139,29 +1142,35 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
      * @param doc
      *            the Document level node of the parsed xhtml file.
      */
-    private void loadMetadata(final Document doc) {
-        final Element head = NodeHelper.getHead(doc);
-        if (head != null) {
-            final List<Element> l = NodeHelper.getMatchingChildrenByTagName(head, "meta");
-            if (l != null) {
-                for (final Element e : l) {
-                    final String name = e.getAttribute("name");
-                    if (name != null) { // ignore non-name metadata data
-                        final String content = e.getAttribute("content");
-                        final Metadata m = new Metadata(name, content);
-                        _metadata.add(m);
-                    }
-                }
-            }
-            // If there is no title meta data attribute, use the document title.
+    private void loadMetadata(final Document doc) 
+    {
+        final Optional<Element> head = NodeHelper.getHead(doc);
+
+        if (head != null) 
+        {
+        	NodeHelper
+        	 .childElemStream(head.get(), "meta")
+        	 .forEach(meta -> {
+        		 final String name = meta.getAttribute("name");
+        		 if (name != null)
+        			 _metadata.add(new Metadata(name, meta.getAttribute("content")));
+        	 });
+        	
             String title = getMetadataByName("title");
-            if (title == null) {
-                final Element t = NodeHelper.getFirstMatchingChildByTagName(head, "title");
-                if (t != null) {
-                    title = t.getTextContent().trim();
-                    final Metadata m = new Metadata("title", title);
-                    _metadata.add(m);
-                }
+
+            // If there is no title meta data attribute,
+        	// use the document title.
+            if (title == null) 
+            {
+            	final Optional<Element> t = 
+            	 NodeHelper
+            	 .childElemStream(head.get(), "title")
+            	 .findFirst();
+            	
+            	t.ifPresent(te -> {
+            		String newTitle = te.getTextContent().trim();
+            		_metadata.add(new Metadata("title", newTitle));
+            	});
             }
         }
     }

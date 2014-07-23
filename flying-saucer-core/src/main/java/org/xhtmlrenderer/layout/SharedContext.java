@@ -27,6 +27,7 @@ import java.awt.Toolkit;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -617,9 +618,9 @@ public class SharedContext {
     }
 
     public void removeElementReferences(final Element e) {
-        final String id = namespaceHandler.getID(e);
-        if (id != null && id.length() > 0) {
-            removeBoxId(id);
+        final Optional<String> id = namespaceHandler.getID(e);
+        if (id.isPresent() && !id.get().isEmpty()) {
+            removeBoxId(id.get());
         }
 
         if (styleMap != null) {

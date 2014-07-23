@@ -19,6 +19,8 @@
  */
 package org.xhtmlrenderer.context;
 
+import java.util.Optional;
+
 import org.w3c.dom.Element;
 import org.xhtmlrenderer.css.extend.AttributeResolver;
 import org.xhtmlrenderer.extend.NamespaceHandler;
@@ -55,11 +57,13 @@ public class StandardAttributeResolver implements AttributeResolver {
      * @param attrName PARAM
      * @return The attributeValue value
      */
-    public String getAttributeValue(final Object e, final String attrName) {
+    @Override
+    public Optional<String> getAttributeValue(final Object e, final String attrName) {
         return nsh.getAttributeValue((Element) e, attrName);
     }
-    
-    public String getAttributeValue(final Object e, final String namespaceURI, final String attrName) {
+
+    @Override
+    public Optional<String> getAttributeValue(final Object e, final String namespaceURI, final String attrName) {
         return nsh.getAttributeValue((Element)e, namespaceURI, attrName);
     }
 
@@ -69,7 +73,8 @@ public class StandardAttributeResolver implements AttributeResolver {
      * @param e PARAM
      * @return The class value
      */
-    public String getClass(final Object e) {
+    @Override
+    public Optional<String> getClass(final Object e) {
         return nsh.getClass((Element) e);
     }
 
@@ -79,10 +84,12 @@ public class StandardAttributeResolver implements AttributeResolver {
      * @param e PARAM
      * @return The iD value
      */
-    public String getID(final Object e) {
+    @Override
+    public Optional<String> getID(final Object e) {
         return nsh.getID((Element) e);
     }
 
+    @Override
     public String getNonCssStyling(final Object e) {
         return nsh.getNonCssStyling((Element) e);
     }
@@ -93,6 +100,7 @@ public class StandardAttributeResolver implements AttributeResolver {
      * @param e PARAM
      * @return The elementStyling value
      */
+    @Override
     public String getElementStyling(final Object e) {
         return nsh.getElementStyling((Element) e);
     }
@@ -103,6 +111,7 @@ public class StandardAttributeResolver implements AttributeResolver {
      * @param e PARAM
      * @return The lang value
      */
+    @Override
     public String getLang(final Object e) {
         return nsh.getLang((Element) e);
     }
@@ -113,6 +122,7 @@ public class StandardAttributeResolver implements AttributeResolver {
      * @param e PARAM
      * @return The link value
      */
+    @Override
     public boolean isLink(final Object e) {
         return nsh.getLinkUri((Element) e) != null;
     }
@@ -123,8 +133,16 @@ public class StandardAttributeResolver implements AttributeResolver {
      * @param e PARAM
      * @return The visited value
      */
-    public boolean isVisited(final Object e) {
-        return isLink(e) && uac.isVisited(nsh.getLinkUri((Element) e));
+    @Override
+    public boolean isVisited(final Object e) 
+    {
+    	if (isLink(e))
+    	{
+    		Optional<String> link = nsh.getLinkUri((Element) e);
+    		return link.isPresent() && uac.isVisited(link.get());
+    	}
+
+    	return false;
     }
 }
 

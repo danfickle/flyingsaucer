@@ -1,8 +1,13 @@
 package org.xhtmlrenderer.util;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.Spliterator;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -11,10 +16,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 public class NodeHelper {
-
+	
   public static boolean isRootNode(final Node n) {
     return n.getParentNode() instanceof Document;
   }
@@ -23,79 +26,99 @@ public class NodeHelper {
     return link.getAttributes().getNamedItem(attrName) != null;
   }
 
+  /**
+   * Case-insensitive.
+   */
   public static boolean attributeContains(final Node link, final String attrName, final String searchStr) {
     final Attr attr = (Attr) link.getAttributes().getNamedItem(attrName);
-    final String[] values = attr.getValue().split(" ");
-    boolean found = false;
-    int i = 0;
-    while (!found && i < values.length) {
-      found = searchStr.equals(values[i]);
-      i++;
-    }
-    return found;
+    final String[] values = attr.getValue().split("\\s");
+    return Arrays.stream(values).anyMatch(s -> GeneralUtil.ciEquals(s, searchStr));
   }
 
-  public static Iterable<Node> makeIterable(final NodeList nodeList) {
-    return new Iterable<Node>() {
-      @Override
-      public Iterator<Node> iterator() {
+  public static class NodeSpliterator implements Spliterator<Node>
+  {
+	@Override
+	public boolean tryAdvance(Consumer<? super Node> action) 
+	{
+		if (_origin < _length)
+		{
+			action.accept(_children.item(_origin));
+			_origin++;
+			return true;
+		}
+		return false;
+	}
 
-        return new Iterator<Node>() {
-          private int i = 0;
+	@Override
+	public Spliterator<Node> trySplit()
+	{
+		int lo = _origin; // divide range in half
+	    int mid = ((lo + _length + 1) >>> 1) & ~1;
 
-          @Override
-          public boolean hasNext() {
-            return i < nodeList.getLength();
-          }
+	    if (lo < mid)
+	    { 
+	    	// split out left half
+	    	// reset this Spliterator's origin
+	    	_origin = mid; 
+	         return new NodeSpliterator(_children, lo, mid);
+	    }
+	    else
+	    {
+	    	// too small to split
+	    	return null;
+	    }
+	}
 
-          @Override
-          public Node next() {
-            return nodeList.item(i++);
-          }
+	@Override
+	public long estimateSize() 
+	{
+		return _length - _origin;
+	}
 
-          @Override
-          public void remove() {
-            throw new NotImplementedException();
-          }
-        };
-      }
-    };
+	@Override
+	public int characteristics() 
+	{
+		return ORDERED | IMMUTABLE | NONNULL | SIZED | SUBSIZED;
+	}
+	  
+	private final NodeList _children;
+	private int _origin;
+	private final int _length;
+	
+	public NodeSpliterator(final NodeList nl, final int start, final int length)
+	{
+		_children = nl;
+		_origin = start;
+		_length = length;
+	}
+  }
+  
+  public static Stream<Node> childNodeStream(final Node n)
+  {
+	  final NodeList nl = n.getChildNodes();
+	  return StreamSupport.stream(new NodeSpliterator(nl, 0, nl.getLength()), true);
+  }
+  
+  public static Stream<Element> childElemStream(final Node n, final String tagName)
+  {
+	  return childNodeStream(n)
+			  .filter(node -> node instanceof Element)
+			  .map(NodeHelper::elementCast)
+			  .filter(e -> GeneralUtil.ciEquals(e.getNodeName(), tagName));
   }
 
-
-  public static Iterable<Node> getChildrenAsNodes(final Node n) {
-    final NodeList childList = n.getChildNodes();
-    return makeIterable(childList);
+  public static Stream<Element> childElemStream(final Node n)
+  {
+	  return childNodeStream(n)
+			  .filter(node -> node instanceof Element)
+			  .map(NodeHelper::elementCast);
   }
-
-  public static Iterable<Element> getChildrenAsElements(final Node n) {
-    final NodeList childList = n.getChildNodes();
-    return new Iterable<Element>() {
-      int i = 0;
-
-      @Override
-      public Iterator<Element> iterator() {
-        return new Iterator<Element>() {
-
-          @Override
-          public boolean hasNext() {
-            return i < childList.getLength();
-          }
-
-          @Override
-          public Element next() {
-            return (Element) childList.item(i++);
-          }
-
-          @Override
-          public void remove() {
-            throw new NotImplementedException();
-          }
-        };
-      }
-    };
+  
+  public static Element elementCast(final Node n)
+  {
+	  return (Element) n;
   }
-
+  
   public static Element getFirstMatchingDeepChildByTagName(final Element e, final String tagName) {
     NodeList matchingElements = e.getElementsByTagName(tagName);
     if (matchingElements != null) {
@@ -149,12 +172,14 @@ public class NodeHelper {
   }
 
 
-  public static Element getHead(final Document doc) {
-    return getFirstMatchingChildByTagName(doc.getDocumentElement(), "head");
+  public static Optional<Element> getHead(final Document doc) 
+  {
+    return childElemStream(doc.getDocumentElement(), "head").findFirst();
   }
 
-  public static Element getBody(Document doc) {
-    return getFirstMatchingChildByTagName(doc.getDocumentElement(), "body");
+  public static Optional<Element> getBody(Document doc) 
+  {
+	return childElemStream(doc.getDocumentElement(), "body").findFirst();
   }
 
   public static boolean isElement(final Node n) {

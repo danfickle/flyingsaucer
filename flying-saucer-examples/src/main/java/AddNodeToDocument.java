@@ -105,7 +105,7 @@ public class AddNodeToDocument {
 
             // root element of the document--you could grab any other element
             // by traversing, XPath, etc.
-            documentRoot = NodeHelper.getBody(domDocument);
+            documentRoot = NodeHelper.getBody(domDocument).get();
         } catch (final Exception e) {
             messageAndExit("Could not render page: " + e.getMessage(), -1);
         }

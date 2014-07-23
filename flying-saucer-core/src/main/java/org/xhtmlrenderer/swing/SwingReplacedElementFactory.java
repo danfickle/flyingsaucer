@@ -37,6 +37,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * A ReplacedElementFactory where Elements are replaced by Swing components.
@@ -87,14 +88,21 @@ public class SwingReplacedElementFactory implements ReplacedElementFactory {
      * @param cssHeight Target height of the image @return A ReplacedElement for the image; will not be null.
      * @return
      */
-    protected ReplacedElement replaceImage(final UserAgentCallback uac, final LayoutContext context, final Element elem, final int cssWidth, final int cssHeight) {
-        ReplacedElement re = null;
-        final String imageSrc = context.getNamespaceHandler().getImageSourceURI(elem);
-        
-        if (imageSrc == null || imageSrc.length() == 0) {
-            LOGGER.warn("No source provided for img element.");
-            re = newIrreplaceableImageElement(cssWidth, cssHeight);
-        } else if (ImageUtil.isEmbeddedBase64Image(imageSrc)) {
+    protected ReplacedElement replaceImage(final UserAgentCallback uac, final LayoutContext context, final Element elem, final int cssWidth, final int cssHeight) 
+    {
+    	ReplacedElement re = null;
+        final Optional<String> oImageSrc = context.getNamespaceHandler().getImageSourceURI(elem);
+
+        if (!oImageSrc.isPresent() || oImageSrc.get().isEmpty())
+        {
+        	LOGGER.warn("No source provided for img element.");
+        	return newIrreplaceableImageElement(cssWidth, cssHeight);
+        }
+
+        String imageSrc = oImageSrc.get();
+
+        // TODO: Move this to stream handler.
+        if (ImageUtil.isEmbeddedBase64Image(imageSrc)) {
             final BufferedImage image = ImageUtil.loadEmbeddedBase64Image(imageSrc);
             if (image != null) {
                 re = new ImageReplacedElement(image, cssWidth, cssHeight);

@@ -20,6 +20,7 @@
 package org.xhtmlrenderer.extend;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -54,41 +55,41 @@ public interface NamespaceHandler
      * may return null. Required to return null if attribute does not exist and
      * not null if attribute exists.
      */
-    String getAttributeValue(Element e, String attrName);
+    Optional<String> getAttributeValue(Element e, String attrName);
     
-    String getAttributeValue(Element e, String namespaceURI, String attrName);
+    Optional<String> getAttributeValue(Element e, String namespaceURI, String attrName);
 
     /**
      * may return null
      */
-    String getClass(Element e);
+    Optional<String> getClass(Element e);
 
     /**
      * may return null
      */
-    String getID(Element e);
+    Optional<String> getID(Element e);
 
     /**
-     * may return null
+     * may NOT return null
      */
     String getElementStyling(Element e);
 
     /**
-     * may return null
+     * may NOT return null
      */
     String getNonCssStyling(Element e);
 
     /**
-     * may return null
+     * may NOT return null
      */
     String getLang(Element e);
 
     /**
      * should return null if element is not a link
      */
-    String getLinkUri(Element e);
+    Optional<String> getLinkUri(Element e);
 
-    String getAnchorName(Element e);
+    Optional<String> getAnchorName(Element e);
 
     /**
      * @return Returns true if the Element represents an image.
@@ -108,5 +109,5 @@ public interface NamespaceHandler
      * return false, and may also return false if the Element is not correctly formed and contains no URI; check the
      * return value carefully.
      */
-    String getImageSourceURI(Element e);
+    Optional<String> getImageSourceURI(Element e);
 }

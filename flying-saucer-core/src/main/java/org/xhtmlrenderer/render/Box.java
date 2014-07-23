@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -525,16 +526,17 @@ public abstract class Box implements Styleable {
 
         _workingMargin = null;
 
-        final String anchorName = c.getNamespaceHandler().getAnchorName(getElement());
-        if (anchorName != null) {
-            c.removeBoxId(anchorName);
+        final Optional<String> anchorName = c.getNamespaceHandler().getAnchorName(getElement());
+
+        if (anchorName.isPresent()) {
+            c.removeBoxId(anchorName.get());
         }
 
         final Element e = getElement();
         if (e != null) {
-            final String id = c.getNamespaceHandler().getID(e);
-            if (id != null) {
-                c.removeBoxId(id);
+            final Optional<String> id = c.getNamespaceHandler().getID(e);
+            if (id.isPresent()) {
+                c.removeBoxId(id.get());
             }
         }
     }

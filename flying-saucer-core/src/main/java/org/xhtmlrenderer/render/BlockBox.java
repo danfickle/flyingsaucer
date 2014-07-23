@@ -25,6 +25,7 @@ import java.awt.Rectangle;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.IdentValue;
@@ -759,13 +760,14 @@ public class BlockBox extends Box implements InlinePaintable {
 
     private void addBoxID(final LayoutContext c) {
         if (! isAnonymous()) {
-            final String name = c.getNamespaceHandler().getAnchorName(getElement());
-            if (name != null) {
-                c.addBoxId(name, this);
+            final Optional<String> name = c.getNamespaceHandler().getAnchorName(getElement());
+            if (name.isPresent()) {
+                c.addBoxId(name.get(), this);
             }
-            final String id = c.getNamespaceHandler().getID(getElement());
-            if (id != null) {
-                c.addBoxId(id, this);
+
+            final Optional<String> id = c.getNamespaceHandler().getID(getElement());
+            if (id.isPresent()) {
+            	c.addBoxId(id.get(), this);
             }
         }
     }

@@ -20,7 +20,9 @@
 package org.xhtmlrenderer.css.newmatch;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -210,12 +212,12 @@ abstract class Condition {
             if (attRes == null) {
                 return false;
             }
-            final String val = attRes.getAttributeValue(e, _namespaceURI, _name);
-            if (val == null) {
+            final Optional<String> val = attRes.getAttributeValue(e, _namespaceURI, _name);
+            if (!val.isPresent()) {
                 return false;
             }
             
-            return compare(val, _value);
+            return compare(val.get(), _value);
         }
     }
 
@@ -308,22 +310,21 @@ abstract class Condition {
             _className = className;
         }
 
-        boolean matches(final Object e, final AttributeResolver attRes, final TreeResolver treeRes) {
+        boolean matches(final Object e, final AttributeResolver attRes, final TreeResolver treeRes) 
+        {
             if (attRes == null) {
                 return false;
             }
-            final String c = attRes.getClass(e);
-            if (c == null) {
+            
+            final Optional<String> c = attRes.getClass(e);
+
+            if (!c.isPresent()) {
                 return false;
             }
-            final String[] ca = split(c, ' ');
-            boolean matched = false;
-            for (final String element : ca) {
-                if (_className.equals(element)) {
-                    matched = true;
-                }
-            }
-            return matched;
+            
+            final String[] ca = split(c.get(), ' ');
+            
+            return Arrays.stream(ca).anyMatch(s -> _className.equals(s));
         }
 
     }
@@ -340,7 +341,9 @@ abstract class Condition {
             if (attRes == null) {
                 return false;
             }
-            if (!_id.equals(attRes.getID(e))) {
+            Optional<String> id = attRes.getID(e);
+            
+            if (!id.isPresent() || !_id.equals(id.get())) {
                 return false;
             }
             return true;

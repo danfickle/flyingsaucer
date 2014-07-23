@@ -19,16 +19,10 @@ public class MediaQueryList
 	{
 		if (queryItems.isEmpty())
 			return true;
-		
-
-		for (MediaQueryItem item : queryItems)
-		{
-			// OR Semantics.
-			if (item.eval(ctx))
-				return true;
-		}
-		
-		return false;
+		else
+			return queryItems
+				.stream()
+				.anyMatch(item -> item.eval(ctx));
 	}
 	
 	@Override

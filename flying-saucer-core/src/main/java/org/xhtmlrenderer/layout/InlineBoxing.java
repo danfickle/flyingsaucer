@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.IdentValue;
@@ -136,13 +137,13 @@ public class InlineBoxing {
                     }
 
                     if (currentIB.getElement() != null) {
-                        final String name = c.getNamespaceHandler().getAnchorName(currentIB.getElement());
-                        if (name != null) {
-                            c.addBoxId(name, currentIB);
+                        final Optional<String> name = c.getNamespaceHandler().getAnchorName(currentIB.getElement());
+                        if (name.isPresent()) {
+                            c.addBoxId(name.get(), currentIB);
                         }
-                        final String id = c.getNamespaceHandler().getID(currentIB.getElement());
-                        if (id != null) {
-                            c.addBoxId(id, currentIB);
+                        final Optional<String> id = c.getNamespaceHandler().getID(currentIB.getElement());
+                        if (id.isPresent()) {
+                            c.addBoxId(id.get(), currentIB);
                         }
                     }
 
