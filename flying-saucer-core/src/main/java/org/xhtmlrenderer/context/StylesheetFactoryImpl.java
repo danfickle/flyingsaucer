@@ -21,6 +21,7 @@ package org.xhtmlrenderer.context;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,38 +70,46 @@ public class StylesheetFactoryImpl implements StylesheetFactory {
     /**
      * The caller is responsible for closing the Reader.
      */
-    public Stylesheet parse(final Reader reader, final StylesheetInfo info, boolean isInline) 
+    public Optional<Stylesheet> parse(final Reader reader, final StylesheetInfo info, boolean isInline) 
     {
-        try 
+        if (info.getUri().isPresent())
         {
-        	final Stylesheet s1 = _cssParser.parseStylesheet(info.getUri(), info.getOrigin(), reader);
+        	Stylesheet s1;
 
-        	// We only cache external stylesheets.
-        	if (!isInline && s1 != null)
-        	{
-        	   	_userAgentCallback.getResourceCache().putCssStylesheet(info.getUri(), s1);
-        	}
+        	try {
+				s1 = _cssParser.parseStylesheet(info.getUri().get(), info.getOrigin(), reader);
+			} catch (IOException e) {
+				return Optional.empty();
+			}
 
-        	return s1; 
-        }
-        catch (final IOException e) 
-        {
-            LOGGER.warn("Couldn't parse stylesheet at URI {}", info.getUri(), e);
-            return new Stylesheet(info.getUri(), info.getOrigin());
-        }
+
+       		if (!isInline)
+       		{
+            	// We only cache external stylesheets.
+       			_userAgentCallback.getResourceCache().putCssStylesheet(info.getUri().get(), s1);
+       		}
+       		
+       		return Optional.of(s1);
+       	}
+
+        LOGGER.warn("Couldn't parse stylesheet with no URI");
+        return Optional.empty();
     }
 
-    /**
-     * @return Returns null if uri could not be loaded
-     */
-    private Stylesheet parse(final StylesheetInfo info) {
-        final CSSResource cr = _userAgentCallback.getCSSResource(info.getUri());
+    private Optional<Stylesheet> parse(final StylesheetInfo info) {
 
-        if (cr == null)
+    	if (!info.getUri().isPresent())
+    		return Optional.empty();
+    	
+    	final Optional<CSSResource> cr = _userAgentCallback.getCSSResource(info.getUri().get());
+
+        if (!cr.isPresent())
         {
         	LOGGER.warn("Unable to retrieve stylesheet at url({})", info.getUri());
-        	return null;
+        	return Optional.empty();
         }
+        
+        final CSSResource cr2 = cr.get();
         
         // Q: Do @import rules use the original URI as the base for importing
         // other stylesheets or do they use the redirected URI.
@@ -109,34 +118,36 @@ public class StylesheetFactoryImpl implements StylesheetFactory {
         // http://stackoverflow.com/questions/7350994/ie-not-using-redirected-url-for-resolving-relative-urls
         // IE uses the previous URI while other browsers use the redirected URI.
         // So we'll go with the majority and screw IE.
-        info.setUri(cr.getUri());
+        info.setUri(Optional.of(cr2.getUri()));
         
         try {
-            final Stylesheet s1 = parse(cr.getReader(), info, false);
-            return s1;
+            return parse(cr2.getReader(), info, false);
         }
         finally {
             try {
-            	cr.getReader().close();
-                cr.onClose();
+            	cr2.getReader().close();
+                cr2.onClose();
             } catch (final IOException e) {
                 // ignore
             }
         }
     }
 
-    public Ruleset parseStyleDeclaration(final String uri, final CSSOrigin origin, final String styleDeclaration) 
+    public Optional<Ruleset> parseStyleDeclaration(final String uri, final CSSOrigin origin, final String styleDeclaration) 
     {
-        return _cssParser.parseDeclaration(uri, origin, styleDeclaration);
+        return Optional.ofNullable(_cssParser.parseDeclaration(uri, origin, styleDeclaration));
     }
 
-    public Stylesheet getStylesheet(final StylesheetInfo info) 
+    public Optional<Stylesheet> getStylesheet(final StylesheetInfo info) 
     {
         // Give the user agent the chance to return a cached
     	// Stylesheet instance.
-        final Stylesheet s1 = _userAgentCallback.getResourceCache().getCssStylesheet(info.getUri());
+    	if (!info.getUri().isPresent())
+    		return Optional.empty();
+    	
+    	final Optional<Stylesheet> s1 = _userAgentCallback.getResourceCache().getCssStylesheet(info.getUri().get());
 
-        if (s1 != null)
+        if (s1.isPresent())
         {
         	LOGGER.info("Stylesheet HIT for " + info.getUri());
         	return s1;

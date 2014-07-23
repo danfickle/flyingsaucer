@@ -19,8 +19,11 @@
  */
 package org.xhtmlrenderer.css.newmatch;
 
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Element;
 import org.xhtmlrenderer.css.extend.AttributeResolver;
 import org.xhtmlrenderer.css.extend.TreeResolver;
 import org.xhtmlrenderer.css.sheet.Ruleset;
@@ -77,24 +80,20 @@ public class Selector {
      * Check if the given Element matches this selector. Note: the parser should
      * give all class
      */
-    public boolean matches(final Object e, final AttributeResolver attRes, final TreeResolver treeRes) {
+    public boolean matches(final Element e, final AttributeResolver attRes, final TreeResolver treeRes) {
         if (siblingSelector != null) {
-            final Object sib = siblingSelector.getAppropriateSibling(e, treeRes);
-            if (sib == null) {
+            final Optional<Element> sib = siblingSelector.getAppropriateSibling(e, treeRes);
+            if (!sib.isPresent()) {
                 return false;
             }
-            if (!siblingSelector.matches(sib, attRes, treeRes)) {
+            if (!siblingSelector.matches(sib.get(), attRes, treeRes)) {
                 return false;
             }
         }
         if (_name == null || treeRes.matchesElement(e, _namespaceURI, _name)) {
             if (conditions != null) {
-                // all conditions need to be true
-                for (final Condition c : conditions) {
-                    if (!c.matches(e, attRes, treeRes)) {
-                        return false;
-                    }
-                }
+            	// all conditions need to be true
+            	return conditions.stream().allMatch(c -> c.matches(e, attRes, treeRes));
             }
             return true;
         }
@@ -105,13 +104,13 @@ public class Selector {
      * Check if the given Element matches this selector's dynamic properties.
      * Note: the parser should give all class
      */
-    public boolean matchesDynamic(final Object e, final AttributeResolver attRes, final TreeResolver treeRes) {
+    public boolean matchesDynamic(final Element e, final AttributeResolver attRes, final TreeResolver treeRes) {
         if (siblingSelector != null) {
-            final Object sib = siblingSelector.getAppropriateSibling(e, treeRes);
-            if (sib == null) {
+            final Optional<Element> sib = siblingSelector.getAppropriateSibling(e, treeRes);
+            if (!sib.isPresent()) {
                 return false;
             }
-            if (!siblingSelector.matchesDynamic(sib, attRes, treeRes)) {
+            if (!siblingSelector.matchesDynamic(sib.get(), attRes, treeRes)) {
                 return false;
             }
         }
@@ -396,14 +395,15 @@ public class Selector {
      * @param treeRes
      * @return The appropriateSibling value
      */
-    Object getAppropriateSibling(final Object e, final TreeResolver treeRes) {
-        Object sibling = null;
+    Optional<Element> getAppropriateSibling(final Element e, final TreeResolver treeRes) {
+        Optional<Element> sibling;
         switch (_axis) {
             case IMMEDIATE_SIBLING_AXIS:
                 sibling = treeRes.getPreviousSiblingElement(e);
                 break;
             default:
-                LOGGER.error("Bad sibling axis");
+            	sibling = Optional.empty();
+            	LOGGER.error("Bad sibling axis");
         }
         return sibling;
     }

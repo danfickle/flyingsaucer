@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.xhtmlrenderer.css.constants.CSSName;
@@ -2237,7 +2238,8 @@ public class CSSParser {
                 // Relative URIs are resolved relative to CSS file, not XHTML file
                 if (_uac != null) 
                 {
-                	uriResult = _uac.resolveURI(_URI, uriResult);
+                	Optional<String> oUriResult = _uac.resolveURI(_URI, uriResult);
+                	uriResult = oUriResult.orElse(null);
                 }
                 else if (isRelativeURI(uriResult)) {
                     final int lastSlash = _URI.lastIndexOf('/');

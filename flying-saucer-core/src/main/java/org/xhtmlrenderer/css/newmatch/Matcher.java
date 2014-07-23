@@ -28,11 +28,13 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Element;
 import org.xhtmlrenderer.css.constants.MarginBoxName;
 import org.xhtmlrenderer.css.extend.AttributeResolver;
 import org.xhtmlrenderer.css.extend.StylesheetFactory;
@@ -45,7 +47,6 @@ import org.xhtmlrenderer.css.sheet.Ruleset;
 import org.xhtmlrenderer.css.sheet.Stylesheet;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
 import org.xhtmlrenderer.layout.SharedContext;
-import org.xhtmlrenderer.util.Util;
 
 
 /**
@@ -87,7 +88,7 @@ public class Matcher {
         _map.remove(e);
     }
 
-    public CascadedStyle getCascadedStyle(final String uri, final Object e, final boolean restyle) {
+    public CascadedStyle getCascadedStyle(final String uri, final Element e, final boolean restyle) {
         synchronized (e) {
             Mapper em;
             if (!restyle) {
@@ -103,11 +104,9 @@ public class Matcher {
      * May return null.
      * We assume that restyle has already been done by a getCascadedStyle if necessary.
      */
-    public CascadedStyle getPECascadedStyle(final Object e, final String pseudoElement) {
-        synchronized (e) {
-            final Mapper em = getMapper(e);
-            return em.getPECascadedStyle(e, pseudoElement);
-        }
+    public CascadedStyle getPECascadedStyle(final Element e, final String pseudoElement) {
+    	final Mapper em = getMapper(e);
+        return em.getPECascadedStyle(e, pseudoElement);
     }
     
     public PageInfo getPageCascadedStyle(final String pageName, final String pseudoPage) {
@@ -139,18 +138,17 @@ public class Matcher {
         return _visitElements.contains(e);
     }
 
-    protected Mapper matchElement(final Object e) {
-        synchronized (e) {
-            final Object parent = _treeRes.getParentElement(e);
-            Mapper child;
-            if (parent != null) {
-                final Mapper m = getMapper(parent);
-                child = m.mapChild(e);
-            } else {//has to be document or fragment node
-                child = docMapper.mapChild(e);
-            }
-            return child;
-        }
+    protected Mapper matchElement(final Element e) {
+       final Optional<Element> parent = _treeRes.getParentElement(e);
+       Mapper child;
+
+       if (parent.isPresent()) {
+    	   final Mapper m = getMapper(parent.get());
+    	   child = m.mapChild(e);
+       } else {//has to be document or fragment node
+    	   child = docMapper.mapChild(e);
+       }
+       return child;
     }
 
     Mapper createDocumentMapper(final List<Stylesheet> stylesheets, final SharedContext sharedCtx) {
@@ -215,7 +213,7 @@ public class Matcher {
         _visitElements = Collections.synchronizedSet(new java.util.HashSet<Object>());
     }
 
-    private Mapper getMapper(final Object e) {
+    private Mapper getMapper(final Element e) {
         Mapper m = _map.get(e);
         if (m != null) {
             return m;
@@ -271,33 +269,30 @@ public class Matcher {
                 };
     }
 
-    private org.xhtmlrenderer.css.sheet.Ruleset getElementStyle(final String uri, final Object e) {
-        synchronized (e) {
-            if (_attRes == null || _styleFactory == null) {
-                return null;
-            }
+    private Optional<org.xhtmlrenderer.css.sheet.Ruleset> getElementStyle(final String uri, final Object e) {
+       if (_attRes == null || _styleFactory == null) {
+           return Optional.empty();
+       }
             
-            final String style = _attRes.getElementStyling(e);
-            if (Util.isNullOrEmpty(style)) {
-                return null;
-            }
+       final Optional<String> style = _attRes.getElementStyling(e);
+
+       if (!style.isPresent() || style.get().isEmpty()) {
+    	   return Optional.empty();
+       }
             
-            return _styleFactory.parseStyleDeclaration(uri, CSSOrigin.AUTHOR, style);
-        }
+       return _styleFactory.parseStyleDeclaration(uri, CSSOrigin.AUTHOR, style.get());
     }
 
-    private org.xhtmlrenderer.css.sheet.Ruleset getNonCssStyle(final String uri, final Object e) {
-        synchronized (e) {
+    private Optional<org.xhtmlrenderer.css.sheet.Ruleset> getNonCssStyle(final String uri, final Object e) {
             if (_attRes == null || _styleFactory == null) {
-                return null;
+                return Optional.empty();
             }
-            final String style = _attRes.getNonCssStyling(e);
-            if (Util.isNullOrEmpty(style)) {
-                return null;
+            final Optional<String> style = _attRes.getNonCssStyling(e);
+            if (!style.isPresent() || style.get().isEmpty()) {
+                return Optional.empty();
             }
 
-            return _styleFactory.parseStyleDeclaration(uri, CSSOrigin.AUTHOR, style);
-        }
+            return _styleFactory.parseStyleDeclaration(uri, CSSOrigin.AUTHOR, style.get());
     }
 
     /**
@@ -327,7 +322,7 @@ public class Matcher {
          * @return The selectors that matched, sorted according to specificity
          *         (more correct: preserves the sort order from Matcher creation)
          */
-        Mapper mapChild(final Object e) {
+        Mapper mapChild(final Element e) {
             //Mapper childMapper = new Mapper();
             final java.util.List<Selector> childAxes = new ArrayList<Selector>(axes.size() + 10);
             final java.util.HashMap<String, List<Selector>> pseudoSelectors = new java.util.HashMap<String, List<Selector>>();
@@ -398,12 +393,12 @@ public class Matcher {
             CascadedStyle result;
             synchronized (e) {
                 CascadedStyle cs = null;
-                final org.xhtmlrenderer.css.sheet.Ruleset elementStyling = getElementStyle(uri, e);
-                final org.xhtmlrenderer.css.sheet.Ruleset nonCssStyling = getNonCssStyle(uri, e);
+                final Optional<org.xhtmlrenderer.css.sheet.Ruleset> elementStyling = getElementStyle(uri, e);
+                final Optional<org.xhtmlrenderer.css.sheet.Ruleset> nonCssStyling = getNonCssStyle(uri, e);
                 final List<PropertyDeclaration> propList = new LinkedList<PropertyDeclaration>();
                 //specificity 0,0,0,0
-                if (nonCssStyling != null) {
-                    propList.addAll(nonCssStyling.getPropertyDeclarations());
+                if (nonCssStyling.isPresent()) {
+                    propList.addAll(nonCssStyling.get().getPropertyDeclarations());
                 }
                 //these should have been returned in order of specificity
                 for (final Iterator<Ruleset> i = getMatchedRulesets(mappedSelectors); i.hasNext();) {
@@ -411,8 +406,8 @@ public class Matcher {
                     propList.addAll(rs.getPropertyDeclarations());
                 }
                 //specificity 1,0,0,0
-                if (elementStyling != null) {
-                    propList.addAll(elementStyling.getPropertyDeclarations());
+                if (elementStyling.isPresent()) {
+                    propList.addAll(elementStyling.get().getPropertyDeclarations());
                 }
                 if (propList.size() == 0)
                     cs = CascadedStyle.emptyCascadedStyle;

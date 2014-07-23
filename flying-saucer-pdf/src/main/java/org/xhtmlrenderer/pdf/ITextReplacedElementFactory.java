@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -59,15 +60,19 @@ public class ITextReplacedElementFactory implements ReplacedElementFactory {
 
             if (srcAttr != null && srcAttr.length() > 0) 
             {
-            	final String resolved = uac.resolveURI(c.getSharedContext().getBaseURL(), srcAttr);
-            	final FSImage fsImage = uac.getImageResource(resolved).getImage();
+            	final Optional<String> resolved = uac.resolveURI(c.getSharedContext().getBaseURL(), srcAttr);
 
-            	if (fsImage != null) {
-                    if (cssWidth != -1 || cssHeight != -1) {
-                        fsImage.scale(cssWidth, cssHeight);
-                    }
-                    return new ITextImageElement(fsImage);
-                }
+            	if (resolved.isPresent())
+            	{
+	            	final FSImage fsImage = uac.getImageResource(resolved.get()).getImage();
+	
+	            	if (fsImage != null) {
+	                    if (cssWidth != -1 || cssHeight != -1) {
+	                        fsImage.scale(cssWidth, cssHeight);
+	                    }
+	                    return new ITextImageElement(fsImage);
+	                }
+            	}
             }
 
         } else if (nodeName.equals("input")) {

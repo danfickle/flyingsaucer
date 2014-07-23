@@ -22,10 +22,13 @@ package org.xhtmlrenderer.demo.browser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.resource.HTMLResource;
+
 import com.github.neoflyingsaucer.defaultuseragent.DefaultUserAgent;
+
 import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -49,15 +52,17 @@ public class PanelManager extends DefaultUserAgent {
      * a public one: demo: to jar:.
      */
     @Override
-    public String resolveURI(String baseUri, String uriRel) {
+    public Optional<String> resolveURI(String baseUri, String uriRel) {
 
-    	String resolvedUri = super.resolveURI(baseUri, uriRel);
+    	Optional<String> oResolvedUri = super.resolveURI(baseUri, uriRel);
     	
-    	if (resolvedUri == null)
+    	if (!oResolvedUri.isPresent())
     	{
-    		return null;
+    		return Optional.empty();
     	}
-    	else if (resolvedUri.startsWith("demo:")) 
+    	String resolvedUri = oResolvedUri.get();
+    	
+    	if (resolvedUri.startsWith("demo:")) 
         {
             final DemoMarker marker = new DemoMarker();
             String shortUrl = resolvedUri.substring(5);
@@ -65,7 +70,7 @@ public class PanelManager extends DefaultUserAgent {
                 shortUrl = "/" + shortUrl;
             }
             URL ref = marker.getClass().getResource(shortUrl);
-            return ref.toString();
+            return Optional.ofNullable(ref.toString());
         }
         else if (resolvedUri.startsWith("demoNav:")) 
         {
@@ -75,16 +80,16 @@ public class PanelManager extends DefaultUserAgent {
                 shortUrl = "/" + shortUrl;
             }
             URL ref = marker.getClass().getResource(shortUrl);
-            return ref.toString();
+            return Optional.ofNullable(ref.toString());
         }
         else
         {
-        	return resolvedUri;
+        	return oResolvedUri;
         }
     }
 
     @Override
-    public HTMLResource getHTMLResource(String uri) 
+    public Optional<HTMLResource> getHTMLResource(String uri) 
     {
     	history.add(uri);
     	return super.getHTMLResource(uri);

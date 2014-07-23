@@ -23,6 +23,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,24 +95,26 @@ public class StyleReference {
                 _context);
     }
     
-    private List<Stylesheet> readAndParseAll(final List<StylesheetInfo> infos, final String medium) {
+    private List<Stylesheet> readAndParseAll(final List<StylesheetInfo> infos, final String medium) 
+    {
         final List<Stylesheet> result = new ArrayList<Stylesheet>(infos.size() + 15);
+
         for (final StylesheetInfo info : infos) {
             if (info.appliesToMedia(_context)) {
-                Stylesheet sheet = info.getStylesheet();
+                Optional<Stylesheet> sheet = info.getStylesheet();
                 
-                if (sheet == null) {
+                if (!sheet.isPresent()) {
                     sheet = _stylesheetFactory.getStylesheet(info);
                 }
                 
-                if (sheet != null)
+                if (sheet.isPresent())
                 {
-                	if (sheet.getImportRules().size() > 0) 
+                	if (!sheet.get().getImportRules().isEmpty()) 
                 	{
-                		result.addAll(readAndParseAll(sheet.getImportRules(), medium));
+                		result.addAll(readAndParseAll(sheet.get().getImportRules(), medium));
                 	}
 
-                	result.add(sheet);
+                	result.add(sheet.get());
                 }
             }
         }
@@ -200,19 +203,26 @@ public class StyleReference {
         int inlineStyleCount = 0;
         if (refs != null) {
             for (int i = 0; i < refs.size(); i++) {
-                String uri;
+                Optional<String> uri;
                 
-                if (! refs.get(i).isInline()) {
+                if (! refs.get(i).isInline()) 
+                {
+                	if (refs.get(i).getUri().isPresent())
+                	{
+                		// TODO: Make sure we have the correct base url.
+                		uri = _uac.resolveURI(_context.getBaseURL(), refs.get(i).getUri().get());
+                		refs.get(i).setUri(uri);
+                	}
+                }
+                else {
                 	// TODO: Make sure we have the correct base url.
-                	uri = _uac.resolveURI(_context.getBaseURL(), refs.get(i).getUri());
-                    refs.get(i).setUri(uri);
-                } else {
-                	// TODO: Make sure we have the correct base url.
-                	refs.get(i).setUri(_context.getBaseURL() + "#inline_style_" + (++inlineStyleCount));
-                    final Stylesheet sheet = _stylesheetFactory.parse(
+                	refs.get(i).setUri(Optional.of(_context.getBaseURL() + "#inline_style_" + (++inlineStyleCount)));
+
+                	final Optional<Stylesheet> sheet = _stylesheetFactory.parse(
                             new StringReader(refs.get(i).getContent()), refs.get(i), true);
-                    refs.get(i).setStylesheet(sheet);
-                    refs.get(i).setUri(null);
+
+                    if (sheet.isPresent())
+                    	refs.get(i).setStylesheet(sheet.get());
                 }
             }
         }

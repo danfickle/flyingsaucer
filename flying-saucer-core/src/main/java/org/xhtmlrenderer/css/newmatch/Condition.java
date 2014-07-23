@@ -362,14 +362,14 @@ abstract class Condition {
             if (attRes == null) {
                 return false;
             }
-            final String lang = attRes.getLang(e);
-            if (lang == null) {
+            final Optional<String> lang = attRes.getLang(e);
+            if (!lang.isPresent()) {
                 return false;
             }
-            if(_lang.equalsIgnoreCase(lang)) {
+            if(_lang.equalsIgnoreCase(lang.get())) {
                 return true;
             }
-            final String[] ca = split(lang, '-');
+            final String[] ca = split(lang.get(), '-');
             if (_lang.equalsIgnoreCase(ca[0])) {
                 return true;
             }

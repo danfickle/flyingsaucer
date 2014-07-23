@@ -19,6 +19,8 @@
  */
 package org.xhtmlrenderer.css.sheet;
 
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.mediaquery.MediaQueryList;
@@ -43,7 +45,7 @@ public class StylesheetInfo {
 	private Stylesheet stylesheet = null;
 
 	private String title;
-    private String uri;
+    private Optional<String> uri;
     private CSSOrigin origin = CSSOrigin.USER_AGENT;
     private String type;
     private MediaQueryList mediaQueryList;
@@ -80,7 +82,7 @@ public class StylesheetInfo {
      *
      * @param uri  The new uri value
      */
-    public void setUri( final String uri ) {
+    public void setUri( final Optional<String> uri ) {
         this.uri = uri;
     }
 
@@ -125,7 +127,7 @@ public class StylesheetInfo {
      *
      * @return   The uri value
      */
-    public String getUri() {
+    public Optional<String> getUri() {
         return uri;
     }
 
@@ -165,8 +167,8 @@ public class StylesheetInfo {
      *
      * @return   The stylesheet value
      */
-    public Stylesheet getStylesheet() {
-        return stylesheet;
+    public Optional<Stylesheet> getStylesheet() {
+        return Optional.ofNullable(stylesheet);
     }
 
     public String getContent() {

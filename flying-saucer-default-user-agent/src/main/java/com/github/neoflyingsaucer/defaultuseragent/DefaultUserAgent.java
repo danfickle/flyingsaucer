@@ -26,13 +26,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import javax.imageio.ImageIO;
@@ -138,7 +138,7 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
      * @return A CSSResource containing the parsed CSS.
      */
     @Override
-    public CSSResource getCSSResource(String uri)
+    public Optional<CSSResource> getCSSResource(String uri)
     {
         try
         {
@@ -146,24 +146,19 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
         	sr.connect();
         	final InputStream bs = sr.bufferedStream();
         	
-        	return new CSSResource(sr.getFinalUri(), new InputStreamReader(bs, "UTF-8"))
+        	return Optional.of(new CSSResource(sr.getFinalUri(), new InputStreamReader(bs, "UTF-8"))
         	{
         		@Override
         		public void onClose() throws IOException 
         		{
         			bs.close();
         		}
-        	};
-		}
-        catch (UnsupportedEncodingException e) 
-        {
-			LOGGER.warn("UTF-8 not supported", e);
-			return null;
+        	});
 		}
         catch (IOException e) 
         {
         	LOGGER.warn("I/O problem", e);
-			return null;
+			return Optional.empty();
 		}
     }
 
@@ -247,7 +242,7 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
      * @return An XMLResource containing the image.
      */
     @Override
-    public HTMLResource getHTMLResource(String uri) 
+    public Optional<HTMLResource> getHTMLResource(String uri) 
     {
         HTMLResourceHelper xmlResource;
         InputStream bs = null;
@@ -261,7 +256,7 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
         } catch (IOException e) {
 			// TODO
 			LOGGER.error("I/O Problem", e);
-			return null;
+			return Optional.empty();
 		} finally {
             if (bs != null) {
                 try {
@@ -271,7 +266,7 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
                 }
             }
         }
-        return new HTMLResource(sr.getFinalUri(), xmlResource.getDocument()); 
+        return Optional.of(new HTMLResource(sr.getFinalUri(), xmlResource.getDocument())); 
     }
 
     @Override
@@ -333,22 +328,22 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
      * @return A URI as String, resolved, or null if there was an exception (for example if the URI is malformed).
      */
     @Override
-    public String resolveURI(String baseUri, String uri) 
+    public Optional<String> resolveURI(String baseUri, String uri) 
     {
         if (uri == null && baseUri == null)
-        	return null;
+        	return Optional.empty();
 
         if (baseUri == null) 
         {
         	try 
         	{
         		URI result = new URI(uri);
-        		return result.normalize().toString();
+        		return Optional.of(result.normalize().toString());
         	}
         	catch (URISyntaxException e)
         	{
         		LOGGER.warn("Unable to parse URI: {}", uri, e);
-        		return null;
+        		return Optional.empty();
         	}
         }
         else
@@ -359,12 +354,12 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
         		URI rel = new URI(uri);
 
         		URI absolute = base.resolve(rel);
-        		return absolute.normalize().toString();
+        		return Optional.of(absolute.normalize().toString());
         	}
         	catch (URISyntaxException e)
         	{
         		LOGGER.warn("Unable to parse URI base/rel pair: {} => {}", baseUri, uri, e);
-        		return null;
+        		return Optional.empty();
         	}
         }
     }

@@ -37,17 +37,19 @@ public interface NamespaceHandler
 {
     /**
      * @return the default CSS stylesheet for this namespace
+     * May NOT return null.
      */
     StylesheetInfo getDefaultStylesheet(StylesheetFactory factory);
 
     /**
      * @return the title for this document, if any exists
      */
-    String getDocumentTitle(Document doc);
+    Optional<String> getDocumentTitle(Document doc);
 
     /**
      * @return all links to CSS stylesheets (type="text/css") in this
      *         document
+     * May NOT return null.
      */
     List<StylesheetInfo> getStylesheets(Document doc);
 
@@ -70,19 +72,19 @@ public interface NamespaceHandler
     Optional<String> getID(Element e);
 
     /**
-     * may NOT return null
+     * may return null
      */
-    String getElementStyling(Element e);
+    Optional<String> getElementStyling(Element e);
 
     /**
-     * may NOT return null
+     * may return null
      */
-    String getNonCssStyling(Element e);
+    Optional<String> getNonCssStyling(Element e);
 
     /**
-     * may NOT return null
+     * may return null
      */
-    String getLang(Element e);
+    Optional<String> getLang(Element e);
 
     /**
      * should return null if element is not a link

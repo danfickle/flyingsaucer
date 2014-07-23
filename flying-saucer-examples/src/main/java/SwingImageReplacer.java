@@ -78,11 +78,15 @@ public class SwingImageReplacer extends ElementReplacer {
             } else {
                 //FSImage is here since we need to capture a target H/W
                 //for the image (as opposed to what the actual image size is).
-            	final String resolved = uac.resolveURI(context.getSharedContext().getBaseURL(), oImageSrc.get());
-                final FSImage fsImage = uac.getImageResource(resolved).getImage();
-                if (fsImage != null) {
-                    im = ((AWTFSImage) fsImage).getImage();
-                }
+            	final Optional<String> resolved = uac.resolveURI(context.getSharedContext().getBaseURL(), oImageSrc.get());
+
+            	if (resolved.isPresent())
+            	{
+            		final FSImage fsImage = uac.getImageResource(resolved.get()).getImage();
+            		if (fsImage != null) {
+            			im = ((AWTFSImage) fsImage).getImage();
+            		}
+            	}
 
                 if (im != null) {
                     re = new ImageReplacedElement(im, cssWidth, cssHeight);

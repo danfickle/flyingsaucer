@@ -19,6 +19,11 @@
  */
 package org.xhtmlrenderer.css.extend;
 
+import java.util.Optional;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
 /**
  * @author scott
  *         <p/>
@@ -33,17 +38,19 @@ public interface TreeResolver {
     /**
      * returns the parent element of an element, or null if this was the root element
      */
-    Object getParentElement(Object element);
+    Optional<Element> getParentElement(Element element);
 
     /**
-     * returns the name of the element so that it may match against the selectors
+     * returns the name of the element so that
+     * it may match against the selectors
+     * May NOT return null.
      */
-    String getElementName(Object element);
+    String getElementName(Element element);
 
     /**
      * The previous sibling element, or null if none exists
      */
-    Object getPreviousSiblingElement(Object node);
+    Optional<Element> getPreviousSiblingElement(Element node);
 
     /**
      * returns true if this element is the first child element of its parent

@@ -23,13 +23,12 @@ package org.xhtmlrenderer.pdf;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.Map;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.extend.FSErrorType;
-import org.xhtmlrenderer.extend.FSImage;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.layout.SharedContext;
 import org.xhtmlrenderer.resource.CSSResource;
@@ -40,9 +39,6 @@ import org.xhtmlrenderer.swing.ImageResourceLoader;
 
 import com.lowagie.text.BadElementException;
 import com.lowagie.text.Image;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.PdfReader;
-
 import org.xhtmlrenderer.util.ImageUtil;
 import org.xhtmlrenderer.util.LangId;
 
@@ -139,12 +135,12 @@ public class ITextUserAgent implements UserAgentCallback {
     }
 
 	@Override
-	public CSSResource getCSSResource(String uri) {
+	public Optional<CSSResource> getCSSResource(String uri) {
 		return _chainedUac.getCSSResource(uri);
 	}
 
 	@Override
-	public HTMLResource getHTMLResource(String uri) {
+	public Optional<HTMLResource> getHTMLResource(String uri) {
 		return _chainedUac.getHTMLResource(uri);
 	}
 
@@ -164,7 +160,7 @@ public class ITextUserAgent implements UserAgentCallback {
 	}
 
 	@Override
-	public String resolveURI(String baseUri, String uri) {
+	public Optional<String> resolveURI(String baseUri, String uri) {
 		return _chainedUac.resolveURI(baseUri, uri);
 	}
 

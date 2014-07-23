@@ -110,14 +110,25 @@ public class SwingReplacedElementFactory implements ReplacedElementFactory {
         } else {
             // lookup in cache, or instantiate
         	// TODO: Make sure we have the correct base uri.
-            final String ruri = uac.resolveURI(context.getSharedContext().getBaseURL(), imageSrc);
-            re = lookupImageReplacedElement(elem, ruri, cssWidth, cssHeight);
-            if (re == null) {
-                LOGGER.debug("Swing: Image " + ruri + " requested at " + " to " + cssWidth + ", " + cssHeight);
+            final Optional<String> ruri = uac.resolveURI(context.getSharedContext().getBaseURL(), imageSrc);
 
-                final ImageResource imageResource = uac.getImageResourceCache().get(ruri, cssWidth, cssHeight);
-                re = new ImageReplacedElement(((AWTFSImage) imageResource.getImage()).getImage(), cssWidth, cssHeight);
-                storeImageReplacedElement(elem, re, ruri, cssWidth, cssHeight);
+            if (ruri.isPresent())
+            {
+            	re = lookupImageReplacedElement(elem, ruri.get(), cssWidth, cssHeight);
+           
+            	if (re == null) {
+            		LOGGER.debug("Swing: Image " + ruri + " requested at " + " to " + cssWidth + ", " + cssHeight);
+
+            		final ImageResource imageResource = uac.getImageResourceCache().get(ruri.get(), cssWidth, cssHeight);
+            		// TODO: ImageResource may be null.
+            		
+            		re = new ImageReplacedElement(((AWTFSImage) imageResource.getImage()).getImage(), cssWidth, cssHeight);
+            		storeImageReplacedElement(elem, re, ruri.get(), cssWidth, cssHeight);
+            	}
+            }
+            else
+            {
+            	return newIrreplaceableImageElement(cssWidth, cssHeight);
             }
         }
         return re;

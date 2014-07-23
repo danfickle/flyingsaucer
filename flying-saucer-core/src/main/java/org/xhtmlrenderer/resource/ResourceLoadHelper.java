@@ -1,5 +1,7 @@
 package org.xhtmlrenderer.resource;
 
+import java.util.Optional;
+
 import org.w3c.dom.Document;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 
@@ -8,24 +10,24 @@ public class ResourceLoadHelper
 	public static HTMLResource loadHtmlDocument(String uri, UserAgentCallback uac)
 	{
 		// First give the uac a chance to resolve the uri.
-		String resolved = uac.resolveURI(null, uri);
+		Optional<String> resolved = uac.resolveURI(null, uri);
 		
-		if (resolved != null)
+		if (resolved.isPresent())
 		{
 			// Second, try to get it from the uac cache.
-			Document doc = uac.getResourceCache().getHtmlDocument(resolved);
+			Optional<Document> doc = uac.getResourceCache().getHtmlDocument(resolved.get());
 
-			if (doc != null)
-				return new HTMLResource(resolved, doc);
+			if (doc.isPresent())
+				return new HTMLResource(resolved.get(), doc.get());
 		
 			// Third try to get it from the uac proper.
-			HTMLResource res = uac.getHTMLResource(resolved);
+			Optional<HTMLResource> res = uac.getHTMLResource(resolved.get());
 			
-			if (res != null)
-				return res;
+			if (res.isPresent())
+				return res.get();
 		}
 		
 		// Finally, return a 404 (not-found) error document.
-		return uac.getErrorDocument(resolved, 404);
+		return uac.getErrorDocument(resolved.get(), 404);
 	}
 }

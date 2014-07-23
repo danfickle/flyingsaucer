@@ -19,6 +19,8 @@
  */
 package org.xhtmlrenderer.css.extend.lib;
 
+import java.util.Optional;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -31,29 +33,34 @@ import org.xhtmlrenderer.css.extend.TreeResolver;
  *         works for a w3c DOM tree
  */
 public class DOMTreeResolver implements TreeResolver {
-    public Object getParentElement(final Object element) {
+    @Override
+	public Optional<Element> getParentElement(final Element element) {
         Node parent = ((Element) element).getParentNode();
-        if (!(parent instanceof Element) || parent instanceof Document) parent = null;
-        return parent;
+
+        if (!(parent instanceof Element) || parent instanceof Document)
+        	parent = null;
+        
+        return Optional.ofNullable((Element) parent);
     }
 
-    public Object getPreviousSiblingElement(final Object element) {
+    @Override
+     public Optional<Element> getPreviousSiblingElement(final Element element) {
         Node sibling = ((Element) element).getPreviousSibling();
         while (sibling != null && !(sibling instanceof Element)) {
             sibling = sibling.getPreviousSibling();
         }
         if (sibling == null || !(sibling instanceof Element)) {
-            return null;
+            return Optional.empty();
         }
-        return sibling;
+        return Optional.of((Element) sibling);
     }
 
-    public String getElementName(final Object element) {
-        final String name = ((Element) element).getNodeName();
-//        if (name == null) name = ((Element) element).getNodeName();
-        return name;
+    @Override
+    public String getElementName(final Element element) {
+        return ((Element) element).getNodeName();
     }
-
+    
+    @Override
     public boolean isFirstChildElement(final Object element) {
         final Node parent = ((Element) element).getParentNode();
         Node currentChild = parent.getFirstChild();
@@ -63,6 +70,7 @@ public class DOMTreeResolver implements TreeResolver {
         return currentChild == element;
     }
 
+    @Override
     public boolean isLastChildElement(final Object element) {
         final Node parent = ((Element) element).getParentNode();
         Node currentChild = parent.getLastChild();
@@ -72,6 +80,7 @@ public class DOMTreeResolver implements TreeResolver {
         return currentChild == element;
     }
 
+    @Override
     public boolean matchesElement(final Object element, final String namespaceURI, final String name) {
         final Element e = (Element)element;
         final String localName = e.getNodeName();
@@ -93,6 +102,7 @@ public class DOMTreeResolver implements TreeResolver {
         }
     }
     
+    @Override
     public int getPositionOfElement(final Object element) {
         final Node parent = ((Element) element).getParentNode();
         final NodeList nl = parent.getChildNodes();

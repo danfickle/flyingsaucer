@@ -19,6 +19,8 @@
  */
 package org.xhtmlrenderer.extend;
 
+import java.util.Optional;
+
 import org.xhtmlrenderer.resource.CSSResource;
 import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.resource.ImageResource;
@@ -58,7 +60,7 @@ public interface UserAgentCallback {
      * @param uri Location of the CSS (returned from resolveURI).
      * @return A CSSResource for the CSS at the uri or null if not available.
      */
-    CSSResource getCSSResource(String uri);
+    Optional<CSSResource> getCSSResource(String uri);
 
     /**
      * Retrieves the Image at the given URI. This is a synchronous call.
@@ -75,8 +77,12 @@ public interface UserAgentCallback {
      * @param uri Location of the HTML (returned from resolveURI).
      * @return A HTMLResource for the content at the URI.
      */
-    HTMLResource getHTMLResource(String uri);
+    Optional<HTMLResource> getHTMLResource(String uri);
     
+    /**
+     * Gets a error document for a specific error code such as 404.
+	 * May NOT return null.
+     */
     HTMLResource getErrorDocument(String uri, int errorCode);
     
     /**
@@ -102,7 +108,7 @@ public interface UserAgentCallback {
      * @param uri an absolute or relative uri to be resolved.
      * @return the full uri in uri-spaces known to the current implementation.
      */
-    String resolveURI(String baseUri, String uri);
+    Optional<String> resolveURI(String baseUri, String uri);
 	
 	ImageResourceLoader getImageResourceCache();
 	

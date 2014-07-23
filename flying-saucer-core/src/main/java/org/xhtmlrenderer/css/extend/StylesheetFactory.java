@@ -20,6 +20,7 @@
 package org.xhtmlrenderer.css.extend;
 
 import java.io.Reader;
+import java.util.Optional;
 
 import org.xhtmlrenderer.css.sheet.Ruleset;
 import org.xhtmlrenderer.css.sheet.Stylesheet;
@@ -35,8 +36,8 @@ import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
  * @author Torbjoern Gannholm
  */
 public interface StylesheetFactory {
-    Stylesheet parse(Reader reader, StylesheetInfo info, boolean isInline);
-    Ruleset parseStyleDeclaration(String uri, CSSOrigin author, String style);
+    Optional<Stylesheet> parse(Reader reader, StylesheetInfo info, boolean isInline);
+    Optional<Ruleset> parseStyleDeclaration(String uri, CSSOrigin author, String style);
 
-    Stylesheet getStylesheet(StylesheetInfo si);
+    Optional<Stylesheet> getStylesheet(StylesheetInfo si);
 }

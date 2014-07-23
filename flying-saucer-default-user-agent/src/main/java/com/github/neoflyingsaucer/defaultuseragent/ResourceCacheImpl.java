@@ -1,6 +1,7 @@
 package com.github.neoflyingsaucer.defaultuseragent;
 
 import java.util.Map;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,15 +63,15 @@ public class ResourceCacheImpl implements ResourceCache
 	}
 
 	@Override
-	public Stylesheet getCssStylesheet(String resolvedUri) 
+	public Optional<Stylesheet> getCssStylesheet(String resolvedUri) 
 	{
-		return _cache.get(resolvedUri);
+		return Optional.ofNullable(_cache.get(resolvedUri));
 	}
 
 	@Override
-	public Document getHtmlDocument(String resolvedUri) 
+	public Optional<Document> getHtmlDocument(String resolvedUri) 
 	{
-		return _docCache.get(resolvedUri);
+		return Optional.ofNullable(_docCache.get(resolvedUri));
 	}
 
 	@Override

@@ -90,7 +90,7 @@ public class StandardAttributeResolver implements AttributeResolver {
     }
 
     @Override
-    public String getNonCssStyling(final Object e) {
+    public Optional<String> getNonCssStyling(final Object e) {
         return nsh.getNonCssStyling((Element) e);
     }
 
@@ -101,7 +101,7 @@ public class StandardAttributeResolver implements AttributeResolver {
      * @return The elementStyling value
      */
     @Override
-    public String getElementStyling(final Object e) {
+    public Optional<String> getElementStyling(final Object e) {
         return nsh.getElementStyling((Element) e);
     }
 
@@ -112,7 +112,7 @@ public class StandardAttributeResolver implements AttributeResolver {
      * @return The lang value
      */
     @Override
-    public String getLang(final Object e) {
+    public Optional<String> getLang(final Object e) {
         return nsh.getLang((Element) e);
     }
 

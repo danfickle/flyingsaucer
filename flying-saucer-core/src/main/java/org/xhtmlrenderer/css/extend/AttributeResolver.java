@@ -67,12 +67,12 @@ public interface AttributeResolver {
     public Optional<String> getID(Object e);
 
     /**
-     * may NOT return null
+     * may return null
      *
      * @param e PARAM
      * @return The non css styling (specificity 0,0,0,0 on author styles, according to css 2.1)
      */
-    public String getNonCssStyling(Object e);
+    public Optional<String> getNonCssStyling(Object e);
 
     /**
      * may return null
@@ -81,7 +81,7 @@ public interface AttributeResolver {
      * @return The elementStyling value
      *         (corresponding to xhtml style attribute, specificity 1,0,0,0 according to css 2.1)
      */
-    public String getElementStyling(Object e);
+    public Optional<String> getElementStyling(Object e);
 
     /**
      * may return null
@@ -89,7 +89,7 @@ public interface AttributeResolver {
      * @param e PARAM
      * @return The lang value
      */
-    public String getLang(Object e);
+    public Optional<String> getLang(Object e);
 
     /**
      * Gets the link attribute of the AttributeResolver object

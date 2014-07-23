@@ -140,7 +140,7 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
 
         info.setType("text/css");
         info.setOrigin(StylesheetInfo.CSSOrigin.AUTHOR);
-        info.setUri(link.getAttribute("href"));
+        info.setUri(link.hasAttribute("href") ? Optional.of(link.getAttribute("href")) : Optional.empty());
         info.setTitle(link.getAttribute("title"));
         
         if (!link.hasAttribute("media") || link.getAttribute("media").isEmpty()) 
@@ -181,7 +181,7 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
 	            
 	          info.setOrigin(StylesheetInfo.CSSOrigin.AUTHOR);
 	          info.setType("text/css");
-	          info.setUri(piNode.getAttribute("href"));
+	          info.setUri(piNode.hasAttribute("href") ? Optional.of(piNode.getAttribute("href")) : Optional.empty());
 	          info.setTitle(piNode.getAttribute("title"));
 	
 	          if (piNode.hasAttribute("media") &&
@@ -211,15 +211,15 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
     }
 
     @Override
-    public String getLang(final Element e) 
+    public Optional<String> getLang(final Element e) 
     {
         if (!e.hasAttribute("lang") || e.getAttribute("lang").isEmpty()) 
         {
             final String lang = this.getMetaInfo(e.getOwnerDocument()).get("Content-Language");
-            return lang == null ? "" : lang;
+            return lang == null ? Optional.empty() : Optional.of(lang);
         }
 
-        return e.getAttribute("lang");
+        return Optional.of(e.getAttribute("lang"));
     }
     
     @Override
@@ -241,24 +241,24 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
     }
 
     @Override
-    public String getNonCssStyling(final Element e) 
+    public Optional<String> getNonCssStyling(final Element e) 
     {
     	switch(e.getNodeName().toLowerCase(Locale.US))
     	{
     	case "table":
-    		return applyTableStyles(e);
+    		return Optional.of(applyTableStyles(e));
     	case "tr":
-    		return applyTableRowStyles(e);
+    		return Optional.of(applyTableRowStyles(e));
     	case "td": /* Fall through */
     	case "th":
-    		return applyTableCellStyles(e);
+    		return Optional.of(applyTableCellStyles(e));
     	case "img":
-    		return applyImgStyles(e);
+    		return Optional.of(applyImgStyles(e));
     	case "p": /* Fall through */
     	case "div":
-            return applyTextAlign(e);
+            return Optional.of(applyTextAlign(e));
     	default:
-    		return "";
+    		return Optional.empty();
     	}
     }
     
@@ -534,7 +534,7 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
     }
 
     @Override
-    public String getElementStyling(final Element e)
+    public Optional<String> getElementStyling(final Element e)
     {
         final StringBuilder style = new StringBuilder();
         if (ciEquals(e.getNodeName(), "td") || ciEquals(e.getNodeName(), "th")) {
@@ -582,7 +582,7 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
         }
 
         style.append(e.getAttribute("style"));
-        return style.toString();
+        return Optional.of(style.toString());
     }
 
     @Override
@@ -639,7 +639,7 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
      * of /html/head/title, or "" if none could be found.
      */
     @Override
-    public String getDocumentTitle(final Document doc) 
+    public Optional<String> getDocumentTitle(final Document doc) 
     {
         final Optional<Element> head = NodeHelper.getHead(doc);
 
@@ -649,11 +649,11 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
 
         	if (title.isPresent())
         	{
-        		return collapseWhiteSpace(readTextContent(title.get()).trim());
+        		return Optional.of(collapseWhiteSpace(readTextContent(title.get()).trim()));
         	}
         }
 
-        return "";
+        return Optional.empty();
     }
 
     private Optional<Element> findFirstChild(final Element parent, final String targetName)
@@ -668,7 +668,7 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
 		info.setOrigin(StylesheetInfo.CSSOrigin.USER_AGENT);
 		info.setMediaQueryList(null);
 		info.setType("text/css");
-		info.setUri("about:defaultstylesheet");
+		info.setUri(Optional.of("about:defaultstylesheet"));
 
 		InputStream is = null;
 		try {
@@ -677,8 +677,10 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
 			if (is == null)
 				return null;
 			
-			final Stylesheet sheet = factory.parse(new InputStreamReader(is), info, false);
-			info.setStylesheet(sheet);
+			final Optional<Stylesheet> sheet = factory.parse(new InputStreamReader(is), info, false);
+
+			if (sheet.isPresent())
+				info.setStylesheet(sheet.get());
 
 		} catch (final Exception e) {
 			LOGGER.error("Could not parse default stylesheet", e);
