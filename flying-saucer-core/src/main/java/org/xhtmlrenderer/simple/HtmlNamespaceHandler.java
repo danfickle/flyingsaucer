@@ -176,7 +176,7 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
     	  .childElemStream(head.get(), "style")
     	  .filter(s -> (!s.hasAttribute("alternate") || !ciEquals(s.getAttribute("alternate"), "yes"))
     	            && (!s.hasAttribute("type") || ciEquals(s.getAttribute("type"), "text/css")))
-    	  .forEach(piNode -> {
+    	  .forEachOrdered(piNode -> {
     		  final StylesheetInfo info = new StylesheetInfo();
 	            
 	          info.setOrigin(StylesheetInfo.CSSOrigin.AUTHOR);
@@ -728,7 +728,7 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
         this._metadata = 
          NodeHelper
           .childElemStream(ohead.get(), "meta")
-          .map(e -> new GenericPair<String>(e.getAttribute("http-equiv"), e.getAttribute("content")))
+          .map(e -> new GenericPair<>(e.getAttribute("http-equiv"), e.getAttribute("content")))
           .filter(a -> !a.getFirst().isEmpty() && !a.getSecond().isEmpty())
           .collect(Collectors.toMap(a -> a.getFirst(), b -> b.getSecond()));
 

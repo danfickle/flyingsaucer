@@ -433,7 +433,7 @@ public abstract class BasicPanel extends RootPanel {
      * in the panel.
      */
     public String getDocumentTitle() {
-        return doc == null ? "" : getSharedContext().getNamespaceHandler().getDocumentTitle(doc).orElse(null);
+        return doc == null ? "" : getSharedContext().getNamespaceHandler().getDocumentTitle(doc).orElse("");
     }
 
     protected Document loadDocument(final String uri) {

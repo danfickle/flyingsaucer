@@ -1012,7 +1012,7 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
         	bookmarks.ifPresent(
         		bks -> NodeHelper
         		      .childElemStream(bks, "bookmark")
-        		      .forEach(e -> loadBookmark(null, e)));
+        		      .forEachOrdered(e -> loadBookmark(null, e)));
         }
     }
 
@@ -1027,7 +1027,7 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
 
         NodeHelper
           .childElemStream(bookmark, "bookmark")
-          .forEach(e -> loadBookmark(us, e));
+          .forEachOrdered(e -> loadBookmark(us, e));
     }
 
     private static class Bookmark {
@@ -1150,7 +1150,7 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
         {
         	NodeHelper
         	 .childElemStream(head.get(), "meta")
-        	 .forEach(meta -> {
+        	 .forEachOrdered(meta -> {
         		 final String name = meta.getAttribute("name");
         		 if (name != null)
         			 _metadata.add(new Metadata(name, meta.getAttribute("content")));

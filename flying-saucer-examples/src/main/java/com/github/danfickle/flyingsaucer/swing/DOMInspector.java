@@ -23,12 +23,13 @@ import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xhtmlrenderer.context.StyleReference;
 import org.xhtmlrenderer.css.constants.ValueConstants;
 import org.xhtmlrenderer.css.parser.PropertyValue;
 import org.xhtmlrenderer.layout.SharedContext;
+import org.xhtmlrenderer.util.GeneralUtil;
+import org.xhtmlrenderer.util.NodeHelper;
 
 import javax.swing.*;
 import javax.swing.event.TreeModelListener;
@@ -44,10 +45,12 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 /**
@@ -553,19 +556,16 @@ class DOMTreeModel implements TreeModel {
         setRoot("body");
     }
 
-    private void setRoot(final String rootNodeName) {
-        final Node tempRoot = doc;
-        NodeList nl = tempRoot.getChildNodes();
-        
-        for (int i = 0; i < nl.getLength(); i++)
-        {
-        	final Node node = nl.item(i);
-        	
-        	if (node.getNodeName().toLowerCase(Locale.US).equals(rootNodeName))
-            {
-                this.root = node;
-            }
-        }
+    private void setRoot(final String rootNodeName) 
+    {
+    	Optional<Node> node = 
+    	  NodeHelper
+    	    .childNodeStream(doc)
+    	    .filter(n -> GeneralUtil.ciEquals(n.getNodeName(), rootNodeName))
+    	    .findFirst();
+    
+    	if (node.isPresent())
+    		this.root = node.get();
     }
 
 
@@ -718,30 +718,29 @@ class DOMTreeModel implements TreeModel {
      * @param parent The feature to be added to the Displayable attribute
      * @return Returns
      */
-    private List<Node> addDisplayable(final Node parent) {
-        List<Node> children = this.displayableNodes.get(parent);
-        if (children == null) {
-            children = new ArrayList<Node>();
-            this.displayableNodes.put(parent, children);
-            NodeList nl = parent.getChildNodes();
-            for (int i = 0; i < nl.getLength(); i++)
-            {
-            	final Node child = nl.item(i);
-            	
-            	if (child instanceof Element ||
-            		child instanceof Comment ||
-            		(child instanceof Text &&
+    private List<Node> addDisplayable(final Node parent) 
+    {
+    	List<Node> children = this.displayableNodes.get(parent);
+
+    	if (children == null) 
+        {
+            children = NodeHelper
+              .childNodeStream(parent)
+              .filter(child -> 
+                      child instanceof Element ||
+            		  child instanceof Comment ||
+            		 (child instanceof Text &&
             		 !((Text) child).getTextContent().trim().isEmpty()))
-            	{
-            		children.add(child);
-            	}
-            }
+             .collect(Collectors.toList());
+
+            this.displayableNodes.put(parent, children);
             return children;
-        } else {
-            return new ArrayList<Node>();
+        }
+        else {
+        	assert(false);
+        	return Collections.emptyList();
         }
     }
-
 }//}}}
 
 //-{{{ DOMTreeCellRenderer

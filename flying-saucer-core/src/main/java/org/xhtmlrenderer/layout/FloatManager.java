@@ -24,6 +24,7 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import org.xhtmlrenderer.css.style.CssContext;
 import org.xhtmlrenderer.render.BlockBox;
@@ -213,21 +214,14 @@ public class FloatManager {
         final Point offset = bfc.getOffset();
         final Rectangle bounds = current.getMarginEdge(cssCtx, -offset.x, -offset.y);
 
-        for (final BoxOffset floater : floats) {
-            final Rectangle floaterBounds = floater.getBox().getMarginEdge(cssCtx,
-                    -floater.getX(), -floater.getY());
-
-            if (floaterBounds.intersects(bounds)) {
-                return true;
-            }
-        }
-
-        return false;
+        return floats.stream()
+        		.map(floater -> floater.getBox().getMarginEdge(cssCtx,-floater.getX(), -floater.getY()))
+        		.anyMatch(floaterBounds -> floaterBounds.intersects(bounds));
     }
 
     private void moveFloatBelow(final CssContext cssCtx, final BlockFormattingContext bfc,
                                    final Box current, final List<BoxOffset> floats) {
-        if (floats.size() == 0) {
+        if (floats.isEmpty()) {
             return;
         }
 
@@ -390,7 +384,8 @@ public class FloatManager {
     }
 
     private Point getOffset(final BlockBox floater, final List<BoxOffset> floats) {
-        for (final BoxOffset boxOffset : floats) {
+
+    	for (final BoxOffset boxOffset : floats) {
             final BlockBox box = boxOffset.getBox();
 
             if (box.equals(floater)) {

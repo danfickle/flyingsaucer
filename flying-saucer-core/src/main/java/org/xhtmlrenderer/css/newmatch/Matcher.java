@@ -113,14 +113,15 @@ public class Matcher {
         final List<PropertyDeclaration> props = new ArrayList<>();
         final Map<MarginBoxName, List<PropertyDeclaration>> marginBoxes = new HashMap<>();
 
-        for (final PageRule pageRule : _pageRules) {
-            if (pageRule.applies(pageName, pseudoPage)) {
-                props.addAll(pageRule.getRuleset().getPropertyDeclarations());
-                marginBoxes.putAll(pageRule.getMarginBoxes());
-            }
-        }
+        _pageRules.stream()
+          .filter(pageRule -> pageRule.applies(pageName, pseudoPage))
+          .forEachOrdered(pageRule -> {
+              props.addAll(pageRule.getRuleset().getPropertyDeclarations());
+              marginBoxes.putAll(pageRule.getMarginBoxes());
+          });
         
-        CascadedStyle style = null;
+        CascadedStyle style;
+        
         if (props.isEmpty()) {
             style = CascadedStyle.emptyCascadedStyle;
         } else {

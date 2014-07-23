@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import org.xhtmlrenderer.css.constants.CSSPrimitiveUnit;
 import org.xhtmlrenderer.css.constants.IdentValue;
@@ -37,6 +38,7 @@ import org.xhtmlrenderer.render.InlineText;
 import org.xhtmlrenderer.render.InlineLayoutBox;
 import org.xhtmlrenderer.render.LineBox;
 import org.xhtmlrenderer.render.RenderingContext;
+
 import static org.xhtmlrenderer.util.GeneralUtil.ciEquals;
 
 public class ContentFunctionFactory 
@@ -47,14 +49,11 @@ public class ContentFunctionFactory
     		new TargetCounterFunction(),
     		new LeaderFunction()));
     
-    public ContentFunction lookupFunction(final LayoutContext c, final FSFunction function) 
+    public Optional<ContentFunction> lookupFunction(final LayoutContext c, final FSFunction function) 
     {
-        for (final ContentFunction f : _functions) {
-            if (f.canHandle(c, function)) {
-                return f;
-            }
-        }
-        return null;
+    	return _functions.stream()
+    			.filter(f -> f.canHandle(c, function))
+    			.findFirst();
     }
     
     public void registerFunction(final ContentFunction function) {

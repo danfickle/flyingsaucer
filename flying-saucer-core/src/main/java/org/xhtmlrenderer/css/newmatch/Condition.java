@@ -278,7 +278,7 @@ abstract class Condition {
         }
         
         protected boolean compare(final String attrValue, final String conditionValue) {
-        	return attrValue.equals(conditionValue) || attrValue.indexOf(' ' + conditionValue + ' ') != -1;
+        	return (' ' + attrValue + ' ').indexOf(' ' + conditionValue + ' ') != -1;
         }
     }
 
@@ -294,10 +294,10 @@ abstract class Condition {
 
     private static class ClassCondition extends Condition {
 
-        private final String _className;
+        private final String _paddedClassName;
 
         ClassCondition(final String className) {
-            _className = className;
+            _paddedClassName = ' ' + className + ' ';
         }
 
         boolean matches(final Element e, final AttributeResolver attRes, final TreeResolver treeRes) 
@@ -314,7 +314,7 @@ abstract class Condition {
             
             // TODO: Other space types.
             String compare = ' ' + c.get() + ' ';
-            return compare.indexOf(' ' + _className + ' ') != -1;
+            return compare.indexOf(_paddedClassName) != -1;
         }
     }
 

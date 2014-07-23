@@ -188,7 +188,7 @@ public class XHtmlMetaToPdfInfoAdapter extends DefaultPDFCreationListener {
           .childElemStream(rootHeadNodeElement.get(), "meta")
           .map(elem -> new GenericPair<>(elem.getAttribute("name"), elem.getAttribute("content")))
           .filter(pair -> !pair.getFirst().isEmpty() && !pair.getSecond().isEmpty())
-          .forEach(pair -> 
+          .forEachOrdered(pair -> 
           {
         	  final String metaName = pair.getFirst();
               final String metaContent = pair.getSecond();

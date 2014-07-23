@@ -20,6 +20,7 @@
 package org.xhtmlrenderer.css.newmatch;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -89,13 +90,7 @@ public class PageInfo {
     }
     
     public boolean hasAny(final MarginBoxName[] marginBoxes) {
-        for (final MarginBoxName marginBox : marginBoxes) {
-            if (_marginBoxes.containsKey(marginBox)) {
-                return true;
-            }
-        }
-        
-        return false;
+    	return Arrays.stream(marginBoxes).anyMatch(mb -> _marginBoxes.containsKey(mb));
     }
     
     public List<PropertyDeclaration> getXMPPropertyList()

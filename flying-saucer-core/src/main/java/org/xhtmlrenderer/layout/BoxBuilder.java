@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Document;
@@ -59,6 +60,8 @@ import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.render.Box;
 import org.xhtmlrenderer.render.FloatedBoxData;
 import org.xhtmlrenderer.render.InlineBox;
+import org.xhtmlrenderer.util.GenericPair;
+import org.xhtmlrenderer.util.NodeHelper;
 
 /**
  * This class is responsible for creating the box tree from the DOM.  This is
@@ -825,7 +828,7 @@ public class BoxBuilder {
                         }
                     } else {
                         contentFunction =
-                                c.getContentFunctionFactory().lookupFunction(c, value.getFunction());
+                                c.getContentFunctionFactory().lookupFunction(c, value.getFunction()).orElse(null);
                         if (contentFunction != null) {
                             function = value.getFunction();
 
@@ -1019,25 +1022,22 @@ public class BoxBuilder {
     private static void addColumns(final LayoutContext c, final TableBox table, final TableColumn parent) {
         final SharedContext sharedContext = c.getSharedContext();
 
-        Node working = parent.getElement().getFirstChild();
-        boolean found = false;
-        while (working != null) {
-            if (working instanceof Element) {
-                final Element element = (Element) working;
-                final CalculatedStyle style = sharedContext.getStyle(element);
+        List<GenericPair<Element, CalculatedStyle>> columns =  
+        NodeHelper
+          .childElemStream(parent.getElement())
+          .map(el -> new GenericPair<>(el, sharedContext.getStyle(el)))
+          .filter(pair -> pair.getSecond().isIdent(CSSName.DISPLAY, IdentValue.TABLE_COLUMN))
+          .collect(Collectors.toList());
 
-                if (style.isIdent(CSSName.DISPLAY, IdentValue.TABLE_COLUMN)) {
-                    found = true;
-                    final TableColumn col = new TableColumn(element, style);
-                    col.setParent(parent);
-                    table.addStyleColumn(col);
-                }
-            }
-            working = working.getNextSibling();
-        }
-        if (! found) {
-            table.addStyleColumn(parent);
-        }
+        columns.stream()
+           .map(pair -> new TableColumn(pair.getFirst(), pair.getSecond()))
+           .forEachOrdered(column -> {
+        	   column.setParent(parent);
+        	   table.addStyleColumn(column);
+           });
+
+        if (columns.isEmpty())
+        	table.addStyleColumn(parent);
     }
 
     private static void addColumnOrColumnGroup(

@@ -1,8 +1,6 @@
 package org.xhtmlrenderer.util;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.function.Consumer;
@@ -128,27 +126,6 @@ public class NodeHelper {
     }
   }
 
-  public static List<Element> getMatchingChildrenByTagName(final Element element, final String tagName) {
-    NodeList matchingElements = element.getChildNodes();
-    if (matchingElements != null) {
-      List<Element> result = new ArrayList<Element>();
-      int i = 0;
-      int N = matchingElements.getLength();
-      while (i < N) {
-        final Node n = matchingElements.item(i);
-        if (n instanceof Element) {
-          final Element e = (Element) n;
-          if (tagName.equals(e.getTagName())) {
-            result.add(e);
-          }
-        }
-        i++;
-      }
-      return result;
-    } else {
-      return null;
-    }
-  }
   public static Optional<Element> getFirstMatchingChildByTagName(final Element element, final String tagName) 
   {
 	  return NodeHelper.childElemStream(element, tagName).findFirst();
@@ -171,5 +148,4 @@ public class NodeHelper {
   public static boolean isText(final Node n) {
     return n instanceof Text;
   }
-
 }

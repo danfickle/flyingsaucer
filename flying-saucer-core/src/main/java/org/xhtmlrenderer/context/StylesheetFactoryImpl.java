@@ -149,7 +149,7 @@ public class StylesheetFactoryImpl implements StylesheetFactory {
 
         if (s1.isPresent())
         {
-        	LOGGER.info("Stylesheet HIT for " + info.getUri());
+        	LOGGER.info("Stylesheet HIT for " + info.getUri().get());
         	return s1;
         }
         

@@ -609,13 +609,13 @@ public class Layer {
         }
     }
 
-    private boolean containsFixedLayer() {
-        for (final Layer child : getChildren()) {
-            if (child.getMaster().getStyle().isFixed() || child.containsFixedLayer()) {
-                return true;
-            }
-        }
-        return false;
+    private boolean containsFixedLayer()
+    {
+    	return
+    	  getChildren().stream()
+    	   .anyMatch(
+    	     child -> child.getMaster().getStyle().isFixed() ||
+    		 	      child.containsFixedLayer());
     }
 
     public boolean containsFixedContent() {
