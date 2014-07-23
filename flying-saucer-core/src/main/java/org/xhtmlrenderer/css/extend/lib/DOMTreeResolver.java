@@ -24,8 +24,8 @@ import java.util.Optional;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xhtmlrenderer.css.extend.TreeResolver;
+import org.xhtmlrenderer.util.NodeHelper;
 
 /**
  * @author scott
@@ -35,17 +35,17 @@ import org.xhtmlrenderer.css.extend.TreeResolver;
 public class DOMTreeResolver implements TreeResolver {
     @Override
 	public Optional<Element> getParentElement(final Element element) {
-        Node parent = ((Element) element).getParentNode();
+        Node parent = element.getParentNode();
 
         if (!(parent instanceof Element) || parent instanceof Document)
-        	parent = null;
+        	return Optional.empty();
         
-        return Optional.ofNullable((Element) parent);
+        return Optional.of((Element) parent);
     }
 
     @Override
      public Optional<Element> getPreviousSiblingElement(final Element element) {
-        Node sibling = ((Element) element).getPreviousSibling();
+        Node sibling = element.getPreviousSibling();
         while (sibling != null && !(sibling instanceof Element)) {
             sibling = sibling.getPreviousSibling();
         }
@@ -57,12 +57,12 @@ public class DOMTreeResolver implements TreeResolver {
 
     @Override
     public String getElementName(final Element element) {
-        return ((Element) element).getNodeName();
+        return element.getNodeName();
     }
     
     @Override
-    public boolean isFirstChildElement(final Object element) {
-        final Node parent = ((Element) element).getParentNode();
+    public boolean isFirstChildElement(final Element element) {
+        final Node parent = element.getParentNode();
         Node currentChild = parent.getFirstChild();
         while (currentChild != null && !(currentChild instanceof Element)) {
             currentChild = currentChild.getNextSibling();
@@ -71,7 +71,7 @@ public class DOMTreeResolver implements TreeResolver {
     }
 
     @Override
-    public boolean isLastChildElement(final Object element) {
+    public boolean isLastChildElement(final Element element) {
         final Node parent = ((Element) element).getParentNode();
         Node currentChild = parent.getLastChild();
         while (currentChild != null && !(currentChild instanceof Element)) {
@@ -81,7 +81,7 @@ public class DOMTreeResolver implements TreeResolver {
     }
 
     @Override
-    public boolean matchesElement(final Object element, final String namespaceURI, final String name) {
+    public boolean matchesElement(final Element element, final String namespaceURI, final String name) {
         final Element e = (Element)element;
         final String localName = e.getNodeName();
         final String eName = localName;
@@ -103,24 +103,13 @@ public class DOMTreeResolver implements TreeResolver {
     }
     
     @Override
-    public int getPositionOfElement(final Object element) {
-        final Node parent = ((Element) element).getParentNode();
-        final NodeList nl = parent.getChildNodes();
-
-        int elt_count = 0;
-        int i = 0;
-        while (i < nl.getLength()) {
-            if (nl.item(i) instanceof Element) {
-                if(nl.item(i) == element) {
-                    return elt_count;
-                } else {
-                    elt_count++;
-                }
-            }
-            i++;
-        }
+    public int getPositionOfElement(final Element element) {
+        final Node parent = element.getParentNode();
         
-        //should not happen
-        return -1;
+        return (int) 
+          NodeHelper
+        	.childElemStream(parent)
+        	.filter(e -> e != element)
+        	.count();
     }
 }

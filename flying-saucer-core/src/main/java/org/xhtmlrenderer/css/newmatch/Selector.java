@@ -19,6 +19,7 @@
  */
 package org.xhtmlrenderer.css.newmatch;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -55,7 +56,7 @@ public class Selector {
 
     private int _pos;//to distinguish between selectors of same specificity
 
-    private java.util.List<Condition> conditions;
+    private java.util.List<Condition> conditions = new ArrayList<>(0);
 
     public final static int DESCENDANT_AXIS = 0;
     public final static int CHILD_AXIS = 1;
@@ -91,11 +92,8 @@ public class Selector {
             }
         }
         if (_name == null || treeRes.matchesElement(e, _namespaceURI, _name)) {
-            if (conditions != null) {
-            	// all conditions need to be true
-            	return conditions.stream().allMatch(c -> c.matches(e, attRes, treeRes));
-            }
-            return true;
+         	// all conditions need to be true
+           	return conditions.stream().allMatch(c -> c.matches(e, attRes, treeRes));
         }
         return false;
     }
@@ -414,9 +412,6 @@ public class Selector {
      * @param c The feature to be added to the Condition attribute
      */
     private void addCondition(final Condition c) {
-        if (conditions == null) {
-            conditions = new java.util.ArrayList<Condition>();
-        }
         if (_pe != null) {
             conditions.add(Condition.createUnsupportedCondition());
             LOGGER.warn("Trying to append conditions to pseudoElement " + _pe);

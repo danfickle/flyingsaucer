@@ -20,12 +20,13 @@
 package org.xhtmlrenderer.css.newmatch;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.w3c.dom.Element;
 import org.xhtmlrenderer.css.extend.AttributeResolver;
 import org.xhtmlrenderer.css.extend.TreeResolver;
 import org.xhtmlrenderer.css.parser.CSSParseException;
@@ -39,7 +40,7 @@ import org.xhtmlrenderer.util.LangId;
  */
 abstract class Condition {
 
-    abstract boolean matches(Object e, AttributeResolver attRes, TreeResolver treeRes);
+    abstract boolean matches(Element e, AttributeResolver attRes, TreeResolver treeRes);
 
     /**
      * the CSS condition [attribute]
@@ -208,7 +209,7 @@ abstract class Condition {
             _value = value;
         }
 
-        boolean matches(final Object e, final AttributeResolver attRes, final TreeResolver treeRes) {
+        boolean matches(final Element e, final AttributeResolver attRes, final TreeResolver treeRes) {
             if (attRes == null) {
                 return false;
             }
@@ -277,14 +278,7 @@ abstract class Condition {
         }
         
         protected boolean compare(final String attrValue, final String conditionValue) {
-            final String[] ca = split(attrValue, ' ');
-            boolean matched = false;
-            for (final String element : ca) {
-                if (conditionValue.equals(element)) {
-                    matched = true;
-                }
-            }
-            return matched;
+        	return attrValue.equals(conditionValue) || attrValue.indexOf(' ' + conditionValue + ' ') != -1;
         }
     }
 
@@ -294,11 +288,7 @@ abstract class Condition {
         }
         
         protected boolean compare(final String attrValue, final String conditionValue) {
-            final String[] ca = split(attrValue, '-');
-            if (conditionValue.equals(ca[0])) {
-                return true;
-            }
-            return false;
+        	return attrValue.indexOf(conditionValue) == 0;
         }
     }
 
@@ -310,7 +300,7 @@ abstract class Condition {
             _className = className;
         }
 
-        boolean matches(final Object e, final AttributeResolver attRes, final TreeResolver treeRes) 
+        boolean matches(final Element e, final AttributeResolver attRes, final TreeResolver treeRes) 
         {
             if (attRes == null) {
                 return false;
@@ -322,11 +312,10 @@ abstract class Condition {
                 return false;
             }
             
-            final String[] ca = split(c.get(), ' ');
-            
-            return Arrays.stream(ca).anyMatch(s -> _className.equals(s));
+            // TODO: Other space types.
+            String compare = ' ' + c.get() + ' ';
+            return compare.indexOf(' ' + _className + ' ') != -1;
         }
-
     }
 
     private static class IDCondition extends Condition {
@@ -337,7 +326,7 @@ abstract class Condition {
             _id = id;
         }
 
-        boolean matches(final Object e, final AttributeResolver attRes, final TreeResolver treeRes) {
+        boolean matches(final Element e, final AttributeResolver attRes, final TreeResolver treeRes) {
             if (attRes == null) {
                 return false;
             }
@@ -358,7 +347,7 @@ abstract class Condition {
             _lang = lang;
         }
 
-        boolean matches(final Object e, final AttributeResolver attRes, final TreeResolver treeRes) {
+        boolean matches(final Element e, final AttributeResolver attRes, final TreeResolver treeRes) {
             if (attRes == null) {
                 return false;
             }
@@ -383,7 +372,7 @@ abstract class Condition {
         FirstChildCondition() {
         }
 
-        boolean matches(final Object e, final AttributeResolver attRes, final TreeResolver treeRes) {
+        boolean matches(final Element e, final AttributeResolver attRes, final TreeResolver treeRes) {
             return treeRes.isFirstChildElement(e);
         }
 
@@ -394,7 +383,7 @@ abstract class Condition {
         LastChildCondition() {
         }
 
-        boolean matches(final Object e, final AttributeResolver attRes, final TreeResolver treeRes) {
+        boolean matches(final Element e, final AttributeResolver attRes, final TreeResolver treeRes) {
             return treeRes.isLastChildElement(e);
         }
 
@@ -412,7 +401,7 @@ abstract class Condition {
             this.b = b;
         }
 
-        boolean matches(final Object e, final AttributeResolver attRes, final TreeResolver treeRes) {
+        boolean matches(final Element e, final AttributeResolver attRes, final TreeResolver treeRes) {
             // getPositionOfElement() starts at 0, CSS spec starts at 1
             int position = treeRes.getPositionOfElement(e)+1;
 
@@ -428,7 +417,7 @@ abstract class Condition {
         }
 
         static NthChildCondition fromString(String number) {
-            number = number.trim().toLowerCase();
+            number = number.trim().toLowerCase(Locale.US);
 
             if ("even".equals(number)) {
                 return new NthChildCondition(2, 0);
@@ -464,7 +453,7 @@ abstract class Condition {
         EvenChildCondition() {
         }
 
-        boolean matches(final Object e, final AttributeResolver attRes, final TreeResolver treeRes) {
+        boolean matches(final Element e, final AttributeResolver attRes, final TreeResolver treeRes) {
             final int position = treeRes.getPositionOfElement(e);
             return position >= 0 && position % 2 == 0;
         }
@@ -475,7 +464,7 @@ abstract class Condition {
         OddChildCondition() {
         }
 
-        boolean matches(final Object e, final AttributeResolver attRes, final TreeResolver treeRes) {
+        boolean matches(final Element e, final AttributeResolver attRes, final TreeResolver treeRes) {
             final int position = treeRes.getPositionOfElement(e);
             return position >= 0 && position % 2 == 1;
         }
@@ -486,7 +475,7 @@ abstract class Condition {
         LinkCondition() {
         }
 
-        boolean matches(final Object e, final AttributeResolver attRes, final TreeResolver treeRes) {
+        boolean matches(final Element e, final AttributeResolver attRes, final TreeResolver treeRes) {
             return attRes.isLink(e);
         }
 
@@ -500,7 +489,7 @@ abstract class Condition {
         UnsupportedCondition() {
         }
 
-        boolean matches(final Object e, final AttributeResolver attRes, final TreeResolver treeRes) {
+        boolean matches(final Element e, final AttributeResolver attRes, final TreeResolver treeRes) {
             return false;
         }
 

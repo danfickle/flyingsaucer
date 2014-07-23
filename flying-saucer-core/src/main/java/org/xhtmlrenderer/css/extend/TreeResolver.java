@@ -22,7 +22,6 @@ package org.xhtmlrenderer.css.extend;
 import java.util.Optional;
 
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 /**
  * @author scott
@@ -55,19 +54,19 @@ public interface TreeResolver {
     /**
      * returns true if this element is the first child element of its parent
      */
-    boolean isFirstChildElement(Object element);
+    boolean isFirstChildElement(Element element);
     
     /**
      * returns true if this element is the last child element of its parent
      */
-    boolean isLastChildElement(Object element);
+    boolean isLastChildElement(Element element);
     
     /**
      * Returns the index of the position of the submitted element among its element node siblings.
      * @param element
      * @return -1 in case of error, 0 indexed position otherwise
      */
-    int getPositionOfElement(Object element);
+    int getPositionOfElement(Element element);
     
     /**
      * Returns <code>true</code> if <code>element</code> has the local name
@@ -78,5 +77,5 @@ public interface TreeResolver {
      * should only match when there is no namespace defined on <code>element</code>.
      * @param name The name to match, may not be null
      */
-    boolean matchesElement(Object element, String namespaceURI, String name);
+    boolean matchesElement(Element element, String namespaceURI, String name);
 }
