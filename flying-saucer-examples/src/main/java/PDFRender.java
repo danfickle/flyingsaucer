@@ -17,6 +17,7 @@
  */
 
 
+import com.github.neoflyingsaucer.defaultuseragent.DefaultUserAgent;
 import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
 import com.lowagie.text.DocumentException;
 
@@ -58,7 +59,7 @@ public class PDFRender {
             renderer.createPDF(os);
             */
 
-            final ITextRenderer renderer = new ITextRenderer();
+            final ITextRenderer renderer = new ITextRenderer(new DefaultUserAgent());
             final ResourceLoaderUserAgent callback = new ResourceLoaderUserAgent(renderer.getOutputDevice());
             callback.setSharedContext(renderer.getSharedContext());
             renderer.getSharedContext ().setUserAgentCallback(callback);
@@ -86,7 +87,7 @@ public class PDFRender {
     private static class ResourceLoaderUserAgent extends ITextUserAgent
     {
         public ResourceLoaderUserAgent(final ITextOutputDevice outputDevice) {
-            super(outputDevice);
+            super(outputDevice, new DefaultUserAgent());
         }
     }
 }

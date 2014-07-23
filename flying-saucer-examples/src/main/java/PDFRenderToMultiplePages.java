@@ -19,7 +19,12 @@
  */
 
 
+import org.w3c.dom.Document;
+import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.pdf.ITextRenderer;
+
+import com.github.neoflyingsaucer.defaultuseragent.DefaultUserAgent;
+import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -28,7 +33,8 @@ import java.io.OutputStream;
 
 
 /**
- * This sample shows how to create a single PDF document from multiple input documents.
+ * This sample shows how to create a single PDF document from
+ * multiple input documents.
  */
 public class PDFRenderToMultiplePages {
     public static void main(final String[] args) throws Exception {
@@ -45,18 +51,21 @@ public class PDFRenderToMultiplePages {
             final File outputFile = File.createTempFile("FlyingSacuer.PDFRenderToMultiplePages", ".pdf");
             os = new FileOutputStream(outputFile);
 
-            final ITextRenderer renderer = new ITextRenderer();
+            final ITextRenderer renderer = new ITextRenderer(new DefaultUserAgent());
 
             // we need to create the target PDF
             // we'll create one page per input string, but we call layout for the first
-            renderer.setDocumentFromString(inputs[0]);
+            Document doc = HTMLResourceHelper.load(inputs[0]).getDocument();
+            
+            renderer.setDocument(doc, "about:test");
             renderer.layout();
             renderer.createPDF(os, false);
 
             // each page after the first we add using layout() followed by writeNextDocument()
             for (int i = 1; i < inputs.length; i++) {
-                renderer.setDocumentFromString(inputs[i]);
-                renderer.layout();
+                Document doc2 = HTMLResourceHelper.load(inputs[i]).getDocument();
+                renderer.setDocument(doc2, "about:test" + i);
+            	renderer.layout();
                 renderer.writeNextDocument();
             }
 

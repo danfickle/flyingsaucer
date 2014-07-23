@@ -149,28 +149,10 @@ public class NodeHelper {
       return null;
     }
   }
-  public static Element getFirstMatchingChildByTagName(final Element element, final String tagName) {
-    NodeList matchingElements = element.getChildNodes();
-    if (matchingElements != null) {
-      int i = 0;
-      int N = matchingElements.getLength();
-      Element result = null;
-      while (i < N && result == null) {
-        final Node n = matchingElements.item(i);
-        if (n instanceof Element) {
-          final Element e = (Element) n;
-          if (tagName.equals(e.getTagName())) {
-            result = e;
-          }
-        }
-        i++;
-      }
-      return result;
-    } else {
-      return null;
-    }
+  public static Optional<Element> getFirstMatchingChildByTagName(final Element element, final String tagName) 
+  {
+	  return NodeHelper.childElemStream(element, tagName).findFirst();
   }
-
 
   public static Optional<Element> getHead(final Document doc) 
   {

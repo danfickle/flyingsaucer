@@ -21,15 +21,18 @@ package org.xhtmlrenderer.pdf.util;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Optional;
 
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.xhtmlrenderer.pdf.DefaultPDFCreationListener;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 import org.xhtmlrenderer.pdf.PDFCreationListener;
+import org.xhtmlrenderer.util.GenericPair;
+import org.xhtmlrenderer.util.GenericTri;
+import org.xhtmlrenderer.util.NodeHelper;
 
 import com.lowagie.text.pdf.PdfName;
 import com.lowagie.text.pdf.PdfObject;
@@ -159,12 +162,15 @@ public class XHtmlMetaToPdfInfoAdapter extends DefaultPDFCreationListener {
     
     private void parseHtmlTitleTag( final Document doc ) 
     {
-        final Element rootHeadNodeElement = doc.head();
-        final Elements titleElements = rootHeadNodeElement.getElementsByTag("title");
-        final Element titleElement = titleElements.isEmpty() ? null : titleElements.get(0); 
+        final Optional<Element> rootHeadNodeElement = NodeHelper.getHead(doc);
 
-        if ( titleElement != null ) {
-            final String titleContent = titleElement.text();
+        if (!rootHeadNodeElement.isPresent())
+        	return;
+        
+        final Optional<Element> titleElement = NodeHelper.getFirstMatchingChildByTagName(rootHeadNodeElement.get(), "title");
+        
+        if ( titleElement.isPresent() ) {
+            final String titleContent = titleElement.get().getTextContent();
             final PdfName pdfName = PdfName.TITLE;
             final PdfString pdfString = new PdfString( titleContent );
             this.pdfInfoValues.put( pdfName, pdfString );
@@ -173,46 +179,51 @@ public class XHtmlMetaToPdfInfoAdapter extends DefaultPDFCreationListener {
     
     private void parseHtmlMetaTags( final Document doc ) {
         
-        final Element rootHeadNodeElement = (Element) doc.head();
-        final Elements metaNodeList = rootHeadNodeElement.getElementsByTag("meta");
-        LOGGER.trace( "metaNodeList=" + metaNodeList );        
+        final Optional<Element> rootHeadNodeElement = NodeHelper.getHead(doc);
 
-        for (int inode = 0; inode < metaNodeList.size(); ++inode) {
-            LOGGER.trace( "node " + inode + " = "+ metaNodeList.get(inode).nodeName() );            
-            final Element thisNode = (Element) metaNodeList.get(inode);
-            LOGGER.trace( "node " + thisNode );            
-            final String metaName = thisNode.attr("name");
-            final String metaContent = thisNode.attr("content");
-            LOGGER.trace( "metaName=" + metaName + ", metaContent=" + metaContent );            
-            if (metaName.length() != 0 && metaContent.length() != 0) {
+        if (!rootHeadNodeElement.isPresent())
+        	return;
+        
+        NodeHelper
+          .childElemStream(rootHeadNodeElement.get(), "meta")
+          .map(elem -> new GenericPair<>(elem.getAttribute("name"), elem.getAttribute("content")))
+          .filter(pair -> !pair.getFirst().isEmpty() && !pair.getSecond().isEmpty())
+          .forEach(pair -> 
+          {
+        	  final String metaName = pair.getFirst();
+              final String metaContent = pair.getSecond();
 
-                PdfName pdfName = null;
-                PdfString pdfString = null;            
-                if ( HTML_META_KEY_TITLE.equalsIgnoreCase( metaName ) 
-                        || HTML_META_KEY_DC_TITLE.equalsIgnoreCase( metaName ) ) {
+              PdfName pdfName;
+              PdfString pdfString;
+
+              if ( HTML_META_KEY_TITLE.equalsIgnoreCase( metaName ) 
+                || HTML_META_KEY_DC_TITLE.equalsIgnoreCase( metaName ) ) 
+              {
                     pdfName = PdfName.TITLE;
                     pdfString = new PdfString( metaContent, PdfObject.TEXT_UNICODE );                    
                     this.pdfInfoValues.put( pdfName, pdfString );
-                   
-                } else if ( HTML_META_KEY_CREATOR.equalsIgnoreCase( metaName ) 
-                        || HTML_META_KEY_DC_CREATOR.equalsIgnoreCase( metaName ) ) {
+              } 
+              else if ( HTML_META_KEY_CREATOR.equalsIgnoreCase( metaName ) 
+                     || HTML_META_KEY_DC_CREATOR.equalsIgnoreCase( metaName ) ) 
+              {
                     pdfName = PdfName.AUTHOR;
                     pdfString = new PdfString( metaContent, PdfObject.TEXT_UNICODE );                    
                     this.pdfInfoValues.put( pdfName, pdfString );
-                    
-                } else if ( HTML_META_KEY_SUBJECT.equalsIgnoreCase( metaName ) 
-                        || HTML_META_KEY_DC_SUBJECT.equalsIgnoreCase( metaName ) ) {
+              }
+              else if ( HTML_META_KEY_SUBJECT.equalsIgnoreCase( metaName ) 
+                     || HTML_META_KEY_DC_SUBJECT.equalsIgnoreCase( metaName ) ) 
+              {
                     pdfName = PdfName.SUBJECT;
                     pdfString = new PdfString( metaContent, PdfObject.TEXT_UNICODE );                    
                     this.pdfInfoValues.put( pdfName, pdfString );
-                    
-                } else if ( HTML_META_KEY_KEYWORDS.equalsIgnoreCase( metaName ) ) {
+              }
+              else if ( HTML_META_KEY_KEYWORDS.equalsIgnoreCase( metaName ) ) 
+              {
                     pdfName = PdfName.KEYWORDS;
                     pdfString = new PdfString( metaContent, PdfObject.TEXT_UNICODE );                    
                     this.pdfInfoValues.put( pdfName, pdfString );
-                }                
-            }
-        }
+              }                
+          });
     }
     
     /**

@@ -36,6 +36,7 @@ import org.w3c.dom.Node;
 import org.xhtmlrenderer.context.StyleReference;
 import org.xhtmlrenderer.css.style.CalculatedStyle;
 import org.xhtmlrenderer.extend.NamespaceHandler;
+import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.layout.BoxBuilder;
 import org.xhtmlrenderer.layout.Layer;
 import org.xhtmlrenderer.layout.LayoutContext;
@@ -49,7 +50,6 @@ import org.xhtmlrenderer.resource.ResourceLoadHelper;
 import org.xhtmlrenderer.simple.HtmlNamespaceHandler;
 import org.xhtmlrenderer.util.NodeHelper;
 
-import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.PdfWriter;
 
@@ -83,16 +83,16 @@ public class ITextRenderer {
 
     private PDFCreationListener _listener;
 
-    public ITextRenderer() {
-        this(DEFAULT_DOTS_PER_POINT, DEFAULT_DOTS_PER_PIXEL);
+    public ITextRenderer(UserAgentCallback uac) {
+        this(DEFAULT_DOTS_PER_POINT, DEFAULT_DOTS_PER_PIXEL, uac);
     }
 
-    public ITextRenderer(final float dotsPerPoint, final int dotsPerPixel) {
+    public ITextRenderer(final float dotsPerPoint, final int dotsPerPixel, UserAgentCallback uac) {
         _dotsPerPoint = dotsPerPoint;
 
         _outputDevice = new ITextOutputDevice(_dotsPerPoint);
 
-        final ITextUserAgent userAgent = new ITextUserAgent(_outputDevice);
+        final ITextUserAgent userAgent = new ITextUserAgent(_outputDevice, uac);
         _sharedContext = new SharedContext();
         _sharedContext.setUserAgentCallback(userAgent);
         _sharedContext.setCss(new StyleReference(userAgent));
@@ -137,16 +137,6 @@ public class ITextRenderer {
 
         final File parent = file.getAbsoluteFile().getParentFile();
         setDocument(loadDocument(file.toURI().toURL().toExternalForm()), (parent == null ? "" : parent.toURI().toURL().toExternalForm()));
-    }
-
-    public void setDocumentFromString(final String content) {
-        setDocumentFromString(content, null);
-    }
-
-    public void setDocumentFromString(final String content, final String baseUrl) 
-    {
-        final Document dom = HTMLResourceHelper.load(content).getDocument();
-        setDocument(dom, baseUrl);
     }
 
     public void setDocument(final Document doc, final String url, final NamespaceHandler nsh) {

@@ -72,8 +72,6 @@ public class ITextImageElement implements ITextReplacedElement {
         outputDevice.drawImage(
             ((ITextImageElement)element).getImage(),
             contentBounds.x, contentBounds.y);
-        
-        System.err.println("!" + contentBounds.x + "!" + contentBounds.y);
     }
 
 	public int getBaseline() {

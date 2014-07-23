@@ -17,13 +17,16 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * }}}
  */
-package org.xhtmlrenderer.pdf;
+package com.github.neoflyingsaucer.other;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.xhtmlrenderer.pdf.ITextRenderer;
+
+import com.github.neoflyingsaucer.defaultuseragent.DefaultUserAgent;
 import com.lowagie.text.DocumentException;
 
 public class ToPDF
@@ -50,7 +53,7 @@ public class ToPDF
         try {
             os = new FileOutputStream(pdf);
             
-            final ITextRenderer renderer = new ITextRenderer();
+            final ITextRenderer renderer = new ITextRenderer(new DefaultUserAgent());
             
             renderer.setDocument(url);
             renderer.layout();

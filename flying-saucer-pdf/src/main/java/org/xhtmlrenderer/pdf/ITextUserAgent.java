@@ -24,32 +24,50 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xhtmlrenderer.extend.FSErrorType;
 import org.xhtmlrenderer.extend.FSImage;
+import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.layout.SharedContext;
+import org.xhtmlrenderer.resource.CSSResource;
+import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.resource.ImageResource;
+import org.xhtmlrenderer.resource.ResourceCache;
+import org.xhtmlrenderer.swing.ImageResourceLoader;
 
-import com.github.neoflyingsaucer.defaultuseragent.DefaultUserAgent;
-import com.github.neoflyingsaucer.defaultuseragent.StreamResource;
+import com.lowagie.text.BadElementException;
 import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfReader;
 
 import org.xhtmlrenderer.util.ImageUtil;
+import org.xhtmlrenderer.util.LangId;
 
-public class ITextUserAgent extends DefaultUserAgent {
+public class ITextUserAgent implements UserAgentCallback {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ITextUserAgent.class);
-    private static final int IMAGE_CACHE_CAPACITY = 32;
 
     private SharedContext _sharedContext;
 
     private final ITextOutputDevice _outputDevice;
+    private final UserAgentCallback _chainedUac;
+    private final Map<String, ImageResource> _imageCache = new java.util.LinkedHashMap<String, ImageResource>(
+			64 /* TODO: Configurable size. */, 0.75f, true)
+	{
+		private static final long serialVersionUID = 1L;
 
-    public ITextUserAgent(final ITextOutputDevice outputDevice) {
-        super(IMAGE_CACHE_CAPACITY);
+		@Override
+		protected boolean removeEldestEntry(final java.util.Map.Entry<String, ImageResource> eldest) 
+		{
+			return size() > 64;
+		}
+	};
+    
+    public ITextUserAgent(final ITextOutputDevice outputDevice, UserAgentCallback uacInner) {
+        _chainedUac = uacInner;
         _outputDevice = outputDevice;
     }
 
@@ -64,6 +82,7 @@ public class ITextUserAgent extends DefaultUserAgent {
         return out.toByteArray();
     }
 
+    @Override
     public ImageResource getImageResource(String uri) {
         ImageResource resource = null;
         if (ImageUtil.isEmbeddedBase64Image(uri)) {
@@ -71,46 +90,22 @@ public class ITextUserAgent extends DefaultUserAgent {
         } else {
             resource = _imageCache.get(uri);
             if (resource == null) {
-                StreamResource sr = new StreamResource(uri);
-                InputStream is = null;
+            	byte[] bytes = _chainedUac.getBinaryResource(uri);
+				
+            	if (bytes == null)
+            		return new ImageResource(uri, null);
+            	
+            	Image image;
 				try {
-					is = sr.bufferedStream();
-					final URL url = new URL(uri);
-					if (url.getPath() != null
-							&& url.getPath().toLowerCase().endsWith(".pdf")) {
-						final PdfReader reader = _outputDevice.getReader(url);
-						final PDFAsImage image = new PDFAsImage(url);
-						final Rectangle rect = reader
-								.getPageSizeWithRotation(1);
-						image.setInitialWidth(rect.getWidth()
-								* _outputDevice.getDotsPerPoint());
-						image.setInitialHeight(rect.getHeight()
-								* _outputDevice.getDotsPerPoint());
-						resource = new ImageResource(uri, image);
-					} else {
-						final Image image = Image.getInstance(readStream(is));
-						scaleToOutputResolution(image);
-						resource = new ImageResource(uri, new ITextFSImage(
-								image));
-					}
+					image = Image.getInstance(bytes);
+					scaleToOutputResolution(image);
+					resource = new ImageResource(uri, new ITextFSImage(
+							image));
 					_imageCache.put(uri, resource);
-				} catch (final Exception e) {
-					LOGGER.error(
-							"Can't read image file; unexpected problem for URI '"
-									+ uri + "'", e);
-				} finally {
-					try {
-						is.close();
-					} catch (final IOException e) {
-						// ignore
-					}
-				}
-            }
 
-            if (resource != null) {
-                resource = new ImageResource(resource.getImageUri(), (FSImage) ((ITextFSImage) resource.getImage()).clone());
-            } else {
-                resource = new ImageResource(uri, null);
+				} catch (BadElementException | IOException e) {
+					return new ImageResource(uri, null);
+				}
             }
         }
         return resource;
@@ -142,4 +137,50 @@ public class ITextUserAgent extends DefaultUserAgent {
     public void setSharedContext(final SharedContext sharedContext) {
         _sharedContext = sharedContext;
     }
+
+	@Override
+	public CSSResource getCSSResource(String uri) {
+		return _chainedUac.getCSSResource(uri);
+	}
+
+	@Override
+	public HTMLResource getHTMLResource(String uri) {
+		return _chainedUac.getHTMLResource(uri);
+	}
+
+	@Override
+	public HTMLResource getErrorDocument(String uri, int errorCode) {
+		return _chainedUac.getErrorDocument(uri, errorCode);
+	}
+
+	@Override
+	public byte[] getBinaryResource(String uri) {
+		return _chainedUac.getBinaryResource(uri);
+	}
+
+	@Override
+	public boolean isVisited(String uri) {
+		return _chainedUac.isVisited(uri);
+	}
+
+	@Override
+	public String resolveURI(String baseUri, String uri) {
+		return _chainedUac.resolveURI(baseUri, uri);
+	}
+
+	@Override
+	public ImageResourceLoader getImageResourceCache() {
+		return _chainedUac.getImageResourceCache();
+	}
+
+	@Override
+	public void onError(LangId msgId, int line, FSErrorType errorType,
+			Object[] args) {
+		_chainedUac.onError(msgId, line, errorType, args);
+	}
+
+	@Override
+	public ResourceCache getResourceCache() {
+		return _chainedUac.getResourceCache();
+	}
 }

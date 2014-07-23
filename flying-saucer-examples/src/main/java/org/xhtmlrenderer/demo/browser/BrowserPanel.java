@@ -23,12 +23,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.event.DocumentListener;
 import org.xhtmlrenderer.layout.SharedContext;
-import org.xhtmlrenderer.simple.PDFRenderer;
 import org.xhtmlrenderer.swing.SwingReplacedElementFactory;
 import org.xhtmlrenderer.util.*;
 
 import com.github.danfickle.flyingsaucer.swing.ScalableXHTMLPanel;
 import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
+import com.github.neoflyingsaucer.other.PDFRenderer;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.PdfWriter;
 
@@ -361,7 +361,7 @@ public class BrowserPanel extends JPanel implements DocumentListener {
 	public void exportToPdf( final String path )
 	{
 		try {
-			PDFRenderer.renderToPDF(currentUri, path, PdfWriter.VERSION_1_7);
+			PDFRenderer.renderToPDF(currentUri, path, PdfWriter.VERSION_1_7, this.manager);
 		} catch (final IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

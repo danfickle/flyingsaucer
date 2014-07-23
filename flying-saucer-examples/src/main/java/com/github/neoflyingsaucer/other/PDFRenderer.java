@@ -1,8 +1,10 @@
-package org.xhtmlrenderer.simple;
+package com.github.neoflyingsaucer.other;
 
+import com.github.neoflyingsaucer.defaultuseragent.DefaultUserAgent;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.PdfWriter;
 
+import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import java.io.File;
@@ -53,7 +55,7 @@ public class PDFRenderer {
     public static void renderToPDF(final String url, final String pdf)
             throws IOException, DocumentException {
 
-        renderToPDF(url, pdf, null);
+        renderToPDF(url, pdf, null, new DefaultUserAgent());
     }
     /**
      * Renders the XML file at the given URL as a PDF file
@@ -67,10 +69,11 @@ public class PDFRenderer {
      * @throws DocumentException if an error occurred
      *                           while building the Document.
      */
-    public static void renderToPDF(final String url, final String pdf, final Character pdfVersion)
+    public static void renderToPDF(final String url, final String pdf, final Character pdfVersion,
+    		final UserAgentCallback uac)
             throws IOException, DocumentException {
 
-        final ITextRenderer renderer = new ITextRenderer();
+        final ITextRenderer renderer = new ITextRenderer(uac);
         renderer.setDocument(url);
         if (pdfVersion != null) renderer.setPDFVersion(pdfVersion.charValue());
         doRenderToPDF(renderer, pdf);
@@ -106,7 +109,7 @@ public class PDFRenderer {
     public static void renderToPDF(final File file, final String pdf, final Character pdfVersion)
             throws IOException, DocumentException {
 
-        final ITextRenderer renderer = new ITextRenderer();
+        final ITextRenderer renderer = new ITextRenderer(new DefaultUserAgent());
         renderer.setDocument(file);
         if (pdfVersion != null) renderer.setPDFVersion(pdfVersion.charValue());
         doRenderToPDF(renderer, pdf);
@@ -169,7 +172,7 @@ public class PDFRenderer {
                 usage("File to render is not found: " + url);
             }
         } else {
-            PDFRenderer.renderToPDF(url, args[1], pdfVersion);
+            PDFRenderer.renderToPDF(url, args[1], pdfVersion, new DefaultUserAgent());
         }
     }
 

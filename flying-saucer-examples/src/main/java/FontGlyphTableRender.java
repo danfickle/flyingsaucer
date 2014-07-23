@@ -55,6 +55,7 @@ import org.xhtmlrenderer.pdf.ITextRenderer;
 import org.xhtmlrenderer.simple.HtmlNamespaceHandler;
 
 import com.github.danfickle.flyingsaucer.swing.XHTMLPanel;
+import com.github.neoflyingsaucer.defaultuseragent.DefaultUserAgent;
 import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.BaseFont;
@@ -362,7 +363,7 @@ public class FontGlyphTableRender {
             JOptionPane.showMessageDialog(frame, "Can't create temp file for PDF output, err: " + e.getMessage());
             return;
         }
-        final ITextRenderer renderer = new ITextRenderer();
+        final ITextRenderer renderer = new ITextRenderer(new DefaultUserAgent());
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(f);
