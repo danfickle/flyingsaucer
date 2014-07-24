@@ -1,9 +1,13 @@
 package com.github.neoflyingsaucer.css.parser;
 
 import org.junit.Test;
+
 import static org.junit.Assert.*;
+
+import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.parser.CSSErrorHandler;
 import org.xhtmlrenderer.css.parser.CSSParser;
+import org.xhtmlrenderer.css.parser.PropertyValue;
 import org.xhtmlrenderer.css.sheet.Ruleset;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
 import org.xhtmlrenderer.util.LangId;
@@ -26,23 +30,40 @@ public class CSSParserTest
 		return parser.parseDeclaration("", CSSOrigin.AUTHOR, declaration); 
 	}
 	
+	private static int declSize(Ruleset rs)
+	{
+		return rs.getPropertyDeclarations().size();
+	}
+
+	private static PropertyValue firstValue(Ruleset rs)
+	{
+		return rs.getPropertyDeclarations().get(0).getValue();
+	}
+	
+	private static CSSName firstProperty(Ruleset rs)
+	{
+		return rs.getPropertyDeclarations().get(0).getCSSName();
+	}
+	
 	@Test
 	public void testRelativeUrlBackgroundImage()
 	{
 		Ruleset rs;
 		
 		rs = parseDeclaration("background-image:url(test.png)");
-		assertEquals(1, rs.getPropertyDeclarations().size());
-		assertEquals("background-image", rs.getPropertyDeclarations().get(0).getPropertyName());
-		assertEquals("test.png", rs.getPropertyDeclarations().get(0).getValue().getStringValue());
+		assertEquals(1, declSize(rs));
+		assertEquals(CSSName.BACKGROUND_IMAGE, firstProperty(rs));
+		assertEquals("test.png", firstValue(rs).getStringValue());
 	
 		rs = parseDeclaration("background-image: url('test.png')");
-		assertEquals(1, rs.getPropertyDeclarations().size());
-		assertEquals("test.png", rs.getPropertyDeclarations().get(0).getValue().getStringValue());
+		assertEquals(1, declSize(rs));
+		assertEquals(CSSName.BACKGROUND_IMAGE, firstProperty(rs));
+		assertEquals("test.png", firstValue(rs).getStringValue());
 
 		rs = parseDeclaration("background-image :url(\"test.png\")");
-		assertEquals(1, rs.getPropertyDeclarations().size());
-		assertEquals("test.png", rs.getPropertyDeclarations().get(0).getValue().getStringValue());
+		assertEquals(1, declSize(rs));
+		assertEquals(CSSName.BACKGROUND_IMAGE, firstProperty(rs));
+		assertEquals("test.png", firstValue(rs).getStringValue());
 	}
 	
 	@Test
@@ -51,26 +72,32 @@ public class CSSParserTest
 		Ruleset rs;
 		
 		rs = parseDeclaration("background-image:url(http://example.com/test.png)");
-		assertEquals(1, rs.getPropertyDeclarations().size());
-		assertEquals("http://example.com/test.png", rs.getPropertyDeclarations().get(0).getValue().getStringValue());
+		assertEquals(1, declSize(rs));
+		assertEquals(CSSName.BACKGROUND_IMAGE, firstProperty(rs));
+		assertEquals("http://example.com/test.png", firstValue(rs).getStringValue());
 		
 		rs = parseDeclaration("background-image: url('http://example.com/test.png')");
-		assertEquals(1, rs.getPropertyDeclarations().size());
-		assertEquals("http://example.com/test.png", rs.getPropertyDeclarations().get(0).getValue().getStringValue());
+		assertEquals(1, declSize(rs));
+		assertEquals(CSSName.BACKGROUND_IMAGE, firstProperty(rs));
+		assertEquals("http://example.com/test.png", firstValue(rs).getStringValue());
 		
 		rs = parseDeclaration("background-image :url(\"http://example.com/test.png\")");
-		assertEquals(1, rs.getPropertyDeclarations().size());
-		assertEquals("http://example.com/test.png", rs.getPropertyDeclarations().get(0).getValue().getStringValue());	}
+		assertEquals(1, declSize(rs));
+		assertEquals(CSSName.BACKGROUND_IMAGE, firstProperty(rs));
+		assertEquals("http://example.com/test.png", firstValue(rs).getStringValue());
+	}
 	
 	@Test
 	public void testLinearGradientBackgroundImage()
 	{
 		Ruleset rs = parseDeclaration("background-image: linear-gradient(to top, red, blue);");
-		assertEquals(1, rs.getPropertyDeclarations().size());
-		assertEquals("linear-gradient", rs.getPropertyDeclarations().get(0).getValue().getFunction().getName());
+		assertEquals(1, declSize(rs));
+		assertEquals(CSSName.BACKGROUND_IMAGE, firstProperty(rs));
+		assertEquals("linear-gradient", firstValue(rs).getFunction().getName());
+
 		// NOTE: Currently each token in a function is reported as a parameter.
-		assertEquals(4, rs.getPropertyDeclarations().get(0).getValue().getFunction().getParameters().size());
-		assertEquals("[to, top, red, blue]", rs.getPropertyDeclarations().get(0).getValue().getFunction().getParameters().toString());
+		assertEquals(4, firstValue(rs).getFunction().getParameters().size());
+		assertEquals("[to, top, red, blue]", firstValue(rs).getFunction().getParameters().toString());
 	}
 	
 	@Test
