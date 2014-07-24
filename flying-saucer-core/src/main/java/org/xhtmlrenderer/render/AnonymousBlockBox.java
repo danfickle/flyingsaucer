@@ -20,14 +20,11 @@
  */
 package org.xhtmlrenderer.render;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.w3c.dom.Element;
-import org.xhtmlrenderer.css.style.CalculatedStyle;
 import org.xhtmlrenderer.css.style.CssContext;
 import org.xhtmlrenderer.layout.LayoutContext;
-import org.xhtmlrenderer.layout.Styleable;
 
 /**
  * An anonymous block box as defined in the CSS spec.  This class is only used
@@ -68,28 +65,21 @@ public class AnonymousBlockBox extends BlockBox {
         _openInlineBoxes = openInlineBoxes;
     }
     
-    public boolean isSkipWhenCollapsingMargins() {
+    public boolean isSkipWhenCollapsingMargins() 
+    {
         // An anonymous block will already have its children provided to it
-        for (final Iterator<Styleable> i = getInlineContent().iterator(); i.hasNext(); ) {
-            final Styleable styleable = (Styleable)i.next();
-            final CalculatedStyle style = styleable.getStyle();
-            if (! (style.isFloated() || style.isAbsolute() || style.isFixed() || style.isRunning())) {
-                return false;
-            }
-        }
-        return true;
+    	return getInlineContent().stream()
+    			 .map(styleable -> styleable.getStyle())
+    			 .allMatch(style -> style.isFloated() || style.isAbsolute() || style.isFixed() || style.isRunning());
     }
     
-    public void provideSiblingMarginToFloats(final int margin) {
-        for (final Iterator<Styleable> i = getInlineContent().iterator(); i.hasNext(); ) {
-            final Styleable styleable = (Styleable)i.next();
-            if (styleable instanceof BlockBox) {
-                final BlockBox b = (BlockBox)styleable;
-                if (b.isFloated()) {
-                    b.getFloatedBoxData().setMarginFromSibling(margin);
-                }
-            }
-        }
+    public void provideSiblingMarginToFloats(final int margin) 
+    {
+    	getInlineContent().stream()
+    	  .filter(styleable -> styleable instanceof BlockBox)
+    	  .map(bb -> (BlockBox) bb)
+    	  .filter(bb -> bb.isFloated())
+    	  .forEachOrdered(b -> b.getFloatedBoxData().setMarginFromSibling(margin));
     }
     
     public boolean isMayCollapseMarginsWithChildren() {

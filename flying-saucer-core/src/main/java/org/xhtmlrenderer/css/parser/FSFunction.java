@@ -19,8 +19,8 @@
  */
 package org.xhtmlrenderer.css.parser;
 
-import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class FSFunction {
     private final String _name;
@@ -40,17 +40,10 @@ public class FSFunction {
     }
     
     @Override
-    public String toString() {
-        final StringBuilder result = new StringBuilder();
-        result.append(_name);
-        result.append('(');
-        for (final Iterator<PropertyValue> i = _parameters.iterator(); i.hasNext(); ) {
-            result.append(i.next());  // HACK
-
-            if (i.hasNext())
-            	result.append(',');
-        }
-        result.append(')');
-        return result.toString();
+    public String toString() 
+    {
+    	return _parameters.stream()
+    			.map(param -> param.toString() /* HACK Why? */)
+    			.collect(Collectors.joining(",", _name + "(", ")"));
     }
 }

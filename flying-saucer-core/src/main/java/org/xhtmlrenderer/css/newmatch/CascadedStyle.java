@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.IdentValue;
@@ -239,15 +240,16 @@ public class CascadedStyle {
 
     public int countAssigned() { return cascadedProperties.size(); }
 
-    public String getFingerprint() {
-        if (this.fingerprint == null) {
-            final StringBuilder sb = new StringBuilder();
-            final Iterator<PropertyDeclaration> iter = cascadedProperties.values().iterator();
-            while (iter.hasNext()) {
-                sb.append(iter.next().getFingerprint());
-            }
-            this.fingerprint = sb.toString();
+    public String getFingerprint() 
+    {
+        if (this.fingerprint == null) 
+        {
+        	this.fingerprint =
+        		cascadedProperties.values().stream()
+        		  .map(iter -> iter.getFingerprint())
+        		  .collect(Collectors.joining());
         }
+
         return this.fingerprint;
     }
 }// end class

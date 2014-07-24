@@ -30,9 +30,11 @@ import static org.xhtmlrenderer.util.GeneralUtil.ciEquals;
 
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -75,13 +77,16 @@ public class AWTFontResolver implements FontResolver
     private FSFont resolveFont(final SharedContext ctx, final String[] families, final float size, final IdentValue weight, final IdentValue style, final IdentValue variant) {
         // Try to create a font for each font family provided as CSS
     	// can specify fallback fonts.
-        if (families != null) {
-            for (final String family : families) {
-                final Font font = resolveFont(ctx, family, size, weight, style, variant);
-                if (font != null) {
-                    return new AWTFSFont(font);
-                }
-            }
+        if (families != null) 
+        {
+        	Optional<Font> resolved =
+        		Arrays.stream(families)
+        			.map(family -> resolveFont(ctx, family, size, weight, style, variant))
+        			.filter(font -> font != null)
+        			.findFirst();
+
+        	if (resolved.isPresent())
+        			return new AWTFSFont(resolved.get());
         }
 
         // if we get here then no font worked, so just return default sans
