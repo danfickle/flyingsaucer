@@ -124,7 +124,7 @@ public abstract class Box implements Styleable {
     }
 
     public String toString() {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         sb.append("Box: ");
         sb.append(" (" + getAbsX() + "," + getAbsY() + ")->(" + getWidth() + " x " + getHeight() + ")");
         return sb.toString();
@@ -682,14 +682,14 @@ public abstract class Box implements Styleable {
             return null;
         }
 
-        Box result = null;
-        for (int i = 0; i < getChildCount(); i++) {
-            final Box child = getChild(i);
-            result = child.find(cssCtx, absX, absY, findAnonymous);
-            if (result != null) {
-                return result;
-            }
-        }
+        Optional<Box> result = 
+        		getChildren().stream()
+        		  .map(child -> child.find(cssCtx, absX, absY, findAnonymous))
+        		  .filter(box -> box != null)
+        		  .findFirst();
+
+        if (result.isPresent())
+        	return result.get();
 
         final Rectangle edge = getContentAreaEdge(getAbsX(), getAbsY(), cssCtx);
         return edge.contains(absX, absY) && getStyle().isVisible() ? this : null;

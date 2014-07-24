@@ -2061,6 +2061,7 @@ public class BlockBox extends Box implements InlinePaintable {
         _fromCaptionedTable = fromTable;
     }
 
+    @Override
     protected boolean isInlineBlock() {
         return isInline();
     }
@@ -2074,6 +2075,7 @@ public class BlockBox extends Box implements InlinePaintable {
         return flowRoot.isRoot();
     }
 
+    @Override
     public Box getDocumentParent() {
         final Box staticEquivalent = getStaticEquivalent();
         if (staticEquivalent != null) {
@@ -2091,13 +2093,9 @@ public class BlockBox extends Box implements InlinePaintable {
             case CONTENT_EMPTY:
                 return false;
             case CONTENT_BLOCK:
-                for (final Iterator<Box> i = getChildIterator(); i.hasNext(); ) {
-                    final BlockBox box = (BlockBox)i.next();
-                    if (box.isContainsInlineContent(c)) {
-                        return true;
-                    }
-                }
-                return false;
+            	return getChildren().stream()
+            			.map(child -> (BlockBox) child)
+            			.anyMatch(box -> box.isContainsInlineContent(c));
         }
 
         throw new RuntimeException("internal error: no children");

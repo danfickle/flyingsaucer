@@ -25,6 +25,7 @@ TODO
 
 DONE
 ----
++ Move to Java 8 including use of streams, optional, etc.
 + Media query support.
 + Replace java.util logging with slf4j.
 + Redirects and gzip response encoding.

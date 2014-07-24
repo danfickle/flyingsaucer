@@ -261,10 +261,12 @@ public class InlineText {
     
     public String getTextExportText() {
         final char[] ch = getSubstring().toCharArray();
-        final StringBuffer result = new StringBuffer();
+        final StringBuilder result = new StringBuilder();
+
         if (isTrimmedLeadingSpace()) {
             result.append(' ');
         }
+       
         for (int i = 0; i < ch.length; i++) {
             final char c = ch[i];
             if (c != '\n') {
