@@ -1,6 +1,7 @@
 package com.github.neoflyingsaucer.other;
 
 import com.github.neoflyingsaucer.defaultuseragent.DefaultUserAgent;
+import com.github.neoflyingsaucer.pdfout.PdfRenderer;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.PdfWriter;
 
@@ -8,6 +9,7 @@ import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -72,14 +74,40 @@ public class PDFRenderer {
     public static void renderToPDF(final String url, final String pdf, final Character pdfVersion,
     		final UserAgentCallback uac)
             throws IOException, DocumentException {
-
-        final ITextRenderer renderer = new ITextRenderer(uac);
-        renderer.setDocument(url);
-        if (pdfVersion != null) renderer.setPDFVersion(pdfVersion.charValue());
-        doRenderToPDF(renderer, pdf);
+//
+    	final PdfRenderer renderer = new PdfRenderer(uac);
+    	renderer.setDocument(url);  
+    	doRenderToPDF(renderer, pdf);
+    	
+//    	final ITextRenderer renderer = new ITextRenderer(uac);
+//    	renderer.setDocument(url);  
+//
+//    	//        
+////        if (pdfVersion != null) renderer.setPDFVersion(pdfVersion.charValue());
+//    	doRenderToPDF(renderer, pdf);
     }
 
-    /**
+    private static void doRenderToPDF(PdfRenderer renderer, String pdf) throws IOException {
+        OutputStream os = null;
+        try {
+            os = new FileOutputStream(pdf);
+            renderer.layout();
+            renderer.createPDF(os);
+
+            os.close();
+            os = null;
+        } finally {
+            if (os != null) {
+                try {
+                    os.close();
+                } catch (final IOException e) {
+                    // ignore
+                }
+            }
+        }
+		
+	}
+	/**
      * Renders the XML file as a PDF file at the target location.
      *
      * @param file XML file to render

@@ -371,6 +371,7 @@ public class BrowserActions {
             }
         } catch (final Exception ex) {
             logger.info("error:" + ex);
+            ex.printStackTrace();
         }
     }
 
