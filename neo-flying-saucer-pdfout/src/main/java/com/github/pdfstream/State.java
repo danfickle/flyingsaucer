@@ -31,8 +31,8 @@ package com.github.pdfstream;
 
 class State {
 
-    private float[] pen;
-    private float[] brush;
+    private PdfColor pen;
+    private PdfColor brush;
     private float pen_width;
     private int line_cap_style;
     private int line_join_style;
@@ -40,14 +40,14 @@ class State {
 
 
     public State(
-            float[] pen,
-            float[] brush,
+            PdfColor pen,
+            PdfColor brush,
             float pen_width,
             int line_cap_style,
             int line_join_style,
             String linePattern) {
-        this.pen = new float[] { pen[0], pen[1], pen[2] };
-        this.brush = new float[] { brush[0], brush[1], brush[2] };
+        this.pen = pen;
+        this.brush = brush;
         this.pen_width = pen_width;
         this.line_cap_style = line_cap_style;
         this.line_join_style = line_join_style;
@@ -55,12 +55,12 @@ class State {
     }
 
 
-    public float[] getPen() {
+    public PdfColor getPen() {
         return pen;
     }
 
 
-    public float[] getBrush() {
+    public PdfColor getBrush() {
         return brush;
     }
 

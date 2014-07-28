@@ -206,7 +206,7 @@ public class PDFobj {
                         Float.valueOf(dict.get(i + 5)) };
             }
         }
-        return Letter.PORTRAIT;
+        return null;
     }
 
 

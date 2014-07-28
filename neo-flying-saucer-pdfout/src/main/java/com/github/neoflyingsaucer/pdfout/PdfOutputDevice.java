@@ -5,7 +5,9 @@ import java.awt.RenderingHints.Key;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Line2D;
+import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.PathIterator;
+import java.awt.geom.Rectangle2D;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Shape;
@@ -18,6 +20,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
+import org.xhtmlrenderer.css.parser.FSCMYKColor;
 import org.xhtmlrenderer.css.parser.FSColor;
 import org.xhtmlrenderer.css.parser.FSRGBColor;
 import org.xhtmlrenderer.css.style.derived.FSLinearGradient;
@@ -33,8 +36,11 @@ import org.xhtmlrenderer.render.InlineText;
 import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.util.Configuration;
 
+import com.github.pdfstream.PDF;
 import com.github.pdfstream.Page;
-import com.github.pdfstream.Point;
+import com.github.pdfstream.PdfColor;
+import com.github.pdfstream.PdfGreyScaleColor;
+import com.github.pdfstream.PdfRgbaColor;
 
 public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevice 
 {
@@ -56,14 +62,11 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
 
     private AffineTransform _transform = new AffineTransform();
 
-    private Color _color = Color.RED;
-
-    private Color _fillColor;
-    private Color _strokeColor;
+    private FSColor _color = null;
+    private float _opacity = 1;
 
     private Stroke _stroke = STROKE_ONE;
-    private Stroke _originalStroke = null;
-    private Stroke _oldStroke = null;
+    private Stroke _originalStroke = STROKE_ONE;
 
     private Area _clip;
 
@@ -92,6 +95,7 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
 	public PdfOutputDevice(float dotsPerPoint) 
 	{
 		_dotsPerPoint = dotsPerPoint;
+
 	}
 
 	@Override
@@ -113,28 +117,22 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
 	}
 
 	@Override
-    public void setColor(final FSColor color) {
-        if (color instanceof FSRGBColor) {
-            final FSRGBColor rgb = (FSRGBColor) color;
-            _color = new Color(rgb.getRed(), rgb.getGreen(), rgb.getBlue(), (int) (rgb.getAlpha() * 255));
-//        } else if (color instanceof FSCMYKColor) {
-//            final FSCMYKColor cmyk = (FSCMYKColor) color;
-//            _color = new CMYKColor(cmyk.getCyan(), cmyk.getMagenta(), cmyk.getYellow(), cmyk.getBlack());
-        } else {
-            throw new RuntimeException("internal error: unsupported color class " + color.getClass().getName());
-        }
+    public void setColor(final FSColor color)
+	{
+		_color = color;
     }
 
 	@Override
-	public void setOpacity(float opacity) {
-		// TODO Auto-generated method stub
-
+	public void setOpacity(float opacity)
+	{
+		_opacity = opacity;
 	}
 
 	@Override
-	public void drawRect(int x, int y, int width, int height) {
-		// TODO Auto-generated method stub
-
+	public void drawRect(int x, int y, int width, int height) 
+	{
+		Rectangle2D.Double d = new Rectangle2D.Double(x, y, width, height);
+		followPath(d, STROKE);
 	}
 
 	@Override
@@ -146,12 +144,7 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
 	@Override
 	public void draw(final Shape s) 
 	{
-		try {
-			followPath(s, STROKE);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		followPath(s, STROKE);
 	}
 
 	@Override
@@ -193,13 +186,7 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
 	@Override
 	public void drawBorderLine(Shape bounds, int side, int width, boolean solid) 
 	{
-		try {
-			followPath(bounds, STROKE);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+		followPath(bounds, STROKE);
 	}
 
 	@Override
@@ -216,20 +203,16 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
 	}
 
 	@Override
-	public void fill(Shape s) {
-		try {
-			followPath(s, FILL);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+	public void fill(Shape s) 
+	{
+		followPath(s, FILL);
 	}
 
 	@Override
-	public void fillRect(int x, int y, int width, int height) {
-		// TODO Auto-generated method stub
-
+	public void fillRect(int x, int y, int width, int height) 
+	{
+		Rectangle2D.Double d = new Rectangle2D.Double(x, y, width, height);
+		followPath(d, FILL);
 	}
 
 	@Override
@@ -239,46 +222,76 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
 	}
 
 	@Override
-	public void clip(Shape s) {
-		// TODO Auto-generated method stub
-
+	public void clip(Shape s) 
+	{
+        if (s != null) 
+        {
+            Shape s2 = _transform.createTransformedShape(s);
+            
+            if (_clip == null)
+                _clip = new Area(s2);
+            else
+                _clip.intersect(new Area(s2));
+            
+            followPath(s2, CLIP);
+        }
 	}
 
 	@Override
 	public Shape getClip() {
-		// TODO Auto-generated method stub
-		return null;
+        try {
+            return _transform.createInverse().createTransformedShape(_clip);
+        } catch (final NoninvertibleTransformException e) {
+            return null;
+        }
 	}
 
 	@Override
-	public void setClip(Shape s) {
-		// TODO Auto-generated method stub
+	public void setClip(Shape s) 
+	{
+		_currentPage.restore();
+		_currentPage.save();
 
+		if (s != null)
+            s = _transform.createTransformedShape(s);
+        if (s == null) {
+            _clip = null;
+        } else {
+            _clip = new Area(s);
+            followPath(s, CLIP);
+        }
 	}
 
 	@Override
 	public void translate(double tx, double ty) 
 	{
-		try {
-			_currentPage.drawLine(0, 0, 100, 100);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
+		_transform.translate(tx, ty);
 	}
 
 	@Override
 	public void setStroke(Stroke s) {
-		// TODO Auto-generated method stub
-
+		_originalStroke = s;
+		_stroke = transformStroke(s);
 	}
 
+    private Stroke transformStroke(final Stroke stroke) {
+        if (!(stroke instanceof BasicStroke))
+            return stroke;
+        final BasicStroke st = (BasicStroke) stroke;
+        final float scale = (float) Math.sqrt(Math.abs(_transform.getDeterminant()));
+        final float dash[] = st.getDashArray();
+        if (dash != null) {
+            for (int k = 0; k < dash.length; ++k) {
+              dash[k] *= scale;
+            }
+        }
+        return new BasicStroke(st.getLineWidth() * scale, st.getEndCap(), st.getLineJoin(), st.getMiterLimit(), dash, st.getDashPhase()
+                * scale);
+    }
+	
 	@Override
 	public Stroke getStroke() {
-		// TODO Auto-generated method stub
-		return null;
+		return _originalStroke;
 	}
 
 	@Override
@@ -294,26 +307,21 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
 	}
 
 	@Override
-	public boolean isSupportsSelection() {
-		// TODO Auto-generated method stub
+	public boolean isSupportsSelection() 
+	{
 		return false;
 	}
 
 	@Override
-	public boolean isSupportsCMYKColors() {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean isSupportsCMYKColors() 
+	{
+		return true;
 	}
 
 	@Override
 	protected void drawLine(int x1, int y1, int x2, int y2) {
 		Shape line = new Line2D.Double(x1, y1, x2, y2);
-		try {
-			followPath(line, STROKE);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		followPath(line, STROKE);
 	}
 
 	public void setSharedContext(SharedContext _sharedContext) {
@@ -326,14 +334,17 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
 		return null;
 	}
 
-	public void finishPage() {
-		// TODO Auto-generated method stub
-		
+	public void finishPage() 
+	{
+		_currentPage.restore();
 	}
 
 	public void initializePage(Page pg, float h) {
 		_currentPage = pg;
-		
+		_pageHeight = h;
+		_transform = new AffineTransform();
+		_transform.scale(1.0d / _dotsPerPoint, 1.0d / _dotsPerPoint);
+		_currentPage.save();
 	}
 
 	public void finish(RenderingContext c, BlockBox _root) {
@@ -351,30 +362,33 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
 		
 	}
 
-    private void followPath(Shape s, final int drawType) throws Exception {
-
-    	System.err.println("!!!!");
-    	
-    	final Page cb = _currentPage;
+    private void followPath(Shape s, final int drawType) 
+    {
         if (s == null)
             return;
 
-        if (drawType == STROKE) {
-            if (!(_stroke instanceof BasicStroke)) {
+    	final Page cb = _currentPage;
+        
+        if (drawType == STROKE) 
+        {
+            if (!(_stroke instanceof BasicStroke)) 
+            {
                 s = _stroke.createStrokedShape(s);
                 followPath(s, FILL);
                 return;
             }
         }
-        if (drawType == STROKE) {
-            setStrokeDiff(_stroke, _oldStroke);
-            _oldStroke = _stroke;
+        
+        if (drawType == STROKE) 
+        {
+            setStrokeDiff(_stroke);
             ensureStrokeColor();
-        } else if (drawType == FILL) {
+        }
+        else if (drawType == FILL) 
+        {
             ensureFillColor();
         }
 
-        List<Point> pdfPath = new ArrayList<>();
         PathIterator points;
 
         if (drawType == CLIP) {
@@ -382,50 +396,42 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
         } else {
             points = s.getPathIterator(_transform);
         }
+        
         final float[] coords = new float[6];
         int traces = 0;
-        while (!points.isDone()) {
+
+        cb.pathOpen();
+        
+        while (!points.isDone())
+        {
             ++traces;
             final int segtype = points.currentSegment(coords);
-
-            for (int i = 0; i < coords.length; i++)
+            normalizeY(coords);
+            
+            switch (segtype)
             {
-            	coords[i] = Math.abs(coords[i]) / _dotsPerPoint;
-            }
-            //normalizeY(coords);
-            switch (segtype) {
             case PathIterator.SEG_CLOSE:
-            	LOGGER.info("Close segment");
+            	cb.pathCloseSubpath();
             	break;
 
             case PathIterator.SEG_CUBICTO:
-            	LOGGER.info("Curve to: {}, {}, {}, {}, {}, {}",
-            			coords[0], coords[1],
-            			coords[2], coords[3],
-            			coords[4], coords[5]);
-            	pdfPath.add(new Point(coords[0], coords[1], true));
-            	pdfPath.add(new Point(coords[2], coords[3], true));
-            	pdfPath.add(new Point(coords[4], coords[5]));
-            	
-            	//cb.curveTo(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5]);
+            	cb.pathCurveTo(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5]);
                 break;
 
             case PathIterator.SEG_LINETO:
-                pdfPath.add(new Point(coords[0], coords[1]));
-                LOGGER.info("Line to: {}, {}", coords[0], coords[1]);
+            	cb.pathLineTo(coords[0], coords[1]);
                 break;
 
             case PathIterator.SEG_MOVETO:
-            	pdfPath.add(new Point(coords[0], coords[1]));
-                LOGGER.info("Move to: {}, {}", coords[0], coords[1]);
-            	//cb.moveTo(coords[0], coords[1]);
+            	cb.pathOpen();
+            	cb.pathMoveTo(coords[0], coords[1]);
                 break;
 
             case PathIterator.SEG_QUADTO:
-            	pdfPath.add(new Point(coords[0], coords[1], true));
-            	pdfPath.add(new Point(coords[2], coords[3], true));
+            	cb.pathCurveTo(coords[0], coords[1], coords[2], coords[3]);
             	break;
             }
+
             points.next();
         }
 
@@ -433,37 +439,112 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
         case FILL:
             if (traces > 0) {
                 if (points.getWindingRule() == PathIterator.WIND_EVEN_ODD)
-                    cb.drawPath(pdfPath, 'f'); // TODO
+                	cb.pathFillEvenOdd();
                 else
-                	cb.drawPath(pdfPath, 'f'); // TODO
+                	cb.pathFillNonZero();
             }
             break;
         case STROKE:
             if (traces > 0)
-                cb.drawPath(pdfPath, 'S');
+                cb.pathStroke();
             break;
         default: // drawType==CLIP
             if (traces == 0)
                 ;//cb.rectangle(0, 0, 0, 0);
-//            if (points.getWindingRule() == PathIterator.WIND_EVEN_ODD)
-//            	cb.clipPath();
-//            	cb.eoClip();
-//            else
-//                cb.clip();
-//            cb.newPath();
+            if (points.getWindingRule() == PathIterator.WIND_EVEN_ODD)
+            	cb.pathClipEvenOdd();
+            else
+                cb.pathClipNonZero();
         }
     }
 
-	private void ensureFillColor() throws IOException {
-		_currentPage.setBrushColor(new float[] { _color.getRed(), _color.getGreen(), _color.getBlue()} );
+    private PdfColor getPdfColor(FSColor col, float opacity)
+    {
+		PdfColor pdfColor = PdfGreyScaleColor.BLACK;
+
+		if (col instanceof FSRGBColor)
+		{
+			FSRGBColor rgba = (FSRGBColor) col;
+			pdfColor = new PdfRgbaColor(
+				rgba.getRed(), rgba.getGreen(), rgba.getBlue(), (int) (rgba.getAlpha() * 255 * opacity));			
+		}
+		else if (col instanceof FSCMYKColor)
+		{
+			// TODO
+			
+		}    	
+    	
+    	return pdfColor;
+    }
+    
+	private void ensureFillColor() 
+	{
+		PdfColor pdfColor = getPdfColor(_color, _opacity);
+		_currentPage.setBrushColor(pdfColor);
 	}
 
-	private void ensureStrokeColor() throws IOException {
-		_currentPage.setPenColor(_color.getRed(), _color.getGreen(), _color.getBlue());
+	private void ensureStrokeColor() {
+		PdfColor pdfColor = getPdfColor(_color, _opacity);
+		_currentPage.setPenColor(pdfColor);
 	}
 
-	private void setStrokeDiff(Stroke _stroke2, Stroke _oldStroke2) {
-	}
+	private void setStrokeDiff(Stroke newStroke) 
+	{
+		final Page cb = _currentPage;
+		if (!(newStroke instanceof BasicStroke))
+			return;
+
+		final BasicStroke nStroke = (BasicStroke) newStroke;
+
+		cb.setPenWidth(nStroke.getLineWidth());
+
+		switch (nStroke.getEndCap()) {
+        case BasicStroke.CAP_BUTT:
+            cb.setLineCapStyle(0);
+            break;
+        case BasicStroke.CAP_SQUARE:
+            cb.setLineCapStyle(2);
+            break;
+        default:
+            cb.setLineCapStyle(1);
+            break;
+        }
+		
+        switch (nStroke.getLineJoin()) {
+        case BasicStroke.JOIN_MITER:
+            cb.setLineJoinStyle(0);
+            break;
+        case BasicStroke.JOIN_BEVEL:
+            cb.setLineJoinStyle(2);
+            break;
+        default:
+            cb.setLineJoinStyle(1);
+            break;
+        }
+
+        // TODO cb.setMiterLimit(nStroke.getMiterLimit());
+        final float dash[] = nStroke.getDashArray();
+
+        if (dash == null)
+        {
+        	cb.setLinePattern("[] 0");
+        }
+        else 
+        {
+        	StringBuilder sb = new StringBuilder(15);
+        	sb.append('[');
+        	
+            for (int k = 0; k < dash.length; ++k) 
+            {
+            	sb.append(PDF.formatFloat(dash[k]));
+                sb.append(' ');
+            }
+            sb.append(']');
+            sb.append(PDF.formatFloat(nStroke.getDashPhase()));
+            
+            cb.setLinePattern(sb.toString());
+        }
+    }
 
 	private float normalizeY(final float y) 
 	{

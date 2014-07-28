@@ -1,6 +1,7 @@
 package com.github.neoflyingsaucer.pdfout;
 
 import java.awt.Rectangle;
+import java.io.IOException;
 
 import org.xhtmlrenderer.extend.FSGlyphVector;
 import org.xhtmlrenderer.extend.FontContext;
@@ -10,8 +11,39 @@ import org.xhtmlrenderer.render.FSFont;
 import org.xhtmlrenderer.render.FSFontMetrics;
 import org.xhtmlrenderer.render.JustificationInfo;
 
+import com.github.pdfstream.CoreFont;
+import com.github.pdfstream.Font;
+import com.github.pdfstream.PDF;
+import com.github.pdfstream.Page;
+
 public class PdfTextRenderer implements TextRenderer{
 
+	private  Page _page;
+	private  PDF _pdf;
+	private  Font _f;
+	
+	public PdfTextRenderer() 
+	{
+
+	}
+
+	public void setInfo(Page page, PDF pdf)
+	{
+		_page = page;
+		_pdf = pdf;
+		Font f = null;
+		
+		try {
+			f = new Font(_pdf, CoreFont.HELVETICA);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		_f = f;
+		
+
+	}
+	
 	@Override
 	public void setup(FontContext context) {
 		// TODO Auto-generated method stub
@@ -21,8 +53,14 @@ public class PdfTextRenderer implements TextRenderer{
 	@Override
 	public void drawString(OutputDevice outputDevice, String string, float x,
 			float y) {
-		// TODO Auto-generated method stub
-		
+
+		try {
+
+			_page.drawString(_f, string, x, y);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -70,7 +108,7 @@ public class PdfTextRenderer implements TextRenderer{
 	@Override
 	public int getWidth(FontContext context, FSFont font, String string) {
 		// TODO Auto-generated method stub
-		return 100;
+		return (int) 100;
 	}
 
 	@Override
@@ -82,7 +120,7 @@ public class PdfTextRenderer implements TextRenderer{
 	@Override
 	public float getFontScale() {
 		// TODO Auto-generated method stub
-		return 1;
+		return 100;
 	}
 
 	@Override
@@ -94,7 +132,7 @@ public class PdfTextRenderer implements TextRenderer{
 	@Override
 	public int getSmoothingLevel() {
 		// TODO Auto-generated method stub
-		return 0;
+		return 10;
 	}
 
 	@Override

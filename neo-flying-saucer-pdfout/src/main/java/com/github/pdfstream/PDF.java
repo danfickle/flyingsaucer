@@ -40,14 +40,18 @@ import java.util.zip.*;
  *
  *
  */
-public class PDF {
-
-    protected int objNumber = 0;
+public class PDF 
+{
+	protected int objNumber = 0;
     protected int metadataObjNumber = 0;
     protected int outputIntentObjNumber = 0;
+
+    
     protected List<Font> fonts = new ArrayList<Font>();
     protected List<Image> images = new ArrayList<Image>();
     protected List<Page> pages = new ArrayList<Page>();
+    protected Map<Float, String> gstates = new HashMap<>(); 
+    
     protected HashMap<String, Destination> destinations = new HashMap<String, Destination>();
     protected List<OptionalContentGroup> groups = new ArrayList<OptionalContentGroup>();
     protected static final DecimalFormat df = new DecimalFormat("0.###", new DecimalFormatSymbols(Locale.US));
@@ -79,7 +83,11 @@ public class PDF {
     public PDF() throws Exception {
     }
 
-
+    public static String formatFloat(double d)
+    {
+    	return PDF.df.format(d);
+    }
+    
     /**
      *  Creates a PDF object that represents a PDF document.
      *
@@ -279,6 +287,27 @@ public class PDF {
             append(">>\n");
         }
 
+        if (!gstates.isEmpty())
+        {
+        	append("/ExtGState\n");
+        	append("<<\n");
+
+        	for (Map.Entry<Float, String> gstate : gstates.entrySet())
+        	{
+        		append('/');
+        		append(gstate.getValue());
+        		append(" <<\n");
+
+        		append("/CA ");
+        		append(PDF.df.format(gstate.getKey()));
+        		append("\n/ca ");
+        		append(PDF.df.format(gstate.getKey()));
+        		append("\n>>\n");
+        	}
+        	
+            append(">>\n");        	
+        }
+        
         if (!images.isEmpty()) {
             append("/XObject\n");
             append("<<\n");
@@ -472,17 +501,19 @@ public class PDF {
         byte[] buf = page.buf.toByteArray();
         dos.write(buf, 0, buf.length);
         dos.finish();
-        page.buf = null;    // Release the page content memory!
+        //page.buf = null;    // Release the page content memory!
 
         newobj();
         append("<<\n");
-        append("/Filter /FlateDecode\n");
+        //append("/Filter /FlateDecode\n");
         append("/Length ");
-        append(baos.size());
+        //append(baos.size());
+append(buf.length);
         append("\n");
         append(">>\n");
         append("stream\n");
-        append(baos);
+        //append(baos);
+append(page.buf);
         append("\nendstream\n");
         endobj();
         page.contents.add(objNumber);
@@ -744,5 +775,25 @@ public class PDF {
         baos.writeTo(os);
         byte_count += baos.size();
     }
+
+
+    /**
+     * If the alpha value is already recorded return its object
+     * name. Otherwise create an object name, record it, and return it.
+     * Doesn't return the preceding / of the object name.
+     */
+	String getExtGStateForAlpha(float a) 
+	{
+		if (gstates.containsKey(a))
+		{
+			return gstates.get(a);
+		}
+		else
+		{
+			String stateObj = "GS" + gstates.size();
+			gstates.put(a, stateObj);
+			return stateObj;
+		}
+	}
 
 }   // End of PDF.java

@@ -111,7 +111,7 @@ public class QRCode implements Drawable {
         for (int row = 0; row < modules.length; row++) {
             for (int col = 0; col < modules.length; col++) {
                 if (isDark(row, col)) {
-                    page.fillRect(x + col*m1, y + row*m1, m1, m1);
+                    // TODO page.fillRect(x + col*m1, y + row*m1, m1, m1);
                 }
             }
         }

@@ -220,18 +220,6 @@ public class Image implements Drawable {
         this.h *= heightFactor;
     }
 
-
-    /**
-     *  Places this image in the specified box.
-     *
-     *  @param box the specified box.
-     */
-    public void placeIn(Box box) throws Exception {
-        box_x = box.x;
-        box_y = box.y;
-    }
-    
-    
     /**
      *  Sets the URI for the "click box" action.
      *

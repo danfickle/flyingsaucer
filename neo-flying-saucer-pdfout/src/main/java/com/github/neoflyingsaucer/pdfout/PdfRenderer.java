@@ -41,6 +41,7 @@ public class PdfRenderer
     private final SharedContext _sharedContext;
     private final PdfOutputDevice _outputDevice;
     private final float _dotsPerPoint;
+    private final PdfTextRenderer _textRenderer;
     
     private BlockBox _root;
 	private Document _doc;
@@ -66,10 +67,11 @@ public class PdfRenderer
   
         final FontResolver fr = new PdfFontResolver();
         _sharedContext.setFontResolver(fr);
+        _textRenderer = new PdfTextRenderer();
 
         final ReplacedElementFactory re = new PdfReplacedElementFactory();        
 		_sharedContext.setReplacedElementFactory(re);
-        _sharedContext.setTextRenderer(new PdfTextRenderer());
+        _sharedContext.setTextRenderer(_textRenderer);
         _sharedContext.setDPI(72 * _dotsPerPoint);
         _sharedContext.setDotsPerPixel(dotsPerPixel);
         _sharedContext.setPrint(true);
@@ -165,6 +167,9 @@ public class PdfRenderer
         final int top = -page.getPaintingTop() + page.getMarginBorderPadding(c, CalculatedStyle.TOP);
 
         final int left = page.getMarginBorderPadding(c, CalculatedStyle.LEFT);
+System.err.println("##" + top + "$$" + left);
+
+		
 
         _outputDevice.translate(left, top);
         _root.getLayer().paint(c);
@@ -207,7 +212,7 @@ public class PdfRenderer
 					throw new RuntimeException(e);
 				}
             
-            
+        	_textRenderer.setInfo(page, _pdfDoc);
             _outputDevice.initializePage(page, nextPageSize[1]);
             paintPage(c, _pdfDoc, currentPage);
             _outputDevice.finishPage();
@@ -261,6 +266,7 @@ public class PdfRenderer
         
         
         try {
+        	_textRenderer.setInfo(null, _pdfDoc);
         	writePDF(pages, c, firstPageSize, _pdfDoc);
         	_pdfDoc.close();
 		} catch (Exception e) {

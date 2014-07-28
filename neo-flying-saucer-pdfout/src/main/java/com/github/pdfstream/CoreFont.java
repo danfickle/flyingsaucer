@@ -49,5 +49,5 @@ public enum CoreFont {
         TIMES_ITALIC,
         TIMES_BOLD_ITALIC,
         SYMBOL,
-        ZAPF_DINGBATS,
+        ZAPF_DINGBATS;
 }

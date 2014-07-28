@@ -29,9 +29,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.github.pdfstream;
 
+import java.awt.Rectangle;
+import java.awt.Shape;
 import java.io.*;
-import java.text.*;
 import java.util.*;
+
+import javafx.geometry.Rectangle2D;
 
 
 /**
@@ -61,14 +64,15 @@ public class Page {
     protected float[] trimBox = null;
     protected float[] artBox = null;
 
-    private float[] pen = {0f, 0f, 0f};
-    private float[] brush = {0f, 0f, 0f};
+    private PdfColor pen = PdfGreyScaleColor.BLACK;
+    private PdfColor brush = PdfGreyScaleColor.WHITE;
     private float pen_width = -1.0f;
     private int line_cap_style = 0;
     private int line_join_style = 0;
     private String linePattern = "[] 0";
     private Font font;
     private List<State> savedStates = new ArrayList<State>();
+    private boolean _isPathOpen = false;
 
 
     public Page(float[] pageSize) throws Exception {
@@ -108,7 +112,69 @@ public class Page {
         return buf.toByteArray();
     }
 
+    public void pathOpen()
+    {
+    	_isPathOpen = true;
+    }
+    
+    
+    public void pathMoveTo(float x, float y)
+    {
+        append(x);
+        append(' ');
+        append(y);
+        append(" m\n");
+    }
 
+    public void pathCloseSubpath()
+    {
+    	append('h');
+    	append('\n');
+    	_isPathOpen = false;
+    }
+    
+    public void pathCurveTo(float x1, float y1, float x2, float y2, float x3, float y3)
+    {
+    	append(x1);
+    	append(' ');
+    	append(y1);
+    	append(' ');
+    	append(x2);
+    	append(' ');
+    	append(y2);
+    	append(' ');
+    	append(x3);
+    	append(' ');
+    	append(y3);
+    	append(' ');
+    	append('c');
+    	append('\n');
+    }
+    
+    public void pathCurveTo(float x1, float y1, float x3, float y3)
+    {
+    	append(x1);
+    	append(' ');
+    	append(y1);
+    	append(' ');
+    	append(x3);
+    	append(' ');
+    	append(y3);
+    	append(' ');
+    	append('y');
+    	append('\n');
+    }    
+
+    public void pathLineTo(float x, float y)
+    {
+    	append(x);
+    	append(' ');
+    	append(y);
+    	append(' ');
+    	append('l');
+    	append('\n');
+    }
+    
     /**
      *  Adds destination to this page.
      *
@@ -162,25 +228,6 @@ public class Page {
             double x2,
             double y2) throws IOException {
         drawLine((float) x1, (float) y1, (float) x2, (float) y2);
-    }
-
-
-    /**
-     *  Draws a line on the page, using the current color, between the points (x1, y1) and (x2, y2).
-     *
-     *  @param x1 the first point's x coordinate.
-     *  @param y1 the first point's y coordinate.
-     *  @param x2 the second point's x coordinate.
-     *  @param y2 the second point's y coordinate.
-     */
-    public void drawLine(
-            float x1,
-            float y1,
-            float x2,
-            float y2) throws IOException {
-        moveTo(x1, y1);
-        lineTo(x2, y2);
-        strokePath();
     }
 
 
@@ -408,137 +455,32 @@ public class Page {
         }
     }
 
-
     /**
      * Sets the color for stroking operations.
      * The pen color is used when drawing lines and splines.
-     *
-     * @param r the red component is float value from 0.0 to 1.0.
-     * @param g the green component is float value from 0.0 to 1.0.
-     * @param b the blue component is float value from 0.0 to 1.0.
      */
-    public void setPenColor(
-            double r, double g, double b) throws IOException {
-        setPenColor((float) r, (float) g, (float) b);
-    }
-
-
-    /**
-     * Sets the color for stroking operations.
-     * The pen color is used when drawing lines and splines.
-     *
-     * @param r the red component is float value from 0.0f to 1.0f.
-     * @param g the green component is float value from 0.0f to 1.0f.
-     * @param b the blue component is float value from 0.0f to 1.0f.
-     */
-    public void setPenColor(
-            float r, float g, float b) throws IOException {
-        if (pen[0] != r ||
-                pen[1] != g ||
-                pen[2] != b) {
-            setColor(r, g, b);
-            append(" RG\n");
-            pen[0] = r;
-            pen[1] = g;
-            pen[2] = b;
-        }
+    public void setPenColor(PdfColor color) 
+    {
+    	if (pen.equals(color))
+    		return;
+    	
+    	color.setStrokeColorOnPage(this);
+    	color.setAlphaColorOnPage(this);
     }
 
 
     /**
      * Sets the color for brush operations.
      * This is the color used when drawing regular text and filling shapes.
-     *
-     * @param r the red component is float value from 0.0 to 1.0.
-     * @param g the green component is float value from 0.0 to 1.0.
-     * @param b the blue component is float value from 0.0 to 1.0.
      */
-    public void setBrushColor(
-            double r, double g, double b) throws IOException {
-        setBrushColor((float) r, (float) g, (float) b);
+    public void setBrushColor(PdfColor color) 
+    {
+    	if (brush.equals(color))
+    		return;
+    	
+    	color.setNonStrokeColorOnPage(this);
+    	color.setAlphaColorOnPage(this);
     }
-
-
-    /**
-     * Sets the color for brush operations.
-     * This is the color used when drawing regular text and filling shapes.
-     *
-     * @param r the red component is float value from 0.0f to 1.0f.
-     * @param g the green component is float value from 0.0f to 1.0f.
-     * @param b the blue component is float value from 0.0f to 1.0f.
-     */
-    public void setBrushColor(
-            float r, float g, float b) throws IOException {
-        if (brush[0] != r ||
-                brush[1] != g ||
-                brush[2] != b) {
-            setColor(r, g, b);
-            append(" rg\n");
-            brush[0] = r;
-            brush[1] = g;
-            brush[2] = b;
-        }
-    }
-
-
-    /**
-     * Sets the color for brush operations.
-     * 
-     * @param color the color.
-     * @throws IOException
-     */
-    public void setBrushColor(float[] color) throws IOException {
-        setBrushColor(color[0], color[1], color[2]);
-    }
-
-
-    /**
-     * Returns the brush color.
-     * 
-     * @return the brush color.
-     */
-    public float[] getBrushColor() {
-        return brush;
-    }
-
-
-    private void setColor(
-            float r, float g, float b) throws IOException {
-        append(r);
-        append(' ');
-        append(g);
-        append(' ');
-        append(b);
-    }
-
-
-    /**
-     * Sets the pen color.
-     * 
-     * @param color the color. See the Color class for predefined values or define your own using 0x00RRGGBB packed integers.
-     * @throws IOException
-     */
-    public void setPenColor(int color) throws IOException {
-        float r = ((color >> 16) & 0xff)/255.0f;
-        float g = ((color >>  8) & 0xff)/255.0f;
-        float b = ((color)       & 0xff)/255.0f;
-        setPenColor(r, g, b);
-    }
-
-
-    /**
-     * Sets the brush color.
-     * 
-     * @param color the color. See the Color class for predefined values or define your own using 0x00RRGGBB packed integers.
-     * @throws IOException
-     */
-    public void setBrushColor(int color) throws IOException {
-        float r = ((color >> 16) & 0xff)/255.0f;
-        float g = ((color >>  8) & 0xff)/255.0f;
-        float b = ((color)       & 0xff)/255.0f;
-        setBrushColor(r, g, b);
-    }
-
 
     /**
      *  Sets the line width to the default.
@@ -576,7 +518,7 @@ public class Page {
      *
      *  @param pattern the line dash pattern.
      */
-    public void setLinePattern(String pattern) throws IOException {
+    public void setLinePattern(String pattern) {
         if (!pattern.equals(linePattern)) {
             linePattern = pattern;
             append(linePattern);
@@ -609,7 +551,7 @@ public class Page {
      *
      *  @param width the pen width.
      */
-    public void setPenWidth(float width) throws IOException {
+    public void setPenWidth(float width) {
         if (pen_width != width) {
             pen_width = width;
             append(pen_width);
@@ -623,7 +565,7 @@ public class Page {
      *
      *  @param style the cap style of the current line. Supported values: Cap.BUTT, Cap.ROUND and Cap.PROJECTING_SQUARE
      */
-    public void setLineCapStyle(int style) throws IOException {
+    public void setLineCapStyle(int style) {
         if (line_cap_style != style) {
             line_cap_style = style;
             append(line_cap_style);
@@ -637,500 +579,13 @@ public class Page {
      *
      *  @param style the line join style code. Supported values: Join.MITER, Join.ROUND and Join.BEVEL
      */
-    public void setLineJoinStyle(int style) throws IOException {
+    public void setLineJoinStyle(int style) {
         if (line_join_style != style) {
             line_join_style = style;
             append(line_join_style);
             append(" j\n");
         }
     }
-
-
-    /**
-     *  Moves the pen to the point with coordinates (x, y) on the page.
-     *
-     *  @param x the x coordinate of new pen position.
-     *  @param y the y coordinate of new pen position.
-     */
-    public void moveTo(double x, double y) throws IOException {
-        moveTo((float) x, (float) y);
-    }
-
-
-    /**
-     *  Moves the pen to the point with coordinates (x, y) on the page.
-     *
-     *  @param x the x coordinate of new pen position.
-     *  @param y the y coordinate of new pen position.
-     */
-    public void moveTo(float x, float y) throws IOException {
-        append(x);
-        append(' ');
-        append(height - y);
-        append(" m\n");
-    }
-
-
-    /**
-     *  Draws a line from the current pen position to the point with coordinates (x, y),
-     *  using the current pen width and stroke color.
-     *  Make sure you call strokePath(), closePath() or fillPath() after the last call to this method.
-     */
-    public void lineTo(double x, double y) throws IOException {
-        lineTo((float) x, (float) y);
-    }
-
-
-    /**
-     *  Draws a line from the current pen position to the point with coordinates (x, y),
-     *  using the current pen width and stroke color.
-     *  Make sure you call strokePath(), closePath() or fillPath() after the last call to this method.
-     */
-    public void lineTo(float x, float y) throws IOException {
-        append(x);
-        append(' ');
-        append(height - y);
-        append(" l\n");
-    }
-
-
-    /**
-     *  Draws the path using the current pen color.
-     */
-    public void strokePath() throws IOException {
-        append("S\n");
-    }
-
-
-    /**
-     *  Closes the path and draws it using the current pen color.
-     */
-    public void closePath() throws IOException {
-        append("s\n");
-    }
-
-
-    /**
-     *  Closes and fills the path with the current brush color.
-     */
-    public void fillPath() throws IOException {
-        append("f\n");
-    }
-
-
-    /**
-     *  Draws the outline of the specified rectangle on the page.
-     *  The left and right edges of the rectangle are at x and x + w.
-     *  The top and bottom edges are at y and y + h.
-     *  The rectangle is drawn using the current pen color.
-     *
-     *  @param x the x coordinate of the rectangle to be drawn.
-     *  @param y the y coordinate of the rectangle to be drawn.
-     *  @param w the width of the rectangle to be drawn.
-     *  @param h the height of the rectangle to be drawn.
-     */
-    public void drawRect(double x, double y, double w, double h)
-            throws IOException {
-        drawRect((float) x, (float) y, (float) w, (float) h);
-    }
-
-
-    /**
-     *  Draws the outline of the specified rectangle on the page.
-     *  The left and right edges of the rectangle are at x and x + w.
-     *  The top and bottom edges are at y and y + h.
-     *  The rectangle is drawn using the current pen color.
-     *
-     *  @param x the x coordinate of the rectangle to be drawn.
-     *  @param y the y coordinate of the rectangle to be drawn.
-     *  @param w the width of the rectangle to be drawn.
-     *  @param h the height of the rectangle to be drawn.
-     */
-    public void drawRect(float x, float y, float w, float h)
-            throws IOException {
-        moveTo(x, y);
-        lineTo(x+w, y);
-        lineTo(x+w, y+h);
-        lineTo(x, y+h);
-        closePath();
-    }
-
-
-    /**
-     *  Fills the specified rectangle on the page.
-     *  The left and right edges of the rectangle are at x and x + w.
-     *  The top and bottom edges are at y and y + h.
-     *  The rectangle is drawn using the current pen color.
-     *
-     *  @param x the x coordinate of the rectangle to be drawn.
-     *  @param y the y coordinate of the rectangle to be drawn.
-     *  @param w the width of the rectangle to be drawn.
-     *  @param h the height of the rectangle to be drawn.
-     */
-    public void fillRect(double x, double y, double w, double h)
-            throws IOException {
-        fillRect((float) x, (float) y, (float) w, (float) h);
-    }
-
-
-    /**
-     *  Fills the specified rectangle on the page.
-     *  The left and right edges of the rectangle are at x and x + w.
-     *  The top and bottom edges are at y and y + h.
-     *  The rectangle is drawn using the current pen color.
-     *
-     *  @param x the x coordinate of the rectangle to be drawn.
-     *  @param y the y coordinate of the rectangle to be drawn.
-     *  @param w the width of the rectangle to be drawn.
-     *  @param h the height of the rectangle to be drawn.
-     */
-    public void fillRect(float x, float y, float w, float h)
-            throws IOException {
-        moveTo(x, y);
-        lineTo(x+w, y);
-        lineTo(x+w, y+h);
-        lineTo(x, y+h);
-        fillPath();
-    }
-
-
-    /**
-     *  Draws or fills the specified path using the current pen or brush.
-     *
-     *  @param path the path.
-     *  @param operation specifies 'stroke' or 'fill' operation.
-     */
-    public void drawPath(
-            List<Point> path, char operation) throws Exception {
-        if (path.size() < 2) {
-            throw new Exception(
-                    "The Path object must contain at least 2 points");
-        }
-        Point point = path.get(0);
-        moveTo(point.x, point.y);
-        boolean curve = false;
-        for (int i = 1; i < path.size(); i++) {
-            point = path.get(i);
-            if (point.isControlPoint) {
-                curve = true;
-                append(point);
-            }
-            else {
-                if (curve) {
-                    curve = false;
-                    append(point);
-                    append("c\n");
-                }
-                else {
-                    lineTo(point.x, point.y);
-                }
-            }
-        }
-
-        append(operation);
-        append('\n');
-    }
-
-
-    /**
-     *  Draws a circle on the page.
-     *
-     *  The outline of the circle is drawn using the current pen color.
-     *
-     *  @param x the x coordinate of the center of the circle to be drawn.
-     *  @param y the y coordinate of the center of the circle to be drawn.
-     *  @param r the radius of the circle to be drawn.
-     */
-    public void drawCircle(
-            double x,
-            double y,
-            double r) throws Exception {
-        drawEllipse((float) x, (float) y, (float) r, (float) r, Operation.STROKE);
-    }
-
-
-    /**
-     *  Draws a circle on the page.
-     *
-     *  The outline of the circle is drawn using the current pen color.
-     *
-     *  @param x the x coordinate of the center of the circle to be drawn.
-     *  @param y the y coordinate of the center of the circle to be drawn.
-     *  @param r the radius of the circle to be drawn.
-     */
-    public void drawCircle(
-            float x,
-            float y,
-            float r) throws Exception {
-        drawEllipse(x, y, r, r, Operation.STROKE);
-    }
-
-
-    /**
-     *  Draws the specified circle on the page and fills it with the current brush color.
-     *
-     *  @param x the x coordinate of the center of the circle to be drawn.
-     *  @param y the y coordinate of the center of the circle to be drawn.
-     *  @param r the radius of the circle to be drawn.
-     *  @param operation must be Operation.STROKE, Operation.CLOSE or Operation.FILL.
-     */
-    public void drawCircle(
-            double x,
-            double y,
-            double r,
-            char operation) throws Exception {
-        drawEllipse((float) x, (float) y, (float) r, (float) r, operation);
-    }
-
-
-    /**
-     *  Draws an ellipse on the page using the current pen color.
-     *
-     *  @param x the x coordinate of the center of the ellipse to be drawn.
-     *  @param y the y coordinate of the center of the ellipse to be drawn.
-     *  @param r1 the horizontal radius of the ellipse to be drawn.
-     *  @param r2 the vertical radius of the ellipse to be drawn.
-     */
-    public void drawEllipse(
-            double x,
-            double y,
-            double r1,
-            double r2) throws Exception {
-        drawEllipse((float) x, (float) y, (float) r1, (float) r2, Operation.STROKE);
-    }
-
-
-    /**
-     *  Draws an ellipse on the page using the current pen color.
-     *
-     *  @param x the x coordinate of the center of the ellipse to be drawn.
-     *  @param y the y coordinate of the center of the ellipse to be drawn.
-     *  @param r1 the horizontal radius of the ellipse to be drawn.
-     *  @param r2 the vertical radius of the ellipse to be drawn.
-     */
-    public void drawEllipse(
-            float x,
-            float y,
-            float r1,
-            float r2) throws Exception {
-        drawEllipse(x, y, r1, r2, Operation.STROKE);
-    }
-
-
-    /**
-     *  Fills an ellipse on the page using the current pen color.
-     *
-     *  @param x the x coordinate of the center of the ellipse to be drawn.
-     *  @param y the y coordinate of the center of the ellipse to be drawn.
-     *  @param r1 the horizontal radius of the ellipse to be drawn.
-     *  @param r2 the vertical radius of the ellipse to be drawn.
-     */
-    public void fillEllipse(
-            double x,
-            double y,
-            double r1,
-            double r2) throws Exception {
-        drawEllipse((float) x, (float) y, (float) r1, (float) r2, Operation.FILL);
-    }
-
-
-    /**
-     *  Fills an ellipse on the page using the current pen color.
-     *
-     *  @param x the x coordinate of the center of the ellipse to be drawn.
-     *  @param y the y coordinate of the center of the ellipse to be drawn.
-     *  @param r1 the horizontal radius of the ellipse to be drawn.
-     *  @param r2 the vertical radius of the ellipse to be drawn.
-     */
-    public void fillEllipse(
-            float x,
-            float y,
-            float r1,
-            float r2) throws Exception {
-        drawEllipse(x, y, r1, r2, Operation.FILL);
-    }
-
-
-    /**
-     *  Draws an ellipse on the page and fills it using the current brush color.
-     *
-     *  @param x the x coordinate of the center of the ellipse to be drawn.
-     *  @param y the y coordinate of the center of the ellipse to be drawn.
-     *  @param r1 the horizontal radius of the ellipse to be drawn.
-     *  @param r2 the vertical radius of the ellipse to be drawn.
-     *  @param operation the operation.
-     */
-    private void drawEllipse(
-            float x,
-            float y,
-            float r1,
-            float r2,
-            char operation) throws Exception {
-        // The best 4-spline magic number
-        float m4 = 0.551784f;
-
-        // Starting point
-        moveTo(x, y - r2);
-
-        appendPointXY(x + m4*r1, y - r2);
-        appendPointXY(x + r1, y - m4*r2);
-        appendPointXY(x + r1, y);
-        append("c\n");
-
-        appendPointXY(x + r1, y + m4*r2);
-        appendPointXY(x + m4*r1, y + r2);
-        appendPointXY(x, y + r2);
-        append("c\n");
-
-        appendPointXY(x - m4*r1, y + r2);
-        appendPointXY(x - r1, y + m4*r2);
-        appendPointXY(x - r1, y);
-        append("c\n");
-
-        appendPointXY(x - r1, y - m4*r2);
-        appendPointXY(x - m4*r1, y - r2);
-        appendPointXY(x, y - r2);
-        append("c\n");
-
-        append(operation);
-        append('\n');
-    }
-
-
-    /**
-     *  Draws a point on the page using the current pen color.
-     *
-     *  @param p the point.
-     */
-    public void drawPoint(Point p) throws Exception {
-        if (p.shape != Point.INVISIBLE)  {
-            List<Point> list;
-            if (p.shape == Point.CIRCLE) {
-                if (p.fillShape) {
-                    drawCircle(p.x, p.y, p.r, 'f');
-                }
-                else {
-                    drawCircle(p.x, p.y, p.r, 'S');
-                }
-            }
-            else if (p.shape == Point.DIAMOND) {
-                list = new ArrayList<Point>();
-                list.add(new Point(p.x, p.y - p.r));
-                list.add(new Point(p.x + p.r, p.y));
-                list.add(new Point(p.x, p.y + p.r));
-                list.add(new Point(p.x - p.r, p.y));
-                if (p.fillShape) {
-                    drawPath(list, 'f');
-                }
-                else {
-                    drawPath(list, 's');
-                }
-            }
-            else if (p.shape == Point.BOX) {
-                list = new ArrayList<Point>();
-                list.add(new Point(p.x - p.r, p.y - p.r));
-                list.add(new Point(p.x + p.r, p.y - p.r));
-                list.add(new Point(p.x + p.r, p.y + p.r));
-                list.add(new Point(p.x - p.r, p.y + p.r));
-                if (p.fillShape) {
-                    drawPath(list, 'f');
-                }
-                else {
-                    drawPath(list, 's');
-                }
-            }
-            else if (p.shape == Point.PLUS) {
-                drawLine(p.x - p.r, p.y, p.x + p.r, p.y);
-                drawLine(p.x, p.y - p.r, p.x, p.y + p.r);
-            }
-            else if (p.shape == Point.UP_ARROW) {
-                list = new ArrayList<Point>();
-                list.add(new Point(p.x, p.y - p.r));
-                list.add(new Point(p.x + p.r, p.y + p.r));
-                list.add(new Point(p.x - p.r, p.y + p.r));
-                if (p.fillShape) {
-                    drawPath(list, 'f');
-                }
-                else {
-                    drawPath(list, 's');
-                }
-            }
-            else if (p.shape == Point.DOWN_ARROW) {
-                list = new ArrayList<Point>();
-                list.add(new Point(p.x - p.r, p.y - p.r));
-                list.add(new Point(p.x + p.r, p.y - p.r));
-                list.add(new Point(p.x, p.y + p.r));
-                if (p.fillShape) {
-                    drawPath(list, 'f');
-                }
-                else {
-                    drawPath(list, 's');
-                }
-            }
-            else if (p.shape == Point.LEFT_ARROW) {
-                list = new ArrayList<Point>();
-                list.add(new Point(p.x + p.r, p.y + p.r));
-                list.add(new Point(p.x - p.r, p.y));
-                list.add(new Point(p.x + p.r, p.y - p.r));
-                if (p.fillShape) {
-                    drawPath(list, 'f');
-                }
-                else {
-                    drawPath(list, 's');
-                }
-            }
-            else if (p.shape == Point.RIGHT_ARROW) {
-                list = new ArrayList<Point>();
-                list.add(new Point(p.x - p.r, p.y - p.r));
-                list.add(new Point(p.x + p.r, p.y));
-                list.add(new Point(p.x - p.r, p.y + p.r));
-                if (p.fillShape) {
-                    drawPath(list, 'f');
-                }
-                else {
-                    drawPath(list, 's');
-                }
-            }
-            else if (p.shape == Point.H_DASH) {
-                drawLine(p.x - p.r, p.y, p.x + p.r, p.y);
-            }
-            else if (p.shape == Point.V_DASH) {
-                drawLine(p.x, p.y - p.r, p.x, p.y + p.r);
-            }
-            else if (p.shape == Point.X_MARK) {
-                drawLine(p.x - p.r, p.y - p.r, p.x + p.r, p.y + p.r);
-                drawLine(p.x - p.r, p.y + p.r, p.x + p.r, p.y - p.r);
-            }
-            else if (p.shape == Point.MULTIPLY) {
-                drawLine(p.x - p.r, p.y - p.r, p.x + p.r, p.y + p.r);
-                drawLine(p.x - p.r, p.y + p.r, p.x + p.r, p.y - p.r);
-                drawLine(p.x - p.r, p.y, p.x + p.r, p.y);
-                drawLine(p.x, p.y - p.r, p.x, p.y + p.r);
-            }
-            else if (p.shape == Point.STAR) {
-                float angle = (float) Math.PI / 10;
-                float sin18 = (float) Math.sin(angle);
-                float cos18 = (float) Math.cos(angle);
-                float a = p.r * cos18;
-                float b = p.r * sin18;
-                float c = 2 * a * sin18;
-                float d = 2 * a * cos18 - p.r;
-                list = new ArrayList<Point>();
-                list.add(new Point(p.x, p.y - p.r));
-                list.add(new Point(p.x + c, p.y + d));
-                list.add(new Point(p.x - a, p.y - b));
-                list.add(new Point(p.x + a, p.y - b));
-                list.add(new Point(p.x - c, p.y + d));
-                if (p.fillShape) {
-                    drawPath(list, 'f');
-                }
-                else {
-                    drawPath(list, 's');
-                }
-            }
-        }
-    }
-
 
     /**
      *  Sets the text rendering mode.
@@ -1175,24 +630,6 @@ public class Page {
             tm = new float[] {cosOfAngle, sinOfAngle, -sinOfAngle, cosOfAngle};
         }
     }
-
-
-    /**
-     *  Draws a bezier curve starting from the current point.
-     *  <strong>Please note:</strong> You must call the fillPath, closePath or strokePath method after the last bezierCurveTo call.
-     *  <p><i>Author:</i> <strong>Pieter Libin</strong>, pieter@emweb.be</p>
-     *
-     *  @param p1 first control point
-     *  @param p2 second control point
-     *  @param p3 end point
-     */
-    public void bezierCurveTo(Point p1, Point p2, Point p3) throws IOException {
-    	append(p1);
-    	append(p2);
-    	append(p3);
-    	append("c\n");
-    }
-
 
     /**
      *  Sets the start of text block.
@@ -1335,71 +772,14 @@ public class Page {
     }
 
 
-    // Code provided by:
-    // Dominique Andre Gunia <contact@dgunia.de>
-    // <<
-    public void drawRectRoundCorners(
-            float x, float y, float w, float h, float r1, float r2, char operation)
-        throws Exception {
-
-        // The best 4-spline magic number
-        float m4 = 0.551784f;
-
-        List<Point> list = new ArrayList<Point>();
-
-        // Starting point
-        list.add(new Point(x + w - r1, y));
-        list.add(new Point(x + w - r1 + m4*r1, y, Point.CONTROL_POINT));
-        list.add(new Point(x + w, y + r2 - m4*r2, Point.CONTROL_POINT));
-        list.add(new Point(x + w, y + r2));
-
-        list.add(new Point(x + w, y + h - r2));
-        list.add(new Point(x + w, y + h - r2 + m4*r2, Point.CONTROL_POINT));
-        list.add(new Point(x + w - m4*r1, y + h, Point.CONTROL_POINT));
-        list.add(new Point(x + w - r1, y + h));
-
-        list.add(new Point(x + r1, y + h));
-        list.add(new Point(x + r1 - m4*r1, y + h, Point.CONTROL_POINT));
-        list.add(new Point(x, y + h - m4*r2, Point.CONTROL_POINT));
-        list.add(new Point(x, y + h - r2));
-
-        list.add(new Point(x, y + r2));
-        list.add(new Point(x, y + r2 - m4*r2, Point.CONTROL_POINT));
-        list.add(new Point(x + m4*r1, y, Point.CONTROL_POINT));
-        list.add(new Point(x + r1, y));
-        list.add(new Point(x + w - r1, y));
-
-        drawPath(list, operation);
-    }
-
-
-    /**
-     *  Clips the path.
-     */
-    public void clipPath() throws IOException {
-        append("W\n");
-        append("n\n");  // Close the path without painting it.
-    }
-
-
-    public void clipRect(float x, float y, float w, float h)
-            throws IOException {
-        moveTo(x, y);
-        lineTo(x + w, y);
-        lineTo(x + w, y + h);
-        lineTo(x, y + h);
-        clipPath();
-    }
-
-
-    public void save() throws IOException {
+    public void save() {
         append("q\n");
         savedStates.add(new State(
                 pen, brush, pen_width, line_cap_style, line_join_style, linePattern));
     }
 
 
-    public void restore() throws IOException {
+    public void restore() {
         append("Q\n");
         if (savedStates.size() > 0) {
             State savedState = savedStates.remove(savedStates.size() - 1);
@@ -1473,24 +853,7 @@ public class Page {
         this.artBox = new float[] {upperLeftX, upperLeftY, lowerRightX, lowerRightY};
     }
 
-
-    private void appendPointXY(float x, float y) throws IOException {
-        append(x);
-        append(' ');
-        append(height - y);
-        append(' ');
-    }
-
-
-    private void append(Point point) throws IOException {
-        append(point.x);
-        append(' ');
-        append(height - point.y);
-        append(' ');
-    }
-
-
-    protected void append(String str) throws IOException {
+    protected void append(String str) {
         int len = str.length();
         for (int i = 0; i < len; i++) {
             buf.write((byte) str.charAt(i));
@@ -1498,22 +861,22 @@ public class Page {
     }
 
 
-    protected void append(int num) throws IOException {
+    protected void append(int num) {
         append(Integer.toString(num));
     }
 
 
-    protected void append(float val) throws IOException {
+    protected void append(float val) {
         append(PDF.df.format(val));
     }
 
 
-    protected void append(char ch) throws IOException {
+    protected void append(char ch) {
         buf.write((byte) ch);
     }
 
 
-    protected void append(byte b) throws IOException {
+    protected void append(byte b) {
         buf.write(b);
     }
 
@@ -1521,8 +884,12 @@ public class Page {
     /**
      *  Appends the specified array of bytes to the page.
      */
-    public void append(byte[] buffer) throws IOException {
-        buf.write(buffer);
+    public void append(byte[] buffer) {
+        try {
+			buf.write(buffer);
+		} catch (IOException e) {
+			throw new PdfException(e);
+		}
     }
 
 
@@ -1531,7 +898,7 @@ public class Page {
             String str,
             float x,
             float y,
-            Map<String, Integer> colors) throws Exception {
+            Map<String, PdfColor> colors) throws Exception {
         setTextBegin(x, y);
         setTextFont(font);
 
@@ -1557,18 +924,115 @@ public class Page {
 
     private void printBuffer(
             StringBuilder buf,
-            Map<String, Integer> colors) throws Exception {
+            Map<String, PdfColor> colors) throws Exception {
         String str = buf.toString();
         if (str.length() > 0) {
             if (colors.containsKey(str)) {
                 setBrushColor(colors.get(str));
             }
             else {
-                setBrushColor(Color.black);
+                setBrushColor(PdfGreyScaleColor.BLACK);
             }
         }
         print(str);
         buf.setLength(0);
     }
+    
 
+    /**
+     * Scale the coordinate space by sx and sy.
+     */
+    public void scale(float sx, float sy)
+    {
+    	// PDF Out: sx 0 0 sy 0 0 cm 
+    	append(sx);
+    	append(' ');
+    	append(0);
+    	append(' ');
+    	append(0);
+    	append(' ');
+    	append(sy);
+    	append(' ');
+    	append(0);
+    	append(' ');
+    	append(0);
+    	append(' ');
+    	append("cm\n");
+    }
+    
+    /**
+     * Translate the coordinate space by tx and ty.
+     */
+    public void translate(float tx, float ty)
+    {
+    	// PDF Out: 1 0 0 1 tx ty cm
+    	append(1);
+    	append(' ');
+    	append(0);
+    	append(' ');
+    	append(0);
+    	append(' ');
+    	append(1);
+    	append(' ');
+    	append(tx);
+    	append(' ');
+    	append(ty);
+    	append(' ');
+    	append("cm\n");
+    }
+
+
+	public void pathFillEvenOdd() 
+	{
+		if (_isPathOpen)
+			pathCloseSubpath();
+		
+		append('f');
+		append('*');
+		append('\n');
+	}
+
+
+	public void pathFillNonZero() 
+	{
+		if (_isPathOpen)
+			pathCloseSubpath();
+		
+		append('f');
+		append('\n');
+	}
+	
+	public void pathStroke()
+	{
+		if (_isPathOpen)
+			pathCloseSubpath();
+
+		append('S');
+		append('\n');
+	}
+
+
+	public void pathClipEvenOdd() 
+	{
+		if (_isPathOpen)
+			pathCloseSubpath();
+		
+		append('W');
+		append('*');
+		append('\n');
+		append('n');
+		append('\n');
+	}
+
+
+	public void pathClipNonZero()
+	{
+		if (_isPathOpen)
+			pathCloseSubpath();
+		
+		append('W');
+		append('\n');
+		append('n');
+		append('\n');
+	}
 }   // End of Page.java
