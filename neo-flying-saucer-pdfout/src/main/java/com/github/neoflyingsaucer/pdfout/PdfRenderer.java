@@ -167,9 +167,6 @@ public class PdfRenderer
         final int top = -page.getPaintingTop() + page.getMarginBorderPadding(c, CalculatedStyle.TOP);
 
         final int left = page.getMarginBorderPadding(c, CalculatedStyle.LEFT);
-System.err.println("##" + top + "$$" + left);
-
-		
 
         _outputDevice.translate(left, top);
         _root.getLayer().paint(c);
@@ -177,8 +174,6 @@ System.err.println("##" + top + "$$" + left);
 
         _outputDevice.setClip(working);
     }
-    
-    
     
     private void writePDF(final List<PageBox> pages, final RenderingContext c, final float[] firstPageSize, final PDF doc) throws Exception {
         _outputDevice.setRoot(_root);
@@ -212,7 +207,6 @@ System.err.println("##" + top + "$$" + left);
 					throw new RuntimeException(e);
 				}
             
-        	_textRenderer.setInfo(page, _pdfDoc);
             _outputDevice.initializePage(page, nextPageSize[1]);
             paintPage(c, _pdfDoc, currentPage);
             _outputDevice.finishPage();
@@ -264,9 +258,7 @@ System.err.println("##" + top + "$$" + left);
 			e.printStackTrace();
 		}
         
-        
         try {
-        	_textRenderer.setInfo(null, _pdfDoc);
         	writePDF(pages, c, firstPageSize, _pdfDoc);
         	_pdfDoc.close();
 		} catch (Exception e) {

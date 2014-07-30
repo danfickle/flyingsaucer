@@ -29,29 +29,32 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.github.pdfstream;
 
 
-class State {
-
-    private PdfColor pen;
-    private PdfColor brush;
-    private float pen_width;
-    private int line_cap_style;
-    private int line_join_style;
-    private String linePattern;
-
+class State 
+{
+    private final PdfColor pen;
+    private final PdfColor brush;
+    private final float penWidth;
+    private final int lineCapStyle;
+    private final int lineJoinStyle;
+    private final String linePattern;
+    private final float miterLimit;
 
     public State(
             PdfColor pen,
             PdfColor brush,
-            float pen_width,
-            int line_cap_style,
-            int line_join_style,
-            String linePattern) {
+            float penWidth,
+            int lineCapStyle,
+            int lineJoinStyle,
+            String linePattern,
+            float miterLimit) 
+    {
         this.pen = pen;
         this.brush = brush;
-        this.pen_width = pen_width;
-        this.line_cap_style = line_cap_style;
-        this.line_join_style = line_join_style;
+        this.penWidth = penWidth;
+        this.lineCapStyle = lineCapStyle;
+        this.lineJoinStyle = lineJoinStyle;
         this.linePattern = linePattern;
+        this.miterLimit = miterLimit;
     }
 
 
@@ -66,22 +69,26 @@ class State {
 
 
     public float getPenWidth() {
-        return pen_width;
+        return penWidth;
     }
 
 
     public int getLineCapStyle() {
-        return line_cap_style;
+        return lineCapStyle;
     }
 
 
     public int getLineJoinStyle() {
-        return line_join_style;
+        return lineJoinStyle;
     }
 
 
     public String getLinePattern() {
         return linePattern;
     }
-
+    
+    public float getMiterLimit()
+    {
+    	return miterLimit;
+    }
 }   // End of State.java

@@ -2,42 +2,73 @@ package com.github.neoflyingsaucer.pdfout;
 
 import org.xhtmlrenderer.render.FSFontMetrics;
 
-public class PdfFontMetrics implements FSFontMetrics {
-
-	@Override
-	public float getAscent() {
-		// TODO Auto-generated method stub
-		return 10;
+public class PdfFontMetrics implements FSFontMetrics 
+{
+    private float _ascent;
+    private float _descent;
+    private float _strikethroughOffset;
+    private float _strikethroughThickness;
+    private float _underlineOffset;
+    private float _underlineThickness;
+	
+	public PdfFontMetrics() 
+	{
 	}
 
 	@Override
-	public float getDescent() {
-		// TODO Auto-generated method stub
-		return 10;
+	public float getAscent() 
+	{
+		return _ascent;
+	}
+
+	@Override
+	public float getDescent() 
+	{
+		return _descent;
 	}
 
 	@Override
 	public float getStrikethroughOffset() {
-		// TODO Auto-generated method stub
-		return 10;
+		return _strikethroughOffset;
 	}
 
 	@Override
 	public float getStrikethroughThickness() {
-		// TODO Auto-generated method stub
-		return 10;
+		return _strikethroughThickness;
 	}
 
 	@Override
 	public float getUnderlineOffset() {
-		// TODO Auto-generated method stub
-		return 10;
+		return _underlineOffset;
 	}
 
 	@Override
 	public float getUnderlineThickness() {
-		// TODO Auto-generated method stub
-		return 10;
+		return _underlineThickness;
 	}
 
+	public void setStrikethroughThickness(float f) {
+		_strikethroughThickness = f;
+	}
+
+	public void setAscent(float f) 
+	{
+		_ascent = f;
+	}
+
+	public void setStrikethroughOffset(float f) {
+		_strikethroughOffset = f;
+	}
+
+	public void setUnderlineOffset(float f) {
+		_underlineOffset = f;
+	}
+
+	public void setUnderlineThickness(float f) {
+		_underlineThickness = f;
+	}
+
+	public void setDescent(float f) {
+		_descent = f;
+	}
 }

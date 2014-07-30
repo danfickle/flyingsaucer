@@ -29,12 +29,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.github.pdfstream;
 
-import java.awt.Rectangle;
-import java.awt.Shape;
 import java.io.*;
 import java.util.*;
-
-import javafx.geometry.Rectangle2D;
 
 
 /**
@@ -64,16 +60,20 @@ public class Page {
     protected float[] trimBox = null;
     protected float[] artBox = null;
 
+    // Graphics state variables.
     private PdfColor pen = PdfGreyScaleColor.BLACK;
     private PdfColor brush = PdfGreyScaleColor.WHITE;
-    private float pen_width = -1.0f;
-    private int line_cap_style = 0;
-    private int line_join_style = 0;
+    private float penWidth = -1.0f;
+    private int lineCapStyle = 0;
+    private int lineJoinStyle = 0;
     private String linePattern = "[] 0";
-    private Font font;
-    private List<State> savedStates = new ArrayList<State>();
-    private boolean _isPathOpen = false;
+    private float miterLimit = 10;
 
+    // Graphics state stack.
+    private List<State> savedStates = new ArrayList<State>();
+
+    private Font font;
+    private boolean isPathOpen = false;
 
     public Page(float[] pageSize) throws Exception {
         this(null, pageSize);
@@ -114,7 +114,7 @@ public class Page {
 
     public void pathOpen()
     {
-    	_isPathOpen = true;
+    	isPathOpen = true;
     }
     
     
@@ -130,7 +130,7 @@ public class Page {
     {
     	append('h');
     	append('\n');
-    	_isPathOpen = false;
+    	isPathOpen = false;
     }
     
     public void pathCurveTo(float x1, float y1, float x2, float y2, float x3, float y3)
@@ -328,7 +328,7 @@ public class Page {
         append("BT\n");
 
         if (font.fontID == null) {
-            setTextFont(font);
+            setTextFont(font, font.size);
         }
         else {
             append('/');
@@ -374,7 +374,8 @@ public class Page {
     }
     
 
-    private void drawString(Font font, String str) throws IOException {
+    private void drawString(Font font, String str)
+    {
         int len = str.length();
         for (int i = 0; i < len; i++) {
             int c1 = str.charAt(i);
@@ -388,7 +389,7 @@ public class Page {
     }
 
 
-    private void drawTwoByteChar(int c1, Font font) throws IOException {
+    private void drawTwoByteChar(int c1, Font font) {
         if (c1 < font.firstChar || c1 > font.lastChar) {
             if (font.isCJK) {
                 append((byte) 0x0000);
@@ -429,7 +430,7 @@ public class Page {
     }
 
 
-    private void drawOneByteChar(int c1, Font font, String str, int i) throws IOException {
+    private void drawOneByteChar(int c1, Font font, String str, int i) {
         if (c1 < font.firstChar || c1 > font.lastChar) {
             c1 = font.mapUnicodeChar(c1);
         }
@@ -487,9 +488,9 @@ public class Page {
      *  The default is the finest line width.
      */
     public void setDefaultLineWidth() throws IOException {
-        if (pen_width != 0f) {
-            pen_width = 0f;
-            append(pen_width);
+        if (penWidth != 0f) {
+            penWidth = 0f;
+            append(penWidth);
             append(" w\n");
         }
     }
@@ -552,9 +553,9 @@ public class Page {
      *  @param width the pen width.
      */
     public void setPenWidth(float width) {
-        if (pen_width != width) {
-            pen_width = width;
-            append(pen_width);
+        if (penWidth != width) {
+            penWidth = width;
+            append(penWidth);
             append(" w\n");
         }
     }
@@ -566,9 +567,9 @@ public class Page {
      *  @param style the cap style of the current line. Supported values: Cap.BUTT, Cap.ROUND and Cap.PROJECTING_SQUARE
      */
     public void setLineCapStyle(int style) {
-        if (line_cap_style != style) {
-            line_cap_style = style;
-            append(line_cap_style);
+        if (lineCapStyle != style) {
+            lineCapStyle = style;
+            append(lineCapStyle);
             append(" J\n");
         }
     }
@@ -580,9 +581,9 @@ public class Page {
      *  @param style the line join style code. Supported values: Join.MITER, Join.ROUND and Join.BEVEL
      */
     public void setLineJoinStyle(int style) {
-        if (line_join_style != style) {
-            line_join_style = style;
-            append(line_join_style);
+        if (lineJoinStyle != style) {
+            lineJoinStyle = style;
+            append(lineJoinStyle);
             append(" j\n");
         }
     }
@@ -592,12 +593,18 @@ public class Page {
      *
      *  @param mode the rendering mode.
      */
-    public void setTextRenderingMode(int mode) throws Exception {
+    public void setTextRenderingMode(int mode)
+    {
         if (mode >= 0 && mode <= 7) {
             this.renderingMode = mode;
+            
+            if (renderingMode != 0) {
+                append(renderingMode);
+                append(" Tr\n");
+            }
         }
         else {
-            throw new Exception("Invalid text rendering mode: " + mode);
+            throw new RuntimeException("Invalid text rendering mode: " + mode);
         }
     }
 
@@ -630,15 +637,6 @@ public class Page {
             tm = new float[] {cosOfAngle, sinOfAngle, -sinOfAngle, cosOfAngle};
         }
     }
-
-    /**
-     *  Sets the start of text block.
-     *  Please see Example_32. This method must have matching call to setTextEnd().
-     */
-    public void setTextStart() throws IOException {
-        append("BT\n");
-    }
-
 
     /**
      *  Sets the text location.
@@ -688,7 +686,7 @@ public class Page {
     }
 
 
-    public void setTextScaling(float scaling) throws IOException {
+    public void setTextScaling(float scaling) {
         append(scaling);
         append(" Tz\n");
     }
@@ -700,12 +698,12 @@ public class Page {
     }
 
 
-    public void setTextFont(Font font) throws IOException {
+    public void setTextFont(Font font, float size) {
         this.font = font;
         append("/F");
         append(font.objNumber);
         append(' ');
-        append(font.size);
+        append(size);
         append(" Tf\n");
     }
 
@@ -762,20 +760,10 @@ public class Page {
         append("T*\n");
     }
 
-
-    /**
-     *  Sets the end of text block.
-     *  Please see Example_32.
-     */
-    public void setTextEnd() throws IOException {
-        append("ET\n");
-    }
-
-
     public void save() {
         append("q\n");
         savedStates.add(new State(
-                pen, brush, pen_width, line_cap_style, line_join_style, linePattern));
+                pen, brush, penWidth, lineCapStyle, lineJoinStyle, linePattern, miterLimit));
     }
 
 
@@ -785,10 +773,11 @@ public class Page {
             State savedState = savedStates.remove(savedStates.size() - 1);
             pen = savedState.getPen();
             brush = savedState.getBrush();
-            pen_width = savedState.getPenWidth();
-            line_cap_style = savedState.getLineCapStyle();
-            line_join_style = savedState.getLineJoinStyle();
+            penWidth = savedState.getPenWidth();
+            lineCapStyle = savedState.getLineCapStyle();
+            lineJoinStyle = savedState.getLineJoinStyle();
             linePattern = savedState.getLinePattern();
+            miterLimit = savedState.getMiterLimit();
         }
     }
     // <<
@@ -900,7 +889,7 @@ public class Page {
             float y,
             Map<String, PdfColor> colors) throws Exception {
         setTextBegin(x, y);
-        setTextFont(font);
+        setTextFont(font, font.size);
 
         StringBuilder buf1 = new StringBuilder();
         StringBuilder buf2 = new StringBuilder();
@@ -918,7 +907,7 @@ public class Page {
         printBuffer(buf1, colors);
         printBuffer(buf2, colors);
 
-        setTextEnd();
+        endText();
     }
 
 
@@ -984,7 +973,7 @@ public class Page {
 
 	public void pathFillEvenOdd() 
 	{
-		if (_isPathOpen)
+		if (isPathOpen)
 			pathCloseSubpath();
 		
 		append('f');
@@ -995,7 +984,7 @@ public class Page {
 
 	public void pathFillNonZero() 
 	{
-		if (_isPathOpen)
+		if (isPathOpen)
 			pathCloseSubpath();
 		
 		append('f');
@@ -1004,7 +993,7 @@ public class Page {
 	
 	public void pathStroke()
 	{
-		if (_isPathOpen)
+		if (isPathOpen)
 			pathCloseSubpath();
 
 		append('S');
@@ -1014,7 +1003,7 @@ public class Page {
 
 	public void pathClipEvenOdd() 
 	{
-		if (_isPathOpen)
+		if (isPathOpen)
 			pathCloseSubpath();
 		
 		append('W');
@@ -1027,12 +1016,67 @@ public class Page {
 
 	public void pathClipNonZero()
 	{
-		if (_isPathOpen)
+		if (isPathOpen)
 			pathCloseSubpath();
 		
 		append('W');
 		append('\n');
 		append('n');
 		append('\n');
+	}
+
+
+	public void setMiterLimit(float miterLimit) 
+	{
+		if (this.miterLimit != miterLimit)
+		{
+			this.miterLimit = miterLimit;
+
+			append(PDF.formatFloat(miterLimit));
+			append(' ');
+			append('M');
+			append('\n');
+		}
+	}
+
+	public void beginText() 
+	{
+		append("BT\n");
+	}
+	
+	public void endText()
+	{
+		append("ET\n");
+	}
+
+
+	public void setTextMatrix(float a, float b, float c, float d, float e, float f) 
+	{
+        append(a);
+        append(' ');
+        append(b);
+        append(' ');
+        append(c);
+        append(' ');
+        append(d);
+        append(' ');
+        append(e);
+        append(' ');
+        append(f);
+        append(" Tm\n");
+	}
+
+
+	public void showText(String s)
+	{
+        append("[ (");
+        drawString(font, s);
+        append(") ] TJ\n");
+	}
+
+
+	public PDF getPdf() 
+	{
+		return pdf;
 	}
 }   // End of Page.java

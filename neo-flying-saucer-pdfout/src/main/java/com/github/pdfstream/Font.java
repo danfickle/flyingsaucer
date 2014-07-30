@@ -111,6 +111,7 @@ public class Font {
      *  @param pdf the PDF to add this font to.
      *  @param coreFont the core font. Must be one the names defined in the CoreFont class.
      */
+    @Deprecated
     public Font(PDF pdf, CoreFont coreFont) throws Exception {
         StandardFont font = StandardFont.getInstance(coreFont);
         this.name = font.name;
@@ -145,7 +146,7 @@ public class Font {
     }
 
     // Used by PDFobj
-    protected Font(CoreFont coreFont) {
+    public Font(CoreFont coreFont) {
         StandardFont font = StandardFont.getInstance(coreFont);
         this.name = font.name;
         this.bBoxLLx = font.bBoxLLx;
@@ -400,7 +401,7 @@ public class Font {
      *  @return the width of the string when draw on the page with this font using the current selected size.
      */
     public float stringWidth(String str) {
-        if (str == null) {
+        if (str == null || str.isEmpty()) {
             return 0.0f;
         }
 
@@ -440,7 +441,7 @@ public class Font {
             }
         }
 
-        return width * size / unitsPerEm;
+        return width;
     }
 
 
@@ -699,5 +700,14 @@ public class Font {
 
         return width;
     }
+    
+    public float getBBoxURy()
+    {
+    	return bBoxURy;
+    }
 
+	public float getBBoxLLy() 
+	{
+		return bBoxLLy;
+	}
 }   // End of Font.java

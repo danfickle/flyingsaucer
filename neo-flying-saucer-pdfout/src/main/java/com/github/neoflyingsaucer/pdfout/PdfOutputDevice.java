@@ -9,21 +9,19 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
 import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Shape;
 import java.awt.Stroke;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
+import org.xhtmlrenderer.css.constants.IdentValue;
 import org.xhtmlrenderer.css.parser.FSCMYKColor;
 import org.xhtmlrenderer.css.parser.FSColor;
 import org.xhtmlrenderer.css.parser.FSRGBColor;
 import org.xhtmlrenderer.css.style.derived.FSLinearGradient;
+import org.xhtmlrenderer.css.value.FontSpecification;
 import org.xhtmlrenderer.extend.FSImage;
 import org.xhtmlrenderer.extend.OutputDevice;
 import org.xhtmlrenderer.layout.SharedContext;
@@ -33,9 +31,11 @@ import org.xhtmlrenderer.render.BorderPainter;
 import org.xhtmlrenderer.render.Box;
 import org.xhtmlrenderer.render.FSFont;
 import org.xhtmlrenderer.render.InlineText;
+import org.xhtmlrenderer.render.JustificationInfo;
 import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.util.Configuration;
 
+import com.github.neoflyingsaucer.pdfout.PdfFontResolver.FontDescription;
 import com.github.pdfstream.PDF;
 import com.github.pdfstream.Page;
 import com.github.pdfstream.PdfColor;
@@ -58,7 +58,7 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
     private Page _currentPage;
     private float _pageHeight;
 
-    //private ITextFSFont _font;
+    private PdfFont _font;
 
     private AffineTransform _transform = new AffineTransform();
 
@@ -89,19 +89,15 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
 
     private Set<String> _linkTargetAreas;
     
-    private boolean haveOpacity = false;
-	
-	
 	public PdfOutputDevice(float dotsPerPoint) 
 	{
 		_dotsPerPoint = dotsPerPoint;
-
 	}
 
 	@Override
-	public void drawSelection(RenderingContext c, InlineText inlineText) {
-		// TODO Auto-generated method stub
-
+	public void drawSelection(RenderingContext c, InlineText inlineText) 
+	{
+		// Unimplemented.
 	}
 
 	@Override
@@ -111,9 +107,11 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
 	}
 
 	@Override
-	public void setFont(FSFont font) {
-		// TODO Auto-generated method stub
-
+	public void setFont(FSFont font) 
+	{
+		_font = (PdfFont) font;
+		
+		_currentPage.getPdf().registerFont(_font.getFontDescription().getFont());
 	}
 
 	@Override
@@ -269,22 +267,27 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
 	}
 
 	@Override
-	public void setStroke(Stroke s) {
+	public void setStroke(Stroke s)
+	{
 		_originalStroke = s;
 		_stroke = transformStroke(s);
 	}
 
-    private Stroke transformStroke(final Stroke stroke) {
+    private Stroke transformStroke(final Stroke stroke)
+    {
         if (!(stroke instanceof BasicStroke))
             return stroke;
+
         final BasicStroke st = (BasicStroke) stroke;
         final float scale = (float) Math.sqrt(Math.abs(_transform.getDeterminant()));
         final float dash[] = st.getDashArray();
+
         if (dash != null) {
             for (int k = 0; k < dash.length; ++k) {
               dash[k] *= scale;
             }
         }
+
         return new BasicStroke(st.getLineWidth() * scale, st.getEndCap(), st.getLineJoin(), st.getMiterLimit(), dash, st.getDashPhase()
                 * scale);
     }
@@ -348,18 +351,15 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
 	}
 
 	public void finish(RenderingContext c, BlockBox _root) {
-		System.err.println("finish");
-		
+		// TODO
 	}
 
 	public void setRoot(BlockBox _root) {
-		System.err.println("setRoot" + _root.toString());
-		
+		// TODO
 	}
 
 	public void start(Document _doc) {
-		System.err.println("start");
-		
+		// TODO
 	}
 
     private void followPath(Shape s, final int drawType) 
@@ -522,7 +522,7 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
             break;
         }
 
-        // TODO cb.setMiterLimit(nStroke.getMiterLimit());
+        cb.setMiterLimit(nStroke.getMiterLimit());
         final float dash[] = nStroke.getDashArray();
 
         if (dash == null)
@@ -557,4 +557,119 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
         coords[3] = normalizeY(coords[3]);
         coords[5] = normalizeY(coords[5]);
     }
+
+	public void drawString(String s, float x, float y, JustificationInfo info) 
+	{
+		if (Configuration.isTrue("xr.renderer.replace-missing-characters", false)) 
+			s = s; // TODO replaceMissingCharacters(s);
+
+		if (s.isEmpty())
+			return;
+
+		final Page cb = _currentPage;
+
+		// The fill color is also used for text.
+		ensureFillColor();
+
+		final AffineTransform at = (AffineTransform) _transform.clone();
+	    at.translate(x, y);
+
+	    final AffineTransform inverse = normalizeMatrix(at);
+	    final AffineTransform flipper = AffineTransform.getScaleInstance(1, -1);
+	    inverse.concatenate(flipper);
+	    inverse.scale(_dotsPerPoint, _dotsPerPoint);
+
+	    final double[] mx = new double[6];
+	    inverse.getMatrix(mx);
+
+	    cb.beginText();
+	    
+	    // Check if bold or italic need to be emulated
+	    boolean resetMode = false;
+
+	    final FontDescription desc = _font.getFontDescription();
+	    final float fontSize = _font.getSize2D() / _dotsPerPoint;
+	    cb.setTextFont(desc.getFont(), fontSize * 1000f);
+	    
+	    float b = (float) mx[1];
+	    float c = (float) mx[2];
+
+	    final FontSpecification fontSpec = getFontSpecification();
+
+	    if (fontSpec != null) 
+	    {
+	        final int need = PdfFontResolver.convertWeightToInt(fontSpec.fontWeight);
+	        final int have = desc.getWeight();
+
+	        if (need > have) {
+                cb.setTextRenderingMode(2); // TEXT_RENDER_MODE_FILL_STROKE
+                final float lineWidth = fontSize * 0.04f; // 4% of font size
+                cb.setPenWidth(lineWidth);
+                ensureStrokeColor();
+                resetMode = true;
+            }
+
+	        if ((fontSpec.fontStyle == IdentValue.ITALIC) && (desc.getStyle() != IdentValue.ITALIC)) 
+	        {
+	        	b = 0f;
+	            c = 0.21256f;
+	        }
+	    }
+
+	    cb.setTextMatrix((float) mx[0], b, c, (float) mx[3], (float) mx[4], (float) mx[5]);
+
+	    if (info == null) {
+	    	cb.showText(s);
+	    } else {
+	       //final PdfTextArray array = makeJustificationArray(s, info);
+	       //cb.showText(array);
+	    }
+	    
+	    if (resetMode) 
+	    {
+	    	cb.setTextRenderingMode(0 /* TEXT_RENDER_MODE_FILL */);
+	        cb.setPenWidth(1);
+	    }
+
+	    cb.endText();
+	}
+	
+    private AffineTransform normalizeMatrix(final AffineTransform current) {
+        final double[] mx = new double[6];
+        AffineTransform result = new AffineTransform();
+        result.getMatrix(mx);
+        mx[3] = -1;
+        mx[5] = _pageHeight;
+        result = new AffineTransform(mx);
+        result.concatenate(current);
+        return result;
+    }
+    
+//    private String replaceMissingCharacters(final String string)
+//    {
+//        final char[] charArr = string.toCharArray();
+//        final char replacementCharacter = Configuration.valueAsChar("xr.renderer.missing-character-replacement", '#');
+//
+//        // first check to see if the replacement character even exists in the
+//        // given font. If not, then do nothing.
+//        if (!_font.getFontDescription().getFont().charExists(replacementCharacter)) {
+//            LOGGER.info( "Missing replacement character [" + replacementCharacter + ":" + (int) replacementCharacter
+//                    + "]. No replacement will occur.");
+//            return string;
+//        }
+//
+//        // iterate through each character in the string and make an appropriate
+//        // replacement
+//        for (int i = 0; i < charArr.length; i++) 
+//        {
+//            if (!(charArr[i] == ' ' || charArr[i] == '\u00a0' || charArr[i] == '\u3000' || _font.getFontDescription().getFont()
+//                    .charExists(charArr[i]))) {
+//                LOGGER.info( "Missing character [" + charArr[i] + ":" + (int) charArr[i] + "] in string [" + string
+//                        + "]. Replacing with '" + replacementCharacter + "'");
+//                charArr[i] = replacementCharacter;
+//            }
+//        }
+//
+//        return String.valueOf(charArr);
+//    }
 }

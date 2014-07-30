@@ -1,8 +1,6 @@
 package com.github.neoflyingsaucer.pdfout;
 
 import java.awt.Rectangle;
-import java.io.IOException;
-
 import org.xhtmlrenderer.extend.FSGlyphVector;
 import org.xhtmlrenderer.extend.FontContext;
 import org.xhtmlrenderer.extend.OutputDevice;
@@ -11,39 +9,18 @@ import org.xhtmlrenderer.render.FSFont;
 import org.xhtmlrenderer.render.FSFontMetrics;
 import org.xhtmlrenderer.render.JustificationInfo;
 
-import com.github.pdfstream.CoreFont;
+import com.github.neoflyingsaucer.pdfout.PdfFontResolver.FontDescription;
 import com.github.pdfstream.Font;
-import com.github.pdfstream.PDF;
-import com.github.pdfstream.Page;
 
-public class PdfTextRenderer implements TextRenderer{
-
-	private  Page _page;
-	private  PDF _pdf;
-	private  Font _f;
+public class PdfTextRenderer implements TextRenderer
+{
+    private static float TEXT_MEASURING_DELTA = 0.01f;
 	
 	public PdfTextRenderer() 
 	{
 
 	}
 
-	public void setInfo(Page page, PDF pdf)
-	{
-		_page = page;
-		_pdf = pdf;
-		Font f = null;
-		
-		try {
-			f = new Font(_pdf, CoreFont.HELVETICA);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		_f = f;
-		
-
-	}
-	
 	@Override
 	public void setup(FontContext context) {
 		// TODO Auto-generated method stub
@@ -51,23 +28,16 @@ public class PdfTextRenderer implements TextRenderer{
 	}
 
 	@Override
-	public void drawString(OutputDevice outputDevice, String string, float x,
-			float y) {
-
-		try {
-
-			_page.drawString(_f, string, x, y);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public void drawString(OutputDevice outputDevice, String string, float x, float y) 
+	{
+		((PdfOutputDevice) outputDevice).drawString(string, x, y, null);
 	}
 
 	@Override
 	public void drawString(OutputDevice outputDevice, String string, float x,
-			float y, JustificationInfo info) {
-		// TODO Auto-generated method stub
-		
+			float y, JustificationInfo info) 
+	{
+		((PdfOutputDevice) outputDevice).drawString(string, x, y, info);
 	}
 
 	@Override
@@ -99,34 +69,55 @@ public class PdfTextRenderer implements TextRenderer{
 	}
 
 	@Override
-	public FSFontMetrics getFSFontMetrics(FontContext context, FSFont font,
-			String string) {
-		// TODO Auto-generated method stub
-		return new PdfFontMetrics();
-	}
+    public FSFontMetrics getFSFontMetrics(final FontContext context, final FSFont font, final String string) 
+	{
+        final FontDescription descr = ((PdfFont )font).getFontDescription();
+        final Font bf = descr.getFont();
+        final float size = font.getSize2D();
+        final PdfFontMetrics result = new PdfFontMetrics();
+
+        result.setAscent(bf.getBBoxURy() * size);
+        result.setDescent(-bf.getBBoxLLy() * size);
+        
+        result.setStrikethroughOffset(-descr.getYStrikeoutPosition() / 1000f * size);
+        if (descr.getYStrikeoutSize() != 0) {
+            result.setStrikethroughThickness(descr.getYStrikeoutSize() / 1000f * size);
+        } else {
+            result.setStrikethroughThickness(size / 12.0f);
+        }
+        
+        result.setUnderlineOffset(-descr.getUnderlinePosition() / 1000f * size);
+        result.setUnderlineThickness(descr.getUnderlineThickness() / 1000f * size);
+        
+        return result;
+    }
 
 	@Override
-	public int getWidth(FontContext context, FSFont font, String string) {
-		// TODO Auto-generated method stub
-		return (int) 100;
+	public int getWidth(FontContext context, FSFont font, String string) 
+	{
+        final Font bf = ((PdfFont)font).getFontDescription().getFont();
+        final float result = bf.stringWidth(string) * font.getSize2D();
+        if (result - Math.floor(result) < TEXT_MEASURING_DELTA) {
+            return (int)result;
+        } else {
+            return (int)Math.ceil(result); 
+        }
 	}
 
 	@Override
 	public void setFontScale(float scale) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
-	public float getFontScale() {
-		// TODO Auto-generated method stub
-		return 100;
+	public float getFontScale() 
+	{
+		return 1.0f;
 	}
 
 	@Override
 	public void setSmoothingThreshold(float fontsize) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override

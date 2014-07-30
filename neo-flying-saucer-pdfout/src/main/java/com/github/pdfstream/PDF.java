@@ -50,9 +50,12 @@ public class PDF
     protected List<Font> fonts = new ArrayList<Font>();
     protected List<Image> images = new ArrayList<Image>();
     protected List<Page> pages = new ArrayList<Page>();
-    protected Map<Float, String> gstates = new HashMap<>(); 
+
     
-    protected HashMap<String, Destination> destinations = new HashMap<String, Destination>();
+    protected Map<Float, String> gstates = new HashMap<>(); 
+    protected Set<String> rfonts = new HashSet<>();
+    
+    protected Map<String, Destination> destinations = new HashMap<String, Destination>();
     protected List<OptionalContentGroup> groups = new ArrayList<OptionalContentGroup>();
     protected static final DecimalFormat df = new DecimalFormat("0.###", new DecimalFormatSymbols(Locale.US));
 
@@ -63,7 +66,7 @@ public class PDF
     private int compliance = 0;
     private OutputStream os = null;
     private List<Integer> objOffset = new ArrayList<Integer>();
-    private String producer = "PDFjet v5.03 (http://pdfjet.com)";
+    private String producer = "neoFlyingSaucer (https://github.com/danfickle/neoflyingsaucer)";
     private String creationDate;
     private String createDate;
     private String title = "";
@@ -152,14 +155,14 @@ public class PDF
     }
 
 
-    protected void newobj() throws IOException {
+    protected void newobj() {
         objOffset.add(byte_count);
         append(++objNumber);
         append(" 0 obj\n");
     }
 
 
-    protected void endobj() throws IOException {
+    protected void endobj() {
         append("endobj\n");
     }
 
@@ -735,44 +738,60 @@ append(page.buf);
     }
 
 
-    protected void append(int num) throws IOException {
+    protected void append(int num) {
         append(Integer.toString(num));
     }
 
 
-    protected void append(float val) throws IOException {
+    protected void append(float val) {
         append(PDF.df.format(val));
     }
 
 
-    protected void append(String str) throws IOException {
+    protected void append(String str){
         int len = str.length();
         for (int i = 0; i < len; i++) {
-            os.write((byte) str.charAt(i));
+            try {
+				os.write((byte) str.charAt(i));
+			} catch (IOException e) {
+				throw new PdfException(e);
+			}
         }
         byte_count += len;
     }
 
 
-    protected void append(char ch) throws IOException {
+    protected void append(char ch) {
         append((byte) ch);
     }
 
 
-    protected void append(byte b) throws IOException {
-        os.write(b);
+    protected void append(byte b) {
+        try {
+			os.write(b);
+		} catch (IOException e) {
+			throw new PdfException(e);
+		}
         byte_count += 1;
     }
 
 
-    protected void append(byte[] buf, int off, int len) throws IOException {
-        os.write(buf, off, len);
+    protected void append(byte[] buf, int off, int len) {
+        try {
+			os.write(buf, off, len);
+		} catch (IOException e) {
+			throw new PdfException(e);
+		}
         byte_count += len;
     }
 
 
-    protected void append(ByteArrayOutputStream baos) throws IOException {
-        baos.writeTo(os);
+    protected void append(ByteArrayOutputStream baos) {
+        try {
+			baos.writeTo(os);
+		} catch (IOException e) {
+			throw new PdfException(e);
+		}
         byte_count += baos.size();
     }
 
@@ -794,6 +813,29 @@ append(page.buf);
 			gstates.put(a, stateObj);
 			return stateObj;
 		}
+	}
+
+	public void registerFont(Font font)
+	{
+		if (rfonts.contains(font.name))
+			return;
+		
+		newobj();
+        append("<<\n");
+        append("/Type /Font\n");
+        append("/Subtype /Type1\n");
+        append("/BaseFont /");
+        append(font.name);
+        append('\n');
+        if (!font.name.equals("Symbol") && !font.equals("ZapfDingbats")) {
+            append("/Encoding /WinAnsiEncoding\n");
+        }
+        append(">>\n");
+        endobj();
+        font.objNumber = objNumber;
+
+        fonts.add(font);
+        rfonts.add(font.name);
 	}
 
 }   // End of PDF.java
