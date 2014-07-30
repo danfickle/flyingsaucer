@@ -420,7 +420,6 @@ public class CalculatedStyle {
             }
 
             _font.fontWeight = getIdent(CSSName.FONT_WEIGHT);
-
             _font.fontStyle = getIdent(CSSName.FONT_STYLE);
             _font.variant = getIdent(CSSName.FONT_VARIANT);
         }

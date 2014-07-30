@@ -17,7 +17,7 @@ public class PdfFont implements FSFont
 
 	@Override
     public float getSize2D() {
-        return _size / 1000;
+        return _size / 1000f;
     }
     
     public FontDescription getFontDescription() {

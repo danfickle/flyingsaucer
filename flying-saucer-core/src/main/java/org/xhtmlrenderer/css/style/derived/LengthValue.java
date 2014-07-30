@@ -167,12 +167,12 @@ public class LengthValue extends DerivedValue {
                 } else if (cssName == CSSName.FONT_SIZE) {
                     // same as with EM
                     final FontSpecification parentFont = style.getParent().getFont(ctx);
-                    baseValue = ctx.getFontSize2D(parentFont);
+                    baseValue = parentFont.size;// WAS:   ctx.getFontSize2D(parentFont);
                 } else if (cssName == CSSName.LINE_HEIGHT) {
                     final FontSpecification font = style.getFont(ctx);
                     baseValue = ctx.getFontSize2D(font);
                 }
-                absVal = (relVal / 100F) * baseValue;
+                absVal = (relVal / 100f) * baseValue;
 
                 break;
             case CSS_NUMBER:
