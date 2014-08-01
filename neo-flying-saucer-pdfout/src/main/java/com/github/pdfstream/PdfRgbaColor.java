@@ -40,9 +40,6 @@ public class PdfRgbaColor implements PdfColor
 	@Override
 	public void setAlphaColorOnPage(Page pg) 
 	{
-		if (this.a != 1)
-			System.err.println("YAH!" + this.a);
-		
 		String extg = pg.pdf.getExtGStateForAlpha(this.a);
 		
 		pg.append('/');

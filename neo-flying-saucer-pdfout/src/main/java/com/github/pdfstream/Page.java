@@ -429,7 +429,19 @@ public class Page {
         }
     }
 
+    private void drawOneByteChar(int c1, Font font) 
+    {
+        if (c1 < font.firstChar || c1 > font.lastChar) {
+            c1 = font.mapUnicodeChar(c1);
+        }
 
+        if (c1 == '(' || c1 == ')' || c1 == '\\') {
+            append((byte) '\\');
+        }
+
+        append((byte) c1);
+    }
+    
     private void drawOneByteChar(int c1, Font font, String str, int i) {
         if (c1 < font.firstChar || c1 > font.lastChar) {
             c1 = font.mapUnicodeChar(c1);
@@ -1078,5 +1090,36 @@ public class Page {
 	public PDF getPdf() 
 	{
 		return pdf;
+	}
+
+
+	public void showText(char[] cc, float[] justification) 
+	{
+        append("[ ");
+
+        if (font.isComposite)
+        {
+            for (int i = 0; i < cc.length; i++) {
+            	append(justification[i]);
+            	append(' ');
+            	append('(');
+            	drawTwoByteChar(cc[i], font);
+            	append(')');
+            	append(' ');
+            }
+        }
+        else
+        {
+            for (int i = 0; i < cc.length; i++) {
+            	append(justification[i]);
+            	append(' ');
+            	append('(');
+            	drawOneByteChar(cc[i], font);
+            	append(')');
+            	append(' ');
+            }
+        }
+        
+        append(" ] TJ\n");
 	}
 }   // End of Page.java

@@ -618,14 +618,18 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
 
 	    cb.setTextMatrix((float) mx[0], b, c, (float) mx[3], (float) mx[4], (float) mx[5]);
 
-	    if (info == null) {
+	    if (info == null) 
+	    {
 	    	cb.showText(s);
-	    } else {
-	       //final PdfTextArray array = makeJustificationArray(s, info);
-	       //cb.showText(array);
+	    }
+	    else
+	    {
+	    	final char[] cc = s.toCharArray();
+	    	final float[] justification = makeJustificationArray(cc, info);
+	    	cb.showText(cc, justification);
 	    }
 	    
-	    if (resetMode) 
+	    if (resetMode)
 	    {
 	    	cb.setTextRenderingMode(0 /* TEXT_RENDER_MODE_FILL */);
 	        cb.setPenWidth(1);
@@ -633,6 +637,32 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
 
 	    cb.endText();
 	}
+	
+    private float[] makeJustificationArray(final char[] cc, final JustificationInfo info) 
+    {
+    	final float[] res = new float[cc.length];
+    	
+    	for (int i = 0; i < cc.length; i++) 
+    	{
+            if (i != cc.length - 1) 
+            {
+            	char c = cc[i];
+
+            	float offset;
+                if (c == ' ' || c == '\u00a0' || c == '\u3000') {
+                    offset = info.getSpaceAdjust();
+                } else {
+                    offset = info.getNonSpaceAdjust();
+                }
+
+                res[i] = (-offset / _dotsPerPoint) / (_font.getSize2D() / _dotsPerPoint);
+            }
+        }
+
+    	return res;
+    }
+
+	
 	
     private AffineTransform normalizeMatrix(final AffineTransform current) {
         final double[] mx = new double[6];
