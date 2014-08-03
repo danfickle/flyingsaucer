@@ -8,11 +8,19 @@ import java.awt.geom.Line2D;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferInt;
+import java.awt.image.Raster;
 import java.awt.BasicStroke;
+import java.awt.Graphics;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Set;
+
+import javax.imageio.ImageIO;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +48,7 @@ import com.github.neoflyingsaucer.pdfout.PdfFontResolver.FontDescription;
 import com.github.pdfstream.Image;
 import com.github.pdfstream.JPGImage;
 import com.github.pdfstream.PDF;
+import com.github.pdfstream.PNGImage;
 import com.github.pdfstream.Page;
 import com.github.pdfstream.PdfColor;
 import com.github.pdfstream.PdfGreyScaleColor;
@@ -219,12 +228,36 @@ System.err.println("x = " + x + " y = " + y + "scale = " + _dotsPerPoint);
         }
         else
         {
+        	BufferedImage img;
+			try {
+				img = ImageIO.read(new ByteArrayInputStream(image.getBytes()));
+			} catch (IOException e) {
+				LOGGER.warn("Unable to read image at uri({})", image.getUri(), e);
+				return;
+			}
+
+			Raster raster;
+			
+        	if (img.getType() != BufferedImage.TYPE_INT_ARGB)
+        	{
+        		BufferedImage buf = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+
+        		Graphics g = buf.createGraphics();
+        		g.drawImage(img, 0, 0, null);
+        		g.dispose();
+
+        		raster = buf.getData();
+        	}
+        	else
+        	{
+        		raster = img.getData();
+        	}
         	
-        	
-        	
-        	
-        	
-        	
+        	DataBufferInt buf = (DataBufferInt) raster.getDataBuffer();
+        	int[] arr = buf.getData();
+
+        	PNGImage png = new PNGImage(image.getUri(), arr, image.getIntrinsicWidth(), image.getIntrinsicHeight(), image.getNumberComponents());
+        	_currentPage.addImage(png, (float) mx[0], (float) mx[1], (float) mx[2], (float) mx[3], (float) mx[4], (float) mx[5]);
         }
     }
 	

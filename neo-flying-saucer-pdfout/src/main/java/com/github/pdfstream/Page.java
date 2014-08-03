@@ -1153,4 +1153,37 @@ public class Page {
         // Restore state.
         append("Q\n");
 	}
+
+
+	public void addImage(PNGImage png, float a, float b, float c, float d,
+			float e, float f) 
+	{
+		String imageName = pdf.getOrRegisterImage(png);
+
+		// Save state.
+		append("q\n");
+
+		// Transformation matrix.
+		append(a);
+        append(' ');
+        append(b);
+        append(' ');
+        append(c);
+        append(' ');
+        append(d);
+        append(' ');
+        append(e);
+        append(' ');
+        append(f);
+        append(" cm\n");
+		
+        // Show image.
+        append('/');
+        append(imageName);
+        append(" Do\n");
+
+        // Restore state.
+        append("Q\n");
+		
+	}
 }   // End of Page.java

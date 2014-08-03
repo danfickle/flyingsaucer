@@ -855,7 +855,77 @@ append(page.buf);
 			objNumber = num;
 		}
 	}
-	
+
+	public String getOrRegisterImage(PNGImage img) 
+    {
+    	if (rimages.containsKey(img.uri))
+    		return rimages.get(img.uri).objName;
+
+    	// TODO: Support other color spaces such as indexed.
+    	String colorSpace = "DeviceRGB";
+
+    	newobj();
+        append("<<\n");
+        append("/Type /XObject\n");
+        append("/Subtype /Image\n");
+        append("/Filter /FlateDecode\n");
+        append("/Width ");
+        append(img.width);
+        append('\n');
+        append("/Height ");
+        append(img.height);
+        append('\n');
+        append("/ColorSpace /");
+        append(colorSpace);
+        append('\n');
+        append("/BitsPerComponent ");
+        append(8);
+        append('\n');
+        append("/Length ");
+
+		byte[] bytes = new byte[img.height * (img.width) * 3];
+        
+		int k = 0, m = 0;
+		for (int i = 0; i < img.height; i++)
+    	{
+    		for (int j = 0; j < img.width; j++)
+    		{
+    			int px = img.dataArray[m++];
+    			
+    			int  a = (px >> 24) & 0xFF;
+    		    int  r = (px >> 16) & 0xFF;
+    		    int  g = (px >> 8)  & 0xFF;
+    		    int  b = (px >> 0)  & 0xFF;
+    			
+    			bytes[k++] = (byte) r;
+    			bytes[k++] = (byte) g;
+    			bytes[k++] = (byte) b;
+    		}
+    	}
+        
+    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    	DeflaterOutputStream dos = new DeflaterOutputStream(baos, new Deflater());
+
+        try {
+            dos.write(bytes, 0, bytes.length);
+        	dos.finish();
+        	dos.close();
+		} catch (IOException e) {
+			// Shouldn't happen.
+		}
+
+    	append(baos.size());
+        append('\n');
+        append(">>\n");
+        append("stream\n");
+        append(baos);
+        append("\nendstream\n");
+        endobj();
+
+        String objName = "IM" + rimages.size();
+        rimages.put(img.uri, new ObjectNameAndNumber(objName, objNumber));
+        return objName;
+    }
 	
     public String getOrRegisterImage(JPGImage img) 
     {

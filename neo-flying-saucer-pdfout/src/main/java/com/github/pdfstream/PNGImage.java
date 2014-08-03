@@ -205,8 +205,21 @@ public class PNGImage {
         deflated = deflateReconstructedData();
     }
 
+    String uri;
+    int[] dataArray;
+    int width;
+    int height;
+    int numberComponents;
+    
+    public PNGImage(String uri, int[] arr, int width, int height, int numberComponents) {
+    	this.uri = uri;
+    	this.dataArray = arr;
+    	this.width = width;
+    	this.height = height;
+    	this.numberComponents = numberComponents;
+	}
 
-    protected int getWidth() {
+	protected int getWidth() {
         return this.w;
     }
 

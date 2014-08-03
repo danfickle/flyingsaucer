@@ -62,10 +62,24 @@ public class PdfOutImage implements FSImage
 	        	   _colorComponents = speci.getNumComponents();
 	           }
 		    }
+		    else
+		    {
+		    	throw new IOException("Unrecognized Image format");
+		    }
 		} finally {
 		    if (in != null)
 				in.close();
 		}
+	}
+	
+	public int getIntrinsicWidth()
+	{
+		return _intrinsicWidth;
+	}
+
+	public int getIntrinsicHeight()
+	{
+		return _intrinsicHeight;
 	}
 	
 	@Override
