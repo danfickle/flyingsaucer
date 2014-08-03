@@ -57,29 +57,6 @@ public class Image implements Drawable {
 
     private boolean rotate90 = false;
 
-
-    /**
-     *  Use of this constructor will result in reduced memory consumption and faster processing, however it currently only supports JPG images.
-     *  Please see Example_24
-     */
-    public Image(PDF pdf, JPGImage jpg) throws Exception {
-        this.w = jpg.getWidth();
-        this.h = jpg.getHeight();
-        this.size = jpg.getFileSize();
-        InputStream stream = jpg.getInputStream();
-        if (jpg.getColorComponents() == 1) {
-            addImage(pdf, stream, ImageType.JPG, w, h, size, "DeviceGray", 8);
-        }
-        else if (jpg.getColorComponents() == 3) {
-            addImage(pdf, stream, ImageType.JPG, w, h, size, "DeviceRGB", 8);
-        }
-        else if (jpg.getColorComponents() == 4) {
-            addImage(pdf, stream, ImageType.JPG, w, h, size, "DeviceCMYK", 8);
-        }
-        stream.close();
-    }
-
-
     /**
      *  Use of this constructor will result in reduced memory consumption and faster processing, however it currently only supports deflated raw PDF images.
      *  Please see Example_24
@@ -110,22 +87,8 @@ public class Image implements Drawable {
     public Image(PDF pdf, InputStream inputStream, int imageType)
             throws Exception {
         byte[] data;
-        if (imageType == ImageType.JPG) {
-            JPGImage jpg = new JPGImage(inputStream);
-            data = jpg.getData();
-            w = jpg.getWidth();
-            h = jpg.getHeight();
-            if (jpg.getColorComponents() == 1) {
-                addImage(pdf, data, null, imageType, "DeviceGray", 8);
-            }
-            else if (jpg.getColorComponents() == 3) {
-                addImage(pdf, data, null, imageType, "DeviceRGB", 8);
-            }
-            else if (jpg.getColorComponents() == 4) {
-                addImage(pdf, data, null, imageType, "DeviceCMYK", 8);
-            }
-        }
-        else if (imageType == ImageType.PNG) {
+
+        if (imageType == ImageType.PNG) {
             PNGImage png = new PNGImage(inputStream);
             data = png.getData();
             w = png.getWidth();

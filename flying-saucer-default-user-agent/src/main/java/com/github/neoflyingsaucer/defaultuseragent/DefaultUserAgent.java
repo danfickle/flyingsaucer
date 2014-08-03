@@ -171,7 +171,7 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
      * @return An ImageResource containing the image.
      */
     @Override
-    public ImageResource getImageResource(String uri) {
+    public Optional<ImageResource> getImageResource(String uri) {
         ImageResource ir;
         if (ImageUtil.isEmbeddedBase64Image(uri)) {
             final BufferedImage image = ImageUtil.loadEmbeddedBase64Image(uri);
@@ -218,7 +218,7 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
                 ir = createImageResource(uri, null);
             }
         }
-        return ir;
+        return Optional.ofNullable(ir);
     }
 
     /**
@@ -270,7 +270,7 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
     }
 
     @Override
-    public byte[] getBinaryResource(String uri) {
+    public Optional<byte[]> getBinaryResource(String uri) {
 
     	StreamResource sr = new StreamResource(uri);
     	sr.connect();
@@ -288,9 +288,9 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
             is.close();
             is = null;
 
-            return result.toByteArray();
+            return Optional.of(result.toByteArray());
         } catch (final IOException e) {
-            return null;
+            return Optional.empty();
         } finally {
             if (is != null) {
                 try {

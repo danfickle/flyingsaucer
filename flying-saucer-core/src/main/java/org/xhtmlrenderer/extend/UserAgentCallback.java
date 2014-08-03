@@ -68,7 +68,7 @@ public interface UserAgentCallback {
      * @param uri Location of the image (returned from resolveURI).
      * @return An ImageResource for the content at the URI.
      */
-    ImageResource getImageResource(String uri);
+    Optional<ImageResource> getImageResource(String uri);
 
     /**
      * Retrieves the HTML at the given URI.
@@ -89,7 +89,7 @@ public interface UserAgentCallback {
      * Retrieves a binary resource located at a given URI and returns its contents
      * as a byte array or <code>null</code> if the resource could not be loaded.
      */
-    byte[] getBinaryResource(String uri);
+    Optional<byte[]> getBinaryResource(String uri);
 
     /**
      * Normally, returns true if the user agent has visited this URI. UserAgent should consider

@@ -11,6 +11,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.BasicStroke;
 import java.awt.Shape;
 import java.awt.Stroke;
+import java.io.ByteArrayInputStream;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -36,6 +37,8 @@ import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.util.Configuration;
 
 import com.github.neoflyingsaucer.pdfout.PdfFontResolver.FontDescription;
+import com.github.pdfstream.Image;
+import com.github.pdfstream.JPGImage;
 import com.github.pdfstream.PDF;
 import com.github.pdfstream.Page;
 import com.github.pdfstream.PdfColor;
@@ -102,8 +105,8 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
 
 	@Override
 	public void paintReplacedElement(RenderingContext c, BlockBox box) {
-		// TODO Auto-generated method stub
-
+        final PdfReplacedElement element = (PdfReplacedElement) box.getReplacedElement();
+        element.paint(c, this, box);
 	}
 
 	@Override
@@ -188,11 +191,43 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
 	}
 
 	@Override
-	public void drawImage(FSImage image, int x, int y) {
-		// TODO Auto-generated method stub
+	public void drawImage(FSImage fsImage, int x, int y) {
+		final PdfOutImage image = ((PdfOutImage) fsImage);
 
-	}
+        if (fsImage.getHeight() <= 0 || fsImage.getWidth() <= 0) {
+            return;
+        }
 
+        final AffineTransform at = (AffineTransform) _transform.clone(); 
+// TODO
+System.err.println("x = " + x + " y = " + y + "scale = " + _dotsPerPoint);
+        at.translate(x, y);
+        at.translate(0, fsImage.getHeight());
+        at.scale(fsImage.getWidth(), fsImage.getHeight());
+        final AffineTransform inverse = normalizeMatrix(at);
+        final AffineTransform flipper = AffineTransform.getScaleInstance(1, -1);
+        inverse.concatenate(flipper);
+        inverse.scale(_dotsPerPoint, _dotsPerPoint);
+        
+        final double[] mx = new double[6];
+        inverse.getMatrix(mx);
+
+        if (image.isJpeg())
+        {
+        	JPGImage img = new JPGImage(image.getUri(), image.getBytes(), image.getWidth(), image.getHeight(), image.getNumberComponents());
+        	_currentPage.addImage(img, (float) mx[0], (float) mx[1], (float) mx[2], (float) mx[3], (float) mx[4], (float) mx[5]);
+        }
+        else
+        {
+        	
+        	
+        	
+        	
+        	
+        	
+        }
+    }
+	
 	@Override
 	public void drawLinearGradient(FSLinearGradient gradient, int x, int y,
 			int width, int height) {
@@ -662,8 +697,6 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
     	return res;
     }
 
-	
-	
     private AffineTransform normalizeMatrix(final AffineTransform current) {
         final double[] mx = new double[6];
         AffineTransform result = new AffineTransform();

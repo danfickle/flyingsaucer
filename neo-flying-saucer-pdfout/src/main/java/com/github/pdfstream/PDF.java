@@ -45,15 +45,19 @@ public class PDF
 	protected int objNumber = 0;
     protected int metadataObjNumber = 0;
     protected int outputIntentObjNumber = 0;
-
     
     protected List<Font> fonts = new ArrayList<Font>();
+
+    @Deprecated
     protected List<Image> images = new ArrayList<Image>();
+
     protected List<Page> pages = new ArrayList<Page>();
 
-    
     protected Map<Float, String> gstates = new HashMap<>(); 
+    protected Map<String, ObjectNameAndNumber> rimages = new HashMap<>();
+
     protected Set<String> rfonts = new HashSet<>();
+
     
     protected Map<String, Destination> destinations = new HashMap<String, Destination>();
     protected List<OptionalContentGroup> groups = new ArrayList<OptionalContentGroup>();
@@ -66,7 +70,7 @@ public class PDF
     private int compliance = 0;
     private OutputStream os = null;
     private List<Integer> objOffset = new ArrayList<Integer>();
-    private String producer = "neoFlyingSaucer (https://github.com/danfickle/neoflyingsaucer)";
+    private String producer = "neoFlyingSaucer \\(https://github.com/danfickle/neoflyingsaucer\\)";
     private String creationDate;
     private String createDate;
     private String title = "";
@@ -311,17 +315,19 @@ public class PDF
             append(">>\n");        	
         }
         
-        if (!images.isEmpty()) {
+        if (!rimages.isEmpty()) {
             append("/XObject\n");
             append("<<\n");
-            for (int i = 0; i < images.size(); i++) {
-                Image image = images.get(i);
-                append("/Im");
-                append(image.objNumber);
+
+            for (ObjectNameAndNumber obj : rimages.values())
+            {
+                append('/');
+                append(obj.objName);
                 append(' ');
-                append(image.objNumber);
+                append(obj.objNumber);
                 append(" 0 R\n");
             }
+
             append(">>\n");
         }
 
@@ -837,5 +843,65 @@ append(page.buf);
         fonts.add(font);
         rfonts.add(font.name);
 	}
+	
+	private static class ObjectNameAndNumber
+	{
+		private int objNumber;
+		private String objName;
+		
+		private ObjectNameAndNumber(String name, int num)
+		{
+			objName = name;
+			objNumber = num;
+		}
+	}
+	
+	
+    public String getOrRegisterImage(JPGImage img) 
+    {
+    	if (rimages.containsKey(img.id))
+    		return rimages.get(img.id).objName;
+    	
+    	String colorSpace;
+    	
+        if (img.colorComponents == 1) {
+            colorSpace = "DeviceGray";
+        }
+        else if (img.colorComponents == 3) {
+            colorSpace = "DeviceRGB";
+        }
+        else { // if (img.colorComponents == 4) {
+            colorSpace = "DeviceCMYK";
+        }
+    		
+    	newobj();
+        append("<<\n");
+        append("/Type /XObject\n");
+        append("/Subtype /Image\n");
+        append("/Filter /DCTDecode\n");
+        append("/Width ");
+        append(img.width);
+        append('\n');
+        append("/Height ");
+        append(img.height);
+        append('\n');
+        append("/ColorSpace /");
+        append(colorSpace);
+        append('\n');
+        append("/BitsPerComponent ");
+        append(8);
+        append('\n');
+        append("/Length ");
+        append(img.data.length);
+        append('\n');
+        append(">>\n");
+        append("stream\n");
+        append(img.data, 0, (int) img.data.length);
+        append("\nendstream\n");
+        endobj();
 
+        String objName = "IM" + rimages.size();
+        rimages.put(img.id, new ObjectNameAndNumber(objName, objNumber));
+        return objName;
+    }
 }   // End of PDF.java

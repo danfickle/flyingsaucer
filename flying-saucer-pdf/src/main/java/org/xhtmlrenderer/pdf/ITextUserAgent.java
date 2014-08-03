@@ -79,32 +79,32 @@ public class ITextUserAgent implements UserAgentCallback {
     }
 
     @Override
-    public ImageResource getImageResource(String uri) {
+    public Optional<ImageResource> getImageResource(String uri) {
         ImageResource resource = null;
         if (ImageUtil.isEmbeddedBase64Image(uri)) {
             resource = loadEmbeddedBase64ImageResource(uri);
         } else {
             resource = _imageCache.get(uri);
             if (resource == null) {
-            	byte[] bytes = _chainedUac.getBinaryResource(uri);
+            	Optional<byte[]> bytes = _chainedUac.getBinaryResource(uri);
 				
-            	if (bytes == null)
-            		return new ImageResource(uri, null);
+            	if (!bytes.isPresent())
+            		return Optional.of(new ImageResource(uri, null));
             	
             	Image image;
 				try {
-					image = Image.getInstance(bytes);
+					image = Image.getInstance(bytes.get());
 					scaleToOutputResolution(image);
 					resource = new ImageResource(uri, new ITextFSImage(
 							image));
 					_imageCache.put(uri, resource);
 
 				} catch (BadElementException | IOException e) {
-					return new ImageResource(uri, null);
+					return Optional.of(new ImageResource(uri, null));
 				}
             }
         }
-        return resource;
+        return Optional.of(resource);
     }
     
     private ImageResource loadEmbeddedBase64ImageResource(final String uri) {
@@ -150,7 +150,7 @@ public class ITextUserAgent implements UserAgentCallback {
 	}
 
 	@Override
-	public byte[] getBinaryResource(String uri) {
+	public Optional<byte[]> getBinaryResource(String uri) {
 		return _chainedUac.getBinaryResource(uri);
 	}
 

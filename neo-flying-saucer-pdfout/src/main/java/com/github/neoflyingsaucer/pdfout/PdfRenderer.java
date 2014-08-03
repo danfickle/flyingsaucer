@@ -9,6 +9,7 @@ import java.util.List;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xhtmlrenderer.context.StyleReference;
+import org.xhtmlrenderer.css.parser.property.PageSize;
 import org.xhtmlrenderer.css.style.CalculatedStyle;
 import org.xhtmlrenderer.extend.FontContext;
 import org.xhtmlrenderer.extend.FontResolver;
@@ -26,6 +27,7 @@ import org.xhtmlrenderer.render.ViewportBox;
 import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.resource.ResourceLoadHelper;
 import org.xhtmlrenderer.simple.HtmlNamespaceHandler;
+
 import com.github.pdfstream.PDF;
 import com.github.pdfstream.Page;
 
@@ -58,10 +60,12 @@ public class PdfRenderer
 
         _outputDevice = new PdfOutputDevice(dotsPerPoint);
 
-        final UserAgentCallback userAgent = uac;
+        final UserAgentCallback old = uac;
+        final UserAgentCallback newish = new PdfOutUserAgent(old);
+
         _sharedContext = new SharedContext();
-        _sharedContext.setUserAgentCallback(userAgent);
-        _sharedContext.setCss(new StyleReference(userAgent));
+        _sharedContext.setUserAgentCallback(newish);
+        _sharedContext.setCss(new StyleReference(newish));
         //userAgent.setSharedContext(_sharedContext);
         _outputDevice.setSharedContext(_sharedContext);
   
@@ -96,8 +100,9 @@ public class PdfRenderer
         _doc = doc;
 
         //getFontResolver().flushFontFaceFonts();
-
+		final Rectangle rect = new Rectangle(0, 0, (int) PageSize.A4.getPageWidth().getFloatValue(), (int) PageSize.A4.getPageHeight().getFloatValue());
         _sharedContext.reset();
+		_sharedContext.set_TempCanvas(rect);
         _sharedContext.setBaseURL(url);
         _sharedContext.setNamespaceHandler(nsh);
         _sharedContext.getCss().setDocumentContext(_sharedContext, _sharedContext.getNamespaceHandler(), doc);
@@ -107,8 +112,8 @@ public class PdfRenderer
     public void layout() 
     {
         final LayoutContext c = newLayoutContext();
-
         final BlockBox root = BoxBuilder.createRootBox(c, _doc);
+        
         root.setContainingBlock(new ViewportBox(getInitialExtents(c)));
         root.layout(c);
         
@@ -244,7 +249,10 @@ public class PdfRenderer
     {
         final List<PageBox> pages = _root.getLayer().getPages();
 
+        //UserAgentCallback old = _sharedContext.getUac();
+        
         final RenderingContext c = newRenderingContext();
+        
         c.setInitialPageNo(1);
         final PageBox firstPage = (PageBox) pages.get(0);
         float[] firstPageSize = new float[] { 

@@ -6,6 +6,7 @@ import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.extend.FSImage;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
+import org.xhtmlrenderer.resource.ImageResource;
 import org.xhtmlrenderer.util.ImageUtil;
 import org.xhtmlrenderer.swing.AWTFSImage;
 import org.xhtmlrenderer.swing.ImageReplacedElement;
@@ -82,9 +83,14 @@ public class SwingImageReplacer extends ElementReplacer {
 
             	if (resolved.isPresent())
             	{
-            		final FSImage fsImage = uac.getImageResource(resolved.get()).getImage();
-            		if (fsImage != null) {
-            			im = ((AWTFSImage) fsImage).getImage();
+            		final Optional<ImageResource> resource = uac.getImageResource(resolved.get());
+            		
+            		if (resource.isPresent())
+            		{
+            			final FSImage fsImage = resource.get().getImage();
+            			if (fsImage != null) {
+            				im = ((AWTFSImage) fsImage).getImage();
+            			}
             		}
             	}
 

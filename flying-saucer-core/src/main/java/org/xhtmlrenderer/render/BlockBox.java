@@ -52,6 +52,7 @@ import org.xhtmlrenderer.layout.PaintingInfo;
 import org.xhtmlrenderer.layout.PersistentBFC;
 import org.xhtmlrenderer.layout.Styleable;
 import org.xhtmlrenderer.newtable.TableRowBox;
+import org.xhtmlrenderer.resource.ImageResource;
 
 /**
  * A block box as defined in the CSS spec.  It also provides a base class for
@@ -343,8 +344,15 @@ public class BlockBox extends Box implements InlinePaintable {
     private MarkerData.ImageMarker makeImageMarker(
             final LayoutContext c, final StrutMetrics structMetrics, final String image) {
         FSImage img = null;
-        if (! image.equals("none")) {
-            img = c.getUac().getImageResource(image).getImage();
+        if (! image.equals("none")) 
+        {
+            Optional<ImageResource> resource= c.getUac().getImageResource(image);
+        	
+            if (!resource.isPresent())
+            	return null;
+            
+        	img = resource.get().getImage();
+
             if (img != null) {
                 final StrutMetrics strutMetrics = structMetrics;
                 if (img.getHeight() > strutMetrics.getAscent()) {

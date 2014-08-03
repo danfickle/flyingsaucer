@@ -114,8 +114,10 @@ public class ITextFontResolver implements FontResolver {
                 continue;
             }
 
-            byte[] font1 = _sharedContext.getUac().getBinaryResource(src.asString());
-            if (font1 == null) {
+        	Optional<byte[]> bytes = _sharedContext.getUac().getBinaryResource(src.asString());
+        	byte[] font1 = bytes.orElse(null);;
+
+        	if (font1 == null) {
                 LOGGER.error("Could not load font " + src.asString());
                 continue;
             }
@@ -123,8 +125,14 @@ public class ITextFontResolver implements FontResolver {
             byte[] font2 = null;
             final FSDerivedValue metricsSrc = style.valueByName(CSSName.FS_FONT_METRIC_SRC);
             if (metricsSrc != IdentValue.NONE) {
-                font2 = _sharedContext.getUac().getBinaryResource(metricsSrc.asString());
-                if (font2 == null) {
+            	Optional<byte[]> bytes2 = _sharedContext.getUac().getBinaryResource(metricsSrc.asString());
+            	
+            	if (bytes2.isPresent())
+            	{
+            	   	font2 = bytes2.get();
+            	}
+            	else 
+            	{
                     LOGGER.error("Could not load font metric data " + src.asString());
                     continue;
                 }

@@ -23,6 +23,7 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,8 +43,8 @@ import org.xhtmlrenderer.css.style.derived.LengthValue;
 import org.xhtmlrenderer.css.value.FontSpecification;
 import org.xhtmlrenderer.extend.FSImage;
 import org.xhtmlrenderer.extend.OutputDevice;
+import org.xhtmlrenderer.resource.ImageResource;
 import org.xhtmlrenderer.util.Configuration;
-import org.xhtmlrenderer.util.Uu;
 
 /**
  * An abstract implementation of an {@link OutputDevice}.  It provides complete
@@ -178,16 +179,20 @@ public abstract class AbstractOutputDevice implements OutputDevice {
         BorderPainter.paint(edge, sides, style.getBorder(c), c, 0, true);
     }
 
-    private FSImage getBackgroundImage(final RenderingContext c, final CalculatedStyle style) {
-    	if (! style.isIdent(CSSName.BACKGROUND_IMAGE, IdentValue.NONE)) {
+    private FSImage getBackgroundImage(final RenderingContext c, final CalculatedStyle style) 
+    {
+    	if (! style.isIdent(CSSName.BACKGROUND_IMAGE, IdentValue.NONE)) 
+    	{
             final String uri = style.getStringProperty(CSSName.BACKGROUND_IMAGE);
-            try {
-            	LOGGER.debug("get bg image: " + uri);
-            	return c.getUac().getImageResource(uri).getImage();
-            } catch (final Exception ex) {
-                ex.printStackTrace();
-                Uu.p(ex);
-            }
+
+            LOGGER.debug("get bg image: " + uri);
+
+            Optional<ImageResource> resource = c.getUac().getImageResource(uri);
+            	
+            if (resource.isPresent())
+            	return resource.get().getImage();
+            else
+            	return null;
         }
         return null;
     }

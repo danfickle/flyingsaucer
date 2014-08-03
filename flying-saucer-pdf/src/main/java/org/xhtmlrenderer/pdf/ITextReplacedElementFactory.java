@@ -34,6 +34,7 @@ import org.xhtmlrenderer.extend.ReplacedElementFactory;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
+import org.xhtmlrenderer.resource.ImageResource;
 
 import static org.xhtmlrenderer.util.GeneralUtil.ciEquals;
 
@@ -64,7 +65,12 @@ public class ITextReplacedElementFactory implements ReplacedElementFactory {
 
             	if (resolved.isPresent())
             	{
-	            	final FSImage fsImage = uac.getImageResource(resolved.get()).getImage();
+	            	final Optional<ImageResource> resource = uac.getImageResource(resolved.get());
+
+	            	if (!resource.isPresent())
+	            		return null;
+	            	
+	            	final FSImage fsImage = resource.get().getImage();
 	
 	            	if (fsImage != null) {
 	                    if (cssWidth != -1 || cssHeight != -1) {
