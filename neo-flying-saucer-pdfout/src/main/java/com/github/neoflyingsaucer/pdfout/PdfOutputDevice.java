@@ -223,7 +223,7 @@ System.err.println("x = " + x + " y = " + y + "scale = " + _dotsPerPoint);
 
         if (image.isJpeg())
         {
-        	JPGImage img = new JPGImage(image.getUri(), image.getBytes(), image.getWidth(), image.getHeight(), image.getNumberComponents());
+        	JPGImage img = new JPGImage(image.getUri(), image.getBytes(), image.getIntrinsicWidth(), image.getIntrinsicHeight(), image.getNumberComponents());
         	_currentPage.addImage(img, (float) mx[0], (float) mx[1], (float) mx[2], (float) mx[3], (float) mx[4], (float) mx[5]);
         }
         else
@@ -240,7 +240,7 @@ System.err.println("x = " + x + " y = " + y + "scale = " + _dotsPerPoint);
 			
         	if (img.getType() != BufferedImage.TYPE_INT_ARGB)
         	{
-        		BufferedImage buf = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        		BufferedImage buf = new BufferedImage(image.getIntrinsicWidth(), image.getIntrinsicHeight(), BufferedImage.TYPE_INT_ARGB);
 
         		Graphics g = buf.createGraphics();
         		g.drawImage(img, 0, 0, null);
@@ -256,7 +256,7 @@ System.err.println("x = " + x + " y = " + y + "scale = " + _dotsPerPoint);
         	DataBufferInt buf = (DataBufferInt) raster.getDataBuffer();
         	int[] arr = buf.getData();
 
-        	PNGImage png = new PNGImage(image.getUri(), arr, image.getIntrinsicWidth(), image.getIntrinsicHeight(), image.getNumberComponents());
+        	PNGImage png = new PNGImage(image.getUri(), arr, image.getIntrinsicWidth(), image.getIntrinsicHeight(), 3);
         	_currentPage.addImage(png, (float) mx[0], (float) mx[1], (float) mx[2], (float) mx[3], (float) mx[4], (float) mx[5]);
         }
     }
