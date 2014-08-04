@@ -861,9 +861,6 @@ append(page.buf);
     	if (rimages.containsKey(img.uri))
     		return rimages.get(img.uri).objName;
 
-    	// TODO: Support other color spaces such as indexed.
-    	String colorSpace = "DeviceRGB";
-
     	newobj();
         append("<<\n");
         append("/Type /XObject\n");
@@ -875,17 +872,18 @@ append(page.buf);
         append("/Height ");
         append(img.height);
         append('\n');
-        append("/ColorSpace /");
-        append(colorSpace);
+        append("/ColorSpace /DeviceRGB");
         append('\n');
         append("/BitsPerComponent ");
         append(8);
         append('\n');
-        append("/Length ");
 
-		byte[] bytes = new byte[img.height * (img.width) * 3];
-        
-		int k = 0, m = 0;
+		byte[] bytes = new byte[img.height * img.width * 3];
+        byte[] alpha = new byte[img.height * img.width];
+		
+		int k = 0, m = 0, n = 0;
+		boolean haveAlpha = false;
+		
 		for (int i = 0; i < img.height; i++)
     	{
     		for (int j = 0; j < img.width; j++)
@@ -897,13 +895,18 @@ append(page.buf);
     		    int  g = (px >> 8)  & 0xFF;
     		    int  b = (px >> 0)  & 0xFF;
     			
-    			bytes[k++] = (byte) r;
+    		    alpha[n++] = (byte) a;
+    		    
+    		    if (a != 0xFF)
+    		    	haveAlpha = true;
+
+    		    bytes[k++] = (byte) r;
     			bytes[k++] = (byte) g;
     			bytes[k++] = (byte) b;
     		}
     	}
         
-    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
     	DeflaterOutputStream dos = new DeflaterOutputStream(baos, new Deflater());
 
         try {
@@ -914,6 +917,14 @@ append(page.buf);
 			// Shouldn't happen.
 		}
 
+        if (haveAlpha)
+        {
+        	append("/SMask ");
+        	append(objNumber + 1);
+        	append(" 0 R\n");
+        }
+        
+        append("/Length ");
     	append(baos.size());
         append('\n');
         append(">>\n");
@@ -921,9 +932,51 @@ append(page.buf);
         append(baos);
         append("\nendstream\n");
         endobj();
+        
+        int imageObjectNumber = objNumber;
+        
+        if (haveAlpha)
+        {
+        	newobj();
+            append("<<\n");
+        	append("/Type /XObject\n");
+            append("/Subtype /Image\n");
+            append("/Filter /FlateDecode\n");
+            append("/Width ");
+            append(img.width);
+            append('\n');
+            append("/Height ");
+            append(img.height);
+            append('\n');
+            append("/ColorSpace /DeviceGray");
+            append('\n');
+            append("/BitsPerComponent ");
+            append(8);
+            append('\n');
+        	
+    		ByteArrayOutputStream alphaStrm = new ByteArrayOutputStream();
+        	DeflaterOutputStream deflated = new DeflaterOutputStream(alphaStrm, new Deflater());
 
+            try {
+                deflated.write(bytes, 0, bytes.length);
+            	deflated.finish();
+            	deflated.close();
+    		} catch (IOException e) {
+    			// Shouldn't happen.
+    		}
+        	
+            append("/Length ");
+        	append(alphaStrm.size());
+            append('\n');
+            append(">>\n");
+            append("stream\n");
+            append(alphaStrm);
+            append("\nendstream\n");
+            endobj();
+        }
+        
         String objName = "IM" + rimages.size();
-        rimages.put(img.uri, new ObjectNameAndNumber(objName, objNumber));
+        rimages.put(img.uri, new ObjectNameAndNumber(objName, imageObjectNumber));
         return objName;
     }
 	

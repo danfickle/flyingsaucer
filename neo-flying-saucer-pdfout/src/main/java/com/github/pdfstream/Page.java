@@ -1184,6 +1184,19 @@ public class Page {
 
         // Restore state.
         append("Q\n");
+	}
+	
+	/**
+	 * Opacity must be between 0 and 1.
+	 * Used for images, etc. If you need a color set as well
+	 * be sure to use setPenColor or setBrushColor instead.
+	 */
+	public void setOpacity(float opacity)
+	{
+		String extg = pdf.getExtGStateForAlpha(opacity);
 		
+		append('/');
+		append(extg);
+		append(" gs\n");
 	}
 }   // End of Page.java

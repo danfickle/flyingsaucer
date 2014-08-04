@@ -221,6 +221,8 @@ System.err.println("x = " + x + " y = " + y + "scale = " + _dotsPerPoint);
         final double[] mx = new double[6];
         inverse.getMatrix(mx);
 
+        _currentPage.setOpacity(_opacity);
+        
         if (image.isJpeg())
         {
         	JPGImage img = new JPGImage(image.getUri(), image.getBytes(), image.getIntrinsicWidth(), image.getIntrinsicHeight(), image.getNumberComponents());
