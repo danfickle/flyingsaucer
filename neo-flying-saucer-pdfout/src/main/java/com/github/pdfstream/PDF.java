@@ -958,7 +958,7 @@ append(page.buf);
         	DeflaterOutputStream deflated = new DeflaterOutputStream(alphaStrm, new Deflater());
 
             try {
-                deflated.write(bytes, 0, bytes.length);
+                deflated.write(alpha, 0, alpha.length);
             	deflated.finish();
             	deflated.close();
     		} catch (IOException e) {
