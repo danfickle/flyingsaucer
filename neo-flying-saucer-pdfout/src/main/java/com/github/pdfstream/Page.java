@@ -1199,4 +1199,10 @@ public class Page {
 		append(extg);
 		append(" gs\n");
 	}
+
+
+	public void addAnnotation(Annotation annot) 
+	{
+		annots.add(annot);
+	}
 }   // End of Page.java

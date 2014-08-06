@@ -7,17 +7,20 @@ import java.awt.geom.Area;
 import java.awt.geom.Line2D;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.PathIterator;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferInt;
 import java.awt.image.Raster;
 import java.awt.BasicStroke;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
@@ -25,6 +28,7 @@ import javax.imageio.ImageIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.xhtmlrenderer.css.constants.IdentValue;
 import org.xhtmlrenderer.css.parser.FSCMYKColor;
 import org.xhtmlrenderer.css.parser.FSColor;
@@ -32,6 +36,7 @@ import org.xhtmlrenderer.css.parser.FSRGBColor;
 import org.xhtmlrenderer.css.style.derived.FSLinearGradient;
 import org.xhtmlrenderer.css.value.FontSpecification;
 import org.xhtmlrenderer.extend.FSImage;
+import org.xhtmlrenderer.extend.NamespaceHandler;
 import org.xhtmlrenderer.extend.OutputDevice;
 import org.xhtmlrenderer.layout.SharedContext;
 import org.xhtmlrenderer.render.AbstractOutputDevice;
@@ -45,7 +50,7 @@ import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.util.Configuration;
 
 import com.github.neoflyingsaucer.pdfout.PdfFontResolver.FontDescription;
-import com.github.pdfstream.Image;
+import com.github.pdfstream.Annotation;
 import com.github.pdfstream.JPGImage;
 import com.github.pdfstream.PDF;
 import com.github.pdfstream.PNGImage;
@@ -99,7 +104,7 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
 
     private int _nextFormFieldIndex;
 
-    private Set<String> _linkTargetAreas;
+    private Set<Rectangle2D> _linkTargetAreas;
     
 	public PdfOutputDevice(float dotsPerPoint) 
 	{
@@ -290,6 +295,167 @@ System.err.println("x = " + x + " y = " + y + "scale = " + _dotsPerPoint);
 	}
 
 	@Override
+    public void paintBackground(final RenderingContext c, final Box box) 
+	{
+        super.paintBackground(c, box);
+        processLink(c, box);
+    }
+	
+    private void processLink(final RenderingContext c, final Box box)
+    {
+        final Element elem = box.getElement();
+
+        if (elem != null) 
+        {
+            final NamespaceHandler handler = _sharedContext.getNamespaceHandler();
+            final Optional<String> ouri = handler.getLinkUri(elem);
+
+            if (ouri.isPresent()) 
+            {
+            	String uri = ouri.get();
+
+            	if (uri.startsWith("#")) 
+            	{
+//                    final String anchor = uri.substring(1);
+//                    final Box target = _sharedContext.getBoxById(anchor);
+//                    
+//                    if (target != null) 
+//                    {
+//                        final PdfDestination dest = createDestination(c, target);
+//
+//                        if (dest != null) {
+//                            PdfAction action = new PdfAction();
+//                            if (handler.getAttributeValue(elem, "onclick").isPresent()) {
+//                                action = PdfAction.javaScript(handler.getAttributeValue(elem, "onclick").get(), _writer);
+//                            } else {
+//                                action.put(PdfName.S, PdfName.GOTO);
+//                                action.put(PdfName.D, dest);
+//                            }
+//
+//                            final com.lowagie.text.Rectangle targetArea = checkLinkArea(c, box);
+//                            if (targetArea == null) {
+//                                return;
+//                            }
+//
+//                            targetArea.setBorder(0);
+//                            targetArea.setBorderWidth(0);
+//
+//                            final PdfAnnotation annot = new PdfAnnotation(_writer, targetArea.getLeft(), targetArea.getBottom(),
+//                                    targetArea.getRight(), targetArea.getTop(), action);
+//                            annot.put(PdfName.SUBTYPE, PdfName.LINK);
+//                            annot.setBorderStyle(new PdfBorderDictionary(0.0f, 0));
+//                            annot.setBorder(new PdfBorderArray(0.0f, 0.0f, 0));
+//                            _writer.addAnnotation(annot);
+//                        }
+//                    }
+                }
+            	else if (uri.indexOf("://") != -1) 
+            	{
+            		Rectangle2D pdfPageRect = checkLinkArea(c, box);
+
+            		if (pdfPageRect == null)
+            			return;
+            		
+            		final Annotation annot = new Annotation(uri, null,
+            				(float) pdfPageRect.getMinX(), (float) pdfPageRect.getMinY(),
+            				(float) pdfPageRect.getMaxX(), (float) pdfPageRect.getMaxY());
+
+            		_currentPage.addAnnotation(annot);
+
+//                    final PdfAnnotation annot = new PdfAnnotation(_writer, targetArea.getLeft(), targetArea.getBottom(), targetArea.getRight(),
+//                            targetArea.getTop(), action);
+//                    annot.put(PdfName.SUBTYPE, PdfName.LINK);
+//
+//                    annot.setBorderStyle(new PdfBorderDictionary(0.0f, 0));
+//                    annot.setBorder(new PdfBorderArray(0.0f, 0.0f, 0));
+//                    _writer.addAnnotation(annot);
+                }
+            }
+        }
+    }
+
+    private Rectangle2D checkLinkArea(final RenderingContext c, final Box box) 
+    {
+        final Rectangle2D targetArea = calcTotalLinkArea(c, box);
+
+        if (_linkTargetAreas.contains(targetArea)) 
+        {
+            return null;
+        }
+        
+        _linkTargetAreas.add(targetArea);
+
+        return targetArea;
+    }
+	
+    private Rectangle2D calcTotalLinkArea(final RenderingContext c, final Box box) 
+    {
+        Box current = box;
+
+        while (true)
+        {
+            final Box prev = current.getPreviousSibling();
+
+            if (prev == null || prev.getElement() != box.getElement()) {
+                break;
+            }
+
+            current = prev;
+        }
+
+        Rectangle2D result = createLocalTargetArea(c, current, true);
+
+        current = current.getNextSibling();
+
+        while (current != null && current.getElement() == box.getElement()) 
+        {
+            result = add(result, createLocalTargetArea(c, current, true));
+
+            current = current.getNextSibling();
+        }
+
+        return result;
+    }
+    
+    private Rectangle2D add(final Rectangle2D r1, final Rectangle2D r2) 
+    {
+        final float llx = (float) Math.min(r1.getMinX(), r2.getMinX());
+        final float urx = (float) Math.max(r1.getMaxX(), r2.getMaxX());
+        final float lly = (float) Math.min(r1.getMinX(), r2.getMinY());
+        final float ury = (float) Math.max(r1.getY(), r2.getY());
+
+        return new Rectangle2D.Float(llx, lly, urx, ury);
+    }
+    
+    private Rectangle2D createLocalTargetArea(final RenderingContext c, final Box box, final boolean useAggregateBounds) 
+    {
+        Rectangle bounds;
+
+        if (useAggregateBounds && box.getPaintingInfo() != null) {
+            bounds = box.getPaintingInfo().getAggregateBounds();
+        } else {
+            bounds = box.getContentAreaEdge(box.getAbsX(), box.getAbsY(), c);
+        }
+
+        final Point2D docCorner = new Point2D.Double(bounds.x, bounds.y + bounds.height);
+        final Point2D pdfCorner = new Point.Double();
+        
+        _transform.transform(docCorner, pdfCorner);
+
+        pdfCorner.setLocation(pdfCorner.getX(), normalizeY((float) pdfCorner.getY()));
+
+        final Rectangle2D result = new Rectangle2D.Float((float) pdfCorner.getX(), (float) pdfCorner.getY(),
+                (float) pdfCorner.getX() + getDeviceLength(bounds.width), (float) pdfCorner.getY() + getDeviceLength(bounds.height));
+
+        return result;
+    }
+    
+    public float getDeviceLength(final float length) 
+    {
+        return length / _dotsPerPoint;
+    }
+    
+	@Override
 	public void clip(Shape s) 
 	{
         if (s != null) 
@@ -397,9 +563,9 @@ System.err.println("x = " + x + " y = " + y + "scale = " + _dotsPerPoint);
 		followPath(line, STROKE);
 	}
 
-	public void setSharedContext(SharedContext _sharedContext) {
-		// TODO Auto-generated method stub
-		
+	public void setSharedContext(SharedContext sharedContext) 
+	{
+		this._sharedContext = sharedContext;
 	}
 
 	public String getMetadataByName(String string) {
@@ -418,6 +584,7 @@ System.err.println("x = " + x + " y = " + y + "scale = " + _dotsPerPoint);
 		_transform = new AffineTransform();
 		_transform.scale(1.0d / _dotsPerPoint, 1.0d / _dotsPerPoint);
 		_currentPage.save();
+        _linkTargetAreas = new HashSet<Rectangle2D>();
 	}
 
 	public void finish(RenderingContext c, BlockBox _root) {
