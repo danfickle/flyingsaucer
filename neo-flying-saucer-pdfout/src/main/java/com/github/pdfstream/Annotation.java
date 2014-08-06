@@ -37,12 +37,12 @@ package com.github.pdfstream;
  */
 public class Annotation {
 
-    String uri;
-    String key;
-    float x1;
-    float y1;
-    float x2;
-    float y2;
+    final String uri;
+    final Destination key;
+    final float x1;
+    final float y1;
+    final float x2;
+    final float y2;
 
 
     /**
@@ -56,8 +56,19 @@ public class Annotation {
      *  @param y2 the y coordinate of the bottom right corner.
      *
      */
+    @Deprecated
     public Annotation(
             String uri, String key, float x1, float y1, float x2, float y2) {
+        this.uri = uri;
+        this.x1 = x1;
+        this.y1 = y1;
+        this.x2 = x2;
+        this.y2 = y2;
+        this.key = null;
+    }
+
+    public Annotation(
+            String uri, Destination key, float x1, float y1, float x2, float y2) {
         this.uri = uri;
         this.key = key;
         this.x1 = x1;
@@ -65,5 +76,4 @@ public class Annotation {
         this.x2 = x2;
         this.y2 = y2;
     }
-
 }

@@ -190,6 +190,8 @@ public class PdfRenderer
 
         final int pageCount = _root.getLayer().getPages().size();
 
+        doc.setPageCount(pageCount);
+        
         c.setPageCount(pageCount);
         c.setOutputDevice(_outputDevice);
         setDidValues(doc);

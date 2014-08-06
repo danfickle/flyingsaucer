@@ -181,11 +181,12 @@ public class Page {
      *  @param name The destination name.
      *  @param yPosition The vertical position of the destination on this page.
      */
+    @Deprecated
     public void addDestination(String name, float yPosition) {
         destinations.add(new Destination(name, height - yPosition));
     }
 
-
+    @Deprecated
     protected void setDestinationsPageObjNumber(int pageObjNumber) {
         for (Destination destination : destinations) {
             destination.setPageObjNumber(pageObjNumber);

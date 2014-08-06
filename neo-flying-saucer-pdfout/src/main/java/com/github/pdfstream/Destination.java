@@ -49,6 +49,7 @@ public class Destination {
      *  @param yPosition the y coordinate of the top left corner.
      *
      */
+    @Deprecated
     public Destination(String name, double yPosition) {
         this(name, (float) yPosition);
     }
@@ -61,14 +62,20 @@ public class Destination {
      *  @param yPosition the y coordinate of the top left corner.
      *
      */
+    @Deprecated
     public Destination(String name, float yPosition) {
         this.name = name;
         this.yPosition = yPosition;
     }
 
 
-    protected void setPageObjNumber(int pageObjNumber) {
+    public Destination(float x, float y, int z) 
+    {
+    	this.yPosition = y;
+	}
+
+
+	public void setPageObjNumber(int pageObjNumber) {
         this.pageObjNumber = pageObjNumber;
     }
-
 }

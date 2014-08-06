@@ -58,9 +58,11 @@ public class PDF
 
     protected Set<String> rfonts = new HashSet<>();
 
+    protected Map<Integer, Integer> reservedPageObjectNumbers = new HashMap<>();
     
     protected Map<String, Destination> destinations = new HashMap<String, Destination>();
     protected List<OptionalContentGroup> groups = new ArrayList<OptionalContentGroup>();
+
     protected static final DecimalFormat df = new DecimalFormat("0.###", new DecimalFormatSymbols(Locale.US));
 
     private static final int CR_LF = 0;
@@ -69,7 +71,7 @@ public class PDF
 
     private int compliance = 0;
     private OutputStream os = null;
-    private List<Integer> objOffset = new ArrayList<Integer>();
+    private Map<Integer, Integer> objOffset = new HashMap<>();
     private String producer = "neoFlyingSaucer \\(https://github.com/danfickle/neoflyingsaucer\\)";
     private String creationDate;
     private String createDate;
@@ -81,7 +83,8 @@ public class PDF
     private int resObjNumber = -1;
     private int pagesObjNumber = -1;
 
-
+    private int reservedObjNumbers = 0;
+    
     /**
      * The default constructor - use when reading PDF files.
      * 
@@ -158,18 +161,24 @@ public class PDF
 
     }
 
-
     protected void newobj() {
-        objOffset.add(byte_count);
+        objOffset.put(objNumber, byte_count);
         append(++objNumber);
         append(" 0 obj\n");
     }
 
+    /**
+     * Zero based page number.
+     */
+    protected void newobj(int page) {
+        objOffset.put(page, byte_count);
+        append(page + 1);
+        append(" 0 obj\n");
+    }
 
     protected void endobj() {
         append("endobj\n");
     }
-
 
     protected int addMetadataObject(String notice, boolean padding) throws Exception {
         StringBuilder sb = new StringBuilder();
@@ -356,13 +365,13 @@ public class PDF
         append("<<\n");
         append("/Type /Pages\n");
         append("/Kids [ ");
-        int pageObjNumber = objNumber + 1;
+        //int pageObjNumber = objNumber + 1;
         for (int i = 0; i < pages.size(); i++) {
-            Page page = pages.get(i);
-            page.setDestinationsPageObjNumber(pageObjNumber);
-            append(pageObjNumber);
+            //Page page = pages.get(i);
+            //page.setDestinationsPageObjNumber(pageObjNumber);
+            append(i + 1);
             append(" 0 R ");
-            pageObjNumber += (page.annots.size() + 1);
+            //pageObjNumber += (page.annots.size() + 1);
         }
         append("]\n");
         append("/Count ");
@@ -450,8 +459,7 @@ public class PDF
         for (int i = 0; i < pages.size(); i++) {
             Page page = pages.get(i);
 
-            // Page object
-            newobj();
+            newobj(i);
             append("<<\n");
             append("/Type /Page\n");
             append("/Parent ");
@@ -556,10 +564,10 @@ append(page.buf);
                 append(">>\n");
             }
             else if (annot.key != null) {
-                Destination destination = destinations.get(annot.key);
+                Destination destination = annot.key;
                 if (destination != null) {
                     append("/Dest [");
-                    append(destination.pageObjNumber);
+                    append(destination.pageObjNumber + 1);
                     append(" 0 R /XYZ 0 ");
                     append(destination.yPosition);
                     append(" 0]\n");
@@ -1027,4 +1035,10 @@ append(page.buf);
         rimages.put(img.id, new ObjectNameAndNumber(objName, objNumber));
         return objName;
     }
+
+	public void setPageCount(int i)
+	{
+		reservedObjNumbers = i;
+		objNumber = i;
+	}
 }   // End of PDF.java

@@ -33,6 +33,7 @@ import org.xhtmlrenderer.css.constants.IdentValue;
 import org.xhtmlrenderer.css.parser.FSCMYKColor;
 import org.xhtmlrenderer.css.parser.FSColor;
 import org.xhtmlrenderer.css.parser.FSRGBColor;
+import org.xhtmlrenderer.css.style.CalculatedStyle;
 import org.xhtmlrenderer.css.style.derived.FSLinearGradient;
 import org.xhtmlrenderer.css.value.FontSpecification;
 import org.xhtmlrenderer.extend.FSImage;
@@ -44,13 +45,16 @@ import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.render.BorderPainter;
 import org.xhtmlrenderer.render.Box;
 import org.xhtmlrenderer.render.FSFont;
+import org.xhtmlrenderer.render.InlineLayoutBox;
 import org.xhtmlrenderer.render.InlineText;
 import org.xhtmlrenderer.render.JustificationInfo;
+import org.xhtmlrenderer.render.PageBox;
 import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.util.Configuration;
 
 import com.github.neoflyingsaucer.pdfout.PdfFontResolver.FontDescription;
 import com.github.pdfstream.Annotation;
+import com.github.pdfstream.Destination;
 import com.github.pdfstream.JPGImage;
 import com.github.pdfstream.PDF;
 import com.github.pdfstream.PNGImage;
@@ -314,40 +318,29 @@ System.err.println("x = " + x + " y = " + y + "scale = " + _dotsPerPoint);
             {
             	String uri = ouri.get();
 
-            	if (uri.startsWith("#")) 
+            	if (uri.length() > 1 && uri.startsWith("#")) 
             	{
-//                    final String anchor = uri.substring(1);
-//                    final Box target = _sharedContext.getBoxById(anchor);
-//                    
-//                    if (target != null) 
-//                    {
-//                        final PdfDestination dest = createDestination(c, target);
-//
-//                        if (dest != null) {
-//                            PdfAction action = new PdfAction();
-//                            if (handler.getAttributeValue(elem, "onclick").isPresent()) {
-//                                action = PdfAction.javaScript(handler.getAttributeValue(elem, "onclick").get(), _writer);
-//                            } else {
-//                                action.put(PdfName.S, PdfName.GOTO);
-//                                action.put(PdfName.D, dest);
-//                            }
-//
-//                            final com.lowagie.text.Rectangle targetArea = checkLinkArea(c, box);
-//                            if (targetArea == null) {
-//                                return;
-//                            }
-//
-//                            targetArea.setBorder(0);
-//                            targetArea.setBorderWidth(0);
-//
-//                            final PdfAnnotation annot = new PdfAnnotation(_writer, targetArea.getLeft(), targetArea.getBottom(),
-//                                    targetArea.getRight(), targetArea.getTop(), action);
-//                            annot.put(PdfName.SUBTYPE, PdfName.LINK);
-//                            annot.setBorderStyle(new PdfBorderDictionary(0.0f, 0));
-//                            annot.setBorder(new PdfBorderArray(0.0f, 0.0f, 0));
-//                            _writer.addAnnotation(annot);
-//                        }
-//                    }
+                    final String anchor = uri.substring(1);
+                    final Box target = _sharedContext.getBoxById(anchor);
+                    
+                    if (target != null) 
+                    {
+                        final Destination dest = createDestination(c, target);
+
+                        if (dest != null) 
+                        {
+                            final Rectangle2D targetArea = checkLinkArea(c, box);
+                            if (targetArea == null) {
+                                return;
+                            }
+
+                            final Annotation annot = new Annotation(null, dest,
+                            		(float) targetArea.getMinX(), (float) targetArea.getMinY(),
+                                    (float) targetArea.getMaxX(), (float) targetArea.getMaxY());
+
+                            _currentPage.addAnnotation(annot);
+                        }
+                    }
                 }
             	else if (uri.indexOf("://") != -1) 
             	{
@@ -356,24 +349,47 @@ System.err.println("x = " + x + " y = " + y + "scale = " + _dotsPerPoint);
             		if (pdfPageRect == null)
             			return;
             		
-            		final Annotation annot = new Annotation(uri, null,
+            		final Annotation annot = new Annotation(uri, (Destination) null,
             				(float) pdfPageRect.getMinX(), (float) pdfPageRect.getMinY(),
             				(float) pdfPageRect.getMaxX(), (float) pdfPageRect.getMaxY());
 
             		_currentPage.addAnnotation(annot);
-
-//                    final PdfAnnotation annot = new PdfAnnotation(_writer, targetArea.getLeft(), targetArea.getBottom(), targetArea.getRight(),
-//                            targetArea.getTop(), action);
-//                    annot.put(PdfName.SUBTYPE, PdfName.LINK);
-//
-//                    annot.setBorderStyle(new PdfBorderDictionary(0.0f, 0));
-//                    annot.setBorder(new PdfBorderArray(0.0f, 0.0f, 0));
-//                    _writer.addAnnotation(annot);
                 }
             }
         }
     }
 
+    private Destination createDestination(final RenderingContext c, final Box box) 
+    {
+        Destination result = null;
+
+        final PageBox page = _root.getLayer().getPage(c, getPageRefY(box));
+        
+        if (page != null)
+        {
+            int distanceFromTop = page.getMarginBorderPadding(c, CalculatedStyle.TOP);
+            distanceFromTop += box.getAbsY() + box.getMargin(c).top() - page.getTop();
+            
+            result = new Destination(0, page.getHeight(c) / _dotsPerPoint - distanceFromTop / _dotsPerPoint, 0);
+            result.setPageObjNumber(_startPageNo + page.getPageNo());
+        }
+
+        return result;
+    }
+    
+    private int getPageRefY(final Box box) 
+    {
+        if (box instanceof InlineLayoutBox) 
+        {
+            final InlineLayoutBox iB = (InlineLayoutBox) box;
+            return iB.getAbsY() + iB.getBaseline();
+        }
+        else 
+        {
+            return box.getAbsY();
+        }
+    }
+    
     private Rectangle2D checkLinkArea(final RenderingContext c, final Box box) 
     {
         final Rectangle2D targetArea = calcTotalLinkArea(c, box);
@@ -421,8 +437,8 @@ System.err.println("x = " + x + " y = " + y + "scale = " + _dotsPerPoint);
     {
         final float llx = (float) Math.min(r1.getMinX(), r2.getMinX());
         final float urx = (float) Math.max(r1.getMaxX(), r2.getMaxX());
-        final float lly = (float) Math.min(r1.getMinX(), r2.getMinY());
-        final float ury = (float) Math.max(r1.getY(), r2.getY());
+        final float lly = (float) Math.min(r1.getMinY(), r2.getMinY());
+        final float ury = (float) Math.max(r1.getMaxY(), r2.getMaxY());
 
         return new Rectangle2D.Float(llx, lly, urx, ury);
     }
@@ -445,7 +461,7 @@ System.err.println("x = " + x + " y = " + y + "scale = " + _dotsPerPoint);
         pdfCorner.setLocation(pdfCorner.getX(), normalizeY((float) pdfCorner.getY()));
 
         final Rectangle2D result = new Rectangle2D.Float((float) pdfCorner.getX(), (float) pdfCorner.getY(),
-                (float) pdfCorner.getX() + getDeviceLength(bounds.width), (float) pdfCorner.getY() + getDeviceLength(bounds.height));
+                (float) getDeviceLength(bounds.width), (float) getDeviceLength(bounds.height));
 
         return result;
     }
@@ -591,8 +607,8 @@ System.err.println("x = " + x + " y = " + y + "scale = " + _dotsPerPoint);
 		// TODO
 	}
 
-	public void setRoot(BlockBox _root) {
-		// TODO
+	public void setRoot(BlockBox root) {
+		_root = root;
 	}
 
 	public void start(Document _doc) {
