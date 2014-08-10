@@ -93,7 +93,7 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
 
     private SharedContext _sharedContext;
     private final float _dotsPerPoint;
-
+    
 //    private final Map<URI, PdfReader> _readerCache = new HashMap<URI, PdfReader>();
 //
 //    private PdfDestination _defaultDestination;
@@ -443,7 +443,7 @@ System.err.println("x = " + x + " y = " + y + "scale = " + _dotsPerPoint);
         return new Rectangle2D.Float(llx, lly, urx, ury);
     }
     
-    private Rectangle2D createLocalTargetArea(final RenderingContext c, final Box box, final boolean useAggregateBounds) 
+    public Rectangle2D createLocalTargetArea(final RenderingContext c, final Box box, final boolean useAggregateBounds) 
     {
         Rectangle bounds;
 
@@ -925,6 +925,15 @@ System.err.println("x = " + x + " y = " + y + "scale = " + _dotsPerPoint);
         result.concatenate(current);
         return result;
     }
+
+	public int getNextFormFieldIndex() 
+	{
+		return ++_nextFormFieldIndex;
+	}
+
+	public Page getCurrentPage() {
+		return _currentPage;
+	}
     
 //    private String replaceMissingCharacters(final String string)
 //    {

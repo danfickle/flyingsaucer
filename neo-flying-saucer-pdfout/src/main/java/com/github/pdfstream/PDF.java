@@ -52,13 +52,10 @@ public class PDF
     protected List<Image> images = new ArrayList<Image>();
 
     protected List<Page> pages = new ArrayList<Page>();
-
-    protected Map<Float, String> gstates = new HashMap<>(); 
-    protected Map<String, ObjectNameAndNumber> rimages = new HashMap<>();
-
-    protected Set<String> rfonts = new HashSet<>();
-
-    protected Map<Integer, Integer> reservedPageObjectNumbers = new HashMap<>();
+    protected Map<Float, String> gstates = new HashMap<Float, String>(); 
+    protected Map<String, ObjectNameAndNumber> rimages = new HashMap<String, ObjectNameAndNumber>();
+    protected Set<String> rfonts = new HashSet<String>();
+    protected List<Integer> acroFields = new ArrayList<Integer>();
     
     protected Map<String, Destination> destinations = new HashMap<String, Destination>();
     protected List<OptionalContentGroup> groups = new ArrayList<OptionalContentGroup>();
@@ -84,6 +81,7 @@ public class PDF
     private int pagesObjNumber = -1;
 
     private int reservedObjNumbers = 0;
+	private Integer acroFormObjNumber;
     
     /**
      * The default constructor - use when reading PDF files.
@@ -365,13 +363,9 @@ public class PDF
         append("<<\n");
         append("/Type /Pages\n");
         append("/Kids [ ");
-        //int pageObjNumber = objNumber + 1;
         for (int i = 0; i < pages.size(); i++) {
-            //Page page = pages.get(i);
-            //page.setDestinationsPageObjNumber(pageObjNumber);
             append(i + 1);
             append(" 0 R ");
-            //pageObjNumber += (page.annots.size() + 1);
         }
         append("]\n");
         append("/Count ");
@@ -414,7 +408,7 @@ public class PDF
 
     private int addRootObject() throws Exception {
         // Add the root object
-        newobj();
+    	newobj();
         append("<<\n");
         append("/Type /Catalog\n");
 
@@ -423,7 +417,14 @@ public class PDF
         append("/Pages ");
         append(pagesObjNumber);
         append(" 0 R\n");
-
+        
+        if (acroFormObjNumber != null)
+        {
+        	append("/AcroForm ");
+        	append(acroFormObjNumber.intValue());
+        	append(" 0 R\n");
+        }
+        
         if (compliance == Compliance.PDF_A_1B) {
             append("/Metadata ");
             append(metadataObjNumber);
@@ -455,7 +456,8 @@ public class PDF
     }
 
 
-    private void addAllPages(int pagesObjNumber, int resObjNumber) throws Exception {
+    private void addAllPages(int pagesObjNumber, int resObjNumber) throws Exception 
+    {
         for (int i = 0; i < pages.size(); i++) {
             Page page = pages.get(i);
 
@@ -494,18 +496,27 @@ public class PDF
                 append(" 0 R ");
             }
             append("]\n");
-            if (page.annots.size() > 0) {
+
+            if (!page.annots.isEmpty() ||
+            	!page.fields.isEmpty()) 
+            {
                 append("/Annots [ ");
                 for (int j = 0; j < page.annots.size(); j++) {
                     append(objNumber + j + 1);
                     append(" 0 R ");
                 }
+                for (int j = 0; j < page.fields.size(); j++) {
+                	append(objNumber + page.annots.size() + j + 1);
+                	append(" 0 R ");
+                }
                 append("]\n");
             }
+            
             append(">>\n");
             endobj();
 
             addAnnotDictionaries(page);
+            addFieldDictionaries(page);
         }
     }
 
@@ -578,8 +589,100 @@ append(page.buf);
         }
     }
 
+    protected void addFieldDictionaries(Page page) throws Exception
+    {
+        for (int i = 0; i < page.fields.size(); i++) 
+        {
+            PdfFormElement f = page.fields.get(i);
 
-    private void addOCProperties() throws Exception {
+            newobj();
+            append("<<\n");
+
+            append("/Type /Annot\n");
+            append("/Subtype /Widget\n");
+
+            // Field type or class.
+            append("/FT /");
+            append(f.clzz);
+            append('\n');
+            
+            // Rectangle on page.
+            append("/Rect [");
+            append(f.x1);
+            append(' ');
+            append(f.y1);
+            append(' ');
+            append(f.x2);
+            append(' ');
+            append(f.y2);
+            append("]\n");
+
+            append("/Border [0 0 0]\n");
+            append("/F 4\n");
+
+            // Partial name.
+            append("/T (");
+            append(f.partial, true);
+            append(")\n");
+            
+            // Export name.
+            append("/TM (");
+            append(f.export, true);
+            append(")\n");
+            
+            // Default state.
+            append("/AS /");
+            append(f.defaultState);
+            append("\n");
+            
+            if (!f.strms.isEmpty())
+            {
+            	append("/AP << /N ");
+            	
+            	if (f.strms.size() == 1)
+            	{
+            		append(f.strms.get(0).objNumber);
+            		append(" 0 R >>\n");
+            	}
+            	else
+            	{
+            		append("<< ");
+            		
+            		for (PdfAppearanceStream strm : f.strms)
+            		{
+            			append('/');
+            			append(strm.state);
+            			append(' ');
+            			append(strm.objNumber);
+            			append(" 0 R ");
+            		}
+
+            		append(">> ");
+            		append(">>\n");
+            	}
+            }
+            
+            append(">>\n");
+            endobj();
+            
+            acroFields.add(objNumber);
+        }
+    }
+
+    private void append(String export, boolean b) 
+    {
+    	for (int i = 0; i < export.length(); i++)
+    	{
+    		int c = export.charAt(i);
+    		
+    		if (c == '(' || c == ')')
+    			append('\\');
+    	
+    		append((byte) c);
+    	}
+	}
+
+	private void addOCProperties() throws Exception {
         if (!groups.isEmpty()) {
             append("/OCProperties\n");
             append("<<\n");
@@ -668,6 +771,7 @@ append(page.buf);
             resObjNumber = addResourcesObject();
             pagesObjNumber = addPagesObject();
             addAllPages(pagesObjNumber, resObjNumber);
+            acroFormObjNumber = addAcroDictionary();
         }
 
         int infoObjNumber = addInfoObject();
@@ -725,7 +829,27 @@ append(page.buf);
     }
 
 
-    /**
+    private Integer addAcroDictionary() 
+    {
+    	if (!acroFields.isEmpty())
+        {
+    		newobj();
+    		append("<<\n");    		
+    		append("/Fields [");
+        	for (Integer field : acroFields)
+        	{
+        		append(field);
+        		append(" 0 R ");
+        	}
+        	append("]\n>>\n");
+        	endobj();
+        	return objNumber;
+        }
+    	
+    	return null;
+	}
+
+	/**
      *  Set the "Title" document property of the PDF file.
      *  @param title The title of this document.
      */
@@ -1040,5 +1164,34 @@ append(page.buf);
 	{
 		reservedObjNumbers = i;
 		objNumber = i;
+	}
+
+	public void addAppearanceStream(PdfAppearanceStream strm)
+	{
+		newobj();
+        append("<<\n");		
+        append("/Type /XObject\n");
+        append("/Subtype /Form\n");
+
+        append("/BBox [ 0 0 ");
+        append(strm.width);
+        append(' ');
+        append(strm.height);
+        append(" ]\n");
+        
+        append("/Matrix [ 1 0 0 1 0 0 ]\n");
+        append("/FormType 1\n");
+
+        append("/Length ");
+        append(strm.os.size());
+        append('\n');
+        
+        append(">>\n");
+        append("stream\n");
+        append(strm.os);
+        append("\nendstream\n");
+        endobj();
+
+        strm.objNumber = objNumber;
 	}
 }   // End of PDF.java

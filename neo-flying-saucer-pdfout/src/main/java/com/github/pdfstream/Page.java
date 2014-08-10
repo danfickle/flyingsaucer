@@ -48,13 +48,18 @@ public class Page {
 
     protected PDF pdf;
     protected ByteArrayOutputStream buf;
+
     protected float[] tm = new float[] {1f, 0f, 0f, 1f};
     protected int renderingMode = 0;
+
     protected float width;
     protected float height;
+
     protected List<Integer> contents;
     protected List<Annotation> annots;
     protected List<Destination> destinations;
+    protected List<PdfFormElement> fields = new ArrayList<PdfFormElement>();
+
     protected float[] cropBox = null;
     protected float[] bleedBox = null;
     protected float[] trimBox = null;
@@ -1205,5 +1210,11 @@ public class Page {
 	public void addAnnotation(Annotation annot) 
 	{
 		annots.add(annot);
+	}
+
+
+	public void addFormField(PdfFormElement field) 
+	{
+		fields.add(field);
 	}
 }   // End of Page.java

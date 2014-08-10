@@ -10,6 +10,8 @@ import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.resource.ImageResource;
 
+import com.github.neoflyingsaucer.pdfout.form.CheckboxFormField;
+
 public class PdfReplacedElementFactory implements ReplacedElementFactory {
 
 	@Override
@@ -23,7 +25,8 @@ public class PdfReplacedElementFactory implements ReplacedElementFactory {
 
         final String nodeName = e.getNodeName();
 
-        if (nodeName.equalsIgnoreCase("img")) {
+        if (nodeName.equalsIgnoreCase("img")) 
+        {
             final String srcAttr = e.getAttribute("src");
 
             if (srcAttr != null && !srcAttr.isEmpty()) 
@@ -45,6 +48,15 @@ public class PdfReplacedElementFactory implements ReplacedElementFactory {
             		}
             	}
             }
+        }
+        else if (nodeName.equalsIgnoreCase("input"))
+        {
+            final String type = e.getAttribute("type");
+        	
+        	if ("checkbox".equalsIgnoreCase(type))
+        	{
+        		return new CheckboxFormField(c, box, cssWidth, cssHeight);
+        	}
         }
         
         return null;
