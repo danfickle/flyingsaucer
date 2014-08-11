@@ -605,6 +605,11 @@ append(page.buf);
             append("/FT /");
             append(f.clzz);
             append('\n');
+
+            // Field bitfield.
+            append("/Ff ");
+            append(f.bitfield);
+            append('\n');
             
             // Rectangle on page.
             append("/Rect [");

@@ -108,15 +108,15 @@ public abstract class AbstractFormField implements PdfReplacedElement
     }
 
     protected boolean isChecked(final Element e) {
-        return !Util.isNullOrEmpty(e.getAttribute("checked"));
+        return e.hasAttribute("checked");
     }
 
     protected boolean isReadOnly(final Element e) {
-        return !Util.isNullOrEmpty(e.getAttribute("readonly"));
+        return e.hasAttribute("readonly");
     }
     
     protected boolean isSelected(final Element e) {
-        return Util.isNullOrEmpty(e.getAttribute("selected"));
+        return e.hasAttribute("selected");
     }
 
     public void detach(final LayoutContext c) {

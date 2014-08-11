@@ -11,8 +11,10 @@ public class PdfFormElement
 	String clzz;
 	String defaultState;
 	String value;
-	boolean readOnly = false;
+	int bitfield = 0;
 	List<PdfAppearanceStream> strms = new ArrayList<PdfAppearanceStream>(2);
+	
+	public static final int BF_READONLY = 1;
 	
 	public void setRectangle(float x, float y, float x2, float y2)
 	{
@@ -47,9 +49,9 @@ public class PdfFormElement
 		this.clzz = clss;
 	}
 
-	public void setReadOnly(boolean b) 
+	public void setBitfield(int b) 
 	{
-		this.readOnly = b;
+		this.bitfield = b;
 	}
 	
 	public void addApearanceStream(PdfAppearanceStream strm)

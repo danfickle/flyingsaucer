@@ -60,7 +60,7 @@ public class CheckboxFormField extends AbstractFormField
     field.setDefaultState(isChecked(elm) ? "Yes" : "Off");
 
     if (isReadOnly(elm))
-    	field.setReadOnly(true);
+    	field.setBitfield(PdfFormElement.BF_READONLY);
     
     createAppearances(field, (float) targetArea.getWidth(), (float) targetArea.getHeight());
     
