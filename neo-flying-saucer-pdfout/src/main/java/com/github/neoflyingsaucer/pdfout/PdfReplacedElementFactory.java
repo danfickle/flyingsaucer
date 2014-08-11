@@ -11,6 +11,7 @@ import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.resource.ImageResource;
 
 import com.github.neoflyingsaucer.pdfout.form.CheckboxFormField;
+import com.github.neoflyingsaucer.pdfout.form.SelectFormField;
 
 public class PdfReplacedElementFactory implements ReplacedElementFactory {
 
@@ -57,6 +58,10 @@ public class PdfReplacedElementFactory implements ReplacedElementFactory {
         	{
         		return new CheckboxFormField(c, box, cssWidth, cssHeight);
         	}
+        }
+        else if (nodeName.equalsIgnoreCase("select"))
+        {
+       		return new SelectFormField(c, box, cssWidth, cssHeight);
         }
         
         return null;

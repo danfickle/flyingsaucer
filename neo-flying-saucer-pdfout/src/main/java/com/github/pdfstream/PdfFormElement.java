@@ -9,10 +9,19 @@ public class PdfFormElement
 	String partial;
 	String export;
 	String clzz;
-	String defaultState;
 	String value;
 	int bitfield = 0;
 	List<PdfAppearanceStream> strms = new ArrayList<PdfAppearanceStream>(2);
+
+	// For checkboxes, etc.
+	String defaultState = null;
+	
+	// For select boxes.
+	String[][] options = null;
+	int selected;
+	
+	// For items containing text.
+	String appearance = null;
 	
 	public static final int BF_READONLY = 1;
 	
@@ -65,5 +74,16 @@ public class PdfFormElement
 		{
 			pdf.addAppearanceStream(strm);
 		}
+	}
+
+	public void setOptions(String[][] options, int selected) 
+	{
+		this.options = options;
+		this.selected = selected;
+	}
+	
+	public void setDefaultAppearanceString(String ap)
+	{
+		this.appearance = ap;
 	}
 }

@@ -635,10 +635,40 @@ append(page.buf);
             append(f.export, true);
             append(")\n");
             
-            // Default state.
-            append("/AS /");
-            append(f.defaultState);
-            append("\n");
+            if (f.defaultState != null)
+            {
+            	// Default state.
+            	append("/AS /");
+            	append(f.defaultState);
+            	append("\n");
+            }
+            
+            if (f.appearance != null)
+            {
+            	append("/DA (");
+            	append(f.appearance, true);
+            	append(")\n");
+            }
+            
+            if (f.options != null)
+            {
+            	append("/Opt [ ");
+            	
+            	for (String[] opt : f.options)
+            	{
+            		append("[ (");
+            		append(opt[0], true);
+            		append(") (");
+            		append(opt[1], true);
+            		append(") ]\n");
+            	}
+            	
+            	append("]\n");
+
+            	append("/V (");
+            	append(f.options[f.selected][1], true);
+            	append(")\n");
+            }
             
             if (!f.strms.isEmpty())
             {
