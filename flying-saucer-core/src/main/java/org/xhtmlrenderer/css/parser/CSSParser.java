@@ -1955,7 +1955,7 @@ public class CSSParser {
             
             float f = value.getFloatValue();
             if (type == CSSPrimitiveUnit.CSS_PERCENTAGE) {
-                f = f/100 * 255;
+                f = f / 100f * (i == 3 ? 1f : 255);
             }
 
             if (f < 0 || (i == 3 && f > 1) || f > 255) 
