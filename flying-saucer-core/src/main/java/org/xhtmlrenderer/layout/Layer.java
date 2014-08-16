@@ -576,12 +576,17 @@ public class Layer {
         getMaster().calcPaintingInfo(c, true);
         final PaintingInfo result = getMaster().getPaintingInfo().copyOf();
 
-        getChildren().stream()
-         .filter(child -> !child.getMaster().getStyle().isFixed() &&
-        		           child.getMaster().getStyle().isAbsolute())
-         .map(child -> child.calcPaintingDimension(c))
-         .forEachOrdered(info -> moveIfGreater(result.getOuterMarginCorner(), info.getOuterMarginCorner()));
-        
+        for (Layer child : getChildren())
+        {
+        	if (!child.getMaster().getStyle().isFixed() &&
+	            child.getMaster().getStyle().isAbsolute())
+        	{
+        		PaintingInfo info = child.calcPaintingDimension(c);
+        		
+        		moveIfGreater(result.getOuterMarginCorner(), info.getOuterMarginCorner());
+        	}
+        }
+
         return result;
     }
     

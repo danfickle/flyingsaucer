@@ -91,10 +91,17 @@ public class Selector {
                 return false;
             }
         }
-        if (_name == null || treeRes.matchesElement(e, _namespaceURI, _name)) {
+        if (_name == null || treeRes.matchesElement(e, _namespaceURI, _name)) 
+        {
          	// all conditions need to be true
-           	return conditions.stream().allMatch(c -> c.matches(e, attRes, treeRes));
+        	for (Condition c : conditions)
+        	{
+        		if (!c.matches(e, attRes, treeRes))
+        			return false;
+        	}
+        	return true;
         }
+        
         return false;
     }
 

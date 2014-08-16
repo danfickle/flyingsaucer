@@ -24,8 +24,8 @@ import java.util.Optional;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xhtmlrenderer.css.extend.TreeResolver;
-import org.xhtmlrenderer.util.NodeHelper;
 
 /**
  * @author scott
@@ -103,13 +103,19 @@ public class DOMTreeResolver implements TreeResolver {
     }
     
     @Override
-    public int getPositionOfElement(final Element element) {
-        final Node parent = element.getParentNode();
+    public int getPositionOfElement(final Element element) 
+    {
+        Node parent = element.getParentNode();
+        NodeList nl = parent.getChildNodes();
+        int length = nl.getLength();
         
-        return (int) 
-          NodeHelper
-        	.childElemStream(parent)
-        	.filter(e -> e != element)
-        	.count();
+        for (int i = 0; i < length; i++)
+        {
+        	if (nl.item(i) == element)
+        		return i;
+        }
+
+        assert(false);
+        return 0;
     }
 }

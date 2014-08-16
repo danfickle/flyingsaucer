@@ -79,19 +79,20 @@ public class AWTFontResolver implements FontResolver
     	// can specify fallback fonts.
         if (families != null) 
         {
-        	Optional<Font> resolved =
-        		Arrays.stream(families)
-        			.map(family -> resolveFont(ctx, family, size, weight, style, variant))
-        			.filter(font -> font != null)
-        			.findFirst();
-
-        	if (resolved.isPresent())
-        			return new AWTFSFont(resolved.get());
+        	for (String family : families)
+        	{
+        		Font f = resolveFont(ctx, family, size, weight, style, variant);
+        		
+        		if (f != null)
+        			return new AWTFSFont(f);
+        	}
         }
 
         // if we get here then no font worked, so just return default sans
         String family = "SansSerif";
-        if (style == IdentValue.ITALIC) {
+
+        if (style == IdentValue.ITALIC) 
+        {
             family = "Serif";
         }
 

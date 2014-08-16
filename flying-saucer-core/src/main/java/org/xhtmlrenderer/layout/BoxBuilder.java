@@ -27,12 +27,11 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.CSSPrimitiveUnit;
@@ -60,8 +59,6 @@ import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.render.Box;
 import org.xhtmlrenderer.render.FloatedBoxData;
 import org.xhtmlrenderer.render.InlineBox;
-import org.xhtmlrenderer.util.GenericPair;
-import org.xhtmlrenderer.util.NodeHelper;
 
 /**
  * This class is responsible for creating the box tree from the DOM.  This is
@@ -310,8 +307,15 @@ public class BoxBuilder {
         }
     }
 
-    private static boolean isAllProperTableNesting(final IdentValue parentDisplay, final List<Styleable> children) {
-    	return children.stream().allMatch(child -> isProperTableNesting(parentDisplay, child.getStyle().getIdent(CSSName.DISPLAY)));
+    private static boolean isAllProperTableNesting(final IdentValue parentDisplay, final List<Styleable> children) 
+    {
+    	for (Styleable child : children)
+    	{
+    		if (!isProperTableNesting(parentDisplay, child.getStyle().getIdent(CSSName.DISPLAY)))
+   				return false;
+    	}
+    	
+    	return true;
     }
 
     /**
@@ -600,14 +604,18 @@ public class BoxBuilder {
         }
     }
 
-    private static ChildBoxInfo lookForBlockContent(final List<Styleable> styleables) {
+    private static ChildBoxInfo lookForBlockContent(final List<Styleable> styleables) 
+    {
         final ChildBoxInfo result = new ChildBoxInfo();
-
-        final boolean containsBlockLevelContent = styleables.stream()
-          .anyMatch(s -> !s.getStyle().isLayedOutInInlineContext());
+        boolean containsBlockLevelContent = false; 
+        
+        for (Styleable s : styleables)
+        {
+        	if (!s.getStyle().isLayedOutInInlineContext())
+        		containsBlockLevelContent = true;
+        }
         
         result.setContainsBlockLevelContent(containsBlockLevelContent);
-
         return result;
     }
 
@@ -1016,21 +1024,31 @@ public class BoxBuilder {
     private static void addColumns(final LayoutContext c, final TableBox table, final TableColumn parent) {
         final SharedContext sharedContext = c.getSharedContext();
 
-        List<GenericPair<Element, CalculatedStyle>> columns =  
-        NodeHelper
-          .childElemStream(parent.getElement())
-          .map(el -> new GenericPair<>(el, sharedContext.getStyle(el)))
-          .filter(pair -> pair.getSecond().isIdent(CSSName.DISPLAY, IdentValue.TABLE_COLUMN))
-          .collect(Collectors.toList());
+        NodeList nl = parent.getElement().getChildNodes();
+        int length = nl.getLength();
+        boolean haveColumn = false;
+        
+        for (int i = 0; i < length; i++)
+        {
+        	Node n = nl.item(i);
 
-        columns.stream()
-           .map(pair -> new TableColumn(pair.getFirst(), pair.getSecond()))
-           .forEachOrdered(column -> {
-        	   column.setParent(parent);
-        	   table.addStyleColumn(column);
-           });
+        	if (!(n instanceof Element))
+        		continue;
 
-        if (columns.isEmpty())
+        	Element el = (Element) n;
+        	CalculatedStyle style = sharedContext.getStyle(el);
+
+        	if (!style.isIdent(CSSName.DISPLAY, IdentValue.TABLE_COLUMN))
+        		continue;
+        	
+        	TableColumn column = new TableColumn(el, style);
+        	column.setParent(parent);
+        	
+        	table.addStyleColumn(column);
+        	haveColumn = true;
+        }
+        
+        if (!haveColumn)
         	table.addStyleColumn(parent);
     }
 

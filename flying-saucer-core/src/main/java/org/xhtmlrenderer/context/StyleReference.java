@@ -43,7 +43,6 @@ import org.xhtmlrenderer.css.sheet.StylesheetInfo;
 import org.xhtmlrenderer.extend.NamespaceHandler;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.layout.SharedContext;
-import org.xhtmlrenderer.util.GenericPair;
 
 
 /**
@@ -100,27 +99,28 @@ public class StyleReference {
     {
         final List<Stylesheet> result = new ArrayList<Stylesheet>(infos.size() + 15);
 
-        infos.stream()
-          .filter(info -> info.appliesToMedia(_context))
-          .map(info -> new GenericPair<>(info, info.getStylesheet()))
-          .forEachOrdered(pair -> {
-        	  Optional<Stylesheet> sheet = pair.getSecond();
-        	  
-        	  if (!sheet.isPresent()) {
-                  sheet = _stylesheetFactory.getStylesheet(pair.getFirst());
-              }
-              
-              if (sheet.isPresent())
-              {
-              	if (!sheet.get().getImportRules().isEmpty()) 
-              	{
-              		result.addAll(readAndParseAll(sheet.get().getImportRules(), medium));
-              	}
+        for (StylesheetInfo info : infos)
+        {
+          if (!info.appliesToMedia(_context))
+        		continue;
+        	
+      	  Optional<Stylesheet> sheet = info.getStylesheet();
+        	
+    	  if (!sheet.isPresent()) {
+              sheet = _stylesheetFactory.getStylesheet(info);
+          }
+          
+          if (sheet.isPresent())
+          {
+          	if (!sheet.get().getImportRules().isEmpty()) 
+          	{
+          		result.addAll(readAndParseAll(sheet.get().getImportRules(), medium));
+          	}
 
-              	result.add(sheet.get());
-              } 
-          });
-       
+          	result.add(sheet.get());
+          }         	
+        }
+        
         return result;
     }
 

@@ -51,9 +51,13 @@ public class ContentFunctionFactory
     
     public Optional<ContentFunction> lookupFunction(final LayoutContext c, final FSFunction function) 
     {
-    	return _functions.stream()
-    			.filter(f -> f.canHandle(c, function))
-    			.findFirst();
+    	for (ContentFunction func : _functions)
+    	{
+    		if (func.canHandle(c, function))
+    			return Optional.of(func);
+    	}
+    	
+    	return Optional.empty();
     }
     
     public void registerFunction(final ContentFunction function) {

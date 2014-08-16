@@ -26,8 +26,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
-
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.IdentValue;
 import org.xhtmlrenderer.css.parser.PropertyValue;
@@ -244,10 +242,14 @@ public class CascadedStyle {
     {
         if (this.fingerprint == null) 
         {
-        	this.fingerprint =
-        		cascadedProperties.values().stream()
-        		  .map(iter -> iter.getFingerprint())
-        		  .collect(Collectors.joining());
+        	StringBuilder sb = new StringBuilder();
+        	
+        	for (PropertyDeclaration decl : cascadedProperties.values())
+        	{
+        		sb.append(decl.getFingerprint());
+        	}
+        	
+        	this.fingerprint = sb.toString();
         }
 
         return this.fingerprint;

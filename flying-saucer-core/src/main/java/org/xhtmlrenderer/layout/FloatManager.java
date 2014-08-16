@@ -212,9 +212,15 @@ public class FloatManager {
         final Point offset = bfc.getOffset();
         final Rectangle bounds = current.getMarginEdge(cssCtx, -offset.x, -offset.y);
 
-        return floats.stream()
-        		.map(floater -> floater.getBox().getMarginEdge(cssCtx,-floater.getX(), -floater.getY()))
-        		.anyMatch(floaterBounds -> floaterBounds.intersects(bounds));
+        for (BoxOffset floater : floats)
+        {
+        	Rectangle floaterBounds = floater.getBox().getMarginEdge(cssCtx,-floater.getX(), -floater.getY());
+        	
+        	if (floaterBounds.intersects(bounds))
+        		return true;
+        }
+        
+        return false;
     }
 
     private void moveFloatBelow(final CssContext cssCtx, final BlockFormattingContext bfc,

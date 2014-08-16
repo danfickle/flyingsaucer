@@ -50,8 +50,11 @@ public class MediaQueryItem
 
 		if (res == true)
 		{
-			res = expressions.stream().allMatch(
-					expr -> expr.eval(ctx));
+			for (MediaQueryExpression expr : expressions)
+			{
+				if (!expr.eval(ctx))
+					res = false;
+			}
 		}
 		
 		if (qualifier == MediaQueryQualifier.NOT)

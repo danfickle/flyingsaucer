@@ -20,7 +20,6 @@
 package org.xhtmlrenderer.css.parser;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class FSFunction {
     private final String _name;
@@ -42,8 +41,21 @@ public class FSFunction {
     @Override
     public String toString() 
     {
-    	return _parameters.stream()
-    			.map(param -> param.toString() /* HACK Why? */)
-    			.collect(Collectors.joining(",", _name + "(", ")"));
+    	StringBuilder sb = new StringBuilder();
+
+    	sb.append(_name);
+    	sb.append('(');
+    	
+    	for (int i = 0; i < _parameters.size(); i++)
+    	{
+    		sb.append(_parameters.get(i).toString());
+    		
+    		if (i != _parameters.size() - 1)
+    			sb.append(',');
+    	}
+    	
+    	sb.append(')');
+    	
+    	return sb.toString();
     }
 }

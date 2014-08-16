@@ -23,6 +23,7 @@ import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xhtmlrenderer.context.StyleReference;
 import org.xhtmlrenderer.css.constants.ValueConstants;
@@ -50,7 +51,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 /**
@@ -558,11 +558,7 @@ class DOMTreeModel implements TreeModel {
 
     private void setRoot(final String rootNodeName) 
     {
-    	Optional<Node> node = 
-    	  NodeHelper
-    	    .childNodeStream(doc)
-    	    .filter(n -> GeneralUtil.ciEquals(n.getNodeName(), rootNodeName))
-    	    .findFirst();
+    	Optional<Element> node = NodeHelper.getFirstMatchingChildByTagName(doc.getDocumentElement(), rootNodeName);
     
     	if (node.isPresent())
     		this.root = node.get();
@@ -724,16 +720,25 @@ class DOMTreeModel implements TreeModel {
 
     	if (children == null) 
         {
-            children = NodeHelper
-              .childNodeStream(parent)
-              .filter(child -> 
-                      child instanceof Element ||
-            		  child instanceof Comment ||
-            		 (child instanceof Text &&
-            		 !((Text) child).getTextContent().trim().isEmpty()))
-             .collect(Collectors.toList());
-
-            this.displayableNodes.put(parent, children);
+    		children = new ArrayList<Node>();
+    		NodeList nl = parent.getChildNodes();
+    		int length = nl.getLength();
+    		
+    		for (int i = 0; i < length; i++)
+    		{    		
+    			Node child = nl.item(i);
+    			
+    			if (child instanceof Text &&
+    				((Text) child).getTextContent().trim().isEmpty())
+    				continue;
+    			else if (!(child instanceof Element) &&
+    					 !(child instanceof Comment))
+    				continue;
+    			
+    			children.add(child);
+    		}
+    			
+    		this.displayableNodes.put(parent, children);
             return children;
         }
         else {

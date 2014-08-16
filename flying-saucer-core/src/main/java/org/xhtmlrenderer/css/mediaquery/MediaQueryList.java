@@ -18,11 +18,19 @@ public class MediaQueryList
 	public boolean eval(SharedContext ctx) 
 	{
 		if (queryItems.isEmpty())
+		{
 			return true;
+		}
 		else
-			return queryItems
-				.stream()
-				.anyMatch(item -> item.eval(ctx));
+		{
+			for (MediaQueryItem item : queryItems)
+			{
+				if (item.eval(ctx))
+					return true;
+			}
+
+			return false;
+		}
 	}
 	
 	@Override

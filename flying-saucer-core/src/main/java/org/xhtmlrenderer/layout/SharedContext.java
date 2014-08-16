@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xhtmlrenderer.context.AWTFontResolver;
 import org.xhtmlrenderer.context.StyleReference;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo;
@@ -53,7 +54,6 @@ import org.xhtmlrenderer.render.FSFontMetrics;
 import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.swing.Java2DTextRenderer;
 import org.xhtmlrenderer.swing.SwingReplacedElementFactory;
-import org.xhtmlrenderer.util.NodeHelper;
 
 /**
  * The SharedContext is that which is kept between successive
@@ -630,10 +630,18 @@ public class SharedContext {
         getCss().removeStyle(e);
         getReplacedElementFactory().remove(e);
 
-        if (e.hasChildNodes()) {
-        	NodeHelper
-        	  .childElemStream(e)
-        	  .forEachOrdered(el -> removeElementReferences(el));
+        if (e.hasChildNodes())
+        {
+        	NodeList nl = e.getChildNodes();
+        	int length = nl.getLength();
+        	
+        	for (int i = 0; i < length; i++)
+        	{
+        		Node item = nl.item(i);
+        		
+        		if (item instanceof Element)
+        			removeElementReferences((Element) item);
+        	}
         }
     }
 

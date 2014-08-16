@@ -1,13 +1,11 @@
 package org.xhtmlrenderer.util;
 
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -20,19 +18,12 @@ public class NodeHelper {
     return n.getParentNode() instanceof Document;
   }
 
+  @Deprecated
   public static boolean hasAttribute(final Node link, final String attrName) {
     return link.getAttributes().getNamedItem(attrName) != null;
   }
 
-  /**
-   * Case-insensitive.
-   */
-  public static boolean attributeContains(final Node link, final String attrName, final String searchStr) {
-    final Attr attr = (Attr) link.getAttributes().getNamedItem(attrName);
-    final String[] values = attr.getValue().split("\\s");
-    return Arrays.stream(values).anyMatch(s -> GeneralUtil.ciEquals(s, searchStr));
-  }
-
+  @Deprecated
   public static class NodeSpliterator implements Spliterator<Node>
   {
 	@Override
@@ -91,12 +82,14 @@ public class NodeHelper {
 	}
   }
   
+  @Deprecated
   public static Stream<Node> childNodeStream(final Node n)
   {
 	  final NodeList nl = n.getChildNodes();
 	  return StreamSupport.stream(new NodeSpliterator(nl, 0, nl.getLength()), true);
   }
   
+  @Deprecated
   public static Stream<Element> childElemStream(final Node n, final String tagName)
   {
 	  return childNodeStream(n)
@@ -105,6 +98,7 @@ public class NodeHelper {
 			  .filter(e -> GeneralUtil.ciEquals(e.getNodeName(), tagName));
   }
 
+  @Deprecated
   public static Stream<Element> childElemStream(final Node n)
   {
 	  return childNodeStream(n)
@@ -112,6 +106,7 @@ public class NodeHelper {
 			  .map(NodeHelper::elementCast);
   }
   
+  @Deprecated
   public static Element elementCast(final Node n)
   {
 	  return (Element) n;
@@ -126,19 +121,31 @@ public class NodeHelper {
     }
   }
 
-  public static Optional<Element> getFirstMatchingChildByTagName(final Element element, final String tagName) 
+  public static Optional<Element> getFirstMatchingChildByTagName(final Element parent, final String tagName) 
   {
-	  return NodeHelper.childElemStream(element, tagName).findFirst();
+  	NodeList nl = parent.getChildNodes();
+  	int length = nl.getLength();
+  	
+  	for (int i = 0; i < length; i++)
+  	{
+  		Node item = nl.item(i);
+  		
+  		if (item instanceof Element &&
+  			item.getNodeName().equals(tagName))
+  			return Optional.of((Element) item);
+  	}
+  	
+  	return Optional.empty();
   }
 
   public static Optional<Element> getHead(final Document doc) 
   {
-    return childElemStream(doc.getDocumentElement(), "head").findFirst();
+    return NodeHelper.getFirstMatchingChildByTagName(doc.getDocumentElement(), "head");
   }
 
   public static Optional<Element> getBody(Document doc) 
   {
-	return childElemStream(doc.getDocumentElement(), "body").findFirst();
+	return NodeHelper.getFirstMatchingChildByTagName(doc.getDocumentElement(), "body");
   }
 
   public static boolean isElement(final Node n) {

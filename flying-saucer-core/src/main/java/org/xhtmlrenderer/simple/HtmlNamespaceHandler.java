@@ -26,12 +26,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
@@ -40,6 +39,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xhtmlrenderer.css.extend.StylesheetFactory;
 import org.xhtmlrenderer.css.extend.TreeResolver;
@@ -51,8 +51,6 @@ import org.xhtmlrenderer.extend.NamespaceHandler;
 import org.xhtmlrenderer.util.Configuration;
 import org.xhtmlrenderer.util.GeneralUtil;
 import org.xhtmlrenderer.util.NodeHelper;
-import org.xhtmlrenderer.util.GenericPair;
-
 import static org.xhtmlrenderer.util.GeneralUtil.ciEquals;
 
 /**
@@ -130,9 +128,9 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
 
     protected Optional<StylesheetInfo> readLinkElement(final Element link)
     {
-    	if (NodeHelper.attributeContains(link, "rel", "alternate"))
+    	if (link.getAttribute("rel").toLowerCase(Locale.US).indexOf("alternate") != -1)
     		return Optional.empty();
-
+    	
     	if (!GeneralUtil.ciEquals(link.getAttribute("type"), "text/css"))
     		return Optional.empty();
     	
@@ -164,50 +162,69 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
     	if (!head.isPresent())
     		return Collections.emptyList();
   
-    	List<StylesheetInfo> list = 
-    	 NodeHelper
-    	  .childElemStream(head.get(), "link")
-    	  .map(l -> readLinkElement(l))
-    	  .filter(l -> l.isPresent())
-    	  .map(l -> l.get())
-    	  .collect(Collectors.toCollection(ArrayList::new));
-    	  
-    	 NodeHelper
-    	  .childElemStream(head.get(), "style")
-    	  .filter(s -> (!s.hasAttribute("alternate") || !ciEquals(s.getAttribute("alternate"), "yes"))
-    	            && (!s.hasAttribute("type") || ciEquals(s.getAttribute("type"), "text/css")))
-    	  .forEachOrdered(piNode -> {
-    		  final StylesheetInfo info = new StylesheetInfo();
+    	NodeList nl = head.get().getChildNodes();
+    	int length = nl.getLength();
+    	
+    	List<StylesheetInfo> list = new ArrayList<StylesheetInfo>();
+    	
+    	for (int i = 0; i < length; i++)
+    	{
+    		Node item = nl.item(i);
+    		
+    		if (!(item instanceof Element))
+    			continue;
+    		
+    		Element elem = (Element) item;
+    		
+    		if (elem.getNodeName().equals("link"))
+    		{
+    			Optional<StylesheetInfo> sheet = readLinkElement(elem);
+    			
+    			if (!sheet.isPresent())
+    				continue;
+    				
+    			list.add(sheet.get());
+    		}
+    		else if (elem.getNodeName().equals("style"))
+    		{
+    			if (elem.getAttribute("alternate").equalsIgnoreCase("yes"))
+    				continue;
+    			
+    			if (elem.hasAttribute("type") && !elem.getAttribute("type").equalsIgnoreCase("text/css"))
+    				continue;
+
+    			final StylesheetInfo info = new StylesheetInfo();
 	            
-	          info.setOrigin(StylesheetInfo.CSSOrigin.AUTHOR);
-	          info.setType("text/css");
-	          info.setUri(piNode.hasAttribute("href") ? Optional.of(piNode.getAttribute("href")) : Optional.empty());
-	          info.setTitle(piNode.getAttribute("title"));
+    			info.setOrigin(StylesheetInfo.CSSOrigin.AUTHOR);
+    			info.setType("text/css");
+    			info.setUri(elem.hasAttribute("href") ? Optional.of(elem.getAttribute("href")) : Optional.empty());
+    			info.setTitle(elem.getAttribute("title"));
 	
-	          if (piNode.hasAttribute("media") &&
-	              !piNode.getAttribute("media").isEmpty())
-	              info.setMediaQueryList(CSSParser.parseMediaQueryList(piNode.getAttribute("media")));
-	          else
-	              info.setMediaQueryList(new MediaQueryList());
+    			if (elem.hasAttribute("media") &&
+    				!elem.getAttribute("media").isEmpty())
+    				info.setMediaQueryList(CSSParser.parseMediaQueryList(elem.getAttribute("media")));
+    			else
+    				info.setMediaQueryList(new MediaQueryList());
 	
 	            // Deal with the common case first.
-	          if (piNode.getChildNodes().getLength() == 1 &&
-	        	  piNode.getFirstChild() instanceof CDATASection)
-	          {
-	             info.setContent(((CDATASection) piNode.getFirstChild()).getTextContent());
-	          }
-	          else
-	          {
-	          	final String content = readTextContent((Element) piNode);
+    			if (elem.getChildNodes().getLength() == 1 &&
+    				elem.getFirstChild() instanceof CDATASection)
+    			{
+    				info.setContent(((CDATASection) elem.getFirstChild()).getTextContent());
+    			}
+    			else
+    			{
+    				String content = readTextContent(elem);
 	
-	          	if (!content.isEmpty())
-	           	   	info.setContent(content);
-	          }
+    				if (!content.isEmpty())
+    					info.setContent(content);
+    			}
 	          
-	          list.add(info);
-    	  });
+    			list.add(info);
+    		}
+    	}
 
-    	 return list;
+    	return list;
     }
 
     @Override
@@ -605,11 +622,25 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
 
     private static String readTextContent(final Element element) 
     {
-        return NodeHelper
-         .childNodeStream(element)
-         .filter(e -> e instanceof Text || e instanceof CDATASection)
-         .map(e -> e instanceof Text ? ((Text) e).getWholeText() : ((CDATASection) e).getTextContent())
-         .collect(Collectors.joining());
+    	StringBuilder sb = new StringBuilder();
+    	NodeList nl = element.getChildNodes();
+    	int length = nl.getLength();
+
+    	for (int i = 0; i < length; i++)
+    	{
+    		Node e = nl.item(i);
+    		
+    		if (e instanceof Text)
+    		{
+    			sb.append(((Text) e).getWholeText());
+    		}
+    		else if (e instanceof CDATASection)
+    		{
+    			sb.append(((CDATASection) e).getTextContent());
+    		}
+    	}
+    	
+    	return sb.toString();
     }
 
     private static String collapseWhiteSpace(final String text)
@@ -658,7 +689,7 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
 
     private Optional<Element> findFirstChild(final Element parent, final String targetName)
     {
-    	return NodeHelper.childElemStream(parent, targetName).findFirst();
+    	return NodeHelper.getFirstMatchingChildByTagName(parent, targetName);
     }
 
     @Override
@@ -725,12 +756,29 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
         	return this._metadata;
         }
         	
-        this._metadata = 
-         NodeHelper
-          .childElemStream(ohead.get(), "meta")
-          .map(e -> new GenericPair<>(e.getAttribute("http-equiv"), e.getAttribute("content")))
-          .filter(a -> !a.getFirst().isEmpty() && !a.getSecond().isEmpty())
-          .collect(Collectors.toMap(a -> a.getFirst(), b -> b.getSecond()));
+        NodeList nl = ohead.get().getChildNodes();
+        int length = nl.getLength();
+
+        this._metadata = new HashMap<String, String>();
+        
+        for (int i = 0; i < length; i++)
+        {
+        	Node item = nl.item(i);
+        	
+        	if (item instanceof Element &&
+        		item.getNodeName().equals("meta"))
+        	{
+        		Element elem = (Element) item;
+        		
+        		String equiv = elem.getAttribute("http-equiv");
+        		String content = elem.getAttribute("content");
+        		
+        		if (!equiv.isEmpty() && !content.isEmpty())
+        		{
+        			this._metadata.put(equiv, content);
+        		}
+        	}
+        }
 
         return this._metadata;
     }

@@ -89,8 +89,15 @@ public class PageInfo {
         return new CascadedStyle(all.iterator());
     }
     
-    public boolean hasAny(final MarginBoxName[] marginBoxes) {
-    	return Arrays.stream(marginBoxes).anyMatch(mb -> _marginBoxes.containsKey(mb));
+    public boolean hasAny(final MarginBoxName[] marginBoxes) 
+    {
+    	for (MarginBoxName mb : marginBoxes)
+    	{
+    		if (_marginBoxes.containsKey(mb))
+    			return true;
+    	}
+    	
+    	return false;
     }
     
     public List<PropertyDeclaration> getXMPPropertyList()
