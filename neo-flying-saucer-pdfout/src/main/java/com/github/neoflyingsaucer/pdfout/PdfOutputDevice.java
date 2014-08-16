@@ -59,6 +59,7 @@ import com.github.pdfstream.JPGImage;
 import com.github.pdfstream.PDF;
 import com.github.pdfstream.PNGImage;
 import com.github.pdfstream.Page;
+import com.github.pdfstream.PdfCmykColor;
 import com.github.pdfstream.PdfColor;
 import com.github.pdfstream.PdfGreyScaleColor;
 import com.github.pdfstream.PdfRgbaColor;
@@ -723,9 +724,13 @@ System.err.println("x = " + x + " y = " + y + "scale = " + _dotsPerPoint);
 		}
 		else if (col instanceof FSCMYKColor)
 		{
-			// TODO
-			
-		}    	
+			FSCMYKColor cmyk = (FSCMYKColor) col;
+			pdfColor = new PdfCmykColor(cmyk.getCyan(), cmyk.getMagenta(), cmyk.getYellow(), cmyk.getBlack(), 1.0f);
+		}
+		else
+		{
+			assert(false);
+		}
     	
     	return pdfColor;
     }
