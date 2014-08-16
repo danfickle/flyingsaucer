@@ -29,7 +29,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.github.pdfstream;
 
-import java.io.*;
 import java.util.*;
 
 
