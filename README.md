@@ -6,10 +6,11 @@ and images.
 
 SCOPE OF THIS PROJECT
 ---------------------
-To provide the best open-source static, paged HTML renderer around. Interactive features have and will be removed.
+To provide the best open-source static, paged HTML renderer around. Interactive features have and will be removed. We plan to target Java 6.
 
 TODO
 ----
++ Replace iText with a new PDF library (partially implemented).
 + Support the WOFF font format for embedded fonts.
 + Support MS Word output (maybe).
 + Make cancelable/interrupted support.
@@ -25,7 +26,6 @@ TODO
 
 DONE
 ----
-+ Move to Java 8 including use of streams, optional, etc.
 + Media query support.
 + Replace java.util logging with slf4j.
 + Redirects and gzip response encoding.
@@ -37,7 +37,7 @@ DONE
   + opacity (J2D)
   + rgba (J2D)
 + Use external libraries for non-core functionality such as commons codec for base64 and Scalr for image scaling.
-+ Move to Java 1.7 including use of generic types, enums, etc.
++ Move to Java 1.6 including use of generic types, enums, etc.
 + Remove SWT, itext5 and docbook support.
 + Move to latest dependencies.
 + Delete extra files, jars, etc.
@@ -65,4 +65,6 @@ RELATED PROJECTS
 + [Python - WeasyPrint](https://github.com/Kozea/WeasyPrint)
 + [C++ - wkHtmlToPdf](https://github.com/wkhtmltopdf/wkhtmltopdf)
 + [Java - CSSBox](http://cssbox.sourceforge.net/)
++ [Python - xhtml2pdf](https://github.com/chrisglass/xhtml2pdf)
+
 
