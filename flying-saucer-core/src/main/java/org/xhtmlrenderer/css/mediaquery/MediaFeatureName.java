@@ -417,7 +417,7 @@ public enum MediaFeatureName
 		return cssName;
 	}
 
-	private static final Map<String, MediaFeatureName> map = new HashMap<>(values().length);
+	private static final Map<String, MediaFeatureName> map = new HashMap<String, MediaFeatureName>(values().length);
 	
 	static 
 	{

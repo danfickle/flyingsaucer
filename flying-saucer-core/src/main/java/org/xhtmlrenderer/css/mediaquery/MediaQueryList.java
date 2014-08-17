@@ -8,7 +8,7 @@ import org.xhtmlrenderer.layout.SharedContext;
 public class MediaQueryList
 {
 	// Each media query is combined together with OR semantics.
-	private final List<MediaQueryItem> queryItems = new ArrayList<>(2);
+	private final List<MediaQueryItem> queryItems = new ArrayList<MediaQueryItem>(2);
 
 	public void addMediaQueryItem(MediaQueryItem mediaQuery) 
 	{

@@ -43,7 +43,7 @@ import static org.xhtmlrenderer.util.GeneralUtil.ciEquals;
 
 public class ContentFunctionFactory 
 {
-    private final List<ContentFunction> _functions = new ArrayList<>(Arrays.asList(
+    private final List<ContentFunction> _functions = new ArrayList<ContentFunction>(Arrays.asList(
     		new PageCounterFunction(),
     		new PagesCounterFunction(),
     		new TargetCounterFunction(),

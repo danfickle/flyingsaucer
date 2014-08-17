@@ -27,7 +27,7 @@ import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.util.XRRuntimeException;
 
 public class BoxRangeHelper {
-    private final LinkedList<BoxRangeData> _clipRegionStack = new LinkedList<>();
+    private final LinkedList<BoxRangeData> _clipRegionStack = new LinkedList<BoxRangeData>();
     
     private final OutputDevice _outputDevice;
     private final List<BoxRangeData> _rangeList;

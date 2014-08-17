@@ -257,7 +257,7 @@ public class ReferenceComparison {
         private final Map<File, Result> files;
 
         public CompareStatistics() {
-            files = new HashMap<>();
+            files = new HashMap<File, Result>();
         }
 
         public void failedToRender(final Exception e) {

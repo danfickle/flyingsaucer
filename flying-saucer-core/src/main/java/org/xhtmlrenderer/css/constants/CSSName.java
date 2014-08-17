@@ -1570,12 +1570,12 @@ public enum CSSName {
     /**
      * Map of all CSS properties
      */
-    private static final Map<String, CSSName> ALL_PROPERTY_NAMES = new TreeMap<>();
+    private static final Map<String, CSSName> ALL_PROPERTY_NAMES = new TreeMap<String, CSSName>();
 
     /**
      * Map of all non-shorthand CSS properties
      */
-    private static final Map<String, CSSName> ALL_PRIMITIVE_PROPERTY_NAMES = new TreeMap<>();
+    private static final Map<String, CSSName> ALL_PRIMITIVE_PROPERTY_NAMES = new TreeMap<String, CSSName>();
 
 
     public final static CSSSideProperties MARGIN_SIDE_PROPERTIES =

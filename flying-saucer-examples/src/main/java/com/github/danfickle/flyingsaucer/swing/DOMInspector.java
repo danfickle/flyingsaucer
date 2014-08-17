@@ -551,7 +551,7 @@ class DOMTreeModel implements TreeModel {
      * @param doc PARAM
      */
     public DOMTreeModel(final Document doc) {
-        this.displayableNodes = new HashMap<>();
+        this.displayableNodes = new HashMap<Node, List<Node>>();
         this.doc = doc;
         setRoot("body");
     }

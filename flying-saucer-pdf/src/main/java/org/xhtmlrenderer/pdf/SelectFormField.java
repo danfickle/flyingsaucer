@@ -114,7 +114,7 @@ public class SelectFormField extends AbstractFormField {
     }
     
     private List<Option> readOptions(final Element e) {
-        final List<Option> result = new ArrayList<>();
+        final List<Option> result = new ArrayList<Option>();
         
         Node n = e.getFirstChild();
         while (n != null) {

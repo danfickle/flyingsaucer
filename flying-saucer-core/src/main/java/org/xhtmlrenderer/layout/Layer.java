@@ -146,14 +146,14 @@ public class Layer {
 
     public synchronized void addChild(final Layer layer) {
         if (_children == null) {
-            _children = new ArrayList<>();
+            _children = new ArrayList<Layer>();
         }
         _children.add(layer);
     }
 
     public void addFloat(final BlockBox floater, final BlockFormattingContext bfc) {
         if (_floats == null) {
-            _floats = new ArrayList<>();
+            _floats = new ArrayList<BlockBox>();
         }
 
         _floats.add(floater);
@@ -189,7 +189,7 @@ public class Layer {
     private static final int AUTO = 4;
     
     private List<Layer> collectLayers(final int which) {
-        final List<Layer> result = new ArrayList<>();
+        final List<Layer> result = new ArrayList<Layer>();
         
         if (which != AUTO) {
             result.addAll(getStackingContextLayers(which));
@@ -211,7 +211,7 @@ public class Layer {
     }
     
     private List<Layer> getStackingContextLayers(final int which) {
-        final List<Layer> result = new ArrayList<>();
+        final List<Layer> result = new ArrayList<Layer>();
         
         final List<Layer> children = getChildren();
         for (int i = 0; i < children.size(); i++) {
@@ -326,8 +326,8 @@ public class Layer {
         } else {
             final BoxRangeLists rangeLists = new BoxRangeLists();
             
-            final List<Box> blocks = new ArrayList<>();
-            final List<Box> lines = new ArrayList<>();
+            final List<Box> blocks = new ArrayList<Box>();
+            final List<Box> lines = new ArrayList<Box>();
     
             final BoxCollector collector = new BoxCollector();
             collector.collect(c, c.getOutputDevice().getClip(), this, blocks, lines, rangeLists);
@@ -428,17 +428,17 @@ public class Layer {
     // we'll paint as a key and a sorted list of borders as values.  These are
     // then painted after we've drawn the background for this cell.
     private Map<TableCellBox, List<CollapsedBorderSide>> collectCollapsedTableBorders(final RenderingContext c, final List<Box> blocks) {
-        final Map<Box, List<CollapsedBorderSide>> cellBordersByTable = new HashMap<>();
-        final Map<TableBox, TableCellBox> triggerCellsByTable = new HashMap<>();
+        final Map<Box, List<CollapsedBorderSide>> cellBordersByTable = new HashMap<Box, List<CollapsedBorderSide>>();
+        final Map<TableBox, TableCellBox> triggerCellsByTable = new HashMap<TableBox, TableCellBox>();
         
-        final Set<CollapsedBorderValue> all = new HashSet<>();
+        final Set<CollapsedBorderValue> all = new HashSet<CollapsedBorderValue>();
         for (final Box b : blocks) {
             if (b instanceof TableCellBox) {
                 final TableCellBox cell = (TableCellBox)b;
                 if (cell.hasCollapsedPaintingBorder()) {
                     List<CollapsedBorderSide> borders = cellBordersByTable.get(cell.getTable());
                     if (borders == null) {
-                        borders = new ArrayList<>();
+                        borders = new ArrayList<CollapsedBorderSide>();
                         cellBordersByTable.put(cell.getTable(), borders);
                     }
                     triggerCellsByTable.put(cell.getTable(), cell);
@@ -450,7 +450,7 @@ public class Layer {
         if (triggerCellsByTable.size() == 0) {
             return null;
         } else {
-            final Map<TableCellBox, List<CollapsedBorderSide>> result = new HashMap<>();
+            final Map<TableCellBox, List<CollapsedBorderSide>> result = new HashMap<TableCellBox, List<CollapsedBorderSide>>();
             
             for (final TableCellBox cell : triggerCellsByTable.values()) {
                 final List<CollapsedBorderSide> borders = cellBordersByTable.get(cell.getTable());
@@ -471,8 +471,8 @@ public class Layer {
     public void paintAsLayer(final RenderingContext c, final BlockBox startingPoint) {
         final BoxRangeLists rangeLists = new BoxRangeLists();
         
-        final List<Box> blocks = new ArrayList<>();
-        final List<Box> lines = new ArrayList<>();
+        final List<Box> blocks = new ArrayList<Box>();
+        final List<Box> lines = new ArrayList<Box>();
     
         final BoxCollector collector = new BoxCollector();
         collector.collect(c, c.getOutputDevice().getClip(), 
@@ -767,7 +767,7 @@ public class Layer {
     public void addPage(final CssContext c) {
         String pseudoPage = null;
         if (_pages == null) {
-            _pages = new ArrayList<>();
+            _pages = new ArrayList<PageBox>();
         }
         
         final List<PageBox> pages = getPages();
@@ -1077,7 +1077,7 @@ public class Layer {
     
     public void addPageSequence(final BlockBox start) {
         if (_pageSequences == null) {
-            _pageSequences = new HashSet<>();
+            _pageSequences = new HashSet<BlockBox>();
         }
         
         _pageSequences.add(start);
@@ -1090,7 +1090,7 @@ public class Layer {
         
         if (_sortedPageSequences == null) 
         {
-            final List<BlockBox> result = new ArrayList<>(_pageSequences);
+            final List<BlockBox> result = new ArrayList<BlockBox>(_pageSequences);
             
             Collections.sort(result, new Comparator<BlockBox>() 
             {

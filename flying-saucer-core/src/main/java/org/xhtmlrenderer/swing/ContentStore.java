@@ -8,7 +8,7 @@ import org.w3c.dom.Document;
 public class ContentStore
 {
 	private final Document doc;
-	private final Map<String, String> store = new HashMap<>();
+	private final Map<String, String> store = new HashMap<String, String>();
 	
 	public ContentStore(final Document doc)
 	{

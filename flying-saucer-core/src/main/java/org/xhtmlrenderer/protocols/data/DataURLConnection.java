@@ -142,9 +142,11 @@ public class DataURLConnection extends URLConnection {
         {
         	try {
 				return URLCodec.decodeUrl(s.getBytes("ASCII"));
-			} catch (UnsupportedEncodingException | DecoderException e) 
+			} catch (DecoderException e) 
 			{
 				LOGGER.warn("Unable to decode url");
+				return new byte[0];
+			} catch (UnsupportedEncodingException e) {
 				return new byte[0];
 			}
         }

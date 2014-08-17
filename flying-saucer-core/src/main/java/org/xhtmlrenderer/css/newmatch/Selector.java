@@ -56,7 +56,7 @@ public class Selector {
 
     private int _pos;//to distinguish between selectors of same specificity
 
-    private java.util.List<Condition> conditions = new ArrayList<>(0);
+    private java.util.List<Condition> conditions = new ArrayList<Condition>(0);
 
     public final static int DESCENDANT_AXIS = 0;
     public final static int CHILD_AXIS = 1;

@@ -240,7 +240,7 @@ public final class Idents {
     }
 
     static {
-        COLOR_MAP = new HashMap<>(18);
+        COLOR_MAP = new HashMap<String, String>(18);
         /* From CSS 2.1- 4.3.6: Colors
         aqua #00ffff
         black #000000
@@ -280,7 +280,7 @@ public final class Idents {
         COLOR_MAP.put("yellow", "#ffff00");
 
         //TODO: FONT_SIZES should be determined by the User Interface!
-        FONT_SIZES = new HashMap<>(9);
+        FONT_SIZES = new HashMap<String, String>(9);
         FONT_SIZES.put("xx-small", "6.9pt");
         FONT_SIZES.put("x-small", "8.3pt");
         FONT_SIZES.put("small", "10pt");
@@ -293,7 +293,7 @@ public final class Idents {
         FONT_SIZES.put("smaller", "0.8em");
         FONT_SIZES.put("larger", "1.2em");
 
-        FONT_WEIGHTS = new HashMap<>(13);
+        FONT_WEIGHTS = new HashMap<String, String>(13);
         FONT_WEIGHTS.put("normal", "400");
         FONT_WEIGHTS.put("bold", "700");
         FONT_WEIGHTS.put("100", "100");
@@ -309,18 +309,18 @@ public final class Idents {
         FONT_WEIGHTS.put("lighter", "lighter");
         // NOTE: 'bolder' and 'lighter' need to be handled programmatically
 
-        BORDER_WIDTHS = new HashMap<>(3);
+        BORDER_WIDTHS = new HashMap<String, String>(3);
         BORDER_WIDTHS.put("thin", "1px");
         BORDER_WIDTHS.put("medium", "2px");
         BORDER_WIDTHS.put("thick", "3px");
 
-        BACKGROUND_POSITIONS_IDENTS = new HashSet<>(5);
+        BACKGROUND_POSITIONS_IDENTS = new HashSet<String>(5);
         BACKGROUND_POSITIONS_IDENTS.add("top");
         BACKGROUND_POSITIONS_IDENTS.add("center");
         BACKGROUND_POSITIONS_IDENTS.add("bottom");
         BACKGROUND_POSITIONS_IDENTS.add("right");
         BACKGROUND_POSITIONS_IDENTS.add("left");
-        BACKGROUND_POSITIONS = new HashMap<>(18);
+        BACKGROUND_POSITIONS = new HashMap<String, String>(18);
 
         // NOTE: combinations of idents for background-positions, are specified in the CSS
         // spec; some are disallowed, for example, there is no "top" all by itself. Check
@@ -353,13 +353,13 @@ public final class Idents {
         BACKGROUND_POSITIONS.put("bottom right", "100% 100%");
         BACKGROUND_POSITIONS.put("right bottom", "100% 100%");
 
-        BACKGROUND_REPEATS = new HashSet<>(4);
+        BACKGROUND_REPEATS = new HashSet<String>(4);
         BACKGROUND_REPEATS.add("repeat");
         BACKGROUND_REPEATS.add("repeat-x");
         BACKGROUND_REPEATS.add("repeat-y");
         BACKGROUND_REPEATS.add("no-repeat");
 
-        BORDER_STYLES = new HashSet<>(10);
+        BORDER_STYLES = new HashSet<String>(10);
         BORDER_STYLES.add("none");
         BORDER_STYLES.add("hidden");
         BORDER_STYLES.add("dotted");
@@ -371,7 +371,7 @@ public final class Idents {
         BORDER_STYLES.add("inset");
         BORDER_STYLES.add("outset");
 
-        LIST_TYPES = new HashSet<>(21);
+        LIST_TYPES = new HashSet<String>(21);
         LIST_TYPES.add("disc");
         LIST_TYPES.add("circle");
         LIST_TYPES.add("square");
@@ -394,7 +394,7 @@ public final class Idents {
         LIST_TYPES.add("katakana-iroha");
         LIST_TYPES.add("none");
 
-        FONT_STYLES = new HashSet<>(3);
+        FONT_STYLES = new HashSet<String>(3);
         FONT_STYLES.add("normal");
         FONT_STYLES.add("italic");
         FONT_STYLES.add("oblique");

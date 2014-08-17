@@ -262,23 +262,24 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
     @Override
     public Optional<String> getNonCssStyling(final Element e) 
     {
-    	switch(e.getNodeName().toLowerCase(Locale.US))
-    	{
-    	case "table":
+    	String nn = e.getNodeName();
+
+    	if (nn.equals("table"))
     		return Optional.of(applyTableStyles(e));
-    	case "tr":
+    	
+    	if (nn.equals("tr"))
     		return Optional.of(applyTableRowStyles(e));
-    	case "td": /* Fall through */
-    	case "th":
+    	
+    	if (nn.equals("td") || nn.equals("th"))
     		return Optional.of(applyTableCellStyles(e));
-    	case "img":
+    	
+    	if (nn.equals("img"))
     		return Optional.of(applyImgStyles(e));
-    	case "p": /* Fall through */
-    	case "div":
-            return Optional.of(applyTextAlign(e));
-    	default:
-    		return Optional.empty();
-    	}
+    	
+    	if (nn.equals("p") || nn.equals("div"))
+    		return Optional.of(applyTextAlign(e));
+    	
+    	return Optional.empty();
     }
     
     private String applyTextAlign(final Element e) 

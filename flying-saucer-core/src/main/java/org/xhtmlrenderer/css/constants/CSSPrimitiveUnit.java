@@ -68,60 +68,80 @@ public enum CSSPrimitiveUnit
 
 	public static CSSPrimitiveUnit fromString(String unit) 
 	{
-		final String unitCompare = unit.toLowerCase(Locale.US);
+		String u = unit.toLowerCase(Locale.US);
 
-		switch (unitCompare)
-		{
-		case "em":
-			return CSSPrimitiveUnit.CSS_EMS;
-		case "ex":
-			return CSSPrimitiveUnit.CSS_EXS;
-		case "rem":
-			return CSSPrimitiveUnit.CSS_REMS;
-		case "ch":
-			return CSSPrimitiveUnit.CSS_CHS;
-		case "vw":
-			return CSSPrimitiveUnit.CSS_VW;
-		case "vh":
-			return CSSPrimitiveUnit.CSS_VH;
-		case "vmin":
-			return CSSPrimitiveUnit.CSS_VMIN;
-		case "vmax":
-			return CSSPrimitiveUnit.CSS_VMAX;
-		case "cm":
-			return CSSPrimitiveUnit.CSS_CM;
-		case "mm":
-			return CSSPrimitiveUnit.CSS_MM;
-		case "in":
-			return CSSPrimitiveUnit.CSS_IN;
-		case "pt":
-			return CSSPrimitiveUnit.CSS_PT;
-		case "px":
+		if (u.equals("px"))
 			return CSSPrimitiveUnit.CSS_PX;
-		case "pc":
-			return CSSPrimitiveUnit.CSS_PC;
-		case "deg":
-			return CSSPrimitiveUnit.CSS_DEG;
-		case "rad":
-			return CSSPrimitiveUnit.CSS_RAD;
-		case "turn":
-			return CSSPrimitiveUnit.CSS_TURN;
-		case "grad":
-			return CSSPrimitiveUnit.CSS_GRAD;
-		case "hz":
-			return CSSPrimitiveUnit.CSS_HZ;
-		case "khz":
-			return CSSPrimitiveUnit.CSS_KHZ;
-		case "dpi":
-			return CSSPrimitiveUnit.CSS_DPI;
-		case "dpcm":
-			return CSSPrimitiveUnit.CSS_DPCM;
-		case "dppx":
-			return CSSPrimitiveUnit.CSS_DPPX;
-		case "%":
+
+		if (u.equals("%"))
 			return CSSPrimitiveUnit.CSS_PERCENTAGE;
-		default:
-			return CSSPrimitiveUnit.CSS_UNKNOWN;
-		}
+		
+		if (u.equals("pt"))
+			return CSSPrimitiveUnit.CSS_PT;
+		
+		if (u.equals("em"))
+			return CSSPrimitiveUnit.CSS_EMS;
+		
+		if (u.equals("ex"))
+			return CSSPrimitiveUnit.CSS_EXS;
+		
+		if (u.equals("rem"))
+			return CSSPrimitiveUnit.CSS_REMS;
+		
+		if (u.equals("ch"))
+			return CSSPrimitiveUnit.CSS_CHS;
+		
+		if (u.equals("vw"))
+			return CSSPrimitiveUnit.CSS_VW;
+		
+		if (u.equals("vh"))
+			return CSSPrimitiveUnit.CSS_VH;
+		
+		if (u.equals("vmin"))
+			return CSSPrimitiveUnit.CSS_VMIN;
+		
+		if (u.equals("vmax"))
+			return CSSPrimitiveUnit.CSS_VMAX;
+
+		if (u.equals("cm"))
+			return CSSPrimitiveUnit.CSS_CM;
+		
+		if (u.equals("mm"))
+			return CSSPrimitiveUnit.CSS_MM;
+		
+		if (u.equals("in"))
+			return CSSPrimitiveUnit.CSS_IN;
+		
+		if (u.equals("pc"))
+			return CSSPrimitiveUnit.CSS_PC;
+
+		if (u.equals("deg"))
+			return CSSPrimitiveUnit.CSS_DEG;
+		
+		if (u.equals("rad"))
+			return CSSPrimitiveUnit.CSS_RAD;
+		
+		if (u.equals("turn"))
+			return CSSPrimitiveUnit.CSS_TURN;
+		
+		if (u.equals("grad"))
+			return CSSPrimitiveUnit.CSS_GRAD;
+	
+		if (u.equals("hz"))
+			return CSSPrimitiveUnit.CSS_HZ;
+		
+		if (u.equals("khz"))
+			return CSSPrimitiveUnit.CSS_KHZ;
+		
+		if (u.equals("dpi"))
+			return CSSPrimitiveUnit.CSS_DPI;
+		
+		if (u.equals("dpcm"))
+			return CSSPrimitiveUnit.CSS_DPCM;
+		
+		if (u.equals("dppx"))
+			return CSSPrimitiveUnit.CSS_DPPX;
+		
+		return CSSPrimitiveUnit.CSS_UNKNOWN;
 	}
 }

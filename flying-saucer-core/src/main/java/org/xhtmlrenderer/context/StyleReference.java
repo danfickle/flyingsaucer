@@ -135,7 +135,7 @@ public class StyleReference {
      */
     public java.util.Map<String, PropertyValue> getCascadedPropertiesMap(final String uri, final Element e) {
         final CascadedStyle cs = _matcher.getCascadedStyle(uri, e, false);//this is only for debug, I think
-        final java.util.LinkedHashMap<String, PropertyValue> props = new java.util.LinkedHashMap<>();
+        final java.util.LinkedHashMap<String, PropertyValue> props = new java.util.LinkedHashMap<String, PropertyValue>();
         for (final java.util.Iterator<PropertyDeclaration> i = cs.getCascadedPropertyDeclarations(); i.hasNext();) {
             final PropertyDeclaration pd = i.next();
 

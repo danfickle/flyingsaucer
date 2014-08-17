@@ -100,7 +100,9 @@ public class ITextUserAgent implements UserAgentCallback {
 							image));
 					_imageCache.put(uri, resource);
 
-				} catch (BadElementException | IOException e) {
+				} catch (IOException e) {
+					return Optional.of(new ImageResource(uri, null));
+				} catch (BadElementException e) {
 					return Optional.of(new ImageResource(uri, null));
 				}
             }

@@ -47,7 +47,7 @@ public class ImageUtil {
     private static final Map<DownscaleQuality, Scaler> qual;
 
     static {
-        qual = new EnumMap<>(DownscaleQuality.class);
+        qual = new EnumMap<DownscaleQuality, Scaler>(DownscaleQuality.class);
         qual.put(DownscaleQuality.FAST, ScalerInstance.FastScaler);
         qual.put(DownscaleQuality.HIGH_QUALITY, ScalerInstance.QualityScaler);
         qual.put(DownscaleQuality.STANDARD, ScalerInstance.StandardScaler);

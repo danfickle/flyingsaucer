@@ -23,7 +23,7 @@ import org.xhtmlrenderer.util.LangId;
 public class FSLinearGradient
 {
 	private int x1, y1, x2, y2;
-	private final List<StopValue> stopPoints = new ArrayList<>(2);
+	private final List<StopValue> stopPoints = new ArrayList<StopValue>(2);
 
 	public static class StopValue implements Comparable<StopValue>
 	{

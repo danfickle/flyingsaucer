@@ -32,7 +32,7 @@ public class MediaRule implements RulesetContainer
 {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MediaRule.class);
 	
-    private final List<Ruleset> _contents = new ArrayList<>();
+    private final List<Ruleset> _contents = new ArrayList<Ruleset>();
     private MediaQueryList mediaQueryList;
     private final CSSOrigin _origin;
     

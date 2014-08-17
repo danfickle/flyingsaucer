@@ -62,13 +62,13 @@ public class CSSParser {
     private static final Set<String> CSS21_PSEUDO_ELEMENTS;
 
     static {
-        SUPPORTED_PSEUDO_ELEMENTS = new HashSet<>(4);
+        SUPPORTED_PSEUDO_ELEMENTS = new HashSet<String>(4);
         SUPPORTED_PSEUDO_ELEMENTS.add("first-line");
         SUPPORTED_PSEUDO_ELEMENTS.add("first-letter");
         SUPPORTED_PSEUDO_ELEMENTS.add("before");
         SUPPORTED_PSEUDO_ELEMENTS.add("after");
 
-        CSS21_PSEUDO_ELEMENTS = new HashSet<>(4);
+        CSS21_PSEUDO_ELEMENTS = new HashSet<String>(4);
         CSS21_PSEUDO_ELEMENTS.add("first-line");
         CSS21_PSEUDO_ELEMENTS.add("first-letter");
         CSS21_PSEUDO_ELEMENTS.add("before");
@@ -82,7 +82,7 @@ public class CSSParser {
     private String _URI;
     private final UserAgentCallback _uac; // May be null.
 
-    private final Map<String, String> _namespaces = new HashMap<>();
+    private final Map<String, String> _namespaces = new HashMap<String, String>();
     private boolean _supportCMYKColors;
 
     public CSSParser(final CSSErrorHandler errorHandler, final UserAgentCallback uac) 
@@ -483,7 +483,7 @@ public class CSSParser {
     	Token t = next();
     	MediaQueryQualifier qualifier = MediaQueryQualifier.NONE;
     	String type = null;
-    	List<MediaQueryExpression> expressions = new ArrayList<>(2);
+    	List<MediaQueryExpression> expressions = new ArrayList<MediaQueryExpression>(2);
     	
     	// [ONLY | NOT]?
     	if (t == Token.TK_IDENT)

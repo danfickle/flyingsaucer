@@ -44,7 +44,7 @@ public class PanelManager extends DefaultUserAgent {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PanelManager.class);
     private int index = -1;
-    private final List<String> history = new ArrayList<>();
+    private final List<String> history = new ArrayList<String>();
 
 
     /**

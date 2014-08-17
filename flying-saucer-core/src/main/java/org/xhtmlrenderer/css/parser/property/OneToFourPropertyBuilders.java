@@ -36,7 +36,7 @@ public abstract class OneToFourPropertyBuilders {
         public List<PropertyDeclaration> buildDeclarations(
                 final CSSName cssName, final List<PropertyValue> values,
                 final CSSOrigin origin, final boolean important, final boolean inheritAllowed) {
-            final List<PropertyDeclaration> result = new ArrayList<>(4);
+            final List<PropertyDeclaration> result = new ArrayList<PropertyDeclaration>(4);
             checkValueCount(cssName, 1, 4, values.size());
             
             final PropertyBuilder builder = getPropertyBuilder();

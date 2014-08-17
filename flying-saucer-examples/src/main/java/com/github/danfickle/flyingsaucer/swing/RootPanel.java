@@ -207,7 +207,7 @@ public class RootPanel extends JPanel implements ComponentListener, FSCanvas
     protected void init() {
 
 
-        documentListeners = new HashMap<>();
+        documentListeners = new HashMap<DocumentListener, DocumentListener>();
         setBackground(Color.white);
         super.setLayout(null);
     }

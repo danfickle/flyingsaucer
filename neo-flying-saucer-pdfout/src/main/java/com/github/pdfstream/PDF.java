@@ -68,7 +68,7 @@ public class PDF
 
     private int compliance = 0;
     private OutputStream os = null;
-    private Map<Integer, Integer> objOffset = new HashMap<>();
+    private Map<Integer, Integer> objOffset = new HashMap<Integer, Integer>();
     private String producer = "neoFlyingSaucer \\(https://github.com/danfickle/neoflyingsaucer\\)";
     private String creationDate;
     private String createDate;

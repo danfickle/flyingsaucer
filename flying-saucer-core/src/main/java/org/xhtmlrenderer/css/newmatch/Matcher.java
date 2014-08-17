@@ -110,8 +110,8 @@ public class Matcher {
     }
     
     public PageInfo getPageCascadedStyle(final String pageName, final String pseudoPage) {
-        final List<PropertyDeclaration> props = new ArrayList<>();
-        final Map<MarginBoxName, List<PropertyDeclaration>> marginBoxes = new HashMap<>();
+        final List<PropertyDeclaration> props = new ArrayList<PropertyDeclaration>();
+        final Map<MarginBoxName, List<PropertyDeclaration>> marginBoxes = new HashMap<MarginBoxName, List<PropertyDeclaration>>();
 
         for (PageRule rule : _pageRules)
         {
@@ -155,7 +155,7 @@ public class Matcher {
     }
 
     Mapper createDocumentMapper(final List<Stylesheet> stylesheets, final SharedContext sharedCtx) {
-        final java.util.TreeMap<String, Selector> sorter = new java.util.TreeMap<>();
+        final java.util.TreeMap<String, Selector> sorter = new java.util.TreeMap<String, Selector>();
         addAllStylesheets(stylesheets, sorter, sharedCtx);
         LOGGER.info("Matcher created with " + sorter.size() + " selectors");
         return new Mapper(sorter.values());

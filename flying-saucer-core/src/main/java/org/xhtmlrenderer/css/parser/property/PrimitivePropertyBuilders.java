@@ -576,7 +576,7 @@ public class PrimitivePropertyBuilders {
 
         private List<PropertyDeclaration> createTwoValueResponse(final PropertyValue value1, final PropertyValue value2,
                 final CSSOrigin origin, final boolean important) {
-            final List<PropertyValue> values = new ArrayList<>(2);
+            final List<PropertyValue> values = new ArrayList<PropertyValue>(2);
             values.add(value1);
             values.add(value2);
 
@@ -614,7 +614,7 @@ public class PrimitivePropertyBuilders {
             checkIdentLengthOrPercentType(cssName, first);
             if (second == null) {
                 if (isLength(first) || first.getPrimitiveTypeN() == CSSPrimitiveUnit.CSS_PERCENTAGE) {
-                    final List<PropertyValue> responseValues = new ArrayList<>(2);
+                    final List<PropertyValue> responseValues = new ArrayList<PropertyValue>(2);
                     responseValues.add((PropertyValue) first);
                     responseValues.add(new PropertyValueImp(
                     		CSSPrimitiveUnit.CSS_PERCENTAGE, 50.0f, "50%"));
@@ -662,7 +662,7 @@ public class PrimitivePropertyBuilders {
             } else {
                 checkIdentPosition(cssName, firstIdent, secondIdent);
 
-                final List<PropertyValue> responseValues = new ArrayList<>(2);
+                final List<PropertyValue> responseValues = new ArrayList<PropertyValue>(2);
 
                 if (firstIdent == null) {
                     responseValues.add((PropertyValue) first);
@@ -710,7 +710,7 @@ public class PrimitivePropertyBuilders {
             final PropertyValue value2 = new PropertyValueImp(
             		CSSPrimitiveUnit.CSS_PERCENTAGE, percent2, percent2 + "%");
 
-            final List<PropertyValue> values = new ArrayList<>(2);
+            final List<PropertyValue> values = new ArrayList<PropertyValue>(2);
             values.add(value1);
             values.add(value2);
 
@@ -885,8 +885,8 @@ public class PrimitivePropertyBuilders {
             // [Century Gothic], [Arial sans-serif] (i.e. the comma is assumed
             // after a string).  Seems wrong per the spec, but FF (at least)
             // does it in standards mode so we do too.
-            final List<String> consecutiveIdents = new ArrayList<>();
-            final List<String> normalized = new ArrayList<>(values.size());
+            final List<String> consecutiveIdents = new ArrayList<String>();
+            final List<String> normalized = new ArrayList<String>(values.size());
             for (final PropertyValue value : values) {
                 final Token operator = value.getOperator();
                 if (operator != null && operator != Token.TK_COMMA) {
@@ -1684,7 +1684,7 @@ public class PrimitivePropertyBuilders {
 			if (values.size() == 1)
 			{
 				// Deal with the common case first.
-				final List<PropertyDeclaration> declarations = new ArrayList<>(4);
+				final List<PropertyDeclaration> declarations = new ArrayList<PropertyDeclaration>(4);
 				
 				declarations.addAll(CSSName.getPropertyBuilder(
 						CSSName.BORDER_TOP_LEFT_RADIUS).buildDeclarations(
@@ -1710,9 +1710,9 @@ public class PrimitivePropertyBuilders {
 			}
 			else
 			{
-				final List<PropertyDeclaration> declarations = new ArrayList<>(4);
-				final List<PropertyValue> leftValues = new ArrayList<>(4);
-				final List<PropertyValue> rightValues = new ArrayList<>(4);
+				final List<PropertyDeclaration> declarations = new ArrayList<PropertyDeclaration>(4);
+				final List<PropertyValue> leftValues = new ArrayList<PropertyValue>(4);
+				final List<PropertyValue> rightValues = new ArrayList<PropertyValue>(4);
 
 				boolean addToLeft = true;
 
@@ -1760,7 +1760,7 @@ public class PrimitivePropertyBuilders {
 		private List<PropertyValue> getValues(final List<PropertyValue> leftValues,
 				final List<PropertyValue> rightValues, final int index)
 		{
-			final List<PropertyValue> values = new ArrayList<>(2);
+			final List<PropertyValue> values = new ArrayList<PropertyValue>(2);
 			values.add(getValue(leftValues, index));
 
 			if (!rightValues.isEmpty())

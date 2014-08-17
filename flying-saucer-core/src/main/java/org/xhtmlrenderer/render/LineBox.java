@@ -383,7 +383,7 @@ public class LineBox extends Box implements InlinePaintable {
     
     public void addNonFlowContent(final BlockBox box) {
         if (_nonFlowContent == null) {
-            _nonFlowContent = new ArrayList<>();
+            _nonFlowContent = new ArrayList<Box>();
         }
         
         _nonFlowContent.add(box);

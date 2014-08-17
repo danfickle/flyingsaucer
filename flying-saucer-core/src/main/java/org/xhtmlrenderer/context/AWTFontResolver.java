@@ -41,13 +41,13 @@ import java.util.Set;
 public class AWTFontResolver implements FontResolver
 {
 	// Contains actual instances of fonts at the correct size, weight, etc.
-	private final Map<String, Font> _instanceHash = new HashMap<>();
+	private final Map<String, Font> _instanceHash = new HashMap<String, Font>();
 
 	// Contains the root fonts that are loaded. That is Font.PLAIN, etc.
-	private final Map<String, Font> _availableFontsHash = new HashMap<>();
+	private final Map<String, Font> _availableFontsHash = new HashMap<String, Font>();
 
 	// Contains a set of avaialable font families.
-	private final Set<String> _availableFontsSet = new HashSet<>();
+	private final Set<String> _availableFontsSet = new HashSet<String>();
     
     public AWTFontResolver() {
         init();

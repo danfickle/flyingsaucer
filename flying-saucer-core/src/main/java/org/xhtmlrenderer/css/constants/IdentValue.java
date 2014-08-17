@@ -214,7 +214,7 @@ public enum IdentValue implements FSDerivedValue
 	private final String ident;
     public final int fsId;
 
-    private static final Map<String, IdentValue> ALL_IDENT_VALUES = new HashMap<>(values().length);
+    private static final Map<String, IdentValue> ALL_IDENT_VALUES = new HashMap<String, IdentValue>(values().length);
 
     private IdentValue(final String ident) 
     {
