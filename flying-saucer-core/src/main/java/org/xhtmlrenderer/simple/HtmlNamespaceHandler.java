@@ -30,7 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
@@ -51,6 +51,8 @@ import org.xhtmlrenderer.extend.NamespaceHandler;
 import org.xhtmlrenderer.util.Configuration;
 import org.xhtmlrenderer.util.GeneralUtil;
 import org.xhtmlrenderer.util.NodeHelper;
+import org.xhtmlrenderer.util.Optional;
+
 import static org.xhtmlrenderer.util.GeneralUtil.ciEquals;
 
 /**
@@ -65,13 +67,13 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
 	@Override
 	public Optional<String> getAttributeValue(final Element e, final String attrName) 
     {
-        return e.hasAttribute(attrName) ? Optional.of(e.getAttribute(attrName)) : Optional.empty();
+        return e.hasAttribute(attrName) ? Optional.of(e.getAttribute(attrName)) : Optional.<String>empty();
     }
     
     @Override
     public Optional<String> getClass(final Element e) 
     {
-        return e.hasAttribute("class") ? Optional.of(e.getAttribute("class")) : Optional.empty();
+        return e.hasAttribute("class") ? Optional.of(e.getAttribute("class")) : Optional.<String>empty();
     }
     
     @Override
@@ -81,7 +83,7 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
     		return Optional.empty();
     	
     	final String result = e.getAttribute("id").trim();
-        return result.isEmpty() ? Optional.empty() : Optional.of(result);
+        return result.isEmpty() ? Optional.<String>empty() : Optional.of(result);
     }
     
     @Override
@@ -138,7 +140,7 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
 
         info.setType("text/css");
         info.setOrigin(StylesheetInfo.CSSOrigin.AUTHOR);
-        info.setUri(link.hasAttribute("href") ? Optional.of(link.getAttribute("href")) : Optional.empty());
+        info.setUri(link.hasAttribute("href") ? Optional.of(link.getAttribute("href")) : Optional.<String>empty());
         info.setTitle(link.getAttribute("title"));
         
         if (!link.hasAttribute("media") || link.getAttribute("media").isEmpty()) 
@@ -197,7 +199,7 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
 	            
     			info.setOrigin(StylesheetInfo.CSSOrigin.AUTHOR);
     			info.setType("text/css");
-    			info.setUri(elem.hasAttribute("href") ? Optional.of(elem.getAttribute("href")) : Optional.empty());
+    			info.setUri(elem.hasAttribute("href") ? Optional.of(elem.getAttribute("href")) : Optional.<String>empty());
     			info.setTitle(elem.getAttribute("title"));
 	
     			if (elem.hasAttribute("media") &&
@@ -233,7 +235,7 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
         if (!e.hasAttribute("lang") || e.getAttribute("lang").isEmpty()) 
         {
             final String lang = this.getMetaInfo(e.getOwnerDocument()).get("Content-Language");
-            return lang == null ? Optional.empty() : Optional.of(lang);
+            return lang == null ? Optional.<String>empty() : Optional.of(lang);
         }
 
         return Optional.of(e.getAttribute("lang"));
@@ -254,7 +256,7 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
     @Override
     public Optional<String> getImageSourceURI(final Element e) 
     {
-        return (e != null && e.hasAttribute("src") ? Optional.of(e.getAttribute("src")) : Optional.empty());
+        return (e != null && e.hasAttribute("src") ? Optional.of(e.getAttribute("src")) : Optional.<String>empty());
     }
 
     @Override
@@ -488,8 +490,17 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
             return false;
         }
 
-        return s.chars().allMatch(
-        	c -> (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F'));
+        char[] chars = s.toCharArray();
+        
+        for (int i = 0; i < chars.length; i++)
+        {
+        	char c = chars[i];
+        	
+        	if (!((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')))
+        		return false;
+        }
+        
+        return true;
     }
     
     private Element findTable(final Element cell) 
@@ -537,17 +548,24 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
 
     protected boolean isInteger(final String value) 
     {
-    	return
-    	 value
-    	  .chars()
-    	  .allMatch(c -> c >= '0' && c <= '9');
+    	char[] chars = value.toCharArray();
+    	
+    	for (int i = 0; i < chars.length; i++)
+    	{
+    		char c = chars[i];
+    		
+    		if (!(c >= '0' && c <= '9'))
+    			return false;
+    	}
+    	
+    	return true;
     }
 
     protected Optional<String> getAttribute(final Element e, final String attrName)
     {
         String result = e.getAttribute(attrName);
         result = result.trim();
-        return result.isEmpty() ? Optional.empty() : Optional.of(result);
+        return result.isEmpty() ? Optional.<String>empty() : Optional.of(result);
     }
 
     @Override

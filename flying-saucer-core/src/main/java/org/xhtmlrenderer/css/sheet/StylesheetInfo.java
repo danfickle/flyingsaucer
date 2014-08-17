@@ -19,12 +19,11 @@
  */
 package org.xhtmlrenderer.css.sheet;
 
-import java.util.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.mediaquery.MediaQueryList;
 import org.xhtmlrenderer.layout.SharedContext;
+import org.xhtmlrenderer.util.Optional;
 
 /**
  * A reference to a stylesheet. If no stylesheet is set, the matcher will try to

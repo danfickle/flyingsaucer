@@ -46,7 +46,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -79,6 +78,7 @@ import org.xhtmlrenderer.render.JustificationInfo;
 import org.xhtmlrenderer.render.PageBox;
 import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.util.Configuration;
+import org.xhtmlrenderer.util.Optional;
 import org.xhtmlrenderer.util.XRRuntimeException;
 
 import com.lowagie.text.DocumentException;

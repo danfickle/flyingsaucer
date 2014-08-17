@@ -22,7 +22,6 @@ package org.xhtmlrenderer.css.newmatch;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,6 +30,7 @@ import org.xhtmlrenderer.css.extend.AttributeResolver;
 import org.xhtmlrenderer.css.extend.TreeResolver;
 import org.xhtmlrenderer.css.parser.CSSParseException;
 import org.xhtmlrenderer.util.LangId;
+import org.xhtmlrenderer.util.Optional;
 
 
 /**

@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 
 import org.xhtmlrenderer.css.constants.CSSPrimitiveUnit;
 import org.xhtmlrenderer.css.constants.IdentValue;
@@ -38,6 +37,7 @@ import org.xhtmlrenderer.render.InlineText;
 import org.xhtmlrenderer.render.InlineLayoutBox;
 import org.xhtmlrenderer.render.LineBox;
 import org.xhtmlrenderer.render.RenderingContext;
+import org.xhtmlrenderer.util.Optional;
 
 import static org.xhtmlrenderer.util.GeneralUtil.ciEquals;
 

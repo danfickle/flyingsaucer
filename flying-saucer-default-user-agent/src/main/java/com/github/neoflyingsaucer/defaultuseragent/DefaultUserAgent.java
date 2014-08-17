@@ -32,7 +32,6 @@ import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import javax.imageio.ImageIO;
@@ -51,6 +50,7 @@ import org.xhtmlrenderer.swing.ImageResourceLoader;
 import org.xhtmlrenderer.util.GeneralUtil;
 import org.xhtmlrenderer.util.ImageUtil;
 import org.xhtmlrenderer.util.LangId;
+import org.xhtmlrenderer.util.Optional;
 
 /**
  * <p>NaiveUserAgent is a simple implementation of {@link UserAgentCallback} which places no restrictions on what
@@ -146,7 +146,7 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
         	sr.connect();
         	final InputStream bs = sr.bufferedStream();
         	
-        	return Optional.of(new CSSResource(sr.getFinalUri(), new InputStreamReader(bs, "UTF-8"))
+        	return Optional.<CSSResource>of(new CSSResource(sr.getFinalUri(), new InputStreamReader(bs, "UTF-8"))
         	{
         		@Override
         		public void onClose() throws IOException 

@@ -1,13 +1,13 @@
 package com.github.neoflyingsaucer.defaultuseragent;
 
 import java.util.Map;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xhtmlrenderer.css.sheet.Stylesheet;
 import org.xhtmlrenderer.resource.ResourceCache;
+import org.xhtmlrenderer.util.Optional;
 
 public class ResourceCacheImpl implements ResourceCache
 {

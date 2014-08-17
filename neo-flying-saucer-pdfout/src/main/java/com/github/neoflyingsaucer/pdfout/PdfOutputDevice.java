@@ -20,7 +20,6 @@ import java.awt.Stroke;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
@@ -51,6 +50,8 @@ import org.xhtmlrenderer.render.JustificationInfo;
 import org.xhtmlrenderer.render.PageBox;
 import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.util.Configuration;
+import org.xhtmlrenderer.util.Optional;
+
 import com.github.neoflyingsaucer.pdfout.PdfFontResolver.FontDescription;
 import com.github.pdfstream.Annotation;
 import com.github.pdfstream.Destination;

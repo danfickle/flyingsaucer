@@ -22,13 +22,13 @@ package org.xhtmlrenderer.demo.browser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.resource.HTMLResource;
+import org.xhtmlrenderer.util.Optional;
 
 import com.github.neoflyingsaucer.defaultuseragent.DefaultUserAgent;
 
 import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 
 /**

@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -35,6 +34,7 @@ import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.resource.ImageResource;
+import org.xhtmlrenderer.util.Optional;
 
 import static org.xhtmlrenderer.util.GeneralUtil.ciEquals;
 

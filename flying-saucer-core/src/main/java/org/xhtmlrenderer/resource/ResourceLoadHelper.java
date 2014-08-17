@@ -1,9 +1,8 @@
 package org.xhtmlrenderer.resource;
 
-import java.util.Optional;
-
 import org.w3c.dom.Document;
 import org.xhtmlrenderer.extend.UserAgentCallback;
+import org.xhtmlrenderer.util.Optional;
 
 public class ResourceLoadHelper 
 {

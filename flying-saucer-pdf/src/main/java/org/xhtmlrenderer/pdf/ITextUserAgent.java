@@ -24,7 +24,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,8 +38,10 @@ import org.xhtmlrenderer.swing.ImageResourceLoader;
 
 import com.lowagie.text.BadElementException;
 import com.lowagie.text.Image;
+
 import org.xhtmlrenderer.util.ImageUtil;
 import org.xhtmlrenderer.util.LangId;
+import org.xhtmlrenderer.util.Optional;
 
 public class ITextUserAgent implements UserAgentCallback {
 

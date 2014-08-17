@@ -23,7 +23,6 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +44,7 @@ import org.xhtmlrenderer.extend.FSImage;
 import org.xhtmlrenderer.extend.OutputDevice;
 import org.xhtmlrenderer.resource.ImageResource;
 import org.xhtmlrenderer.util.Configuration;
+import org.xhtmlrenderer.util.Optional;
 
 /**
  * An abstract implementation of an {@link OutputDevice}.  It provides complete

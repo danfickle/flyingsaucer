@@ -19,12 +19,11 @@
  */
 package org.xhtmlrenderer.context;
 
-import java.util.Optional;
-
 import org.w3c.dom.Element;
 import org.xhtmlrenderer.css.extend.AttributeResolver;
 import org.xhtmlrenderer.extend.NamespaceHandler;
 import org.xhtmlrenderer.extend.UserAgentCallback;
+import org.xhtmlrenderer.util.Optional;
 
 
 /**

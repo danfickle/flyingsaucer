@@ -25,7 +25,6 @@ import java.awt.Rectangle;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.IdentValue;
@@ -53,6 +52,7 @@ import org.xhtmlrenderer.layout.PersistentBFC;
 import org.xhtmlrenderer.layout.Styleable;
 import org.xhtmlrenderer.newtable.TableRowBox;
 import org.xhtmlrenderer.resource.ImageResource;
+import org.xhtmlrenderer.util.Optional;
 
 /**
  * A block box as defined in the CSS spec.  It also provides a base class for

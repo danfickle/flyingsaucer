@@ -21,7 +21,6 @@ package org.xhtmlrenderer.pdf.util;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +32,7 @@ import org.xhtmlrenderer.pdf.DefaultPDFCreationListener;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 import org.xhtmlrenderer.pdf.PDFCreationListener;
 import org.xhtmlrenderer.util.NodeHelper;
+import org.xhtmlrenderer.util.Optional;
 
 import com.lowagie.text.pdf.PdfName;
 import com.lowagie.text.pdf.PdfObject;

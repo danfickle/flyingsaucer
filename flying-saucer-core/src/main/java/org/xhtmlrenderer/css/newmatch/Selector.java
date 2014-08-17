@@ -20,7 +20,6 @@
 package org.xhtmlrenderer.css.newmatch;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +27,7 @@ import org.w3c.dom.Element;
 import org.xhtmlrenderer.css.extend.AttributeResolver;
 import org.xhtmlrenderer.css.extend.TreeResolver;
 import org.xhtmlrenderer.css.sheet.Ruleset;
+import org.xhtmlrenderer.util.Optional;
 
 
 /**

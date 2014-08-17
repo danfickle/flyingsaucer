@@ -1,9 +1,8 @@
 package org.xhtmlrenderer.resource;
 
-import java.util.Optional;
-
 import org.w3c.dom.Document;
 import org.xhtmlrenderer.css.sheet.Stylesheet;
+import org.xhtmlrenderer.util.Optional;
 
 public interface ResourceCache
 {

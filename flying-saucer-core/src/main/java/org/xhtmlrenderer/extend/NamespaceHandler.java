@@ -20,12 +20,12 @@
 package org.xhtmlrenderer.extend;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xhtmlrenderer.css.extend.StylesheetFactory;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo;
+import org.xhtmlrenderer.util.Optional;
 
 /**
  * Provides knowledge specific to a certain document type, 

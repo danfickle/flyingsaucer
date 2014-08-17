@@ -1,11 +1,5 @@
 package org.xhtmlrenderer.util;
 
-import java.util.Optional;
-import java.util.Spliterator;
-import java.util.function.Consumer;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

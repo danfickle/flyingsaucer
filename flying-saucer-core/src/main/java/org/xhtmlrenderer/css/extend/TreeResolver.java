@@ -19,9 +19,8 @@
  */
 package org.xhtmlrenderer.css.extend;
 
-import java.util.Optional;
-
 import org.w3c.dom.Element;
+import org.xhtmlrenderer.util.Optional;
 
 /**
  * @author scott

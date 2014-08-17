@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import org.xhtmlrenderer.css.constants.CSSName;
@@ -56,6 +55,7 @@ import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.util.GeneralUtil;
 import org.xhtmlrenderer.util.LangId;
+import org.xhtmlrenderer.util.Optional;
 
 public class CSSParser {
     private static final Set<String> SUPPORTED_PSEUDO_ELEMENTS;

@@ -33,6 +33,7 @@ import org.xhtmlrenderer.css.value.FontSpecification;
 import org.xhtmlrenderer.extend.FontResolver;
 import org.xhtmlrenderer.layout.SharedContext;
 import org.xhtmlrenderer.render.FSFont;
+import org.xhtmlrenderer.util.Optional;
 import org.xhtmlrenderer.util.XRRuntimeException;
 
 import java.io.*;

@@ -27,7 +27,6 @@ import java.awt.Toolkit;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +53,7 @@ import org.xhtmlrenderer.render.FSFontMetrics;
 import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.swing.Java2DTextRenderer;
 import org.xhtmlrenderer.swing.SwingReplacedElementFactory;
+import org.xhtmlrenderer.util.Optional;
 
 /**
  * The SharedContext is that which is kept between successive

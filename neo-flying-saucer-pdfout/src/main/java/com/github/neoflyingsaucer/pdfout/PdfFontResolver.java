@@ -1,19 +1,17 @@
 package com.github.neoflyingsaucer.pdfout;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.xhtmlrenderer.css.constants.IdentValue;
 import org.xhtmlrenderer.css.value.FontSpecification;
 import org.xhtmlrenderer.extend.FontResolver;
 import org.xhtmlrenderer.layout.SharedContext;
 import org.xhtmlrenderer.render.FSFont;
-
 import com.github.pdfstream.CoreFont;
 import com.github.pdfstream.Font;
 
@@ -36,14 +34,12 @@ public class PdfFontResolver implements FontResolver
         
         if (families != null) 
         {
-        	Optional<PdfFont> resolved = Arrays.stream(families)
-        			.map(family -> (PdfFont) resolveFont(ctx, family, size, weight, styleN, variant))
-        			.filter(font -> font != null)
-        			.findFirst();
-        	
-        	if (resolved.isPresent())
+        	for (String family : families)
         	{
-        		return resolved.get();
+        		PdfFont font = (PdfFont) resolveFont(ctx, family, size, weight, styleN, variant);
+        		
+        		if (font != null)
+        			return font;
         	}
         }
 
@@ -357,7 +353,14 @@ public class PdfFontResolver implements FontResolver
 
             _fontDescriptions.add(descr);
 
-            Collections.sort(_fontDescriptions, (o1, o2) -> o1.getWeight() - o2.getWeight());
+            Collections.sort(_fontDescriptions,
+            	new Comparator<FontDescription>() 
+           		{
+           			@Override
+           			public int compare(FontDescription o1, FontDescription o2) {
+           				return o1.getWeight() - o2.getWeight();
+           			}
+           		});
         }
 
         public String getName() {

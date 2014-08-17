@@ -31,13 +31,13 @@ import org.xhtmlrenderer.swing.AWTFSImage;
 import org.xhtmlrenderer.swing.EmptyReplacedElement;
 import org.xhtmlrenderer.swing.ImageReplacedElement;
 import org.xhtmlrenderer.util.ImageUtil;
+import org.xhtmlrenderer.util.Optional;
 import org.xhtmlrenderer.resource.ImageResource;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * A ReplacedElementFactory where Elements are replaced by Swing components.

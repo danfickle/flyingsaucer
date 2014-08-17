@@ -1,7 +1,6 @@
 package com.github.neoflyingsaucer.pdfout;
 
 import java.io.IOException;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +12,7 @@ import org.xhtmlrenderer.resource.ImageResource;
 import org.xhtmlrenderer.resource.ResourceCache;
 import org.xhtmlrenderer.swing.ImageResourceLoader;
 import org.xhtmlrenderer.util.LangId;
+import org.xhtmlrenderer.util.Optional;
 
 public class PdfOutUserAgent implements UserAgentCallback
 {

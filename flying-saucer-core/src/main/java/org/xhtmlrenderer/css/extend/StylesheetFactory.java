@@ -20,12 +20,12 @@
 package org.xhtmlrenderer.css.extend;
 
 import java.io.Reader;
-import java.util.Optional;
 
 import org.xhtmlrenderer.css.sheet.Ruleset;
 import org.xhtmlrenderer.css.sheet.Stylesheet;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
+import org.xhtmlrenderer.util.Optional;
 
 
 /**

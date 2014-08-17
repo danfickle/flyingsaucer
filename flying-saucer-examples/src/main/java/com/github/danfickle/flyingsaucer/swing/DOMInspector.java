@@ -31,6 +31,7 @@ import org.xhtmlrenderer.css.parser.PropertyValue;
 import org.xhtmlrenderer.layout.SharedContext;
 import org.xhtmlrenderer.util.GeneralUtil;
 import org.xhtmlrenderer.util.NodeHelper;
+import org.xhtmlrenderer.util.Optional;
 
 import javax.swing.*;
 import javax.swing.event.TreeModelListener;
@@ -50,7 +51,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 
 /**

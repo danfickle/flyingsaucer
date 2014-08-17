@@ -23,7 +23,6 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +42,7 @@ import org.xhtmlrenderer.css.sheet.StylesheetInfo;
 import org.xhtmlrenderer.extend.NamespaceHandler;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.layout.SharedContext;
+import org.xhtmlrenderer.util.Optional;
 
 
 /**

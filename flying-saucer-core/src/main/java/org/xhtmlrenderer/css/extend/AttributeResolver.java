@@ -19,7 +19,7 @@
  */
 package org.xhtmlrenderer.css.extend;
 
-import java.util.Optional;
+import org.xhtmlrenderer.util.Optional;
 
 
 /**

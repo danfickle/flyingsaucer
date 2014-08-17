@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +46,7 @@ import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.layout.PaintingInfo;
 import org.xhtmlrenderer.layout.Styleable;
 import org.xhtmlrenderer.util.NodeHelper;
+import org.xhtmlrenderer.util.Optional;
 
 public abstract class Box implements Styleable {
 

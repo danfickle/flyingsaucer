@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.IdentValue;
@@ -45,6 +44,7 @@ import org.xhtmlrenderer.render.LineBox;
 import org.xhtmlrenderer.render.MarkerData;
 import org.xhtmlrenderer.render.StrutMetrics;
 import org.xhtmlrenderer.render.TextDecoration;
+import org.xhtmlrenderer.util.Optional;
 
 /**
  * This class is responsible for flowing inline content into lines.  Block

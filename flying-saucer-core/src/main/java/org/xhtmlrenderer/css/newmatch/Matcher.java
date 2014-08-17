@@ -28,7 +28,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -47,6 +46,7 @@ import org.xhtmlrenderer.css.sheet.Ruleset;
 import org.xhtmlrenderer.css.sheet.Stylesheet;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
 import org.xhtmlrenderer.layout.SharedContext;
+import org.xhtmlrenderer.util.Optional;
 
 
 /**

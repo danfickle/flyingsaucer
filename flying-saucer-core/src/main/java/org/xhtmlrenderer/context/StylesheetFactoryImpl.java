@@ -21,7 +21,6 @@ package org.xhtmlrenderer.context;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +35,7 @@ import org.xhtmlrenderer.extend.FSErrorType;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.resource.CSSResource;
 import org.xhtmlrenderer.util.LangId;
+import org.xhtmlrenderer.util.Optional;
 
 /**
  * A Factory class for Cascading Style Sheets. Sheets are parsed using a single

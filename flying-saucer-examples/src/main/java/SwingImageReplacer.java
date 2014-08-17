@@ -8,6 +8,7 @@ import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.resource.ImageResource;
 import org.xhtmlrenderer.util.ImageUtil;
+import org.xhtmlrenderer.util.Optional;
 import org.xhtmlrenderer.swing.AWTFSImage;
 import org.xhtmlrenderer.swing.ImageReplacedElement;
 import org.xhtmlrenderer.swing.EmptyReplacedElement;

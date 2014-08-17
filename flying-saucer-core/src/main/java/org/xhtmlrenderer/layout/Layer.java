@@ -30,7 +30,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import org.xhtmlrenderer.css.constants.CSSName;
@@ -991,7 +990,13 @@ public class Layer {
         
         blocks.add(block);
         
-        Collections.sort(blocks, (b1, b2) -> b1.getAbsY() - b2.getAbsY());
+        Collections.sort(blocks, new Comparator<BlockBox>() 
+        {
+        	@Override
+        	public int compare(BlockBox b1, BlockBox b2) {
+        		return b1.getAbsY() - b2.getAbsY();
+        	}
+        }); 
     }
     
     public void removeRunningBlock(final BlockBox block) {
@@ -1083,9 +1088,19 @@ public class Layer {
             return null;
         }
         
-        if (_sortedPageSequences == null) {
+        if (_sortedPageSequences == null) 
+        {
             final List<BlockBox> result = new ArrayList<>(_pageSequences);
-            Collections.sort(result, (b1, b2) -> b1.getAbsY() - b2.getAbsY());
+            
+            Collections.sort(result, new Comparator<BlockBox>() 
+            {
+            	@Override
+            	public int compare(BlockBox b1, BlockBox b2) 
+            	{
+            		return b1.getAbsY() - b2.getAbsY();
+            	}
+            });
+            		
             _sortedPageSequences  = result;
         }
         
