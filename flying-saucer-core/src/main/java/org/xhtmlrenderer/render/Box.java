@@ -682,15 +682,14 @@ public abstract class Box implements Styleable {
             return null;
         }
 
-        Optional<Box> result = 
-        		getChildren().stream()
-        		  .map(child -> child.find(cssCtx, absX, absY, findAnonymous))
-        		  .filter(box -> box != null)
-        		  .findFirst();
-
-        if (result.isPresent())
-        	return result.get();
-
+        for (Box child : getChildren())
+        {
+        	Box bx = child.find(cssCtx, absX, absY, findAnonymous);
+        	
+        	if (bx != null)
+        		return bx;
+        }
+        
         final Rectangle edge = getContentAreaEdge(getAbsX(), getAbsY(), cssCtx);
         return edge.contains(absX, absY) && getStyle().isVisible() ? this : null;
     }

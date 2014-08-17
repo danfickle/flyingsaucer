@@ -1293,14 +1293,21 @@ public class BlockBox extends Box implements InlinePaintable {
         }
 
         ensureChildren(c);
-        if (getChildrenContentType() == CONTENT_INLINE) {
-            return false;
-        } else if (getChildrenContentType() == CONTENT_BLOCK) 
+
+        if (getChildrenContentType() == CONTENT_INLINE) 
         {
-        	if (getChildren().stream()
-        		  .map(child -> (BlockBox) child)
-        		  .anyMatch(child -> child.isSkipWhenCollapsingMargins() || ! child.isVerticalMarginsAdjoin(c)))
-        		return false;
+            return false;
+        }
+        else if (getChildrenContentType() == CONTENT_BLOCK) 
+        {
+        	for (Box child : getChildren())
+        	{
+        		BlockBox bb = (BlockBox) child;
+        		
+        		if (bb.isSkipWhenCollapsingMargins() || 
+        			!bb.isVerticalMarginsAdjoin(c))
+        			return false;
+        	}
         }
 
         return style.asFloat(CSSName.MIN_HEIGHT) == 0 &&
@@ -2093,19 +2100,34 @@ public class BlockBox extends Box implements InlinePaintable {
         }
     }
 
-    public boolean isContainsInlineContent(final LayoutContext c) {
+    public boolean isContainsInlineContent(final LayoutContext c) 
+    {
         ensureChildren(c);
+
         switch (getChildrenContentType()) {
             case CONTENT_INLINE:
-                return true;
+            {
+            	return true;
+            }
             case CONTENT_EMPTY:
-                return false;
+            {
+            	return false;
+            }
             case CONTENT_BLOCK:
-            	return getChildren().stream()
-            			.map(child -> (BlockBox) child)
-            			.anyMatch(box -> box.isContainsInlineContent(c));
-        }
+            {
+            	for (Box child : getChildren())
+            	{
+            		BlockBox box = (BlockBox) child;
+            		
+            		if (box.isContainsInlineContent(c))
+            			return true;
+            	}
 
+            	return false;
+            }
+        }
+        
+        assert(false);
         throw new RuntimeException("internal error: no children");
     }
 

@@ -104,16 +104,23 @@ public class TableRowBox extends BlockBox {
         }
     }
     
-    private boolean isShouldMoveToNextPage(final LayoutContext c) {
+    private boolean isShouldMoveToNextPage(final LayoutContext c) 
+    {
         final PageBox page = c.getRootLayer().getFirstPage(c, this);
         
         if (getAbsY() + getHeight() < page.getBottom()) {
             return false;
         }
         
-        return !getChildren().stream()
-        		.map(cell -> ((TableCellBox) cell).calcBlockBaseline(c))
-        		.anyMatch(baseline -> baseline != BlockBox.NO_BASELINE && baseline < page.getBottom()); 
+        for (Box cell : getChildren())
+        {
+        	int baseline = ((TableCellBox) cell).calcBlockBaseline(c);
+        	
+        	if (baseline != BlockBox.NO_BASELINE && baseline < page.getBottom())
+        		return true;
+        }
+        
+        return false;
     }
     
     public void analyzePageBreaks(final LayoutContext c, final ContentLimitContainer container) {

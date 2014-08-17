@@ -51,7 +51,6 @@ import org.xhtmlrenderer.render.JustificationInfo;
 import org.xhtmlrenderer.render.PageBox;
 import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.util.Configuration;
-
 import com.github.neoflyingsaucer.pdfout.PdfFontResolver.FontDescription;
 import com.github.pdfstream.Annotation;
 import com.github.pdfstream.Destination;
@@ -94,6 +93,8 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
 
     private SharedContext _sharedContext;
     private final float _dotsPerPoint;
+    
+    private PdfHelper _pdfHelper;
     
 //    private final Map<URI, PdfReader> _readerCache = new HashMap<URI, PdfReader>();
 //
@@ -612,8 +613,10 @@ System.err.println("x = " + x + " y = " + y + "scale = " + _dotsPerPoint);
 		_root = root;
 	}
 
-	public void start(Document _doc) {
-		// TODO
+	public void start(Document doc) 
+	{
+		_pdfHelper = new PdfHelper();
+		_pdfHelper.loadMetadata(doc);
 	}
 
     private void followPath(Shape s, final int drawType) 
@@ -939,7 +942,15 @@ System.err.println("x = " + x + " y = " + y + "scale = " + _dotsPerPoint);
 	public Page getCurrentPage() {
 		return _currentPage;
 	}
+
+	public void setDidValues(PDF doc) 
+	{
+		_pdfHelper.setDidValues(doc);
+	}
     
+
+	
+	
 //    private String replaceMissingCharacters(final String string)
 //    {
 //        final char[] charArr = string.toCharArray();

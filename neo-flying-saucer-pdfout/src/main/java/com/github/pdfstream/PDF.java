@@ -1229,4 +1229,9 @@ append(page.buf);
 
         strm.objNumber = objNumber;
 	}
+
+	public void setKeywords(String v)
+	{
+		// TODO Auto-generated method stub
+	}
 }   // End of PDF.java

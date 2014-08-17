@@ -385,14 +385,13 @@ public class Layer {
             }
         }
         
-        Optional<Box> res = 
-        getFloats().stream()
-          .map(floater -> floater.find(cssCtx, absX, absY, findAnonymous))
-          .filter(box -> box != null)
-          .findFirst();
-
-        if (res.isPresent())
-        	return res.get();
+        for (Box floater : getFloats())
+        {
+        	result = floater.find(cssCtx, absX, absY, findAnonymous);
+        	
+        	if (result != null)
+        		return result;
+        }
 
         result = getMaster().find(cssCtx, absX, absY, findAnonymous);
         if (result != null) {
@@ -613,11 +612,14 @@ public class Layer {
 
     private boolean containsFixedLayer()
     {
-    	return
-    	  getChildren().stream()
-    	   .anyMatch(
-    	     child -> child.getMaster().getStyle().isFixed() ||
-    		 	      child.containsFixedLayer());
+    	for (Layer child : getChildren())
+    	{
+    		if (child.getMaster().getStyle().isFixed() ||
+    		 	child.containsFixedLayer())
+    			return true;
+    	}
+    	
+    	return false;
     }
 
     public boolean containsFixedContent() {

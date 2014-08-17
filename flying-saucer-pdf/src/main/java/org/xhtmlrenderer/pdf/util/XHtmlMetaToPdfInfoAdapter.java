@@ -27,11 +27,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xhtmlrenderer.pdf.DefaultPDFCreationListener;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 import org.xhtmlrenderer.pdf.PDFCreationListener;
-import org.xhtmlrenderer.util.GenericPair;
-import org.xhtmlrenderer.util.GenericTri;
 import org.xhtmlrenderer.util.NodeHelper;
 
 import com.lowagie.text.pdf.PdfName;
@@ -184,46 +184,56 @@ public class XHtmlMetaToPdfInfoAdapter extends DefaultPDFCreationListener {
         if (!rootHeadNodeElement.isPresent())
         	return;
         
-        NodeHelper
-          .childElemStream(rootHeadNodeElement.get(), "meta")
-          .map(elem -> new GenericPair<>(elem.getAttribute("name"), elem.getAttribute("content")))
-          .filter(pair -> !pair.getFirst().isEmpty() && !pair.getSecond().isEmpty())
-          .forEachOrdered(pair -> 
-          {
-        	  final String metaName = pair.getFirst();
-              final String metaContent = pair.getSecond();
+        NodeList nl = rootHeadNodeElement.get().getChildNodes();
+        int length = nl.getLength();
+        
+        for (int i = 0; i < length; i++)
+        {
+        	Node n = nl.item(i);
+        	if (!(n instanceof Element) ||
+        		!n.getNodeName().equals("meta"))
+        		continue;
+        		
+        	Element elem = (Element) n;
+        	
+        	if (!elem.hasAttribute("name") || 
+        		!elem.hasAttribute("content"))
+        		continue;
+        	
+        	final String metaName = elem.getAttribute("name");
+            final String metaContent = elem.getAttribute("content");
 
-              PdfName pdfName;
-              PdfString pdfString;
+            PdfName pdfName;
+            PdfString pdfString;
 
-              if ( HTML_META_KEY_TITLE.equalsIgnoreCase( metaName ) 
-                || HTML_META_KEY_DC_TITLE.equalsIgnoreCase( metaName ) ) 
-              {
+            if ( HTML_META_KEY_TITLE.equalsIgnoreCase( metaName ) 
+              || HTML_META_KEY_DC_TITLE.equalsIgnoreCase( metaName ) ) 
+            {
                     pdfName = PdfName.TITLE;
                     pdfString = new PdfString( metaContent, PdfObject.TEXT_UNICODE );                    
                     this.pdfInfoValues.put( pdfName, pdfString );
-              } 
-              else if ( HTML_META_KEY_CREATOR.equalsIgnoreCase( metaName ) 
+            } 
+            else if ( HTML_META_KEY_CREATOR.equalsIgnoreCase( metaName ) 
                      || HTML_META_KEY_DC_CREATOR.equalsIgnoreCase( metaName ) ) 
-              {
+            {
                     pdfName = PdfName.AUTHOR;
                     pdfString = new PdfString( metaContent, PdfObject.TEXT_UNICODE );                    
                     this.pdfInfoValues.put( pdfName, pdfString );
-              }
-              else if ( HTML_META_KEY_SUBJECT.equalsIgnoreCase( metaName ) 
+            }
+            else if ( HTML_META_KEY_SUBJECT.equalsIgnoreCase( metaName ) 
                      || HTML_META_KEY_DC_SUBJECT.equalsIgnoreCase( metaName ) ) 
-              {
+            {
                     pdfName = PdfName.SUBJECT;
                     pdfString = new PdfString( metaContent, PdfObject.TEXT_UNICODE );                    
                     this.pdfInfoValues.put( pdfName, pdfString );
-              }
-              else if ( HTML_META_KEY_KEYWORDS.equalsIgnoreCase( metaName ) ) 
-              {
+            }
+            else if ( HTML_META_KEY_KEYWORDS.equalsIgnoreCase( metaName ) ) 
+            {
                     pdfName = PdfName.KEYWORDS;
                     pdfString = new PdfString( metaContent, PdfObject.TEXT_UNICODE );                    
                     this.pdfInfoValues.put( pdfName, pdfString );
-              }                
-          });
+            }                
+        }
     }
     
     /**

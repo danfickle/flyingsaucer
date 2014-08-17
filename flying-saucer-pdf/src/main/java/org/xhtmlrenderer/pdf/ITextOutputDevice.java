@@ -79,7 +79,6 @@ import org.xhtmlrenderer.render.JustificationInfo;
 import org.xhtmlrenderer.render.PageBox;
 import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.util.Configuration;
-import org.xhtmlrenderer.util.NodeHelper;
 import org.xhtmlrenderer.util.XRRuntimeException;
 
 import com.lowagie.text.DocumentException;
@@ -1000,34 +999,13 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
 
     private void loadBookmarks(final Document doc)
     {
-        final Optional<Element> head = NodeHelper.getHead(doc);
-
-        if (head.isPresent()) 
-        {
-        	Optional<Element> bookmarks = 
-        	 NodeHelper
-        	  .childElemStream(head.get(), "bookmarks")
-        	  .findFirst();
-        			
-        	bookmarks.ifPresent(
-        		bks -> NodeHelper
-        		      .childElemStream(bks, "bookmark")
-        		      .forEachOrdered(e -> loadBookmark(null, e)));
-        }
+    	// Unimplemented
     }
+    
 
     private void loadBookmark(final Bookmark parent, final Element bookmark) 
     {
-        final Bookmark us = new Bookmark(bookmark.getAttribute("name"), bookmark.getAttribute("href"));
-
-        if (parent == null) 
-            _bookmarks.add(us);
-        else
-            parent.addChild(us);
-
-        NodeHelper
-          .childElemStream(bookmark, "bookmark")
-          .forEachOrdered(e -> loadBookmark(us, e));
+    	// Unimplemented
     }
 
     private static class Bookmark {
@@ -1144,35 +1122,7 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
      */
     private void loadMetadata(final Document doc) 
     {
-        final Optional<Element> head = NodeHelper.getHead(doc);
-
-        if (head != null) 
-        {
-        	NodeHelper
-        	 .childElemStream(head.get(), "meta")
-        	 .forEachOrdered(meta -> {
-        		 final String name = meta.getAttribute("name");
-        		 if (name != null)
-        			 _metadata.add(new Metadata(name, meta.getAttribute("content")));
-        	 });
-        	
-            String title = getMetadataByName("title");
-
-            // If there is no title meta data attribute,
-        	// use the document title.
-            if (title == null) 
-            {
-            	final Optional<Element> t = 
-            	 NodeHelper
-            	 .childElemStream(head.get(), "title")
-            	 .findFirst();
-            	
-            	t.ifPresent(te -> {
-            		String newTitle = te.getTextContent().trim();
-            		_metadata.add(new Metadata("title", newTitle));
-            	});
-            }
-        }
+    	// Unimplemented.
     }
 
     /**

@@ -222,25 +222,12 @@ public class PdfRenderer
         _outputDevice.finish(c, _root);
     }
 
-    // Sets the document information dictionary values from html metadata
+    /**
+     * Sets the document information dictionary values from html metadata
+     */
     private void setDidValues(final PDF doc) 
     {
-        String v = _outputDevice.getMetadataByName("title");
-        if (v != null) {
-            doc.setTitle(v);
-        }
-        v = _outputDevice.getMetadataByName("author");
-        if (v != null) {
-            doc.setAuthor(v);
-        }
-        v = _outputDevice.getMetadataByName("subject");
-        if (v != null) {
-            doc.setSubject(v);
-        }
-        v = _outputDevice.getMetadataByName("keywords");
-        if (v != null) {
-            // TODO: Implement.
-        }
+    	_outputDevice.setDidValues(doc);
     }
     
     /**
