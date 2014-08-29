@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.w3c.dom.Document;
 import org.xhtmlrenderer.extend.NamespaceHandler;
+import org.xhtmlrenderer.extend.ReplacedElementFactory;
 import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.layout.BoxBuilder;
 import org.xhtmlrenderer.layout.LayoutContext;
@@ -365,9 +366,9 @@ public class Java2DRenderer {
 		final AWTFontResolver fontResolver = new AWTFontResolver();
 		sharedContext.setFontResolver(fontResolver);
 
-		// TODO
-		//ReplacedElementFactory replacedElementFactory = new SwingReplacedElementFactory();
-		sharedContext.setReplacedElementFactory(null);
+		
+		ReplacedElementFactory replacedElementFactory = new SwingReplacedElementFactory();
+		sharedContext.setReplacedElementFactory(replacedElementFactory);
 
 		sharedContext.setTextRenderer(new Java2DTextRenderer());
 		sharedContext.setDPI(72 * this.dotsPerPoint);
