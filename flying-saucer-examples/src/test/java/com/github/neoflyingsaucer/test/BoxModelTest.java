@@ -10,9 +10,10 @@ public class BoxModelTest
 	public void testPageMarginSize()
 	{
 		String html =
-			"<html><head><style>@page { size: 4px 4px; margin: 1px; } " +
-			"body { background-color: #00f; }</style></head>" +
-		    "<body></body></html>";
+			"<html><head><style>" +
+			"@page { size: 4px 4px; margin: 1px; }" +
+			"body { background-color: #00f; margin: 0; }" +
+			"</style></head><body></body></html>";
 		
 		String expected = 
 			"####" +

@@ -73,10 +73,10 @@ public class Java2DPageRenderer
                first.getContentWidth(c), first.getContentHeight(c));
     }
     
-    public Dimension doDocumentLayout(final Graphics g) 
+    public void doDocumentLayout(final Graphics g) 
     {
             if (g == null || doc == null) 
-            	return null;
+            	return;
 
             final LayoutContext c = newLayoutContext((Graphics2D) g);
 
@@ -96,14 +96,12 @@ public class Java2DPageRenderer
 
             // final long end = System.currentTimeMillis();
 
-            final Dimension intrinsicSize = root.getLayer().getPaintingDimension(c);
+            Dimension intrinsicSize = root.getLayer().getPaintingDimension(c);
 
             if (c.isPrint()) {
                 root.getLayer().trimEmptyPages(c, intrinsicSize.height);
                 root.getLayer().layoutPages(c);
             }
-            
-            return intrinsicSize;
     }
 
     protected boolean isNeedRelayout() {
@@ -175,7 +173,7 @@ public class Java2DPageRenderer
             getSharedContext().setNamespaceHandler(new HtmlNamespaceHandler());
             getSharedContext().getCss().setDocumentContext(getSharedContext(), getSharedContext().getNamespaceHandler(), doc);
 
-            Dimension intrinsicSize = doDocumentLayout(g2);
+            doDocumentLayout(g2);
             assignPagePrintPositions(g2);
             
             if (page >= getRootLayer().getPages().size()) {
@@ -183,12 +181,12 @@ public class Java2DPageRenderer
             }
             
             // render the document
-            paintPage(g2, page);
+            Dimension intrinsicSize = paintPage(g2, page);
             
             return intrinsicSize;
     }
     
-	public void paintPage(final Graphics2D g, final int pageNo)
+	public Dimension paintPage(final Graphics2D g, final int pageNo)
 	{
 		  	final Layer root = getRootLayer();
 
@@ -226,6 +224,8 @@ public class Java2DPageRenderer
 	        g.translate(-left, -top);
 
 	        g.setClip(working);
+	        
+	        return new Dimension(page.getWidth(c), page.getHeight(c));
 	}
 	  
 	    public Layer getRootLayer() {
