@@ -11,10 +11,10 @@ import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
 
 public class BufferedImageTest
 {
-	private static BufferedImage renderImage(String html, int width, int height)
+	private static BufferedImage renderImage(String html, int width, int height, int pageNo)
 	{
 		Document doc = HTMLResourceHelper.load(html).getDocument();
-		BufferedImage buff = Java2DPageRenderer.renderToImage(doc, width, height, new DefaultUserAgent(), 0);
+		BufferedImage buff = Java2DPageRenderer.renderToImage(doc, width, height, new DefaultUserAgent(), pageNo);
 		return buff;
 	}
 	
@@ -121,9 +121,9 @@ public class BufferedImageTest
 	}
 	
 	
-	public static void assertImgEquals(String html, String image, int imageWidth, int maxWidth, int maxHheight)
+	public static void assertImgEquals(String html, String image, int imageWidth, int maxWidth, int maxHheight, int pageNo)
 	{
-		BufferedImage original = renderImage(html, maxWidth, maxHheight);
+		BufferedImage original = renderImage(html, maxWidth, maxHheight, pageNo);
 
 		if (!image.isEmpty())
 		{
