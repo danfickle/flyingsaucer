@@ -276,7 +276,13 @@ public class PageBox {
                 getContentWidth(cssCtx),
                 getContentHeight(cssCtx));
         
-        result.height -= 1;
+        // danfickle commented out the following line because it was
+        // causing an off-by-one error in the clipping region for the page
+        // with Java2DPageRenderer.
+        // Ironically, it was added with the commit message (by peterbrant):
+        // "Off by one error in page bounds clip region calculation" 
+        // Will commenting out cause errors elsewhere?
+        // result.height -= 1;
 
         return result;
     }
