@@ -216,6 +216,96 @@ public class BoxModelTest
 			"GGGGGGGG";
 
 		BufferedImageTest.assertImgEquals(html, expected, 8, 100, 100, 0);
-	}	
+	}
+
+	@Test
+	public void testNegativeRelativePositioning()
+	{
+		String html =
+			"<html><head><style>" +
+			"@page { size: 2px 5px; margin: 0; }" +
+			"body { background-color: #0f0; margin: 0; }" +
+			".div1 { background-color: #f00; padding: 0; margin: 0; height: 4px; width: 1px; }" +
+			".div2 { background-color: #00f; margin: 0; padding: 0; height: 1px; width: 1px; position: relative; top: -2px; }" +
+			"</style></head><body><div class=\"div1\"></div><div class=\"div2\"></div></body></html>";
+		
+		String expected = 
+			"RG" +
+			"RG" +
+			"BG" +
+			"RG" +
+			"GG";;
+		
+		BufferedImageTest.assertImgEquals(html, expected, 2, 100, 100, 0);
+	}
+
+	@Test
+	public void testPostiveRelativePositioning()
+	{
+		String html =
+			"<html><head><style>" +
+			"@page { size: 2px 7px; margin: 0; }" +
+			"body { background-color: #0f0; margin: 0; }" +
+			".div1 { background-color: #f00; padding: 0; margin: 0; height: 2px; width: 1px; position: relative; top: 2px;}" +
+			".div2 { background-color: #00f; margin: 0; padding: 0; height: 4px; width: 2px; }" +
+			"</style></head><body><div class=\"div1\"></div><div class=\"div2\"></div></body></html>";
+		
+		String expected = 
+			"GG" +
+			"GG" +
+			"RB" +
+			"RB" +
+			"BB" +
+			"BB" +
+			"GG";
+		
+		BufferedImageTest.assertImgEquals(html, expected, 2, 100, 100, 0);
+	}
 	
+	@Test
+	public void testBeforeInsertedContent()
+	{
+		String html =
+			"<html><head><style>" +
+			"@page { size: 2px 5px; margin: 0; }" +
+			"body { background-color: #0f0; margin: 0; }" +
+			".div1 { background-color: #f00; padding: 0; margin: 0; height: 4px; width: 2px; }" +
+			".div1:before { content: \" \"; display:block; background-color: #00f; width: 1px; height: 1px; padding: 0; margin: 0; }" +
+			"</style></head><body><div class=\"div1\"></div></body></html>";
+		
+		String expected = 
+			"BR" +
+			"RR" +
+			"RR" +
+			"RR" +
+			"GG";
+		
+		BufferedImageTest.assertImgEquals(html, expected, 2, 100, 100, 0);
+	}
+	
+	@Test
+	public void testAfterInsertedContent()
+	{
+		String html =
+			"<html><head><style>" +
+			"@page { size: 2px 5px; margin: 0; }" +
+			"body { background-color: #0f0; margin: 0; }" +
+			".div1 { background-color: #f00; padding: 0; margin: 0; height: 4px; width: 2px; }" +
+			"span { display: inline-block; width: 2px; height: 2px; }" +
+			".div1:after { content: \" \"; display:block; background-color: #00f; width: 1px; height: 1px; padding: 0; margin: 0; }" +
+			"</style></head><body><div class=\"div1\"><span></span></div></body></html>";
+		
+		// Note: The standard behaviour of :before and :after is to insert the content inside the 
+		// element before or after any dom children. In this case, it inserts after the span.
+		// This is not always the same as the end of the element. In short, this test
+		// output is correct. Try it in Firefox.
+		String expected = 
+			"RR" +
+			"RR" +
+			"BR" +
+			"RR" +
+			"GG";
+		
+		BufferedImageTest.assertImgEquals(html, expected, 2, 100, 100, 0);
+	}	
 }
