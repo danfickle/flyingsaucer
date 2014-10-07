@@ -118,20 +118,7 @@ public class BorderPainter {
         
         final OutputDevice dev = ctx.getOutputDevice();
         
-    	if (border.isSquareRectStandard() &&
-    		sides == BorderPainter.ALL &&
-    		border.leftStyle() == IdentValue.SOLID &&
-    		border.left() == 1)
-    	{
-        		// Deal with the easiest, fastest & most common case first.
-    			// Example: border: 1px solid black;
-        		dev.setStroke(new BasicStroke(1.0f));
-        		dev.setColor(border.leftColor());
-        		dev.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-        		dev.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
-        		dev.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-    	}
-    	else if (!border.hasBorderRadius())
+        if (!border.hasBorderRadius())
     	{
 			if ((sides & BorderPainter.TOP) == BorderPainter.TOP
 					&& border.topColor() != FSRGBColor.TRANSPARENT) {

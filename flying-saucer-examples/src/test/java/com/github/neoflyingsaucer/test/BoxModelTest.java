@@ -205,11 +205,15 @@ public class BoxModelTest
 			".div1 { background-color: #f00; border: 1px solid #00f; margin: 1px; padding: 1px; height: 1px; width: 1px; }" +
 			"</style></head><body><div class=\"div1\"></div></body></html>";
 		
-		// Something about using a 1px uniform border makes this sample produce
-		// too many red pixels (4x4 instead of 3x3).
-		// To be investigated...
 		String expected = 
-				"";
+			"GGGGGGGG" +
+			"GBBBBBGG" +
+			"GBRRRBGG" +
+			"GBRRRBGG" +
+			"GBRRRBGG" +
+			"GBBBBBGG" +
+			"GGGGGGGG" +
+			"GGGGGGGG";
 
 		BufferedImageTest.assertImgEquals(html, expected, 8, 100, 100, 0);
 	}	
