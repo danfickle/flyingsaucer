@@ -50,6 +50,12 @@ BROWSER
 3. Take the browser for a spin at:
 /flying-saucer-examples/src/main/java/org/xhtmlrenderer/demo/browser/BrowserStartup.java
 
+HOW TO HELP
+-----------
+Once you have setup the project and looked at the browser, please consider running the manual test runner located at:
+`com.github.neoflyingsaucer.manualtestrunner` in the flying-saucer-examples module. If you can figure out why individual
+tests are failing, file an issue with details or send a pull request. Thanks.
+
 LICENSE
 -------
 Flying Saucer is distributed under the LGPL.  Flying Saucer itself is licensed 
