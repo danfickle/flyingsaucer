@@ -1,0 +1,3 @@
+Manual tests moved to src/main/resources/manual_tests/tests in the flying-saucer-examples module.
+Test runner is at com.github.neoflyingsaucer.manualtestrunner, also in flying-saucer-examples module.
+
