@@ -9,7 +9,6 @@ import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -79,12 +78,12 @@ public class PDFRenderer {
     	renderer.setDocument(url);  
     	doRenderToPDF(renderer, pdf);
     	
-//    	final ITextRenderer renderer = new ITextRenderer(uac);
-//    	renderer.setDocument(url);  
+    	final ITextRenderer renderer2 = new ITextRenderer(uac);
+    	renderer2.setDocument(url);
 //
 //    	//        
 ////        if (pdfVersion != null) renderer.setPDFVersion(pdfVersion.charValue());
-//    	doRenderToPDF(renderer, pdf);
+    	doRenderToPDF(renderer2, pdf + ".old.pdf");
     }
 
     private static void doRenderToPDF(PdfRenderer renderer, String pdf) throws IOException {
