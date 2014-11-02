@@ -39,7 +39,7 @@ public class ITextTextRenderer implements TextRenderer {
     }
 
     public void drawString(final OutputDevice outputDevice, final String string, final float x, final float y) {
-        ((ITextOutputDevice)outputDevice).drawString(string, x, y, null);
+    	((ITextOutputDevice)outputDevice).drawString(string, x, y, null);
     }
     
     public void drawString(
@@ -64,7 +64,7 @@ public class ITextTextRenderer implements TextRenderer {
         
         result.setUnderlineOffset(-descr.getUnderlinePosition() / 1000f * size);
         result.setUnderlineThickness(descr.getUnderlineThickness() / 1000f * size);
-        
+
         return result;
     }
 

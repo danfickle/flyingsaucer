@@ -66,7 +66,7 @@ public class PdfRenderer
         _sharedContext = new SharedContext();
         _sharedContext.setUserAgentCallback(newish);
         _sharedContext.setCss(new StyleReference(newish));
-        //userAgent.setSharedContext(_sharedContext);
+        ((PdfOutUserAgent) newish).setSharedContext(_sharedContext);
         _outputDevice.setSharedContext(_sharedContext);
   
         final FontResolver fr = new PdfFontResolver();

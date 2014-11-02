@@ -38,11 +38,11 @@ public class ITextImageElement implements ITextReplacedElement {
     }
 
     public int getIntrinsicWidth() {
-        return (int)_image.getWidth();
+    	return (int)_image.getWidth();
     }
 
     public int getIntrinsicHeight() {
-        return (int)_image.getHeight();
+    	return (int)_image.getHeight();
     }
 
     public Point getLocation() {

@@ -30,14 +30,14 @@ public class ITextFSFontMetrics implements FSFontMetrics {
     private float _underlineThickness;
     
     public float getAscent() {
-        return _ascent;
+    	return _ascent;
     }
     
     public void setAscent(final float ascent) {
         _ascent = ascent;
     }
     public float getDescent() {
-        return _descent;
+    	return _descent;
     }
     
     public void setDescent(final float descent) {

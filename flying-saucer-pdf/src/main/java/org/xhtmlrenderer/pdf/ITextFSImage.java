@@ -35,7 +35,7 @@ public class ITextFSImage implements FSImage, Cloneable {
     }
 
     public int getHeight() {
-        return (int)_image.getPlainHeight();
+    	return (int)_image.getPlainHeight();
     }
 
     public void scale(final int width, final int height) {

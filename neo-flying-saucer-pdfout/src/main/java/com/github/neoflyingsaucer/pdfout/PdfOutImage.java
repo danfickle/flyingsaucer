@@ -10,6 +10,7 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.stream.ImageInputStream;
 
 import org.xhtmlrenderer.extend.FSImage;
+import org.xhtmlrenderer.layout.SharedContext;
 
 public class PdfOutImage implements FSImage 
 {
@@ -19,6 +20,9 @@ public class PdfOutImage implements FSImage
 	private int _intrinsicWidth;
 	private int _intrinsicHeight;
 
+	private final int _originalWidth;
+	private final int _originalHeight;
+	
 	private int _setWidth = -1;
 	private int _setHeight = -1;
 	
@@ -39,6 +43,9 @@ public class PdfOutImage implements FSImage
 	            reader.setInput(in);
 	            _intrinsicWidth = reader.getWidth(0);
 	            _intrinsicHeight = reader.getHeight(0);
+	            
+	            _originalWidth = _intrinsicWidth;
+	            _originalHeight = _intrinsicHeight;
 	            
 	            String type = reader.getFormatName();
 	            
@@ -72,6 +79,24 @@ public class PdfOutImage implements FSImage
 		}
 	}
 	
+    public void scaleToOutputResolution(SharedContext _sharedContext) {
+        final float factor = _sharedContext.getDotsPerPixel();
+        if (factor != 1.0f) {
+            _intrinsicWidth *= factor;
+            _intrinsicHeight *= factor;
+        }
+    }
+
+	public int getOriginalWidth()
+	{
+		return _originalWidth;
+	}
+
+	public int getOriginalHeight()
+	{
+		return _originalHeight;
+	}
+    
 	public int getIntrinsicWidth()
 	{
 		return _intrinsicWidth;
@@ -87,7 +112,7 @@ public class PdfOutImage implements FSImage
 	{
 		if (_setWidth != -1)
 			return _setWidth;
-
+			
 		return _intrinsicWidth;
 	}
 	

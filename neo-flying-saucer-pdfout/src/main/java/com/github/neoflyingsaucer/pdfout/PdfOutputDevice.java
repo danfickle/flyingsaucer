@@ -219,20 +219,18 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
             return;
         }
 
-        final AffineTransform at = (AffineTransform) _transform.clone(); 
-// TODO
-System.err.println("x = " + x + " y = " + y + "scale = " + _dotsPerPoint);
-        at.translate(x, y);
+        final AffineTransform at = AffineTransform.getTranslateInstance(x, y);
         at.translate(0, fsImage.getHeight());
         at.scale(fsImage.getWidth(), fsImage.getHeight());
-        final AffineTransform inverse = normalizeMatrix(at);
+
+        final AffineTransform inverse = normalizeMatrix(_transform);
         final AffineTransform flipper = AffineTransform.getScaleInstance(1, -1);
+        inverse.concatenate(at);
         inverse.concatenate(flipper);
-        inverse.scale(_dotsPerPoint, _dotsPerPoint);
-        
+
         final double[] mx = new double[6];
         inverse.getMatrix(mx);
-
+        
         _currentPage.setOpacity(_opacity);
         
         if (image.isJpeg())
@@ -254,7 +252,7 @@ System.err.println("x = " + x + " y = " + y + "scale = " + _dotsPerPoint);
 			
         	if (img.getType() != BufferedImage.TYPE_INT_ARGB)
         	{
-        		BufferedImage buf = new BufferedImage(image.getIntrinsicWidth(), image.getIntrinsicHeight(), BufferedImage.TYPE_INT_ARGB);
+        		BufferedImage buf = new BufferedImage(image.getOriginalWidth(), image.getOriginalHeight(), BufferedImage.TYPE_INT_ARGB);
 
         		Graphics g = buf.createGraphics();
         		g.drawImage(img, 0, 0, null);
@@ -270,7 +268,7 @@ System.err.println("x = " + x + " y = " + y + "scale = " + _dotsPerPoint);
         	DataBufferInt buf = (DataBufferInt) raster.getDataBuffer();
         	int[] arr = buf.getData();
 
-        	PNGImage png = new PNGImage(image.getUri(), arr, image.getIntrinsicWidth(), image.getIntrinsicHeight(), 3);
+        	PNGImage png = new PNGImage(image.getUri(), arr, image.getOriginalWidth(), image.getOriginalHeight(), 3);
         	_currentPage.addImage(png, (float) mx[0], (float) mx[1], (float) mx[2], (float) mx[3], (float) mx[4], (float) mx[5]);
         }
     }

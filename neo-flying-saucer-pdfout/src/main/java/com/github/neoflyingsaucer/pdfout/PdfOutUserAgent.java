@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.extend.FSErrorType;
 import org.xhtmlrenderer.extend.UserAgentCallback;
+import org.xhtmlrenderer.layout.SharedContext;
 import org.xhtmlrenderer.resource.CSSResource;
 import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.resource.ImageResource;
@@ -19,6 +20,7 @@ public class PdfOutUserAgent implements UserAgentCallback
 	private final static Logger LOGGER = LoggerFactory.getLogger(PdfOutUserAgent.class);
 	
 	private final UserAgentCallback _inner;
+	private SharedContext _sharedContext;
 	
 	public PdfOutUserAgent(UserAgentCallback inner)
 	{
@@ -46,7 +48,14 @@ public class PdfOutUserAgent implements UserAgentCallback
 			return Optional.empty();
 		}
 		
+		img.scaleToOutputResolution(_sharedContext);
+		
 		return Optional.of(new ImageResource(uri, img));
+	}
+	
+	public void setSharedContext(SharedContext ctx)
+	{
+		_sharedContext = ctx;
 	}
 
 	@Override
