@@ -60,7 +60,6 @@ public class PdfFontResolver implements FontResolver
                 return new PdfFont(result, size);
             }
         }
-
         return null;
 	}
 		
@@ -201,6 +200,7 @@ public class PdfFontResolver implements FontResolver
         result.put("Dialog", helvetica);
         result.put("SansSerif", helvetica);
         result.put("Helvetica", helvetica);
+        result.put("Arial", helvetica);
     }
 
     private static void addSymbol(final Map<String, FontFamily> result)

@@ -170,9 +170,8 @@ public class PdfRenderer
         _outputDevice.clip(content);
 
         final int top = -page.getPaintingTop() + page.getMarginBorderPadding(c, CalculatedStyle.TOP);
-
         final int left = page.getMarginBorderPadding(c, CalculatedStyle.LEFT);
-
+//_sharedContext.setDebug_draw_font_metrics(true);
         _outputDevice.translate(left, top);
         _root.getLayer().paint(c);
         _outputDevice.translate(-left, -top);
@@ -206,6 +205,7 @@ public class PdfRenderer
             float[] nextPageSize = new float[] { 
             		currentPage.getWidth(c) / _dotsPerPoint,
             		currentPage.getHeight(c) / _dotsPerPoint };
+
             Page page;
             try {
 					page = new Page(_pdfDoc, nextPageSize);

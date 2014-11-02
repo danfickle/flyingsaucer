@@ -849,7 +849,7 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
 
 	    final FontDescription desc = _font.getFontDescription();
 	    final float fontSize = _font.getSize2D() / _dotsPerPoint;
-	    cb.setTextFont(desc.getFont(), fontSize * 1000f);
+	    cb.setTextFont(desc.getFont(), fontSize);
 
 	    float b = (float) mx[1];
 	    float c = (float) mx[2];

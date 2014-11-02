@@ -276,7 +276,7 @@ public class ITextRenderer {
 
         firePreOpen();
         doc.open();
-
+//_sharedContext.setDebug_draw_font_metrics(true);
         writePDF(pages, c, firstPageSize, doc, writer);
 
         if (finish) {
@@ -368,7 +368,6 @@ public class ITextRenderer {
         _outputDevice.clip(content);
 
         final int top = -page.getPaintingTop() + page.getMarginBorderPadding(c, CalculatedStyle.TOP);
-
         final int left = page.getMarginBorderPadding(c, CalculatedStyle.LEFT);
 
         _outputDevice.translate(left, top);

@@ -73,7 +73,7 @@ public class PdfTextRenderer implements TextRenderer
 	{
         final FontDescription descr = ((PdfFont )font).getFontDescription();
         final Font bf = descr.getFont();
-        final float size = font.getSize2D();
+        final float size = font.getSize2D() / 1000f;
         final PdfFontMetrics result = new PdfFontMetrics();
 
         result.setAscent(bf.getBBoxURy() * size);
@@ -96,7 +96,8 @@ public class PdfTextRenderer implements TextRenderer
 	public int getWidth(FontContext context, FSFont font, String string) 
 	{
         final Font bf = ((PdfFont)font).getFontDescription().getFont();
-        final float result = bf.stringWidth(string) * font.getSize2D();
+        final float result = (bf.stringWidth(string)) * (font.getSize2D() / 1000f);
+        
         if (result - Math.floor(result) < TEXT_MEASURING_DELTA) {
             return (int)result;
         } else {
@@ -123,7 +124,7 @@ public class PdfTextRenderer implements TextRenderer
 	@Override
 	public int getSmoothingLevel() {
 		// TODO Auto-generated method stub
-		return 10;
+		return 0;
 	}
 
 	@Override

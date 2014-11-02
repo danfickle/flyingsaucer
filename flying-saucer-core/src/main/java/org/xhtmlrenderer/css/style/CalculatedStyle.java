@@ -490,7 +490,8 @@ public class CalculatedStyle {
                 _lineHeight = getFloatPropertyProportionalHeight(CSSName.LINE_HEIGHT, 0, ctx);
             } else {
                 //must be a number
-                _lineHeight = getFont(ctx).size * valueByName(CSSName.LINE_HEIGHT).asFloat();
+            	_lineHeight = getFont(ctx).size * valueByName(CSSName.LINE_HEIGHT).asFloat();
+
             }
             _lineHeightResolved = true;
         }

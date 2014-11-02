@@ -32,7 +32,7 @@ public class ITextFSFont implements FSFont {
     }
 
     public float getSize2D() {
-        return _size;
+    	return _size;
     }
     
     public FontDescription getFontDescription() {
