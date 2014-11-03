@@ -57,7 +57,6 @@ public class Page {
 
     protected List<Integer> contents;
     protected List<Annotation> annots;
-    protected List<Destination> destinations;
     protected List<PdfFormElement> fields = new ArrayList<PdfFormElement>();
 
     protected float[] cropBox = null;
@@ -98,13 +97,16 @@ public class Page {
      *  @param pdf the pdf object.
      *  @param pageSize the page size of this page.
      */
-    public Page(PDF pdf, float[] pageSize) throws Exception {
+    public Page(PDF pdf, float[] pageSize) throws Exception 
+    {
         this.pdf = pdf;
+
         contents = new ArrayList<Integer>();
         annots = new ArrayList<Annotation>();
-        destinations = new ArrayList<Destination>();
+
         width = pageSize[0];
         height = pageSize[1];
+
         buf = new ByteArrayOutputStream(8192);
 
         if (pdf != null) {
@@ -179,26 +181,6 @@ public class Page {
     	append('l');
     	append('\n');
     }
-    
-    /**
-     *  Adds destination to this page.
-     *
-     *  @param name The destination name.
-     *  @param yPosition The vertical position of the destination on this page.
-     */
-    @Deprecated
-    public void addDestination(String name, float yPosition) {
-        destinations.add(new Destination(name, height - yPosition));
-    }
-
-    @Deprecated
-    protected void setDestinationsPageObjNumber(int pageObjNumber) {
-        for (Destination destination : destinations) {
-            destination.setPageObjNumber(pageObjNumber);
-            this.pdf.destinations.put(destination.name, destination);
-        }
-    }
-
     
     /**
      *  Returns the width of this page.

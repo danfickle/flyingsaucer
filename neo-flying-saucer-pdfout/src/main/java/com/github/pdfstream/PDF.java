@@ -56,15 +56,12 @@ public class PDF
     protected Map<String, ObjectNameAndNumber> rimages = new HashMap<String, ObjectNameAndNumber>();
     protected Set<String> rfonts = new HashSet<String>();
     protected List<Integer> acroFields = new ArrayList<Integer>();
-    
+    protected List<Bookmark> bookmarks = new ArrayList<Bookmark>();
+   
     protected Map<String, Destination> destinations = new HashMap<String, Destination>();
     protected List<OptionalContentGroup> groups = new ArrayList<OptionalContentGroup>();
 
     protected static final DecimalFormat df = new DecimalFormat("0.###", new DecimalFormatSymbols(Locale.US));
-
-    private static final int CR_LF = 0;
-    private static final int CR = 1;
-    private static final int LF = 2;
 
     private int compliance = 0;
     private OutputStream os = null;
@@ -76,12 +73,11 @@ public class PDF
     private String subject = "";
     private String author = "";
     private int byteCount = 0;
-    private int endOfLine = CR_LF;
     private int resObjNumber = -1;
     private int pagesObjNumber = -1;
 
-    private int reservedObjNumbers = 0;
 	private Integer acroFormObjNumber;
+	private int outlinesObjNumber;
     
     /**
      * The default constructor - use when reading PDF files.
@@ -337,7 +333,7 @@ public class PDF
 
             append(">>\n");
         }
-
+        
         if (!groups.isEmpty()) {
             append("/Properties\n");
             append("<<\n");
@@ -433,6 +429,13 @@ public class PDF
             append("/OutputIntents [");
             append(outputIntentObjNumber);
             append(" 0 R]\n");
+        }
+        
+        if (!bookmarks.isEmpty())
+        {
+        	append("/Outlines ");
+        	append(outlinesObjNumber);
+        	append(" 0 R\n");
         }
 
         append(">>\n");
@@ -809,6 +812,9 @@ append(page.buf);
             acroFormObjNumber = addAcroDictionary();
         }
 
+        if (!bookmarks.isEmpty())
+        	outlinesObjNumber = addBookmarks();
+
         int infoObjNumber = addInfoObject();
         int rootObjNumber = addRootObject();
 
@@ -1023,7 +1029,142 @@ append(page.buf);
         byteCount += baos.size();
     }
 
+    public void addBookmark(Bookmark bm)
+    {
+    	bookmarks.add(bm);
+    }
+    
+    protected int addBookmarks()
+    {
+    	assert(!bookmarks.isEmpty());
+    	
+    	Bookmark first = bookmarks.get(0);
+    	Bookmark last = bookmarks.get(0);
+    	
+    	for (int i = 0; i < bookmarks.size(); i++)
+    	{
+    		Bookmark bm = bookmarks.get(i);
+        	int currentLevel = bm.level;
+    		
+        	bm.offsetObjNumber = i;
 
+        	if (bm.level == first.level)
+        		last = bm;
+        	
+    		// First, find the parent and the previous.
+    		for (int j = i - 1; j >= 0; j--)
+    		{
+    			if (bookmarks.get(j).level < currentLevel)
+    			{
+    				bm.parent = bookmarks.get(j);
+    				break;
+    			}
+    			else if (bookmarks.get(j).level == currentLevel &&
+    					bm.prev == null)
+    			{
+    				bm.prev = bookmarks.get(j);
+    			}
+    		}
+    		
+    		// Find the children.
+    		for (int j = i + 1; j < bookmarks.size(); j++)
+    		{
+    			if (bookmarks.get(j).level <= currentLevel ||
+    				bookmarks.get(j).level > currentLevel + 1)
+    				break;
+    			
+    			if (bm.first == null)
+    				bm.first = bookmarks.get(j);
+
+    			bm.last = bookmarks.get(j);
+    			bm.count++;
+    		}
+    		
+    		// Next, find the next...
+    		if (i + 1 < bookmarks.size() && bookmarks.get(i + 1).level == currentLevel)
+    			bm.next = bookmarks.get(i + 1);
+    	}
+    	
+    	int firstObjNumber = this.objNumber + 1;
+    	
+    	for (int i = 0; i < bookmarks.size(); i++)
+    	{
+    		Bookmark bm = bookmarks.get(i);
+    		newobj();
+    		append("<<\n/Title ");
+    		appendSystemString(bm.name);
+    		append('\n');
+    		
+    		if (bm.parent != null)
+    		{
+    			append("/Parent ");
+    			append(bm.parent.offsetObjNumber + firstObjNumber);
+    			append(" 0 R\n");
+    		}
+    		else
+    		{
+    			append("/Parent ");
+    			append(firstObjNumber + bookmarks.size());
+    			append(" 0 R\n");
+    		}
+    		
+    		if (bm.next != null)
+    		{
+    			append("/Next ");
+    			append((bm.next.offsetObjNumber + firstObjNumber));
+    			append(" 0 R\n");
+    		}
+    		
+    		if (bm.prev != null)
+    		{
+    			append("/Prev ");
+    			append((bm.prev.offsetObjNumber + firstObjNumber));
+    			append(" 0 R\n");
+    		}
+    		
+    		if (bm.first != null)
+    		{
+    			append("/First ");
+    			append((bm.first.offsetObjNumber + firstObjNumber));
+    			append(" 0 R\n");
+    		}
+    		
+    		if (bm.last != null)
+    		{
+    			append("/Last ");
+    			append((bm.last.offsetObjNumber + firstObjNumber));
+    			append(" 0 R\n");
+    		}
+
+    		if (bm.count != 0)
+    		{
+    			append("/Count ");
+    			append(-(bm.count));
+    			append("\n");
+    		}
+    		
+    		append("/Dest [");
+            append(bm.dest.pageObjNumber + 1);
+            append(" 0 R /XYZ 0 ");
+            append(bm.dest.yPosition);
+            append(" 0]\n");
+    		append(">>\n");
+    		endobj();
+    	}
+    	
+    	newobj();
+    	append("<<\n/Type /Outlines\n");
+    	append("/First ");
+    	append(first.offsetObjNumber + firstObjNumber);
+    	append(" 0 R\n");
+    	append("/Last ");
+    	append(last.offsetObjNumber + firstObjNumber);
+    	append(" 0 R\n>>\n");
+    	endobj();
+    	
+    	return objNumber;
+    }
+    
     /**
      * If the alpha value is already recorded return its object
      * name. Otherwise create an object name, record it, and return it.
@@ -1252,7 +1393,6 @@ append(page.buf);
 
 	public void setPageCount(int i)
 	{
-		reservedObjNumbers = i;
 		objNumber = i;
 	}
 

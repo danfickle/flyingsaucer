@@ -55,6 +55,7 @@ import org.xhtmlrenderer.util.Optional;
 
 import com.github.neoflyingsaucer.pdfout.PdfFontResolver.FontDescription;
 import com.github.pdfstream.Annotation;
+import com.github.pdfstream.Bookmark;
 import com.github.pdfstream.Destination;
 import com.github.pdfstream.JPGImage;
 import com.github.pdfstream.PDF;
@@ -314,8 +315,12 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
 	
 	private void processBookmark(RenderingContext c, Box box)
 	{
-    	System.err.println("BOOKMARK LEVEL: " + box.getStyle().asFloat(CSSName.FS_BOOKMARK_LEVEL));
-		// TODO...
+    	int bookmarkLevel = (int) box.getStyle().asFloat(CSSName.FS_BOOKMARK_LEVEL);
+    	String bookmarkContent = box.getElement().getTextContent();
+    	Destination bookmarkDestination = createDestination(c, box);
+
+    	Bookmark bm = new Bookmark(bookmarkDestination, bookmarkContent, bookmarkLevel);
+    	_currentPage.getPdf().addBookmark(bm);
 	}
 	
     private void processLink(final RenderingContext c, final Box box)
