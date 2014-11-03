@@ -1665,6 +1665,37 @@ public class PrimitivePropertyBuilders {
 		return Collections.singletonList(result);
 	}
 
+	public static class BookmarkLevel implements PropertyBuilder
+	{
+		/* bookmark-level property. Use to define a bookmark in PDFs.
+		 * See: https://dvcs.w3.org/hg/csswg/raw-file/f7490857b4eb/css-gcpm/Overview.html#bookmarks
+		 * We prefix, so: "fs-bookmark-level"
+		 * Must be the ident "none" or a plain number, starting at 1.
+		 */
+		@Override
+		public List<PropertyDeclaration> buildDeclarations(CSSName cssName,
+				List<PropertyValue> values, CSSOrigin origin,
+				boolean important, boolean inheritAllowed) {
+
+			checkValueCount(cssName, 1, values.size());
+			PropertyValue value = values.get(0);
+			checkInheritAllowed(value, false);
+			checkIdentOrNumberType(cssName, value);
+
+			if (value.getPrimitiveTypeN() == CSSPrimitiveUnit.CSS_IDENT)
+			{
+				checkIdentValidity(cssName, EnumSet.of(IdentValue.NONE), value);
+			}
+			else if (value.getFloatValue() < 1.0f) 
+			{
+				cssThrowError(LangId.NO_NEGATIVE, cssName);
+            }
+			
+			return Collections.singletonList(new PropertyDeclaration(cssName,
+					value, important, origin));
+		}
+	}
+	
 	public static class BorderRadius implements PropertyBuilder
 	{
 		@Override

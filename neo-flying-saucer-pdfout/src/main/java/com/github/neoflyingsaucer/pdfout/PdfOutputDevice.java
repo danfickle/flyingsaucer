@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.IdentValue;
 import org.xhtmlrenderer.css.parser.FSCMYKColor;
 import org.xhtmlrenderer.css.parser.FSColor;
@@ -304,7 +305,18 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
 	{
         super.paintBackground(c, box);
         processLink(c, box);
+        
+        if (!box.getStyle().isIdent(CSSName.FS_BOOKMARK_LEVEL, IdentValue.NONE))
+        {
+        	processBookmark(c, box);
+        }
     }
+	
+	private void processBookmark(RenderingContext c, Box box)
+	{
+    	System.err.println("BOOKMARK LEVEL: " + box.getStyle().asFloat(CSSName.FS_BOOKMARK_LEVEL));
+		// TODO...
+	}
 	
     private void processLink(final RenderingContext c, final Box box)
     {

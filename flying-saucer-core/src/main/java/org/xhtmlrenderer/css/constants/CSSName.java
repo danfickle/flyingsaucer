@@ -1526,7 +1526,14 @@ public enum CSSName {
                        "0",
                        Marker.NOT_INHERITED,
                        new PrimitivePropertyBuilders.BorderRadius()
-                       );
+                       ),
+    
+    FS_BOOKMARK_LEVEL("fs-bookmark-level",
+    		  Marker.PRIMITIVE,
+    		  "none",
+    		  Marker.NOT_INHERITED,
+    		  new PrimitivePropertyBuilders.BookmarkLevel()
+    	);
     
     private static enum Marker
     {
