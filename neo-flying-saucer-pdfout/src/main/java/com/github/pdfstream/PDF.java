@@ -69,13 +69,13 @@ public class PDF
     private int compliance = 0;
     private OutputStream os = null;
     private Map<Integer, Integer> objOffset = new HashMap<Integer, Integer>();
-    private String producer = "neoFlyingSaucer \\(https://github.com/danfickle/neoflyingsaucer\\)";
+    private String producer = "neoFlyingSaucer (https://github.com/danfickle/neoflyingsaucer)";
     private String creationDate;
     private String createDate;
     private String title = "";
     private String subject = "";
     private String author = "";
-    private int byte_count = 0;
+    private int byteCount = 0;
     private int endOfLine = CR_LF;
     private int resObjNumber = -1;
     private int pagesObjNumber = -1;
@@ -160,7 +160,7 @@ public class PDF
     }
 
     protected void newobj() {
-        objOffset.put(objNumber, byte_count);
+        objOffset.put(objNumber, byteCount);
         append(++objNumber);
         append(" 0 obj\n");
     }
@@ -169,7 +169,7 @@ public class PDF
      * Zero based page number.
      */
     protected void newobj(int page) {
-        objOffset.put(page, byte_count);
+        objOffset.put(page, byteCount);
         append(page + 1);
         append(" 0 obj\n");
     }
@@ -381,18 +381,18 @@ public class PDF
         // Add the info object
         newobj();
         append("<<\n");
-        append("/Title (");
-        append(title);
-        append(")\n");
-        append("/Subject (");
-        append(subject);
-        append(")\n");
-        append("/Author (");
-        append(author);
-        append(")\n");
-        append("/Producer (");
-        append(producer);
-        append(")\n");
+        append("/Title ");
+        appendSystemString(title);
+        append("\n");
+        append("/Subject ");
+        appendSystemString(subject);
+        append("\n");
+        append("/Author ");
+        appendSystemString(author);
+        append("\n");
+        append("/Producer ");
+        appendSystemString(producer);
+        append("\n");
 
         if (compliance != Compliance.PDF_A_1B) {
             append("/CreationDate (D:");
@@ -812,7 +812,7 @@ append(page.buf);
         int infoObjNumber = addInfoObject();
         int rootObjNumber = addRootObject();
 
-        int startxref = byte_count;
+        int startxref = byteCount;
 
         // Create the xref table
         append("xref\n");
@@ -921,6 +921,7 @@ append(page.buf);
     }
 
 
+    // TODO: Encoding...
     protected void append(String str){
         int len = str.length();
         for (int i = 0; i < len; i++) {
@@ -930,9 +931,63 @@ append(page.buf);
 				throw new PdfException(e);
 			}
         }
-        byte_count += len;
+        byteCount += len;
     }
 
+    /*
+     * Outputs a PDF string. System strings are used when not displaying directly in the document,
+     * such as document title and outlines/bookmarks. These can be encoded in
+     * PDFDocEncoding or UTF16-BE with byte order mark.
+     * Fortunately, this is exactly what Java is required to return
+     * when asked for a UTF-16 string. See the documentation for Charset class.
+     */
+    protected void appendSystemString(String str)
+    {
+    	final byte open = '(';
+    	final byte close = ')';
+    	final byte slash = '\\';
+    	
+    	append(open);
+    	byteCount++;
+    	
+    	byte[] utf16be = null;
+		try {
+			utf16be = str.getBytes("UTF-16");
+		} catch (UnsupportedEncodingException e) {
+			// Java is broken. UTF-16 support is required!
+			assert(false);
+		}
+    	
+    	for (int i = 0; i < utf16be.length; i++)
+    	{
+    		if (utf16be[i] == open)
+    		{
+    			append(slash);
+    			append(open);
+    			byteCount += 2;
+    		}
+    		else if (utf16be[i] == close)
+    		{
+    			append(slash);
+    			append(close);
+    			byteCount += 2;
+    		}
+    		else if (utf16be[i] == slash)
+    		{
+    			append(slash);
+    			append(slash);
+    			byteCount += 2;
+    		}
+    		else
+    		{
+    			append(utf16be[i]);
+    			byteCount += 1;
+    		}
+    	}
+    	
+    	append(close);
+    	byteCount++;
+    }
 
     protected void append(char ch) {
         append((byte) ch);
@@ -945,7 +1000,7 @@ append(page.buf);
 		} catch (IOException e) {
 			throw new PdfException(e);
 		}
-        byte_count += 1;
+        byteCount += 1;
     }
 
 
@@ -955,7 +1010,7 @@ append(page.buf);
 		} catch (IOException e) {
 			throw new PdfException(e);
 		}
-        byte_count += len;
+        byteCount += len;
     }
 
 
@@ -965,7 +1020,7 @@ append(page.buf);
 		} catch (IOException e) {
 			throw new PdfException(e);
 		}
-        byte_count += baos.size();
+        byteCount += baos.size();
     }
 
 
