@@ -629,14 +629,14 @@ append(page.buf);
             append("/F 4\n");
 
             // Partial name.
-            append("/T (");
-            append(f.partial, true);
-            append(")\n");
+            append("/T ");
+            appendSystemString(f.partial);
+            append("\n");
             
             // Export name.
-            append("/TM (");
-            append(f.export, true);
-            append(")\n");
+            append("/TM ");
+            appendSystemString(f.export);
+            append("\n");
             
             if (f.defaultState != null)
             {
@@ -659,18 +659,18 @@ append(page.buf);
             	
             	for (String[] opt : f.options)
             	{
-            		append("[ (");
-            		append(opt[0], true);
-            		append(") (");
-            		append(opt[1], true);
-            		append(") ]\n");
+            		append("[ ");
+            		appendSystemString(opt[0]);
+            		append(' ');
+            		appendSystemString(opt[1]);
+            		append(" ]\n");
             	}
             	
             	append("]\n");
 
-            	append("/V (");
-            	append(f.options[f.selected][1], true);
-            	append(")\n");
+            	append("/V ");
+            	appendSystemString(f.options[f.selected][1]);
+            	append("\n");
             }
             
             if (!f.strms.isEmpty())
