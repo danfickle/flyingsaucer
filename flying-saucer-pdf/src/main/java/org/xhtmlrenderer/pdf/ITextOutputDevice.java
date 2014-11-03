@@ -755,8 +755,9 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
             else {
                 cb.setLiteral('[');
                 final int lim = dash.length;
+
                 for (int k = 0; k < lim; ++k) {
-                    cb.setLiteral(dash[k]);
+                	cb.setLiteral(dash[k]);
                     cb.setLiteral(' ');
                 }
                 cb.setLiteral(']');

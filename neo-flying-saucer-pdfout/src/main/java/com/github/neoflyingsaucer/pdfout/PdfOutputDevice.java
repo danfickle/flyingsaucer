@@ -797,11 +797,12 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
             for (int k = 0; k < dash.length; ++k) 
             {
             	sb.append(PDF.formatFloat(dash[k]));
-                sb.append(' ');
+
+            	if (k != dash.length - 1)
+            		sb.append(' ');
             }
             sb.append(']');
             sb.append(PDF.formatFloat(nStroke.getDashPhase()));
-            
             cb.setLinePattern(sb.toString());
         }
     }

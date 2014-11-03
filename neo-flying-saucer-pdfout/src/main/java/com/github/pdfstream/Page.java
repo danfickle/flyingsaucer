@@ -1011,13 +1011,14 @@ public class Page {
 	
 	public void pathStroke()
 	{
+		/* Don't explicity close path as it seems to cause the dash 
+		 * array to be ignored (at least with my viewer, could be a bug in viewer?). */
 		if (isPathOpen)
-			pathCloseSubpath();
+			isPathOpen = false;
 
 		append('S');
 		append('\n');
 	}
-
 
 	public void pathClipEvenOdd() 
 	{
