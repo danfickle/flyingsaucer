@@ -356,19 +356,19 @@ public class PDF
 //        append("/Pattern\n");
 //        append("<<\n");
 
-   		append("/Shading <<\n");
+   		append("/Pattern <<\n");
         
        	for (int i = 0; i < linearGradients.size(); i++)
        	{
        		append("/LGradient" + (i + 1) + ' ');
-//       		append("\n<<\n");
-//       		append("/Type /Pattern\n");
-//       		append("/PatternType 2\n");
-//       		append("/Shading ");
+       		append("\n<<\n");
+      		append("/Type /Pattern\n");
+       		append("/PatternType 2\n");
+       		append("/Shading ");
        		append(linearGradients.get(i).shadingObjNumber + " 0 R\n");
-//       		append(">>\n");
+       		append(">>\n");
        	}
-        
+       	
        	// TODO: Radial gradients here.
        	
         append(">>\n"); // End pattern dictionary.
@@ -394,25 +394,14 @@ public class PDF
     		append("/ColorSpace /DeviceRGB\n");
     		
     		append("/Coords [");
-    		append(0.1f);
+    		append((lg.gradient.getStartX() + lg.x)  / lg.dotsPerPoint);
     		append(' ');
-    		append(0.1f);
+    		append((lg.gradient.getEndY() + lg.y) / lg.dotsPerPoint);
     		append(' ');
-    		append(0.99f);
+    		append((lg.gradient.getEndX() + lg.x) / lg.dotsPerPoint);
     		append(' ');
-    		append(0.99f);
+    		append((lg.gradient.getStartY() + lg.y) / lg.dotsPerPoint);
     		append("]\n");
-
-    		
-//    		append("/Coords [");
-//    		append(lg.gradient.getStartX());
-//    		append(' ');
-//    		append(lg.gradient.getStartY());
-//    		append(' ');
-//    		append(lg.gradient.getEndX());
-//    		append(' ');
-//    		append(lg.gradient.getEndY());
-//    		append("]\n");
 
     		append("/Function " + (objNumber + 1) + " 0 R\n");
     		append(">>\n");
@@ -1556,9 +1545,9 @@ append(page.buf);
 		// TODO Auto-generated method stub
 	}
 
-	public String addLinearGradient(FSLinearGradient gradient) 
+	public String addLinearGradient(FSLinearGradient gradient, float dotsPerPoint, float x, float y) 
 	{
-		linearGradients.add(new LinearGradient(gradient));
+		linearGradients.add(new LinearGradient(gradient,  dotsPerPoint, x, y));
 		return "LGradient" + linearGradients.size();
 	}
 	

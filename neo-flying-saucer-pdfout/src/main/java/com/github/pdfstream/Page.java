@@ -1202,26 +1202,21 @@ public class Page {
 	}
 
 
-	public void drawLinearGradient(String lnName, float a, float b, float c, float d,
-			float e, float f) 
+	public void drawLinearGradient(String lnName, float x, float y, float width, float height) 
 	{
 		append("q\n");
 
-		// Transformation matrix.
-		append(a);
-        append(' ');
-        append(b);
-        append(' ');
-        append(c);
-        append(' ');
-        append(d);
-        append(' ');
-        append(e);
-        append(' ');
-        append(f);
-        append(" cm\n");
-		
-		append("/" + lnName + " sh\n"); // Choose our pattern.
+		append("/Pattern cs\n");
+		append("/" + lnName + " scn\n"); // Choose our pattern.
+
+		append(x);
+		append(' ');
+		append(y);
+		append(' ');
+		append(width);
+		append(' ');
+		append(height);
+		append(" re\nf\n");
 		
 		append("Q\n");
 	}
