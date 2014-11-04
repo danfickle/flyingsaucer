@@ -1200,4 +1200,29 @@ public class Page {
 	{
 		fields.add(field);
 	}
+
+
+	public void drawLinearGradient(String lnName, float a, float b, float c, float d,
+			float e, float f) 
+	{
+		append("q\n");
+
+		// Transformation matrix.
+		append(a);
+        append(' ');
+        append(b);
+        append(' ');
+        append(c);
+        append(' ');
+        append(d);
+        append(' ');
+        append(e);
+        append(' ');
+        append(f);
+        append(" cm\n");
+		
+		append("/" + lnName + " sh\n"); // Choose our pattern.
+		
+		append("Q\n");
+	}
 }   // End of Page.java

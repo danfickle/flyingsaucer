@@ -277,9 +277,23 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
 	
 	@Override
 	public void drawLinearGradient(FSLinearGradient gradient, int x, int y,
-			int width, int height) {
-		// TODO Auto-generated method stub
+			int width, int height) 
+	{
+		String lnName = _currentPage.getPdf().addLinearGradient(gradient);
 
+        final AffineTransform at = AffineTransform.getTranslateInstance(x, y);
+        at.translate(0, height);
+        at.scale(width, height);
+
+        final AffineTransform inverse = normalizeMatrix(_transform);
+        final AffineTransform flipper = AffineTransform.getScaleInstance(1, -1);
+        inverse.concatenate(at);
+        inverse.concatenate(flipper);
+
+        final double[] mx = new double[6];
+        inverse.getMatrix(mx);
+		
+		_currentPage.drawLinearGradient(lnName, (float) mx[0], (float) mx[1], (float) mx[2], (float) mx[3], (float) mx[4], (float) mx[5]);
 	}
 
 	@Override
