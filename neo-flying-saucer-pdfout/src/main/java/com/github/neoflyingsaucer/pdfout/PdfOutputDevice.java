@@ -279,8 +279,6 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
 	@Override
 	public void drawLinearGradient(FSLinearGradient gradient, int x, int y, int width, int height) 
 	{
-		LinearGradient lg = _currentPage.getPdf().addLinearGradient(gradient, _dotsPerPoint, x, y, width, height);
-        
         Rectangle2D.Float rect = new Rectangle2D.Float(x, y, width, height);
         Shape s = _transform.createTransformedShape(rect);
         Rectangle2D rect2 = s.getBounds2D();
@@ -288,17 +286,10 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
         float y1 = (float) (_pageHeight - rect2.getMinY());
         float y2 = (float) (_pageHeight - rect2.getMaxY());
         float y3 = Math.min(y1,  y2);
-        
-        final AffineTransform at = AffineTransform.getTranslateInstance(x, y);
-        at.translate(0, height);
-        at.scale(width, height);
 
-        final AffineTransform inverse = normalizeMatrix(_transform);
-        final AffineTransform flipper = AffineTransform.getScaleInstance(1, -1);
-        inverse.concatenate(at);
-        inverse.concatenate(flipper);
-        
-       _currentPage.drawLinearGradient(lg, (float) rect2.getX(), (float) y3, (float) rect2.getWidth(), (float) rect2.getHeight(), inverse);
+		LinearGradient lg = _currentPage.getPdf().addLinearGradient(gradient, _dotsPerPoint, (float) rect2.getMinX(), y3, (float) rect2.getWidth(), (float) rect2.getHeight());
+     
+        _currentPage.drawLinearGradient(lg);
 	}
 
 	@Override

@@ -1203,8 +1203,7 @@ public class Page {
 	}
 
 
-	public void drawLinearGradient(LinearGradient ln,
-			float x, float y, float width, float height, AffineTransform transform) 
+	public void drawLinearGradient(LinearGradient ln) 
 	{
 			append("q\n");
 			
@@ -1217,13 +1216,13 @@ public class Page {
 			append("/Pattern cs\n");
 			append("/" + ln.name + " scn\n"); // Choose our pattern.
 
-			append(x);
+			append(ln.x);
 			append(' ');
-			append(y);
+			append(ln.y);
 			append(' ');
-			append(width);
+			append(ln.w);
 			append(' ');
-			append(height);
+			append(ln.h);
 
 			append(" re\nf\n");
 			append("Q\n");

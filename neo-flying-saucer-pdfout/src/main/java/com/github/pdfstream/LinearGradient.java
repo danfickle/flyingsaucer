@@ -60,13 +60,13 @@ public class LinearGradient
     	pdf.append("/ColorSpace /DeviceRGB\n");
     		
     	pdf.append("/Coords [");
-    	pdf.append((gradient.getStartX() + x)  / dotsPerPoint);
+    	pdf.append((gradient.getStartX() + x * dotsPerPoint)  / dotsPerPoint);
     	pdf.append(' ');
-    	pdf.append((gradient.getEndY() + y) / dotsPerPoint);
+    	pdf.append((gradient.getEndY() + y * dotsPerPoint) / dotsPerPoint);
     	pdf.append(' ');
-    	pdf.append((gradient.getEndX() + x) / dotsPerPoint);
+    	pdf.append((gradient.getEndX() + x * dotsPerPoint) / dotsPerPoint);
     	pdf.append(' ');
-    	pdf.append((gradient.getStartY() + y) / dotsPerPoint);
+    	pdf.append((gradient.getStartY() + y * dotsPerPoint) / dotsPerPoint);
     	pdf.append("]\n");
 
     	// The stitcher function immediately follows this object.
@@ -83,13 +83,13 @@ public class LinearGradient
     	pdf.newobj();
     	pdf.append("<<\n");
     	pdf.append("/BBox [");
-    	pdf.append(x);
+    	pdf.append(0);
     	pdf.append(' ');
-    	pdf.append(y);
+    	pdf.append(0);
     	pdf.append(' ');
-    	pdf.append(x + w);
+    	pdf.append((x + w));
     	pdf.append(' ');
-    	pdf.append(y + h);
+    	pdf.append((y + h));
     	pdf.append("]\n");
     	pdf.append("/FormType 1\n");
     	pdf.append("/Group <<\n");
@@ -107,7 +107,6 @@ public class LinearGradient
     	pdf.append("/ColorSpace /DeviceGray\n");
     	pdf.append("/Extend [true true]\n");
     	pdf.append("/ShadingType 2\n");
-
 
     	// The stitcher function for smask immediately follows these objects.
     	pdf.append("/Function " + (pdf.objNumber + 3));
@@ -225,12 +224,14 @@ public class LinearGradient
 				pdf.append(((FSRGBColor) nxt.getColor()).getAlpha());
 				pdf.append("]\n");
 			}
+			else
+			{
+				// TODO
+				
+			}
 			
 			pdf.append(">>\n");
 			pdf.endobj();
-			
-			
-			
 		}
     }
     
