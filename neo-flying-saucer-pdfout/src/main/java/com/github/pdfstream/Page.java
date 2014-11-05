@@ -29,6 +29,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.github.pdfstream;
 
+import java.awt.geom.AffineTransform;
 import java.io.*;
 import java.util.*;
 
@@ -1202,22 +1203,30 @@ public class Page {
 	}
 
 
-	public void drawLinearGradient(String lnName, float x, float y, float width, float height) 
+	public void drawLinearGradient(LinearGradient ln,
+			float x, float y, float width, float height, AffineTransform transform) 
 	{
-		append("q\n");
+			append("q\n");
+			
+			if (ln.isSpecial)
+			{
+				append("/" + ln.gname);
+				append(" gs\n");
+			}
+			
+			append("/Pattern cs\n");
+			append("/" + ln.name + " scn\n"); // Choose our pattern.
 
-		append("/Pattern cs\n");
-		append("/" + lnName + " scn\n"); // Choose our pattern.
+			append(x);
+			append(' ');
+			append(y);
+			append(' ');
+			append(width);
+			append(' ');
+			append(height);
 
-		append(x);
-		append(' ');
-		append(y);
-		append(' ');
-		append(width);
-		append(' ');
-		append(height);
-		append(" re\nf\n");
-		
-		append("Q\n");
+			append(" re\nf\n");
+			append("Q\n");
+//		}
 	}
 }   // End of Page.java

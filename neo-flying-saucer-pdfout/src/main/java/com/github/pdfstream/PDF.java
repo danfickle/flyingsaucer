@@ -61,7 +61,8 @@ public class PDF
     protected Set<String> rfonts = new HashSet<String>();
     protected List<Integer> acroFields = new ArrayList<Integer>();
     protected List<Bookmark> bookmarks = new ArrayList<Bookmark>();
-   
+   	boolean hasAdditionalGStates = false;
+    
     protected Map<String, Destination> destinations = new HashMap<String, Destination>();
     protected List<OptionalContentGroup> groups = new ArrayList<OptionalContentGroup>();
 
@@ -160,7 +161,7 @@ public class PDF
 
     }
 
-    protected void newobj() {
+    void newobj() {
         objOffset.put(objNumber, byteCount);
         append(++objNumber);
         append(" 0 obj\n");
@@ -302,7 +303,7 @@ public class PDF
             append(">>\n");
         }
 
-        if (!gstates.isEmpty())
+        if (!gstates.isEmpty() || hasAdditionalGStates)
         {
         	append("/ExtGState\n");
         	append("<<\n");
@@ -318,6 +319,17 @@ public class PDF
         		append("\n/ca ");
         		append(PDF.df.format(gstate.getKey()));
         		append("\n>>\n");
+        	}
+        	
+        	for (LinearGradient lg : linearGradients)
+        	{
+        		if (lg.gstateObjNumber != 0)
+        		{
+        			append("/" + lg.gname);
+        			append(' ');
+        			append(lg.gstateObjNumber);
+        			append(" 0 R\n");
+        		}
         	}
         	
             append(">>\n");        	
@@ -360,7 +372,7 @@ public class PDF
         
        	for (int i = 0; i < linearGradients.size(); i++)
        	{
-       		append("/LGradient" + (i + 1) + ' ');
+       		append("/" + linearGradients.get(i).name);
        		append("\n<<\n");
       		append("/Type /Pattern\n");
        		append("/PatternType 2\n");
@@ -378,101 +390,13 @@ public class PDF
         return objNumber;
     }
 
-    protected void addShaders()
+    static enum PColorSpace
     {
-    	
-    	for (LinearGradient lg : linearGradients)
-    	{
-    		float lastStopPosition = lg.gradient.getStopPoints().get(lg.gradient.getStopPoints().size() - 1).getLength();
-
-    		newobj();
-   			lg.shadingObjNumber = objNumber;
-
-    		append("<<\n");
-    		append("/ShadingType 2\n");
-    		append("/Extend [true true]\n");
-    		append("/ColorSpace /DeviceRGB\n");
-    		
-    		append("/Coords [");
-    		append((lg.gradient.getStartX() + lg.x)  / lg.dotsPerPoint);
-    		append(' ');
-    		append((lg.gradient.getEndY() + lg.y) / lg.dotsPerPoint);
-    		append(' ');
-    		append((lg.gradient.getEndX() + lg.x) / lg.dotsPerPoint);
-    		append(' ');
-    		append((lg.gradient.getStartY() + lg.y) / lg.dotsPerPoint);
-    		append("]\n");
-
-    		append("/Function " + (objNumber + 1) + " 0 R\n");
-    		append(">>\n");
-    		endobj();
-
-    		newobj();
-    		int firstFunctionObj = this.objNumber + 1;
-    		append("<<\n");
-    		append("/FunctionType 3\n");
-    		append("/Domain [0 1]\n");
-    		
-    		append("/Bounds [");
-    		for (int i = 1; i < lg.gradient.getStopPoints().size() - 1;i++)
-    		{
-    			append(lg.gradient.getStopPoints().get(i).getLength() / lastStopPosition);
-    			append(' ');
-    		}
-    		append("]\n");
-
-    		append("/Encode [");
-    		for (int i = 0; i < lg.gradient.getStopPoints().size() - 1;i++)
-    		{
-    			append("0 1 ");
-    		}
-    		append("]\n");
-    		
-    		append("/Functions [\n");    		
-    		for (int i = 0; i < lg.gradient.getStopPoints().size() - 1; i++)
-    		{
-    			append(firstFunctionObj + i);
-    			append(" 0 R\n");
-    		}
-    		append("]\n");
-
-    		append(">>\n"); // End function dictionary.
-    		endobj();
-    		
-    		for (int i = 0; i < lg.gradient.getStopPoints().size() - 1; i++)
-    		{
-    			newobj();
-
-    			StopValue sv = lg.gradient.getStopPoints().get(i);
-    			StopValue nxt = lg.gradient.getStopPoints().get(i + 1);
-
-    			append("<<\n");
-    			append("/FunctionType 2\n");
-    			append("/Domain [0 1]\n");
-    			append("/N 1\n");
-
-    			append("/C0 [");
-    			append(((FSRGBColor) sv.getColor()).getRed() / 255f);
-    			append(' ');
-    			append(((FSRGBColor) sv.getColor()).getGreen() / 255f);
-    			append(' ');
-    			append(((FSRGBColor) sv.getColor()).getBlue() / 255f);
-    			append("]\n");
-    			
-    			append("/C1 [");
-    			append(((FSRGBColor) nxt.getColor()).getRed() / 255f);
-    			append(' ');
-    			append(((FSRGBColor) nxt.getColor()).getGreen() / 255f);
-    			append(' ');
-    			append(((FSRGBColor) nxt.getColor()).getBlue() / 255f);
-    			append("]\n");
-    			
-    			append(">>\n");
-    			endobj();
-    		}
-    	}
+    	RGB,
+    	GRAY,
+    	CMYK,
+    	OPACITY;
     }
-    
 
     protected int addPagesObject() throws Exception {
         newobj();
@@ -926,7 +850,12 @@ append(page.buf);
     private void flush(boolean close) throws Exception {
         if (pagesObjNumber == -1) {
             addPageContent(pages.get(pages.size() - 1));
-            addShaders();
+
+            for (LinearGradient lg : linearGradients)
+            {
+            	lg.addShader();
+            }
+
             resObjNumber = addResourcesObject();
             pagesObjNumber = addPagesObject();
             addAllPages(pagesObjNumber, resObjNumber);
@@ -1545,10 +1474,10 @@ append(page.buf);
 		// TODO Auto-generated method stub
 	}
 
-	public String addLinearGradient(FSLinearGradient gradient, float dotsPerPoint, float x, float y) 
+	public LinearGradient addLinearGradient(FSLinearGradient gradient, float dotsPerPoint, float x, float y, float w, float h) 
 	{
-		linearGradients.add(new LinearGradient(gradient,  dotsPerPoint, x, y));
-		return "LGradient" + linearGradients.size();
+		LinearGradient lg = new LinearGradient(this, gradient,  dotsPerPoint, x, y, w, h, linearGradients.size());
+		linearGradients.add(lg);
+		return lg;
 	}
-	
 }   // End of PDF.java

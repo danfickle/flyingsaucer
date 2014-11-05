@@ -58,6 +58,7 @@ import com.github.pdfstream.Annotation;
 import com.github.pdfstream.Bookmark;
 import com.github.pdfstream.Destination;
 import com.github.pdfstream.JPGImage;
+import com.github.pdfstream.LinearGradient;
 import com.github.pdfstream.PDF;
 import com.github.pdfstream.PNGImage;
 import com.github.pdfstream.Page;
@@ -278,7 +279,7 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
 	@Override
 	public void drawLinearGradient(FSLinearGradient gradient, int x, int y, int width, int height) 
 	{
-		String lnName = _currentPage.getPdf().addLinearGradient(gradient, _dotsPerPoint, x, y);
+		LinearGradient lg = _currentPage.getPdf().addLinearGradient(gradient, _dotsPerPoint, x, y, width, height);
         
         Rectangle2D.Float rect = new Rectangle2D.Float(x, y, width, height);
         Shape s = _transform.createTransformedShape(rect);
@@ -288,7 +289,16 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
         float y2 = (float) (_pageHeight - rect2.getMaxY());
         float y3 = Math.min(y1,  y2);
         
-       _currentPage.drawLinearGradient(lnName, (float) rect2.getX(), (float) y3, (float) rect2.getWidth(), (float) rect2.getHeight());
+        final AffineTransform at = AffineTransform.getTranslateInstance(x, y);
+        at.translate(0, height);
+        at.scale(width, height);
+
+        final AffineTransform inverse = normalizeMatrix(_transform);
+        final AffineTransform flipper = AffineTransform.getScaleInstance(1, -1);
+        inverse.concatenate(at);
+        inverse.concatenate(flipper);
+        
+       _currentPage.drawLinearGradient(lg, (float) rect2.getX(), (float) y3, (float) rect2.getWidth(), (float) rect2.getHeight(), inverse);
 	}
 
 	@Override
