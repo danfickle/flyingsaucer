@@ -12,7 +12,6 @@ TODO
 ----
 + Replace iText with a new PDF library (partially implemented).
 + Support the WOFF font format for embedded fonts.
-+ Support MS Word output (maybe).
 + Make cancelable/interrupted support.
 + Make case insensitive and locale insensitive.
 + Gradients.
@@ -33,9 +32,9 @@ DONE
 + Use a better text-breaker (Java's BreakIterator) to handle more languages.
 + CSS3 Support
   + border-radius (J2D, PDF)
-  + linear-gradient (J2D)
-  + opacity (J2D)
-  + rgba (J2D)
+  + linear-gradient (J2D, PDF)
+  + opacity (J2D, PDF)
+  + rgba (J2D, PDF)
 + Use external libraries for non-core functionality such as commons codec for base64 and Scalr for image scaling.
 + Move to Java 1.6 including use of generic types, enums, etc.
 + Remove SWT, itext5 and docbook support.
@@ -65,12 +64,19 @@ way and for any purpose you want as long as you respect the terms of the
 license. A copy of the LGPL license is included as license-lgpl-2.1.txt
 in our distributions and in our source tree.
 
+PDF TUTORIALS
+-------------
+As a way of getting my head around the PDF format internal details, I have started to write tutorials about the inner workings
+of the PDF format. They **may** be useful to those working with the PDF format.
++ [Linear Gradients in PDFs](pdf-internals-tutorials/linear-gradients.md)
+
+
 RELATED PROJECTS
 ----------------
++ [PHP - mpdf](http://mpdf.bpm1.com/)
 + [PHP - dompdf](https://github.com/dompdf/dompdf)
 + [Python - WeasyPrint](https://github.com/Kozea/WeasyPrint)
 + [C++ - wkHtmlToPdf](https://github.com/wkhtmltopdf/wkhtmltopdf)
 + [Java - CSSBox](http://cssbox.sourceforge.net/)
 + [Python - xhtml2pdf](https://github.com/chrisglass/xhtml2pdf)
-
 
