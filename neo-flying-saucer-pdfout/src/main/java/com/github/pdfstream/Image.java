@@ -215,66 +215,6 @@ public class Image implements Drawable {
 
 
     /**
-     *  Draws this image on the specified page.
-     *
-     *  @param page the page to draw this image on.
-     */
-    public void drawOn(Page page) throws Exception {
-        x += box_x;
-        y += box_y;
-        page.append("q\n");
-
-        if (rotate90) {
-            page.append(h);
-            page.append(' ');
-            page.append(0f);
-            page.append(' ');
-            page.append(0f);
-            page.append(' ');
-            page.append(w);
-            page.append(' ');
-            page.append(x);
-            page.append(' ');
-            page.append(page.height - y);
-            page.append(" cm\n");
-
-            // Rotate the image 2x45 degrees clockwise. The magic number is Math.sqrt(0.5):
-            page.append("0.7071067811 -0.7071067811 0.7071067811 0.7071067811 0.0 0.0 cm\n");
-            page.append("0.7071067811 -0.7071067811 0.7071067811 0.7071067811 0.0 0.0 cm\n");
-        }
-        else {
-            page.append(w);
-            page.append(' ');
-            page.append(0f);
-            page.append(' ');
-            page.append(0f);
-            page.append(' ');
-            page.append(h);
-            page.append(' ');
-            page.append(x);
-            page.append(' ');
-            page.append(page.height - (y + h));
-            page.append(" cm\n");
-        }
-
-        page.append("/Im");
-        page.append(objNumber);
-        page.append(" Do\n");
-        page.append("Q\n");
-        
-        if (uri != null || key != null) {
-            page.annots.add(new Annotation(
-                    uri,
-                    key,    // The destination name
-                    x,
-                    page.height - y,
-                    x + w,
-                    page.height - (y + h)));
-        }
-    }
-
-
-    /**
      *  Returns the width of this image when drawn on the page.
      *  The scaling is take into account.
      *
@@ -434,5 +374,12 @@ public class Image implements Drawable {
         pdf.images.add(this);
         objNumber = pdf.objNumber;
     }
+
+
+	@Override
+	public void drawOn(Page page) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
     
 }   // End of Image.java

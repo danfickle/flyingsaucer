@@ -34,9 +34,7 @@ import java.text.*;
 import java.util.*;
 import java.util.zip.*;
 
-import org.xhtmlrenderer.css.parser.FSRGBColor;
 import org.xhtmlrenderer.css.style.derived.FSLinearGradient;
-import org.xhtmlrenderer.css.style.derived.FSLinearGradient.StopValue;
 
 
 /**
@@ -568,14 +566,21 @@ public class PDF
     }
 
 
-    private void addPageContent(Page page) throws Exception {
+    private void addPageContent(Page page)
+    {
         ByteArrayOutputStream baos =
                 new ByteArrayOutputStream();
         DeflaterOutputStream dos =
                 new DeflaterOutputStream(baos, new Deflater());
-        byte[] buf = page.buf.toByteArray();
-        dos.write(buf, 0, buf.length);
-        dos.finish();
+        byte[] buf = page.getContentStream().getContent();
+
+        try {
+			dos.write(buf, 0, buf.length);
+	        dos.finish();
+        } catch (IOException e) {
+			throw new PdfException(e);
+		}
+
         //page.buf = null;    // Release the page content memory!
 
         newobj();
@@ -588,7 +593,7 @@ append(buf.length);
         append(">>\n");
         append("stream\n");
         //append(baos);
-append(page.buf);
+append(page.getContentStream().buf);
         append("\nendstream\n");
         endobj();
         page.contents.add(objNumber);
@@ -821,7 +826,8 @@ append(page.buf);
     }
 
 
-    public void addPage(Page page) throws Exception {
+    public void addPage(Page page) 
+    {
         int n = pages.size();
         if (n > 0) {
             addPageContent(pages.get(n - 1));

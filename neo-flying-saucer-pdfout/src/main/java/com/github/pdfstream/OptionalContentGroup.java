@@ -70,27 +70,27 @@ public class OptionalContentGroup {
         this.exportable = exportable;
     }
 
-    public void drawOn(Page p) throws Exception {
-        if (!components.isEmpty()) {
-            p.pdf.groups.add(this);
-            ocgNumber = p.pdf.groups.size();
-
-            p.pdf.newobj();
-            p.pdf.append("<<\n");
-            p.pdf.append("/Type /OCG\n");
-            p.pdf.append("/Name (" + name + ")\n");
-            p.pdf.append(">>\n");
-            p.pdf.endobj();
-
-            objNumber = p.pdf.objNumber;
-
-            p.append("/OC /OC");
-            p.append(ocgNumber);
-            p.append(" BDC\n");
-            for (Drawable component : components) {
-                component.drawOn(p);
-            }
-            p.append("\nEMC\n");
-        }
-    }
+//    public void drawOn(Page p) throws Exception {
+//        if (!components.isEmpty()) {
+//            p.pdf.groups.add(this);
+//            ocgNumber = p.pdf.groups.size();
+//
+//            p.pdf.newobj();
+//            p.pdf.append("<<\n");
+//            p.pdf.append("/Type /OCG\n");
+//            p.pdf.append("/Name (" + name + ")\n");
+//            p.pdf.append(">>\n");
+//            p.pdf.endobj();
+//
+//            objNumber = p.pdf.objNumber;
+//
+//            p.append("/OC /OC");
+//            p.append(ocgNumber);
+//            p.append(" BDC\n");
+//            for (Drawable component : components) {
+//                component.drawOn(p);
+//            }
+//            p.append("\nEMC\n");
+//        }
+//    }
 }   // End of OptionalContentGroup.java

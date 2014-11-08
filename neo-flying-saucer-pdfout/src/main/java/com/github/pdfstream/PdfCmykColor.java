@@ -17,7 +17,7 @@ public class PdfCmykColor  implements PdfColor
 	}
 	
 	@Override
-	public void setStrokeColorOnPage(Page pg) 
+	public void setStrokeColorOnPage(ContentStream pg) 
 	{
 		pg.append(PDF.df.format(this.c));
 		pg.append(' ');
@@ -30,7 +30,7 @@ public class PdfCmykColor  implements PdfColor
 	}
 
 	@Override
-	public void setNonStrokeColorOnPage(Page pg) 
+	public void setNonStrokeColorOnPage(ContentStream pg) 
 	{
 		pg.append(PDF.df.format(this.c));
 		pg.append(' ');
@@ -43,7 +43,7 @@ public class PdfCmykColor  implements PdfColor
 	}
 
 	@Override
-	public void setAlphaColorOnPage(Page pg) 
+	public void setAlphaColorOnPage(ContentStream pg) 
 	{
 		String extg = pg.pdf.getExtGStateForAlpha(this.a);
 		
