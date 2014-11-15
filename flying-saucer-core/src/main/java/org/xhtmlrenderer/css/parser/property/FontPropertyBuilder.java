@@ -74,17 +74,17 @@ public class FontPropertyBuilder implements PropertyBuilder {
                 if (ident == IdentValue.NORMAL) { // skip to avoid double set false positives
                     continue;
                 }
-                if (PrimitivePropertyBuilders.FONT_STYLES.contains(ident)) {
+                if (IdentSet.FONT_STYLES.contains(ident)) {
                     if (fontStyle != null) {
                         throw new CSSParseException(LangId.NO_TWICE, -1, "font-style");
                     }
                     fontStyle = new PropertyDeclaration(CSSName.FONT_STYLE, value, important, origin);
-                } else if (PrimitivePropertyBuilders.FONT_VARIANTS.contains(ident)) {
+                } else if (IdentSet.FONT_VARIANTS.contains(ident)) {
                     if (fontVariant != null) {
                         throw new CSSParseException(LangId.NO_TWICE, -1, "font-variant");
                     }
                     fontVariant = new PropertyDeclaration(CSSName.FONT_VARIANT, value, important, origin);
-                } else if (PrimitivePropertyBuilders.FONT_WEIGHTS.contains(ident)) {
+                } else if (IdentSet.FONT_WEIGHTS.contains(ident)) {
                     if (fontWeight != null) {
                         throw new CSSParseException(LangId.NO_TWICE, -1, "font-weight");
                     }

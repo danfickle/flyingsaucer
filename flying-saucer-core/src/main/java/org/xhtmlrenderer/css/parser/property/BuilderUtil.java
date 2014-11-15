@@ -1,6 +1,7 @@
 package org.xhtmlrenderer.css.parser.property;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -43,7 +44,8 @@ public class BuilderUtil {
 		StringType,
 		ColorType,
 		AngleType,
-		ResolutionType;
+		ResolutionType,
+		IntegerType;
 	}
 	
 	public static void cssThrowError(final LangId key, final Object... args) 
@@ -73,6 +75,11 @@ public class BuilderUtil {
 			   typesAllowed.contains(GenericType.LengthType))
 			)
 			cssThrowError(LangId.UNSUPPORTED_TYPE, val.getPrimitiveTypeN(), cssName);
+	}
+	
+	public static List<PropertyDeclaration> sList(CSSName cssName, PropertyValue value, boolean important, CSSOrigin origin)
+	{
+		return Collections.singletonList(new PropertyDeclaration(cssName, value, important, origin));
 	}
 	
 	private static boolean checkType(CSSPrimitiveUnit primitive, EnumSet<GenericType> typesAllowed)
@@ -190,7 +197,10 @@ public class BuilderUtil {
 			if (!checkType(primitive, typesAllowed) &&
 				 !(primitive == CSSPrimitiveUnit.CSS_NUMBER && 
 				   value.getFloatValue() == 0f && 
-				   typesAllowed.contains(GenericType.LengthType))
+				   typesAllowed.contains(GenericType.LengthType)) &&
+				 !(primitive == CSSPrimitiveUnit.CSS_NUMBER && 
+				   value.getFloatValue() % 1f == 0f && 
+				   typesAllowed.contains(GenericType.IntegerType))
 				)
 				cssThrowError(LangId.UNSUPPORTED_TYPE, value.getPrimitiveTypeN(), cssName);
 		}

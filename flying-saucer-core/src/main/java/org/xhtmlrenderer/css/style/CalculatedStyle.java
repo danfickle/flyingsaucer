@@ -24,6 +24,7 @@ import java.awt.Cursor;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.constants.CSSName;
@@ -33,7 +34,7 @@ import org.xhtmlrenderer.css.parser.FSColor;
 import org.xhtmlrenderer.css.parser.FSFunction;
 import org.xhtmlrenderer.css.parser.FSRGBColor;
 import org.xhtmlrenderer.css.parser.PropertyValue;
-import org.xhtmlrenderer.css.parser.property.PrimitivePropertyBuilders;
+import org.xhtmlrenderer.css.parser.property.IdentSet;
 import org.xhtmlrenderer.css.sheet.PropertyDeclaration;
 import org.xhtmlrenderer.css.style.derived.BorderPropertySet;
 import org.xhtmlrenderer.css.style.derived.DerivedValueFactory;
@@ -436,7 +437,7 @@ public class CalculatedStyle {
             return null;
         }
         final IdentValue fontSizeIdent = (IdentValue) fontSize;
-        if (PrimitivePropertyBuilders.ABSOLUTE_FONT_SIZES.contains(fontSizeIdent)) {
+        if (IdentSet.ABSOLUTE_FONT_SIZES.contains(fontSizeIdent)) {
             return fontSizeIdent;
         }
 

@@ -130,7 +130,7 @@ public class BorderPropertyBuilders {
                 return false;
             }
             
-            return PrimitivePropertyBuilders.BORDER_STYLES.contains(ident);
+            return IdentSet.BORDER_STYLES.contains(ident);
         }
         
         private PropertyValue convertToBorderWidth(final PropertyValue value) {
@@ -147,7 +147,7 @@ public class BorderPropertyBuilders {
                     return null;
                 }
                 
-                if (PrimitivePropertyBuilders.BORDER_WIDTHS.contains(ident)) {
+                if (IdentSet.BORDER_WIDTHS.contains(ident)) {
                     return Conversions.getBorderWidth(ident.toString());
                 } else {
                     return null;

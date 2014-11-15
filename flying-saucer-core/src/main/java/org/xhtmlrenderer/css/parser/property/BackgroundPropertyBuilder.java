@@ -51,7 +51,7 @@ public class BackgroundPropertyBuilder implements PropertyBuilder {
         } else {
             final IdentValue ident = IdentValue.fsValueOf(value.getStringValue());
             return ident != null && 
-                PrimitivePropertyBuilders.BACKGROUND_POSITIONS.contains(ident);
+                IdentSet.BACKGROUND_POSITIONS.contains(ident);
         }
     }
 
@@ -90,7 +90,7 @@ public class BackgroundPropertyBuilder implements PropertyBuilder {
                 
                 final IdentValue ident = checkIdent(CSSName.BACKGROUND_SHORTHAND, value);
                 
-                if (PrimitivePropertyBuilders.BACKGROUND_REPEATS.contains(ident)) {
+                if (IdentSet.BACKGROUND_REPEATS.contains(ident)) {
                     if (backgroundRepeat != null) {
                         throw new CSSParseException(LangId.NO_TWICE, -1, "background-repeat");
                     }
@@ -99,7 +99,7 @@ public class BackgroundPropertyBuilder implements PropertyBuilder {
                             CSSName.BACKGROUND_REPEAT, value, important, origin);
                 }
                 
-                if (PrimitivePropertyBuilders.BACKGROUND_ATTACHMENTS.contains(ident)) {
+                if (IdentSet.BACKGROUND_ATTACHMENTS.contains(ident)) {
                     if (backgroundAttachment != null) {
                         throw new CSSParseException(LangId.NO_TWICE, -1, "background-attachment");
                     }
@@ -126,7 +126,7 @@ public class BackgroundPropertyBuilder implements PropertyBuilder {
                             CSSName.BACKGROUND_IMAGE, value, important, origin);
                 }
                 
-                if (PrimitivePropertyBuilders.BACKGROUND_POSITIONS.contains(ident)) {
+                if (IdentSet.BACKGROUND_POSITIONS.contains(ident)) {
                     processingBackgroundPosition = true;
                 }
             } else if (type == CSSPrimitiveUnit.CSS_RGBCOLOR) {

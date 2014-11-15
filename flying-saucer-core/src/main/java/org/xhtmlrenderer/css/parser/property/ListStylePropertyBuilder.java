@@ -63,14 +63,14 @@ public class ListStylePropertyBuilder implements PropertyBuilder {
                         listStyleImage = new PropertyDeclaration(
                                 CSSName.LIST_STYLE_IMAGE, value, important, origin);
                     }
-                } else if (PrimitivePropertyBuilders.LIST_STYLE_POSITIONS.contains(ident)) {
+                } else if (IdentSet.LIST_STYLE_POSITIONS.contains(ident)) {
                     if (listStylePosition != null) {
                         throw new CSSParseException(LangId.NO_TWICE, -1, "list-style-position");
                     }
                     
                     listStylePosition = new PropertyDeclaration(
                             CSSName.LIST_STYLE_POSITION, value, important, origin);
-                } else if (PrimitivePropertyBuilders.LIST_STYLE_TYPES.contains(ident)) {
+                } else if (IdentSet.LIST_STYLE_TYPES.contains(ident)) {
                     if (listStyleType != null) {
                         throw new CSSParseException(LangId.NO_TWICE, -1, "list-style-type");
                     }

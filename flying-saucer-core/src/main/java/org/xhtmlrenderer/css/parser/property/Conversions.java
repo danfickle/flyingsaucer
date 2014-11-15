@@ -174,6 +174,8 @@ public class Conversions {
         COLORS.put("wheat",new FSRGBColor(0xF5DEB3));
         COLORS.put("whitesmoke",new FSRGBColor(0xF5F5F5));
         COLORS.put("yellowgreen",new FSRGBColor(0x9ACD32));
+
+        COLORS.put("transparent", new FSRGBColor(0, 0, 0, 0));
     }
     
     static {
