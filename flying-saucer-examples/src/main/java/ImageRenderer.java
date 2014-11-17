@@ -22,9 +22,10 @@
 import java.awt.image.BufferedImage;
 import java.io.*;
 
-import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.swing.Java2DRenderer;
 import org.xhtmlrenderer.util.FSImageWriter;
+
+import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 
 
 /**

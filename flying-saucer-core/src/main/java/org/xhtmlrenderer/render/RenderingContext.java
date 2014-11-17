@@ -23,10 +23,16 @@ import java.awt.Rectangle;
 
 import org.xhtmlrenderer.context.StyleReference;
 import org.xhtmlrenderer.css.style.CssContext;
-import org.xhtmlrenderer.css.value.FontSpecification;
 import org.xhtmlrenderer.extend.*;
 import org.xhtmlrenderer.layout.Layer;
 import org.xhtmlrenderer.layout.SharedContext;
+
+import com.github.neoflyingsaucer.extend.output.FSFont;
+import com.github.neoflyingsaucer.extend.output.FSFontMetrics;
+import com.github.neoflyingsaucer.extend.output.FontContext;
+import com.github.neoflyingsaucer.extend.output.FontResolver;
+import com.github.neoflyingsaucer.extend.output.FontSpecificationI;
+import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 
 /**
  * Supplies information about the context in which rendering will take place
@@ -84,11 +90,11 @@ public class RenderingContext implements CssContext {
         return sharedContext.getDotsPerPixel();
     }    
     
-    public float getFontSize2D(final FontSpecification font) {
+    public float getFontSize2D(final FontSpecificationI font) {
         return sharedContext.getFont(font).getSize2D();
     }
 
-    public float getXHeight(final FontSpecification parentFont) {
+    public float getXHeight(final FontSpecificationI parentFont) {
         return sharedContext.getXHeight(getFontContext(), parentFont);
     }
 
@@ -113,7 +119,7 @@ public class RenderingContext implements CssContext {
         return sharedContext.getFontResolver();
     }
     
-    public FSFont getFont(final FontSpecification font) {
+    public FSFont getFont(final FontSpecificationI font) {
         return sharedContext.getFont(font);
     }
 

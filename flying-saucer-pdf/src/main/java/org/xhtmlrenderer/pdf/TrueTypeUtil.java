@@ -9,6 +9,7 @@ import java.util.Map;
 import org.xhtmlrenderer.css.constants.IdentValue;
 import org.xhtmlrenderer.pdf.ITextFontResolver.FontDescription;
 
+import com.github.neoflyingsaucer.extend.output.FontSpecificationI.FontStyle;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.RandomAccessFileOrArray;
@@ -18,18 +19,18 @@ import com.lowagie.text.pdf.RandomAccessFileOrArray;
  * <a href="http://sourceforge.net/projects/itext/">http://sourceforge.net/projects/itext/</a> for license information.
  */
 public class TrueTypeUtil {
-    private static IdentValue guessStyle(final BaseFont font) {
+    private static FontStyle guessStyle(final BaseFont font) {
         final String[][] names = font.getFullFontName();
         for (final String[] name : names) {
             final String lower = name[3].toLowerCase();
             if (lower.indexOf("italic") != -1) {
-                return IdentValue.ITALIC;
+                return FontStyle.ITALIC;
             } else if (lower.indexOf("oblique") != -1) {
-                return IdentValue.OBLIQUE;
+                return FontStyle.OBLIQUE;
             }
         }
 
-        return IdentValue.NORMAL;
+        return FontStyle.NORMAL;
     }
 
     public static String[] getFamilyNames(final BaseFont font) {

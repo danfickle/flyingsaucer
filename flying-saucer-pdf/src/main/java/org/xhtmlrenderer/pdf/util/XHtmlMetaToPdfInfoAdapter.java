@@ -32,8 +32,8 @@ import org.xhtmlrenderer.pdf.DefaultPDFCreationListener;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 import org.xhtmlrenderer.pdf.PDFCreationListener;
 import org.xhtmlrenderer.util.NodeHelper;
-import org.xhtmlrenderer.util.Optional;
 
+import com.github.neoflyingsaucer.extend.useragent.Optional;
 import com.lowagie.text.pdf.PdfName;
 import com.lowagie.text.pdf.PdfObject;
 import com.lowagie.text.pdf.PdfString;

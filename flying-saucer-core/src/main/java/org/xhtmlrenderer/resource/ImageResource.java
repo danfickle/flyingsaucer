@@ -19,14 +19,16 @@
  */
 package org.xhtmlrenderer.resource;
 
-import org.xhtmlrenderer.extend.FSImage;
 import org.xhtmlrenderer.swing.AWTFSImage;
+
+import com.github.neoflyingsaucer.extend.output.FSImage;
+import com.github.neoflyingsaucer.extend.useragent.ImageResourceI;
 
 /**
  * Use this class to return an ImageResource from the user agent.
  * 
  */
-public class ImageResource {
+public class ImageResource implements ImageResourceI {
     private final String _imageUri;
     private final FSImage _img;
 
@@ -35,15 +37,27 @@ public class ImageResource {
         _img = img;
     }
 
-    public FSImage getImage() {
+    /* (non-Javadoc)
+	 * @see com.github.neoflyingsaucer.extend.ImageResourceI#getImage()
+	 */
+    @Override
+	public FSImage getImage() {
         return _img;
     }
 
-    public String getImageUri() {
+    /* (non-Javadoc)
+	 * @see com.github.neoflyingsaucer.extend.ImageResourceI#getImageUri()
+	 */
+    @Override
+	public String getImageUri() {
         return _imageUri;
     }
 
-    public boolean hasDimensions(final int width, final int height) 
+    /* (non-Javadoc)
+	 * @see com.github.neoflyingsaucer.extend.ImageResourceI#hasDimensions(int, int)
+	 */
+    @Override
+	public boolean hasDimensions(final int width, final int height) 
     {
 		if (_img instanceof AWTFSImage) {
 			final AWTFSImage awtfi = (AWTFSImage) _img;

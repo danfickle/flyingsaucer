@@ -21,7 +21,7 @@ package org.xhtmlrenderer.swing;
 
 import java.awt.Graphics2D;
 
-import org.xhtmlrenderer.extend.FontContext;
+import com.github.neoflyingsaucer.extend.output.FontContext;
 
 public class Java2DFontContext implements FontContext {
     private final Graphics2D _graphics;

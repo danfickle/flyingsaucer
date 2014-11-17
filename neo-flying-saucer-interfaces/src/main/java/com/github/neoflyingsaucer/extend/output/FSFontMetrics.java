@@ -1,6 +1,5 @@
 /*
  * {{{ header & license
- * Copyright (c) 2004, 2005 Joshua Marinacci
  * Copyright (c) 2006 Wisconsin Court System
  *
  * This program is free software; you can redistribute it and/or
@@ -10,7 +9,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
@@ -18,13 +17,24 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * }}}
  */
-package org.xhtmlrenderer.extend;
+package com.github.neoflyingsaucer.extend.output;
 
-import org.xhtmlrenderer.css.value.FontSpecification;
-import org.xhtmlrenderer.layout.SharedContext;
-import org.xhtmlrenderer.render.FSFont;
-
-public interface FontResolver {
-    public FSFont resolveFont(SharedContext renderingContext, FontSpecification spec);
-    public void flushCache();
+public interface FSFontMetrics {
+    public float getAscent();
+    
+    /**
+     * In keeping with the JDK {@link java.awt.font.LineMetrics} convention, this number is
+     * positive for values below the baseline.
+     */
+    public float getDescent();
+    public float getStrikethroughOffset();
+    public float getStrikethroughThickness();
+    
+    /**
+     * In keeping with the JDK {@link java.awt.font.LineMetrics} convention, this number is
+     * positive for values below the baseline.
+     */
+    public float getUnderlineOffset();
+    
+    public float getUnderlineThickness();
 }

@@ -22,11 +22,12 @@ package org.xhtmlrenderer.pdf;
 import java.awt.Point;
 import java.awt.Rectangle;
 
-import org.xhtmlrenderer.extend.FSImage;
-import org.xhtmlrenderer.extend.ReplacedElement;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.render.RenderingContext;
+
+import com.github.neoflyingsaucer.extend.output.FSImage;
+import com.github.neoflyingsaucer.extend.output.ReplacedElement;
 
 public class ITextImageElement implements ITextReplacedElement {
     private final FSImage _image;
@@ -57,7 +58,7 @@ public class ITextImageElement implements ITextReplacedElement {
         return _image;
     }
     
-    public void detach(final LayoutContext c) {
+    public void detach() {
     }
     
     public boolean isRequiresInteractivePaint() {

@@ -3,11 +3,13 @@ package org.xhtmlrenderer.resource;
 import java.io.IOException;
 import java.io.Reader;
 
+import com.github.neoflyingsaucer.extend.useragent.CSSResourceI;
+
 /**
  * Use this container to return a CSSResource from the user-agent
  * consisting of a uri and a reader with the CSS contents.
  */
-public class CSSResource
+public class CSSResource implements CSSResourceI
 {
 	private final String _uri;
 	private final Reader _reader;
@@ -22,25 +24,27 @@ public class CSSResource
 		_reader = reader;
 	}
 	
-	/**
-	 * Internal use only.
+	/* (non-Javadoc)
+	 * @see com.github.neoflyingsaucer.extend.CSSResourceI#getUri()
 	 */
+	@Override
 	public String getUri()
 	{
 		return _uri;
 	}
 
-	/**
-	 * Internal use only.
+	/* (non-Javadoc)
+	 * @see com.github.neoflyingsaucer.extend.CSSResourceI#getReader()
 	 */
+	@Override
 	public Reader getReader()
 	{
 		return _reader;
 	}
 	
-	/**
-	 * If needed, you can subclass this container and put code in onClose
-	 * to close any underlying streams.
+	/* (non-Javadoc)
+	 * @see com.github.neoflyingsaucer.extend.CSSResourceI#onClose()
 	 */
+	@Override
 	public void onClose() throws IOException { }
 }

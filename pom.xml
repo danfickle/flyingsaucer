@@ -29,6 +29,9 @@
     <module>flying-saucer-default-user-agent</module>
     <module>neo-flying-saucer-jsoup-to-dom</module>
     <module>neo-flying-saucer-pdfout</module>
+    <module>neo-flying-saucer-display-list</module>
+    <module>neo-flying-saucer-java2d-out</module>
+    <module>neo-flying-saucer-interfaces</module>
   </modules>
 
 

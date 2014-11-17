@@ -18,6 +18,11 @@
 	<description>Flying Saucer is a CSS 2.1 renderer written in Java.  This artifact is a default user agent implementation.</description>
 
 	<dependencies>
+    <dependency>
+      <groupId>org.xhtmlrenderer</groupId>
+      <artifactId>neo-flying-saucer-interfaces</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 		<dependency>
 			<groupId>org.xhtmlrenderer</groupId>
 			<artifactId>flying-saucer-core</artifactId>

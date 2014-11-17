@@ -116,7 +116,7 @@ public abstract class AbstractFormField implements ITextReplacedElement {
         return Util.isNullOrEmpty(e.getAttribute("selected"));
     }
 
-    public void detach(final LayoutContext c) {
+    public void detach() {
     }
 
     public int getIntrinsicHeight() {

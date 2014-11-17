@@ -18,6 +18,16 @@
 	<name>Flying Saucer Core Renderer</name>
 
 	<dependencies>
+    <dependency>
+      <groupId>org.xhtmlrenderer</groupId>
+      <artifactId>neo-flying-saucer-display-list</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xhtmlrenderer</groupId>
+      <artifactId>neo-flying-saucer-interfaces</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>

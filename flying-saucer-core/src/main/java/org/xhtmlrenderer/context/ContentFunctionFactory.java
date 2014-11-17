@@ -37,7 +37,8 @@ import org.xhtmlrenderer.render.InlineText;
 import org.xhtmlrenderer.render.InlineLayoutBox;
 import org.xhtmlrenderer.render.LineBox;
 import org.xhtmlrenderer.render.RenderingContext;
-import org.xhtmlrenderer.util.Optional;
+
+import com.github.neoflyingsaucer.extend.useragent.Optional;
 
 import static org.xhtmlrenderer.util.GeneralUtil.ciEquals;
 

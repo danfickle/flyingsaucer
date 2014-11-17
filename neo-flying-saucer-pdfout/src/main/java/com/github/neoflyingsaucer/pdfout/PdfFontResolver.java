@@ -7,11 +7,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.xhtmlrenderer.css.constants.IdentValue;
-import org.xhtmlrenderer.css.value.FontSpecification;
-import org.xhtmlrenderer.extend.FontResolver;
-import org.xhtmlrenderer.layout.SharedContext;
-import org.xhtmlrenderer.render.FSFont;
+import com.github.neoflyingsaucer.extend.output.FSFont;
+import com.github.neoflyingsaucer.extend.output.FontResolver;
+import com.github.neoflyingsaucer.extend.output.FontSpecificationI;
+import com.github.neoflyingsaucer.extend.output.FontSpecificationI.FontStyle;
+import com.github.neoflyingsaucer.extend.output.FontSpecificationI.FontVariant;
 import com.github.pdfstream.CoreFont;
 import com.github.pdfstream.Font;
 
@@ -20,23 +20,23 @@ public class PdfFontResolver implements FontResolver
 	private Map<String, FontFamily> _fontFamilies = createInitialFontMap();
 	
 	@Override
-	public FSFont resolveFont(SharedContext renderingContext, FontSpecification spec) 
+	public FSFont resolveFont(FontSpecificationI spec) 
 	{
-		return resolveFont(renderingContext, spec.families, spec.size, spec.fontWeight, spec.fontStyle, spec.variant);
+		return resolveFont(spec.getFamilies(), spec.getSize(), spec.getFontWeight(), spec.getStyle(), spec.getVariant());
 	}
 	
-    private FSFont resolveFont(final SharedContext ctx, final String[] families, final float size, final IdentValue weight, IdentValue style, final IdentValue variant) 
+    private FSFont resolveFont(final String[] families, final float size, final int weight, FontStyle style, final FontVariant variant)
     {
-        final IdentValue styleN = 
-    	    (! (style == IdentValue.NORMAL || style == IdentValue.OBLIQUE
-             || style == IdentValue.ITALIC)) ? IdentValue.NORMAL : style;
+        final FontStyle styleN = 
+    	    (! (style == FontStyle.NORMAL || style == FontStyle.OBLIQUE
+             || style == FontStyle.ITALIC)) ? FontStyle.NORMAL : style;
         
         
         if (families != null) 
         {
         	for (String family : families)
         	{
-        		PdfFont font = (PdfFont) resolveFont(ctx, family, size, weight, styleN, variant);
+        		PdfFont font = (PdfFont) resolveFont(family, size, weight, styleN, variant);
         		
         		if (font != null)
         			return font;
@@ -44,18 +44,18 @@ public class PdfFontResolver implements FontResolver
         }
 
         // Default font.
-        return resolveFont(ctx, "Serif", size, weight, style, variant);
+        return resolveFont("Serif", size, weight, style, variant);
     }
 	
-	private FSFont resolveFont(SharedContext ctx, String fontFamily, float size,
-			IdentValue weight, IdentValue style, IdentValue variant)
+	private FSFont resolveFont(String fontFamily, float size,
+			int weight, FontStyle style, FontVariant variant)
 	{
         final String normalizedFontFamily = normalizeFontFamily(fontFamily);
 
         final FontFamily family = _fontFamilies.get(normalizedFontFamily);
 
         if (family != null) {
-            FontDescription result = family.match(convertWeightToInt(weight), style);
+            FontDescription result = family.match(weight, style);
             if (result != null) {
                 return new PdfFont(result, size);
             }
@@ -93,40 +93,6 @@ public class PdfFontResolver implements FontResolver
 	{
         _fontFamilies = createInitialFontMap();
 	}
-	
-    public static int convertWeightToInt(final IdentValue weight)
-    {
-        if (weight == IdentValue.NORMAL) {
-            return 400;
-        } else if (weight == IdentValue.BOLD) {
-            return 700;
-        } else if (weight == IdentValue.FONT_WEIGHT_100) {
-            return 100;
-        } else if (weight == IdentValue.FONT_WEIGHT_200) {
-            return 200;
-        } else if (weight == IdentValue.FONT_WEIGHT_300) {
-            return 300;
-        } else if (weight == IdentValue.FONT_WEIGHT_400) {
-            return 400;
-        } else if (weight == IdentValue.FONT_WEIGHT_500) {
-            return 500;
-        } else if (weight == IdentValue.FONT_WEIGHT_600) {
-            return 600;
-        } else if (weight == IdentValue.FONT_WEIGHT_700) {
-            return 700;
-        } else if (weight == IdentValue.FONT_WEIGHT_800) {
-            return 800;
-        } else if (weight == IdentValue.FONT_WEIGHT_900) {
-            return 900;
-        } else if (weight == IdentValue.LIGHTER) {
-            // FIXME
-            return 400;
-        } else if (weight == IdentValue.BOLDER) {
-            // FIXME
-            return 700;
-        }
-        throw new IllegalArgumentException();
-    }
 
     private static Map<String, FontFamily> createInitialFontMap() 
     {
@@ -147,13 +113,13 @@ public class PdfFontResolver implements FontResolver
         courier.setName("Courier");
 
         courier.addFontDescription(new FontDescription(
-                createFont(CoreFont.COURIER_BOLD_OBLIQUE), IdentValue.OBLIQUE, 700));
+                createFont(CoreFont.COURIER_BOLD_OBLIQUE), FontStyle.OBLIQUE, 700));
         courier.addFontDescription(new FontDescription(
-                createFont(CoreFont.COURIER_OBLIQUE), IdentValue.OBLIQUE, 400));
+                createFont(CoreFont.COURIER_OBLIQUE), FontStyle.OBLIQUE, 400));
         courier.addFontDescription(new FontDescription(
-                createFont(CoreFont.COURIER_BOLD), IdentValue.NORMAL, 700));
+                createFont(CoreFont.COURIER_BOLD), FontStyle.NORMAL, 700));
         courier.addFontDescription(new FontDescription(
-                createFont(CoreFont.COURIER), IdentValue.NORMAL, 400));
+                createFont(CoreFont.COURIER), FontStyle.NORMAL, 400));
 
         result.put("DialogInput", courier);
         result.put("Monospaced", courier);
@@ -171,13 +137,13 @@ public class PdfFontResolver implements FontResolver
         times.setName("Times");
 
         times.addFontDescription(new FontDescription(
-                createFont(CoreFont.TIMES_BOLD_ITALIC), IdentValue.ITALIC, 700));
+                createFont(CoreFont.TIMES_BOLD_ITALIC), FontStyle.ITALIC, 700));
         times.addFontDescription(new FontDescription(
-                createFont(CoreFont.TIMES_ITALIC), IdentValue.ITALIC, 400));
+                createFont(CoreFont.TIMES_ITALIC), FontStyle.ITALIC, 400));
         times.addFontDescription(new FontDescription(
-                createFont(CoreFont.TIMES_BOLD), IdentValue.NORMAL, 700));
+                createFont(CoreFont.TIMES_BOLD), FontStyle.NORMAL, 700));
         times.addFontDescription(new FontDescription(
-                createFont(CoreFont.TIMES_ROMAN), IdentValue.NORMAL, 400));
+                createFont(CoreFont.TIMES_ROMAN), FontStyle.NORMAL, 400));
 
         result.put("Serif", times);
         result.put("TimesRoman", times);
@@ -189,13 +155,13 @@ public class PdfFontResolver implements FontResolver
         helvetica.setName("Helvetica");
 
         helvetica.addFontDescription(new FontDescription(
-                createFont(CoreFont.HELVETICA_BOLD_OBLIQUE), IdentValue.OBLIQUE, 700));
+                createFont(CoreFont.HELVETICA_BOLD_OBLIQUE), FontStyle.OBLIQUE, 700));
         helvetica.addFontDescription(new FontDescription(
-                createFont(CoreFont.HELVETICA_OBLIQUE), IdentValue.OBLIQUE, 400));
+                createFont(CoreFont.HELVETICA_OBLIQUE), FontStyle.OBLIQUE, 400));
         helvetica.addFontDescription(new FontDescription(
-                createFont(CoreFont.HELVETICA_BOLD), IdentValue.NORMAL, 700));
+                createFont(CoreFont.HELVETICA_BOLD), FontStyle.NORMAL, 700));
         helvetica.addFontDescription(new FontDescription(
-                createFont(CoreFont.HELVETICA), IdentValue.NORMAL, 400));
+                createFont(CoreFont.HELVETICA), FontStyle.NORMAL, 400));
 
         result.put("Dialog", helvetica);
         result.put("SansSerif", helvetica);
@@ -225,7 +191,7 @@ public class PdfFontResolver implements FontResolver
     
     
     public static class FontDescription {
-        private IdentValue _style;
+        private FontStyle _style;
         private int _weight;
 
         private Font _font;
@@ -242,10 +208,10 @@ public class PdfFontResolver implements FontResolver
         }
 
         public FontDescription(final Font font) {
-            this(font, IdentValue.NORMAL, 400);
+            this(font, FontStyle.NORMAL, 400);
         }
 
-        public FontDescription(final Font font, final IdentValue style, final int weight) {
+        public FontDescription(final Font font, final FontStyle style, final int weight) {
             _font = font;
             _style = style;
             _weight = weight;
@@ -268,11 +234,11 @@ public class PdfFontResolver implements FontResolver
             _weight = weight;
         }
 
-        public IdentValue getStyle() {
+        public FontStyle getStyle() {
             return _style;
         }
 
-        public void setStyle(final IdentValue style) {
+        public void setStyle(final FontStyle style) {
             _style = style;
         }
 
@@ -371,7 +337,7 @@ public class PdfFontResolver implements FontResolver
             _name = name;
         }
 
-        public FontDescription match(final int desiredWeight, final IdentValue style) {
+        public FontDescription match(final int desiredWeight, final FontStyle style) {
             if (_fontDescriptions == null) {
                 throw new RuntimeException("fontDescriptions is null");
             }
@@ -385,10 +351,10 @@ public class PdfFontResolver implements FontResolver
             }
 
             if (candidates.size() == 0) {
-                if (style == IdentValue.ITALIC) {
-                    return match(desiredWeight, IdentValue.OBLIQUE);
-                } else if (style == IdentValue.OBLIQUE) {
-                    return match(desiredWeight, IdentValue.NORMAL);
+                if (style == FontStyle.ITALIC) {
+                    return match(desiredWeight, FontStyle.OBLIQUE);
+                } else if (style == FontStyle.OBLIQUE) {
+                    return match(desiredWeight, FontStyle.NORMAL);
                 } else {
                     candidates.addAll(_fontDescriptions);
                 }

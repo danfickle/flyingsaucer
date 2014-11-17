@@ -9,7 +9,6 @@ import java.awt.image.BufferedImage;
 
 import org.w3c.dom.Document;
 import org.xhtmlrenderer.css.style.CalculatedStyle;
-import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.layout.BoxBuilder;
 import org.xhtmlrenderer.layout.Layer;
 import org.xhtmlrenderer.layout.LayoutContext;
@@ -20,6 +19,8 @@ import org.xhtmlrenderer.render.PageBox;
 import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.render.ViewportBox;
 import org.xhtmlrenderer.simple.HtmlNamespaceHandler;
+
+import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 
 public class Java2DPageRenderer 
 {

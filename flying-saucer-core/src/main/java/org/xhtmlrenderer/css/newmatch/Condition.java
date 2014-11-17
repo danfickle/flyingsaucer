@@ -29,8 +29,9 @@ import org.w3c.dom.Element;
 import org.xhtmlrenderer.css.extend.AttributeResolver;
 import org.xhtmlrenderer.css.extend.TreeResolver;
 import org.xhtmlrenderer.css.parser.CSSParseException;
-import org.xhtmlrenderer.util.LangId;
-import org.xhtmlrenderer.util.Optional;
+
+import com.github.neoflyingsaucer.extend.useragent.LangId;
+import com.github.neoflyingsaucer.extend.useragent.Optional;
 
 
 /**

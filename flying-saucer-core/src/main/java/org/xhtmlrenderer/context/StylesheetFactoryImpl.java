@@ -31,11 +31,13 @@ import org.xhtmlrenderer.css.sheet.Ruleset;
 import org.xhtmlrenderer.css.sheet.Stylesheet;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
-import org.xhtmlrenderer.extend.FSErrorType;
-import org.xhtmlrenderer.extend.UserAgentCallback;
-import org.xhtmlrenderer.resource.CSSResource;
-import org.xhtmlrenderer.util.LangId;
-import org.xhtmlrenderer.util.Optional;
+
+import com.github.neoflyingsaucer.extend.useragent.CSSResourceI;
+import com.github.neoflyingsaucer.extend.useragent.FSErrorType;
+import com.github.neoflyingsaucer.extend.useragent.LangId;
+import com.github.neoflyingsaucer.extend.useragent.Optional;
+import com.github.neoflyingsaucer.extend.useragent.StylesheetI;
+import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 
 /**
  * A Factory class for Cascading Style Sheets. Sheets are parsed using a single
@@ -70,7 +72,7 @@ public class StylesheetFactoryImpl implements StylesheetFactory {
     /**
      * The caller is responsible for closing the Reader.
      */
-    public Optional<Stylesheet> parse(final Reader reader, final StylesheetInfo info, boolean isInline) 
+    public Optional<StylesheetI> parse(final Reader reader, final StylesheetInfo info, boolean isInline) 
     {
         if (info.getUri().isPresent())
         {
@@ -89,19 +91,19 @@ public class StylesheetFactoryImpl implements StylesheetFactory {
        			_userAgentCallback.getResourceCache().putCssStylesheet(info.getUri().get(), s1);
        		}
        		
-       		return Optional.of(s1);
+       		return Optional.of((StylesheetI) s1);
        	}
 
         LOGGER.warn("Couldn't parse stylesheet with no URI");
         return Optional.empty();
     }
 
-    private Optional<Stylesheet> parse(final StylesheetInfo info) {
+    private Optional<StylesheetI> parse(final StylesheetInfo info) {
 
     	if (!info.getUri().isPresent())
     		return Optional.empty();
     	
-    	final Optional<CSSResource> cr = _userAgentCallback.getCSSResource(info.getUri().get());
+    	final Optional<CSSResourceI> cr = _userAgentCallback.getCSSResource(info.getUri().get());
 
         if (!cr.isPresent())
         {
@@ -109,7 +111,7 @@ public class StylesheetFactoryImpl implements StylesheetFactory {
         	return Optional.empty();
         }
         
-        final CSSResource cr2 = cr.get();
+        final CSSResourceI cr2 = cr.get();
         
         // Q: Do @import rules use the original URI as the base for importing
         // other stylesheets or do they use the redirected URI.
@@ -138,14 +140,14 @@ public class StylesheetFactoryImpl implements StylesheetFactory {
         return Optional.ofNullable(_cssParser.parseDeclaration(uri, origin, styleDeclaration));
     }
 
-    public Optional<Stylesheet> getStylesheet(final StylesheetInfo info) 
+    public Optional<StylesheetI> getStylesheet(final StylesheetInfo info) 
     {
         // Give the user agent the chance to return a cached
     	// Stylesheet instance.
     	if (!info.getUri().isPresent())
     		return Optional.empty();
     	
-    	final Optional<Stylesheet> s1 = _userAgentCallback.getResourceCache().getCssStylesheet(info.getUri().get());
+    	final Optional<StylesheetI> s1 = _userAgentCallback.getResourceCache().getCssStylesheet(info.getUri().get());
 
         if (s1.isPresent())
         {

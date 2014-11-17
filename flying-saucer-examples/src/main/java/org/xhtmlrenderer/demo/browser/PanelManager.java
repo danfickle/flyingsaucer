@@ -22,9 +22,10 @@ package org.xhtmlrenderer.demo.browser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.resource.HTMLResource;
-import org.xhtmlrenderer.util.Optional;
 
 import com.github.neoflyingsaucer.defaultuseragent.DefaultUserAgent;
+import com.github.neoflyingsaucer.extend.useragent.HTMLResourceI;
+import com.github.neoflyingsaucer.extend.useragent.Optional;
 
 import java.net.*;
 import java.util.ArrayList;
@@ -89,7 +90,7 @@ public class PanelManager extends DefaultUserAgent {
     }
 
     @Override
-    public Optional<HTMLResource> getHTMLResource(String uri) 
+    public Optional<HTMLResourceI> getHTMLResource(String uri) 
     {
     	history.add(uri);
     	return super.getHTMLResource(uri);

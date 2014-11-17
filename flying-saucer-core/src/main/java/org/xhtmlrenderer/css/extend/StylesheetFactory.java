@@ -22,10 +22,11 @@ package org.xhtmlrenderer.css.extend;
 import java.io.Reader;
 
 import org.xhtmlrenderer.css.sheet.Ruleset;
-import org.xhtmlrenderer.css.sheet.Stylesheet;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
-import org.xhtmlrenderer.util.Optional;
+
+import com.github.neoflyingsaucer.extend.useragent.Optional;
+import com.github.neoflyingsaucer.extend.useragent.StylesheetI;
 
 
 /**
@@ -36,8 +37,8 @@ import org.xhtmlrenderer.util.Optional;
  * @author Torbjoern Gannholm
  */
 public interface StylesheetFactory {
-    Optional<Stylesheet> parse(Reader reader, StylesheetInfo info, boolean isInline);
+    Optional<StylesheetI> parse(Reader reader, StylesheetInfo info, boolean isInline);
     Optional<Ruleset> parseStyleDeclaration(String uri, CSSOrigin author, String style);
 
-    Optional<Stylesheet> getStylesheet(StylesheetInfo si);
+    Optional<StylesheetI> getStylesheet(StylesheetInfo si);
 }

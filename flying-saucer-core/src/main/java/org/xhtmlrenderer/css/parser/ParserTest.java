@@ -22,7 +22,8 @@ package org.xhtmlrenderer.css.parser;
 import java.io.StringReader;
 
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
-import org.xhtmlrenderer.util.LangId;
+
+import com.github.neoflyingsaucer.extend.useragent.LangId;
 
 public class ParserTest {
     public static void main(final String[] args) throws Exception {

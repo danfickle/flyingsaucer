@@ -22,9 +22,13 @@ package org.xhtmlrenderer.extend;
 
 import java.awt.Rectangle;
 
-import org.xhtmlrenderer.render.FSFont;
-import org.xhtmlrenderer.render.FSFontMetrics;
+import org.xhtmlrenderer.extend.OutputDevice;
 import org.xhtmlrenderer.render.JustificationInfo;
+
+import com.github.neoflyingsaucer.extend.output.FSFont;
+import com.github.neoflyingsaucer.extend.output.FSFontMetrics;
+import com.github.neoflyingsaucer.extend.output.FSGlyphVector;
+import com.github.neoflyingsaucer.extend.output.FontContext;
 
 public interface TextRenderer {
     public void setup(FontContext context);

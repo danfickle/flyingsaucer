@@ -19,11 +19,11 @@
  */
 package org.xhtmlrenderer.css.sheet;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.mediaquery.MediaQueryList;
 import org.xhtmlrenderer.layout.SharedContext;
-import org.xhtmlrenderer.util.Optional;
+
+import com.github.neoflyingsaucer.extend.useragent.Optional;
+import com.github.neoflyingsaucer.extend.useragent.StylesheetI;
 
 /**
  * A reference to a stylesheet. If no stylesheet is set, the matcher will try to
@@ -38,10 +38,10 @@ import org.xhtmlrenderer.util.Optional;
  */
 public class StylesheetInfo {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(StylesheetInfo.class);
+	// private static final Logger LOGGER = LoggerFactory.getLogger(StylesheetInfo.class);
 	
 	// Just to be able to attach "dummy" stylesheets. Also might save a lookup if it's already looked up
-	private Stylesheet stylesheet = null;
+	private StylesheetI stylesheet = null;
 
 	private String title;
     private Optional<String> uri;
@@ -117,7 +117,7 @@ public class StylesheetInfo {
      *
      * @param stylesheet  The new stylesheet value
      */
-    public void setStylesheet( final Stylesheet stylesheet ) {
+    public void setStylesheet( final StylesheetI stylesheet ) {
         this.stylesheet = stylesheet;
     }
 
@@ -166,7 +166,7 @@ public class StylesheetInfo {
      *
      * @return   The stylesheet value
      */
-    public Optional<Stylesheet> getStylesheet() {
+    public Optional<StylesheetI> getStylesheet() {
         return Optional.ofNullable(stylesheet);
     }
 

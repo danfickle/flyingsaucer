@@ -1,4 +1,4 @@
-package org.xhtmlrenderer.util;
+package com.github.neoflyingsaucer.extend.useragent;
 
 public enum LangId
 {

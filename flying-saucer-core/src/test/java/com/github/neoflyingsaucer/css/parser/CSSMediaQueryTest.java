@@ -9,7 +9,8 @@ import org.xhtmlrenderer.css.mediaquery.MediaQueryList;
 import org.xhtmlrenderer.css.parser.CSSErrorHandler;
 import org.xhtmlrenderer.css.parser.CSSParser;
 import org.xhtmlrenderer.layout.SharedContext;
-import org.xhtmlrenderer.util.LangId;
+
+import com.github.neoflyingsaucer.extend.useragent.LangId;
 
 import static org.junit.Assert.*;
 

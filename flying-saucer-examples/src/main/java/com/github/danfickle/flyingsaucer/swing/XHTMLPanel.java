@@ -24,10 +24,11 @@ import java.io.InputStream;
 import java.net.URL;
 
 import org.w3c.dom.Document;
-import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.layout.SharedContext;
 import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.simple.HtmlNamespaceHandler;
+
+import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 
 /**
  * <p/>
@@ -106,7 +107,7 @@ public class XHTMLPanel extends BasicPanel {
     }
 
     /**
-     * Instantiates a panel with a custom {@link org.xhtmlrenderer.extend.UserAgentCallback}
+     * Instantiates a panel with a custom {@link com.github.neoflyingsaucer.extend.useragent.UserAgentCallback}
      * implementation.
      *
      * @param uac The custom UserAgentCallback implementation.

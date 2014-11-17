@@ -45,10 +45,11 @@ import org.xhtmlrenderer.css.style.derived.ListValue;
 import org.xhtmlrenderer.css.style.derived.NumberValue;
 import org.xhtmlrenderer.css.style.derived.RectPropertySet;
 import org.xhtmlrenderer.css.value.FontSpecification;
-import org.xhtmlrenderer.render.FSFont;
-import org.xhtmlrenderer.render.FSFontMetrics;
 import org.xhtmlrenderer.util.GeneralUtil;
 import org.xhtmlrenderer.util.XRRuntimeException;
+
+import com.github.neoflyingsaucer.extend.output.FSFont;
+import com.github.neoflyingsaucer.extend.output.FSFontMetrics;
 
 
 /**

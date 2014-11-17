@@ -21,7 +21,7 @@ package org.xhtmlrenderer.swing;
 
 import java.awt.Font;
 
-import org.xhtmlrenderer.render.FSFont;
+import com.github.neoflyingsaucer.extend.output.FSFont;
 
 public class AWTFSFont implements FSFont {
     private final Font _font;

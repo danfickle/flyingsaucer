@@ -2,11 +2,13 @@ package org.xhtmlrenderer.resource;
 
 import org.w3c.dom.Document;
 
+import com.github.neoflyingsaucer.extend.useragent.HTMLResourceI;
+
 /**
  * Use this container to return a final URI and a w3c Document
  * from the user-agent when required.
  */
-public class HTMLResource 
+public class HTMLResource implements HTMLResourceI 
 {
 	private final Document _doc;
 	private final String _uri;
@@ -21,17 +23,19 @@ public class HTMLResource
 		_uri = uri;
 	}
 	
-	/**
-	 * Internal use only.
+	/* (non-Javadoc)
+	 * @see com.github.neoflyingsaucer.extend.HTMLResourceI#getURI()
 	 */
+	@Override
 	public String getURI()
 	{
 		return _uri;
 	}
 
-	/**
-	 * Internal use only.
+	/* (non-Javadoc)
+	 * @see com.github.neoflyingsaucer.extend.HTMLResourceI#getDocument()
 	 */
+	@Override
 	public Document getDocument()
 	{
 		return _doc;

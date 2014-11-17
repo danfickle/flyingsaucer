@@ -36,7 +36,6 @@ import org.xhtmlrenderer.css.parser.FSRGBColor;
 import org.xhtmlrenderer.css.style.CalculatedStyle;
 import org.xhtmlrenderer.css.style.derived.FSLinearGradient;
 import org.xhtmlrenderer.css.value.FontSpecification;
-import org.xhtmlrenderer.extend.FSImage;
 import org.xhtmlrenderer.extend.NamespaceHandler;
 import org.xhtmlrenderer.extend.OutputDevice;
 import org.xhtmlrenderer.layout.SharedContext;
@@ -44,15 +43,17 @@ import org.xhtmlrenderer.render.AbstractOutputDevice;
 import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.render.BorderPainter;
 import org.xhtmlrenderer.render.Box;
-import org.xhtmlrenderer.render.FSFont;
 import org.xhtmlrenderer.render.InlineLayoutBox;
 import org.xhtmlrenderer.render.InlineText;
 import org.xhtmlrenderer.render.JustificationInfo;
 import org.xhtmlrenderer.render.PageBox;
 import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.util.Configuration;
-import org.xhtmlrenderer.util.Optional;
 
+import com.github.neoflyingsaucer.extend.output.FSFont;
+import com.github.neoflyingsaucer.extend.output.FSImage;
+import com.github.neoflyingsaucer.extend.output.FontSpecificationI.FontStyle;
+import com.github.neoflyingsaucer.extend.useragent.Optional;
 import com.github.neoflyingsaucer.pdfout.PdfFontResolver.FontDescription;
 import com.github.pdfstream.Annotation;
 import com.github.pdfstream.Bookmark;
@@ -886,7 +887,7 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
 
 	    if (fontSpec != null) 
 	    {
-	        final int need = PdfFontResolver.convertWeightToInt(fontSpec.fontWeight);
+	        final int need = fontSpec.getFontWeight();
 	        final int have = desc.getWeight();
 
 	        if (need > have) {
@@ -897,7 +898,7 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
                 resetMode = true;
             }
 
-	        if ((fontSpec.fontStyle == IdentValue.ITALIC) && (desc.getStyle() != IdentValue.ITALIC)) 
+	        if ((fontSpec.fontStyle == IdentValue.ITALIC) && (desc.getStyle() != FontStyle.ITALIC)) 
 	        {
 	        	b = 0f;
 	            c = 0.21256f;

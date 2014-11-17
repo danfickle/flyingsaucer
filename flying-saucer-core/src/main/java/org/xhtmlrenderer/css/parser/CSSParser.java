@@ -52,10 +52,11 @@ import org.xhtmlrenderer.css.sheet.RulesetContainer;
 import org.xhtmlrenderer.css.sheet.Stylesheet;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
-import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.util.GeneralUtil;
-import org.xhtmlrenderer.util.LangId;
-import org.xhtmlrenderer.util.Optional;
+
+import com.github.neoflyingsaucer.extend.useragent.LangId;
+import com.github.neoflyingsaucer.extend.useragent.Optional;
+import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 
 public class CSSParser {
     private static final Set<String> SUPPORTED_PSEUDO_ELEMENTS;

@@ -45,13 +45,14 @@ import org.xhtmlrenderer.css.extend.StylesheetFactory;
 import org.xhtmlrenderer.css.extend.TreeResolver;
 import org.xhtmlrenderer.css.mediaquery.MediaQueryList;
 import org.xhtmlrenderer.css.parser.CSSParser;
-import org.xhtmlrenderer.css.sheet.Stylesheet;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo;
 import org.xhtmlrenderer.extend.NamespaceHandler;
 import org.xhtmlrenderer.util.Configuration;
 import org.xhtmlrenderer.util.GeneralUtil;
 import org.xhtmlrenderer.util.NodeHelper;
-import org.xhtmlrenderer.util.Optional;
+
+import com.github.neoflyingsaucer.extend.useragent.Optional;
+import com.github.neoflyingsaucer.extend.useragent.StylesheetI;
 
 import static org.xhtmlrenderer.util.GeneralUtil.ciEquals;
 
@@ -727,7 +728,7 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
 			if (is == null)
 				return null;
 			
-			final Optional<Stylesheet> sheet = factory.parse(new InputStreamReader(is), info, false);
+			final Optional<StylesheetI> sheet = factory.parse(new InputStreamReader(is), info, false);
 
 			if (sheet.isPresent())
 				info.setStylesheet(sheet.get());

@@ -19,9 +19,10 @@
  */
 package org.xhtmlrenderer.pdf;
 
-import org.xhtmlrenderer.extend.ReplacedElement;
 import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.render.RenderingContext;
+
+import com.github.neoflyingsaucer.extend.output.ReplacedElement;
 
 public interface ITextReplacedElement extends ReplacedElement
 {

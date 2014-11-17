@@ -22,10 +22,10 @@ package org.xhtmlrenderer.swing;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-import org.xhtmlrenderer.extend.ReplacedElement;
-import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.util.Configuration;
 import org.xhtmlrenderer.util.ImageUtil;
+
+import com.github.neoflyingsaucer.extend.output.ReplacedElement;
 
 /**
  * An ImageReplacedElement is a {@link ReplacedElement} that contains a {@link java.awt.Image}. It's used as a
@@ -83,7 +83,7 @@ public class ImageReplacedElement implements ReplacedElement {
     }
 
     /** {@inheritDoc} */
-    public void detach(final LayoutContext c) {
+    public void detach() {
         // nothing to do in this case
     }
 

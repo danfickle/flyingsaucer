@@ -36,8 +36,6 @@ import org.xhtmlrenderer.css.style.FSDerivedValue;
 import org.xhtmlrenderer.css.style.derived.BorderPropertySet;
 import org.xhtmlrenderer.css.style.derived.LengthValue;
 import org.xhtmlrenderer.css.style.derived.RectPropertySet;
-import org.xhtmlrenderer.extend.FSImage;
-import org.xhtmlrenderer.extend.ReplacedElement;
 import org.xhtmlrenderer.layout.BlockBoxing;
 import org.xhtmlrenderer.layout.BlockFormattingContext;
 import org.xhtmlrenderer.layout.BoxBuilder;
@@ -51,8 +49,10 @@ import org.xhtmlrenderer.layout.PaintingInfo;
 import org.xhtmlrenderer.layout.PersistentBFC;
 import org.xhtmlrenderer.layout.Styleable;
 import org.xhtmlrenderer.newtable.TableRowBox;
-import org.xhtmlrenderer.resource.ImageResource;
-import org.xhtmlrenderer.util.Optional;
+import com.github.neoflyingsaucer.extend.output.FSImage;
+import com.github.neoflyingsaucer.extend.output.ReplacedElement;
+import com.github.neoflyingsaucer.extend.useragent.ImageResourceI;
+import com.github.neoflyingsaucer.extend.useragent.Optional;
 
 /**
  * A block box as defined in the CSS spec.  It also provides a base class for
@@ -346,7 +346,7 @@ public class BlockBox extends Box implements InlinePaintable {
         FSImage img = null;
         if (! image.equals("none")) 
         {
-            Optional<ImageResource> resource= c.getUac().getImageResource(image);
+            Optional<ImageResourceI> resource= c.getUac().getImageResource(image);
         	
             if (!resource.isPresent())
             	return null;
@@ -561,7 +561,7 @@ public class BlockBox extends Box implements InlinePaintable {
         setMinMaxCalculated(false);
         setChildrenHeight(0);
         if (isReplaced()) {
-            getReplacedElement().detach(c);
+            getReplacedElement().detach();
             setReplacedElement(null);
         }
         if (getChildrenContentType() == BlockBox.CONTENT_INLINE) {

@@ -23,11 +23,12 @@ package org.xhtmlrenderer.render;
 import java.awt.Rectangle;
 
 import org.w3c.dom.Node;
-import org.xhtmlrenderer.extend.FSGlyphVector;
 import org.xhtmlrenderer.layout.FunctionData;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.layout.WhitespaceStripper;
 import org.xhtmlrenderer.util.Uu;
+
+import com.github.neoflyingsaucer.extend.output.FSGlyphVector;
 
 /**
  * A lightweight object which contains a chunk of text from an inline element.  

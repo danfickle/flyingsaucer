@@ -6,6 +6,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
+import com.github.neoflyingsaucer.extend.useragent.Optional;
+
 public class NodeHelper {
 	
   public static boolean isRootNode(final Node n) {

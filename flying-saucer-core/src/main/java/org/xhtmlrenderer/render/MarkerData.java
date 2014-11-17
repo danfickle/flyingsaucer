@@ -19,7 +19,7 @@
  */
 package org.xhtmlrenderer.render;
 
-import org.xhtmlrenderer.extend.FSImage;
+import com.github.neoflyingsaucer.extend.output.FSImage;
 
 /**
  * A bean containing information necessary to draw a list marker.  This includes

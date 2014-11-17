@@ -17,15 +17,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  */
-package org.xhtmlrenderer.extend;
+package com.github.neoflyingsaucer.extend.useragent;
 
-import org.xhtmlrenderer.resource.CSSResource;
-import org.xhtmlrenderer.resource.HTMLResource;
-import org.xhtmlrenderer.resource.ImageResource;
-import org.xhtmlrenderer.resource.ResourceCache;
-import org.xhtmlrenderer.swing.ImageResourceLoader;
-import org.xhtmlrenderer.util.LangId;
-import org.xhtmlrenderer.util.Optional;
 
 
 /**
@@ -59,7 +52,7 @@ public interface UserAgentCallback {
      * @param uri Location of the CSS (returned from resolveURI).
      * @return A CSSResource for the CSS at the uri or null if not available.
      */
-    Optional<CSSResource> getCSSResource(String uri);
+    Optional<CSSResourceI> getCSSResource(String uri);
 
     /**
      * Retrieves the Image at the given URI. This is a synchronous call.
@@ -67,7 +60,7 @@ public interface UserAgentCallback {
      * @param uri Location of the image (returned from resolveURI).
      * @return An ImageResource for the content at the URI.
      */
-    Optional<ImageResource> getImageResource(String uri);
+    Optional<ImageResourceI> getImageResource(String uri);
 
     /**
      * Retrieves the HTML at the given URI.
@@ -76,13 +69,13 @@ public interface UserAgentCallback {
      * @param uri Location of the HTML (returned from resolveURI).
      * @return A HTMLResource for the content at the URI.
      */
-    Optional<HTMLResource> getHTMLResource(String uri);
+    Optional<HTMLResourceI> getHTMLResource(String uri);
     
     /**
      * Gets a error document for a specific error code such as 404.
 	 * May NOT return null.
      */
-    HTMLResource getErrorDocument(String uri, int errorCode);
+    HTMLResourceI getErrorDocument(String uri, int errorCode);
     
     /**
      * Retrieves a binary resource located at a given URI and returns its contents

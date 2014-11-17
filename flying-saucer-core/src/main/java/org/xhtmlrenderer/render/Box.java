@@ -46,7 +46,8 @@ import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.layout.PaintingInfo;
 import org.xhtmlrenderer.layout.Styleable;
 import org.xhtmlrenderer.util.NodeHelper;
-import org.xhtmlrenderer.util.Optional;
+
+import com.github.neoflyingsaucer.extend.useragent.Optional;
 
 public abstract class Box implements Styleable {
 

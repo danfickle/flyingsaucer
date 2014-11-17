@@ -39,21 +39,22 @@ import org.xhtmlrenderer.context.StyleReference;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo;
 import org.xhtmlrenderer.css.style.CalculatedStyle;
 import org.xhtmlrenderer.css.style.EmptyStyle;
-import org.xhtmlrenderer.css.value.FontSpecification;
 import org.xhtmlrenderer.extend.FSCanvas;
-import org.xhtmlrenderer.extend.FontContext;
-import org.xhtmlrenderer.extend.FontResolver;
 import org.xhtmlrenderer.extend.NamespaceHandler;
 import org.xhtmlrenderer.extend.ReplacedElementFactory;
 import org.xhtmlrenderer.extend.TextRenderer;
-import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.render.Box;
-import org.xhtmlrenderer.render.FSFont;
-import org.xhtmlrenderer.render.FSFontMetrics;
 import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.swing.Java2DTextRenderer;
 import org.xhtmlrenderer.swing.SwingReplacedElementFactory;
-import org.xhtmlrenderer.util.Optional;
+
+import com.github.neoflyingsaucer.extend.output.FSFont;
+import com.github.neoflyingsaucer.extend.output.FSFontMetrics;
+import com.github.neoflyingsaucer.extend.output.FontContext;
+import com.github.neoflyingsaucer.extend.output.FontResolver;
+import com.github.neoflyingsaucer.extend.output.FontSpecificationI;
+import com.github.neoflyingsaucer.extend.useragent.Optional;
+import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 
 /**
  * The SharedContext is that which is kept between successive
@@ -439,14 +440,14 @@ public class SharedContext {
         return this.mm_per_dot;
     }
 
-    public FSFont getFont(final FontSpecification spec) {
-        return getFontResolver().resolveFont(this, spec);
+    public FSFont getFont(final FontSpecificationI spec) {
+        return getFontResolver().resolveFont(spec);
     }
 
     //strike-through offset should always be half of the height of lowercase x...
     //and it is defined even for fonts without 'x'!
-    public float getXHeight(final FontContext fontContext, final FontSpecification fs) {
-        final FSFont font = getFontResolver().resolveFont(this, fs);
+    public float getXHeight(final FontContext fontContext, final FontSpecificationI fs) {
+        final FSFont font = getFontResolver().resolveFont(fs);
         final FSFontMetrics fm = getTextRenderer().getFSFontMetrics(fontContext, font, " ");
         final float sto = fm.getStrikethroughOffset();
         return fm.getAscent() - 2 * Math.abs(sto) + fm.getStrikethroughThickness();

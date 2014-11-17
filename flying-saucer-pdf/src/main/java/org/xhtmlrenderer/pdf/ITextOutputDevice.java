@@ -62,7 +62,6 @@ import org.xhtmlrenderer.css.style.CalculatedStyle;
 import org.xhtmlrenderer.css.style.CssContext;
 import org.xhtmlrenderer.css.style.derived.FSLinearGradient;
 import org.xhtmlrenderer.css.value.FontSpecification;
-import org.xhtmlrenderer.extend.FSImage;
 import org.xhtmlrenderer.extend.NamespaceHandler;
 import org.xhtmlrenderer.extend.OutputDevice;
 import org.xhtmlrenderer.layout.SharedContext;
@@ -71,16 +70,18 @@ import org.xhtmlrenderer.render.AbstractOutputDevice;
 import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.render.BorderPainter;
 import org.xhtmlrenderer.render.Box;
-import org.xhtmlrenderer.render.FSFont;
 import org.xhtmlrenderer.render.InlineLayoutBox;
 import org.xhtmlrenderer.render.InlineText;
 import org.xhtmlrenderer.render.JustificationInfo;
 import org.xhtmlrenderer.render.PageBox;
 import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.util.Configuration;
-import org.xhtmlrenderer.util.Optional;
 import org.xhtmlrenderer.util.XRRuntimeException;
 
+import com.github.neoflyingsaucer.extend.output.FSFont;
+import com.github.neoflyingsaucer.extend.output.FSImage;
+import com.github.neoflyingsaucer.extend.output.FontSpecificationI.FontStyle;
+import com.github.neoflyingsaucer.extend.useragent.Optional;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Image;
 import com.lowagie.text.pdf.CMYKColor;
@@ -508,7 +509,7 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
         float c = (float) mx[2];
         final FontSpecification fontSpec = getFontSpecification();
         if (fontSpec != null) {
-            final int need = ITextFontResolver.convertWeightToInt(fontSpec.fontWeight);
+            final int need = fontSpec.getFontWeight();
             final int have = desc.getWeight();
             if (need > have) {
                 cb.setTextRenderingMode(PdfContentByte.TEXT_RENDER_MODE_FILL_STROKE);
@@ -516,7 +517,7 @@ public class ITextOutputDevice extends AbstractOutputDevice implements OutputDev
                 cb.setLineWidth(lineWidth);
                 resetMode = true;
             }
-            if ((fontSpec.fontStyle == IdentValue.ITALIC) && (desc.getStyle() != IdentValue.ITALIC)) {
+            if ((fontSpec.fontStyle == IdentValue.ITALIC) && (desc.getStyle() != FontStyle.ITALIC)) {
                 b = 0f;
                 c = 0.21256f;
             }

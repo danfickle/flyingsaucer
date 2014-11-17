@@ -1,17 +1,18 @@
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
-import org.xhtmlrenderer.extend.ReplacedElement;
-import org.xhtmlrenderer.extend.UserAgentCallback;
-import org.xhtmlrenderer.extend.FSImage;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
-import org.xhtmlrenderer.resource.ImageResource;
 import org.xhtmlrenderer.util.ImageUtil;
-import org.xhtmlrenderer.util.Optional;
 import org.xhtmlrenderer.swing.AWTFSImage;
 import org.xhtmlrenderer.swing.ImageReplacedElement;
 import org.xhtmlrenderer.swing.EmptyReplacedElement;
+
+import com.github.neoflyingsaucer.extend.output.FSImage;
+import com.github.neoflyingsaucer.extend.output.ReplacedElement;
+import com.github.neoflyingsaucer.extend.useragent.ImageResourceI;
+import com.github.neoflyingsaucer.extend.useragent.Optional;
+import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -84,7 +85,7 @@ public class SwingImageReplacer extends ElementReplacer {
 
             	if (resolved.isPresent())
             	{
-            		final Optional<ImageResource> resource = uac.getImageResource(resolved.get());
+            		final Optional<ImageResourceI> resource = uac.getImageResource(resolved.get());
             		
             		if (resource.isPresent())
             		{

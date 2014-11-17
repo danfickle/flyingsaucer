@@ -21,6 +21,8 @@ package org.xhtmlrenderer.render;
 
 import java.awt.font.LineMetrics;
 
+import com.github.neoflyingsaucer.extend.output.FSFontMetrics;
+
 
 /**
  * A note on this class: What we really want is a FontMetrics2D object (i.e.

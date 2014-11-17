@@ -20,7 +20,8 @@
 package org.xhtmlrenderer.pdf;
 
 import org.xhtmlrenderer.pdf.ITextFontResolver.FontDescription;
-import org.xhtmlrenderer.render.FSFont;
+
+import com.github.neoflyingsaucer.extend.output.FSFont;
 
 public class ITextFSFont implements FSFont {
     private final FontDescription _font;

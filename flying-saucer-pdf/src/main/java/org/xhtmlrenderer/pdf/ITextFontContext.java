@@ -19,7 +19,7 @@
  */
 package org.xhtmlrenderer.pdf;
 
-import org.xhtmlrenderer.extend.FontContext;
+import com.github.neoflyingsaucer.extend.output.FontContext;
 
 public class ITextFontContext implements FontContext {
 

@@ -22,17 +22,18 @@ package org.xhtmlrenderer.swing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
-import org.xhtmlrenderer.extend.ReplacedElement;
 import org.xhtmlrenderer.extend.ReplacedElementFactory;
-import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.swing.AWTFSImage;
 import org.xhtmlrenderer.swing.EmptyReplacedElement;
 import org.xhtmlrenderer.swing.ImageReplacedElement;
 import org.xhtmlrenderer.util.ImageUtil;
-import org.xhtmlrenderer.util.Optional;
-import org.xhtmlrenderer.resource.ImageResource;
+
+import com.github.neoflyingsaucer.extend.output.ReplacedElement;
+import com.github.neoflyingsaucer.extend.useragent.ImageResourceI;
+import com.github.neoflyingsaucer.extend.useragent.Optional;
+import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -119,7 +120,7 @@ public class SwingReplacedElementFactory implements ReplacedElementFactory {
             	if (re == null) {
             		LOGGER.debug("Swing: Image " + ruri + " requested at " + " to " + cssWidth + ", " + cssHeight);
 
-            		final ImageResource imageResource = uac.getImageResourceCache().get(ruri.get(), cssWidth, cssHeight);
+            		final ImageResourceI imageResource = uac.getImageResourceCache().get(ruri.get(), cssWidth, cssHeight);
             		// TODO: ImageResource may be null.
             		
             		re = new ImageReplacedElement(((AWTFSImage) imageResource.getImage()).getImage(), cssWidth, cssHeight);

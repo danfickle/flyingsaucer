@@ -21,7 +21,7 @@ package org.xhtmlrenderer.pdf;
 
 import java.net.URL;
 
-import org.xhtmlrenderer.extend.FSImage;
+import com.github.neoflyingsaucer.extend.output.FSImage;
 
 public class PDFAsImage implements FSImage {
     private final URL _source;

@@ -20,11 +20,11 @@
 
 
 import org.w3c.dom.Document;
-import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import com.github.neoflyingsaucer.defaultuseragent.DefaultUserAgent;
 import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
+import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 
 import java.io.File;
 import java.io.FileOutputStream;

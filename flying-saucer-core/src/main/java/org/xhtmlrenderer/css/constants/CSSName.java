@@ -44,7 +44,8 @@ import org.xhtmlrenderer.css.parser.property.SizePropertyBuilder;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo;
 import org.xhtmlrenderer.css.style.FSDerivedValue;
 import org.xhtmlrenderer.css.style.derived.DerivedValueFactory;
-import org.xhtmlrenderer.util.LangId;
+
+import com.github.neoflyingsaucer.extend.useragent.LangId;
 
 
 /**

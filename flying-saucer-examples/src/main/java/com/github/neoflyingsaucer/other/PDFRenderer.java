@@ -1,19 +1,28 @@
 package com.github.neoflyingsaucer.other;
 
 import com.github.neoflyingsaucer.defaultuseragent.DefaultUserAgent;
+import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
+import com.github.neoflyingsaucer.displaylist.DisplayListImpl;
+import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
+import com.github.neoflyingsaucer.j2dout.Java2DOut;
 import com.github.neoflyingsaucer.pdfout.PdfRenderer;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.PdfWriter;
 
-import org.xhtmlrenderer.extend.UserAgentCallback;
+import org.w3c.dom.Document;
 import org.xhtmlrenderer.pdf.ITextRenderer;
+import org.xhtmlrenderer.swing.DisplayListRenderer;
 
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 import java.util.HashMap;
+
+import javax.imageio.ImageIO;
 
 /**
  * <p/>
@@ -84,6 +93,26 @@ public class PDFRenderer {
 //    	//        
 ////        if (pdfVersion != null) renderer.setPDFVersion(pdfVersion.charValue());
     	doRenderToPDF(renderer2, pdf + ".old.pdf");
+    	
+    	
+		String html =
+				"<html><head><style>" +
+				"@page { size: 400px 400px; margin: 1px; }" +
+				"body { background-color: #00f; margin: 2px; border: 1px solid blue; height: 100px; }" +
+				"</style></head><body></body></html>";
+    	
+    	
+    	Document doc = HTMLResourceHelper.load(html).getDocument();
+    	DisplayListImpl dl = DisplayListRenderer.renderToList(doc, 1000, 1000, uac, 0);
+    	System.err.println(dl.toString());
+    	
+    	BufferedImage img = new BufferedImage(1000, 1000, BufferedImage.TYPE_INT_ARGB);
+    	Graphics2D g2d = img.createGraphics();
+    	Java2DOut out = new Java2DOut(g2d);
+    	out.render(dl);
+    	g2d.dispose();
+    	
+    	ImageIO.write(img, "png", new File(pdf + ".img.png")); 
     }
 
     private static void doRenderToPDF(PdfRenderer renderer, String pdf) throws IOException {

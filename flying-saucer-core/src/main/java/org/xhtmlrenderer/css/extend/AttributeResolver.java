@@ -19,7 +19,7 @@
  */
 package org.xhtmlrenderer.css.extend;
 
-import org.xhtmlrenderer.util.Optional;
+import com.github.neoflyingsaucer.extend.useragent.Optional;
 
 
 /**

@@ -19,8 +19,7 @@
  */
 package org.xhtmlrenderer.pdf;
 
-import org.xhtmlrenderer.extend.FSImage;
-
+import com.github.neoflyingsaucer.extend.output.FSImage;
 import com.lowagie.text.Image;
 
 public class ITextFSImage implements FSImage, Cloneable {

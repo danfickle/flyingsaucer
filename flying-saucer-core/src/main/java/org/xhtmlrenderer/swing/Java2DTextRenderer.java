@@ -28,15 +28,16 @@ import java.awt.font.GlyphVector;
 import java.awt.geom.Point2D;
 import java.util.Map;
 
-import org.xhtmlrenderer.extend.FSGlyphVector;
-import org.xhtmlrenderer.extend.FontContext;
 import org.xhtmlrenderer.extend.OutputDevice;
 import org.xhtmlrenderer.extend.TextRenderer;
-import org.xhtmlrenderer.render.FSFont;
-import org.xhtmlrenderer.render.FSFontMetrics;
 import org.xhtmlrenderer.render.JustificationInfo;
 import org.xhtmlrenderer.render.LineMetricsAdapter;
 import org.xhtmlrenderer.util.Configuration;
+
+import com.github.neoflyingsaucer.extend.output.FSFont;
+import com.github.neoflyingsaucer.extend.output.FSFontMetrics;
+import com.github.neoflyingsaucer.extend.output.FSGlyphVector;
+import com.github.neoflyingsaucer.extend.output.FontContext;
 
 
 /**

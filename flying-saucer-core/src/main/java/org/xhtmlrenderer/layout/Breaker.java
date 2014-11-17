@@ -21,9 +21,11 @@
 package org.xhtmlrenderer.layout;
 
 import java.text.BreakIterator;
+
 import org.xhtmlrenderer.css.constants.IdentValue;
 import org.xhtmlrenderer.css.style.CalculatedStyle;
-import org.xhtmlrenderer.render.FSFont;
+
+import com.github.neoflyingsaucer.extend.output.FSFont;
 
 /**
  * A utility class that scans the text of a single inline box, looking for the

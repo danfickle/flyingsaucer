@@ -40,11 +40,13 @@ import org.xhtmlrenderer.css.style.derived.BorderPropertySet;
 import org.xhtmlrenderer.css.style.derived.FSLinearGradient;
 import org.xhtmlrenderer.css.style.derived.LengthValue;
 import org.xhtmlrenderer.css.value.FontSpecification;
-import org.xhtmlrenderer.extend.FSImage;
 import org.xhtmlrenderer.extend.OutputDevice;
-import org.xhtmlrenderer.resource.ImageResource;
 import org.xhtmlrenderer.util.Configuration;
-import org.xhtmlrenderer.util.Optional;
+
+import com.github.neoflyingsaucer.extend.output.FSFontMetrics;
+import com.github.neoflyingsaucer.extend.output.FSImage;
+import com.github.neoflyingsaucer.extend.useragent.ImageResourceI;
+import com.github.neoflyingsaucer.extend.useragent.Optional;
 
 /**
  * An abstract implementation of an {@link OutputDevice}.  It provides complete
@@ -187,7 +189,7 @@ public abstract class AbstractOutputDevice implements OutputDevice {
 
             LOGGER.debug("get bg image: " + uri);
 
-            Optional<ImageResource> resource = c.getUac().getImageResource(uri);
+            Optional<ImageResourceI> resource = c.getUac().getImageResource(uri);
             	
             if (resource.isPresent())
             	return resource.get().getImage();

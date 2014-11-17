@@ -12,18 +12,21 @@ import javax.imageio.ImageIO;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xhtmlrenderer.extend.FSImage;
 import org.xhtmlrenderer.resource.ImageResource;
 import org.xhtmlrenderer.swing.AWTFSImage;
 import org.xhtmlrenderer.util.ImageUtil;
 
+import com.github.neoflyingsaucer.extend.output.FSImage;
+import com.github.neoflyingsaucer.extend.useragent.ImageResourceI;
+
 /**
  *
  */
-public class ImageResourceLoaderImpl implements org.xhtmlrenderer.swing.ImageResourceLoader {
+public class ImageResourceLoaderImpl implements com.github.neoflyingsaucer.extend.useragent.ImageResourceLoader 
+{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ImageResourceLoaderImpl.class);
-    private final Map<CacheKey, ImageResource> _imageCache;
+    private final Map<CacheKey, ImageResourceI> _imageCache;
 
     private final int _imageCacheCapacity;
 
@@ -37,7 +40,7 @@ public class ImageResourceLoaderImpl implements org.xhtmlrenderer.swing.ImageRes
 
         // note we do *not* override removeEldestEntry() here--users of this class must call shrinkImageCache().
         // that's because we don't know when is a good time to flush the cache
-        this._imageCache = new LinkedHashMap<CacheKey, ImageResource>(cacheSize, 0.75f, true);
+        this._imageCache = new LinkedHashMap<CacheKey, ImageResourceI>(cacheSize, 0.75f, true);
     }
 
     public static ImageResource loadImageResourceFromUri(final String uri) {
@@ -109,7 +112,7 @@ public class ImageResourceLoaderImpl implements org.xhtmlrenderer.swing.ImageRes
 	 * @see com.github.neoflyingsaucer.defaultuseragent.ImageResourceLoaderI#get(java.lang.String)
 	 */
     @Override
-	public ImageResource get(final String uri) {
+	public ImageResourceI get(final String uri) {
         return get(uri, -1, -1);
     }
 
@@ -117,15 +120,15 @@ public class ImageResourceLoaderImpl implements org.xhtmlrenderer.swing.ImageRes
 	 * @see com.github.neoflyingsaucer.defaultuseragent.ImageResourceLoaderI#get(java.lang.String, int, int)
 	 */
     @Override
-	public ImageResource get(final String uri, final int width, final int height) 
+	public ImageResourceI get(final String uri, final int width, final int height) 
     {
     	if (ImageUtil.isEmbeddedBase64Image(uri)) {
-            final ImageResource resource = loadEmbeddedBase64ImageResource(uri);
+            final ImageResourceI resource = loadEmbeddedBase64ImageResource(uri);
             resource.getImage().scale(width, height);
             return resource;
         } else {
             final CacheKey key = new CacheKey(uri, width, height);
-            ImageResource ir = _imageCache.get(key);
+            ImageResourceI ir = _imageCache.get(key);
             if (ir == null) {
                 // not loaded, or not loaded at target size
 
@@ -169,7 +172,7 @@ public class ImageResourceLoaderImpl implements org.xhtmlrenderer.swing.ImageRes
 	 * @see com.github.neoflyingsaucer.defaultuseragent.ImageResourceLoaderI#loaded(org.xhtmlrenderer.resource.ImageResource, int, int)
 	 */
     @Override
-	public void loaded(final ImageResource ir, final int width, final int height) {
+	public void loaded(final ImageResourceI ir, final int width, final int height) {
         final String imageUri = ir.getImageUri();
         if (imageUri != null) {
             _imageCache.put(new CacheKey(imageUri, width, height), ir);

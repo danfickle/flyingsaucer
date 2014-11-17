@@ -28,7 +28,6 @@ import java.util.Map;
 import org.w3c.dom.Document;
 import org.xhtmlrenderer.extend.NamespaceHandler;
 import org.xhtmlrenderer.extend.ReplacedElementFactory;
-import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.layout.BoxBuilder;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.layout.SharedContext;
@@ -36,10 +35,12 @@ import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.render.Box;
 import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.render.ViewportBox;
-import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.resource.ResourceLoadHelper;
 import org.xhtmlrenderer.simple.HtmlNamespaceHandler;
 import org.xhtmlrenderer.util.ImageUtil;
+
+import com.github.neoflyingsaucer.extend.useragent.HTMLResourceI;
+import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 
 /**
  * <p>Renders an XML files, formatted with CSS, as an image. Input is a document in the form of file or URL,
@@ -341,7 +342,7 @@ public class Java2DRenderer {
 	}
 
 	private Document loadDocument(final String uri) {
-    	HTMLResource rs = ResourceLoadHelper.loadHtmlDocument(uri, sharedContext.getUac());
+    	HTMLResourceI rs = ResourceLoadHelper.loadHtmlDocument(uri, sharedContext.getUac());
     	sharedContext.setDocumentURI(rs.getURI());
     	return rs.getDocument();
 	}

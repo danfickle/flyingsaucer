@@ -119,7 +119,8 @@ public abstract class AbstractFormField implements PdfReplacedElement
         return e.hasAttribute("selected");
     }
 
-    public void detach(final LayoutContext c) {
+    @Override
+    public void detach() {
     }
 
     public int getIntrinsicHeight() {

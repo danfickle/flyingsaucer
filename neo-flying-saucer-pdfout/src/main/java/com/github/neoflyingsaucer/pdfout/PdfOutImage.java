@@ -9,8 +9,9 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.stream.ImageInputStream;
 
-import org.xhtmlrenderer.extend.FSImage;
 import org.xhtmlrenderer.layout.SharedContext;
+
+import com.github.neoflyingsaucer.extend.output.FSImage;
 
 public class PdfOutImage implements FSImage 
 {

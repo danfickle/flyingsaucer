@@ -40,9 +40,11 @@ import org.xhtmlrenderer.css.sheet.PropertyDeclaration;
 import org.xhtmlrenderer.css.sheet.Stylesheet;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo;
 import org.xhtmlrenderer.extend.NamespaceHandler;
-import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.layout.SharedContext;
-import org.xhtmlrenderer.util.Optional;
+
+import com.github.neoflyingsaucer.extend.useragent.Optional;
+import com.github.neoflyingsaucer.extend.useragent.StylesheetI;
+import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 
 
 /**
@@ -104,7 +106,7 @@ public class StyleReference {
           if (!info.appliesToMedia(_context))
         		continue;
         	
-      	  Optional<Stylesheet> sheet = info.getStylesheet();
+      	  Optional<StylesheetI> sheet = info.getStylesheet();
         	
     	  if (!sheet.isPresent()) {
               sheet = _stylesheetFactory.getStylesheet(info);
@@ -112,12 +114,14 @@ public class StyleReference {
           
           if (sheet.isPresent())
           {
-          	if (!sheet.get().getImportRules().isEmpty()) 
+        	Stylesheet s2 = (Stylesheet) sheet.get();
+        	  
+        	if (!s2.getImportRules().isEmpty()) 
           	{
-          		result.addAll(readAndParseAll(sheet.get().getImportRules(), medium));
+          		result.addAll(readAndParseAll(s2.getImportRules(), medium));
           	}
 
-          	result.add(sheet.get());
+          	result.add(s2);
           }         	
         }
         
@@ -220,7 +224,7 @@ public class StyleReference {
                 	// TODO: Make sure we have the correct base url.
                 	refs.get(i).setUri(Optional.of(_context.getBaseURL() + "#inline_style_" + (++inlineStyleCount)));
 
-                	final Optional<Stylesheet> sheet = _stylesheetFactory.parse(
+                	final Optional<StylesheetI> sheet = _stylesheetFactory.parse(
                             new StringReader(refs.get(i).getContent()), refs.get(i), true);
 
                     if (sheet.isPresent())

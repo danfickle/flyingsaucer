@@ -31,7 +31,8 @@ import org.xhtmlrenderer.css.parser.PropertyValue;
 import org.xhtmlrenderer.layout.SharedContext;
 import org.xhtmlrenderer.util.GeneralUtil;
 import org.xhtmlrenderer.util.NodeHelper;
-import org.xhtmlrenderer.util.Optional;
+
+import com.github.neoflyingsaucer.extend.useragent.Optional;
 
 import javax.swing.*;
 import javax.swing.event.TreeModelListener;

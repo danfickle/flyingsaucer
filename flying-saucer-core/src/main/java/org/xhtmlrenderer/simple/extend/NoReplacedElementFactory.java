@@ -1,11 +1,12 @@
 package org.xhtmlrenderer.simple.extend;
 
 import org.w3c.dom.Element;
-import org.xhtmlrenderer.extend.ReplacedElement;
 import org.xhtmlrenderer.extend.ReplacedElementFactory;
-import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
+
+import com.github.neoflyingsaucer.extend.output.ReplacedElement;
+import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 
 public class NoReplacedElementFactory implements ReplacedElementFactory {
 

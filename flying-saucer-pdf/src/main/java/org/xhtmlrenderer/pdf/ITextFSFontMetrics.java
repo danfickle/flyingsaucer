@@ -19,7 +19,7 @@
  */
 package org.xhtmlrenderer.pdf;
 
-import org.xhtmlrenderer.render.FSFontMetrics;
+import com.github.neoflyingsaucer.extend.output.FSFontMetrics;
 
 public class ITextFSFontMetrics implements FSFontMetrics {
     private float _ascent;

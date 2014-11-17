@@ -23,8 +23,7 @@ import java.awt.*;
 
 import javax.swing.JComponent;
 
-import org.xhtmlrenderer.extend.ReplacedElement;
-import org.xhtmlrenderer.layout.LayoutContext;
+import com.github.neoflyingsaucer.extend.output.ReplacedElement;
 
 public class SwingReplacedElement implements ReplacedElement {
     private final JComponent _component;
@@ -58,7 +57,7 @@ public class SwingReplacedElement implements ReplacedElement {
         return _component.getLocation();
     }
     
-    public void detach(final LayoutContext c) {
+    public void detach() {
     }
     
     public boolean isRequiresInteractivePaint() {

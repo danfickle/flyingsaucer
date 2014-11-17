@@ -19,7 +19,7 @@
  */
 package org.xhtmlrenderer.css.parser;
 
-import org.xhtmlrenderer.util.LangId;
+import com.github.neoflyingsaucer.extend.useragent.LangId;
 
 public class CSSParseException extends RuntimeException {
     private static final long serialVersionUID = 1L;

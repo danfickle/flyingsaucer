@@ -20,7 +20,8 @@
 package org.xhtmlrenderer.css.extend;
 
 import org.w3c.dom.Element;
-import org.xhtmlrenderer.util.Optional;
+
+import com.github.neoflyingsaucer.extend.useragent.Optional;
 
 /**
  * @author scott

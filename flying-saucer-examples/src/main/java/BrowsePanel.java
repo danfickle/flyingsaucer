@@ -19,7 +19,6 @@
 import org.w3c.dom.Document;
 import org.xhtmlrenderer.demo.browser.FSScrollPane;
 import org.xhtmlrenderer.event.DefaultDocumentListener;
-import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.resource.ResourceLoadHelper;
 import org.xhtmlrenderer.swing.SwingReplacedElementFactory;
 import org.xhtmlrenderer.util.GeneralUtil;
@@ -27,6 +26,7 @@ import org.xhtmlrenderer.util.GeneralUtil;
 import com.github.danfickle.flyingsaucer.swing.XHTMLPanel;
 import com.github.neoflyingsaucer.defaultuseragent.DefaultUserAgent;
 import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
+import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 
 import javax.swing.*;
 

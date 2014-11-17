@@ -35,7 +35,6 @@ import org.xhtmlrenderer.css.style.derived.RectPropertySet;
 import org.xhtmlrenderer.render.AnonymousBlockBox;
 import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.render.Box;
-import org.xhtmlrenderer.render.FSFontMetrics;
 import org.xhtmlrenderer.render.FloatDistances;
 import org.xhtmlrenderer.render.InlineBox;
 import org.xhtmlrenderer.render.InlineLayoutBox;
@@ -44,7 +43,9 @@ import org.xhtmlrenderer.render.LineBox;
 import org.xhtmlrenderer.render.MarkerData;
 import org.xhtmlrenderer.render.StrutMetrics;
 import org.xhtmlrenderer.render.TextDecoration;
-import org.xhtmlrenderer.util.Optional;
+
+import com.github.neoflyingsaucer.extend.output.FSFontMetrics;
+import com.github.neoflyingsaucer.extend.useragent.Optional;
 
 /**
  * This class is responsible for flowing inline content into lines.  Block

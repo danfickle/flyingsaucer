@@ -26,12 +26,13 @@ import java.awt.print.PrinterGraphics;
 import java.io.InputStream;
 
 import org.w3c.dom.Document;
-import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.layout.Layer;
 import org.xhtmlrenderer.layout.PaintingInfo;
 import org.xhtmlrenderer.render.Box;
 import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.swing.Java2DOutputDevice;
+
+import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 
 /**
  * ScalableXHTMLPanel extends {@see XHTMLPanel} to allow zoom on output.
@@ -63,7 +64,7 @@ public class ScalableXHTMLPanel extends XHTMLPanel {
 	}
 
 	/**
-	 * Instantiates a panel with a custom {@link org.xhtmlrenderer.extend.UserAgentCallback}
+	 * Instantiates a panel with a custom {@link com.github.neoflyingsaucer.extend.useragent.UserAgentCallback}
 	 * implementation.
 	 *
 	 * @param uac The custom UserAgentCallback implementation.

@@ -1,7 +1,6 @@
 package com.github.neoflyingsaucer.pdfout;
 
-import org.xhtmlrenderer.render.FSFont;
-
+import com.github.neoflyingsaucer.extend.output.FSFont;
 import com.github.neoflyingsaucer.pdfout.PdfFontResolver.FontDescription;
 
 public class PdfFont implements FSFont

@@ -19,7 +19,7 @@
  */
 package org.xhtmlrenderer.css.parser;
 
-import org.xhtmlrenderer.util.LangId;
+import com.github.neoflyingsaucer.extend.useragent.LangId;
 
 public interface CSSErrorHandler {
     public void error(String uri, int line, LangId msgId, Object... args);

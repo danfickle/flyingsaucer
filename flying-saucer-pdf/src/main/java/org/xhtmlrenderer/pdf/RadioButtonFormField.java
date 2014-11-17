@@ -193,8 +193,8 @@ public class RadioButtonFormField extends AbstractFormField {
         return Math.min(value, Math.max(1.0f, 0.05f*value));
     }  
     
-    public void detach(final LayoutContext c) {
-        super.detach(c);
+    public void detach() {
+        super.detach();
         
         _factory.remove(_box.getElement());
     }

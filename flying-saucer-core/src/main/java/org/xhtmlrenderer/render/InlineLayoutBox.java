@@ -43,6 +43,8 @@ import org.xhtmlrenderer.layout.Layer;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.layout.PaintingInfo;
 
+import com.github.neoflyingsaucer.extend.output.FSFontMetrics;
+
 /**
  * A {@link Box} which contains the portion of an inline element layed out on a
  * single line.  It may contain content from several {@link InlineBox} objects

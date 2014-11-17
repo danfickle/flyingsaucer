@@ -45,8 +45,8 @@ public class BookmarkElement implements ITextReplacedElement {
         _location = new Point(x, y);
     }
     
-    public void detach(final LayoutContext c) {
-        c.removeBoxId(getAnchorName());
+    public void detach() {
+       // c.removeBoxId(getAnchorName());
     }
 
     public String getAnchorName() {

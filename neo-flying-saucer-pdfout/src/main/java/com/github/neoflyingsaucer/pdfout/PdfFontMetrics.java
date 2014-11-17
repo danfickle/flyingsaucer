@@ -1,6 +1,6 @@
 package com.github.neoflyingsaucer.pdfout;
 
-import org.xhtmlrenderer.render.FSFontMetrics;
+import com.github.neoflyingsaucer.extend.output.FSFontMetrics;
 
 public class PdfFontMetrics implements FSFontMetrics 
 {

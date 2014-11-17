@@ -1,4 +1,4 @@
-package org.xhtmlrenderer.extend;
+package com.github.neoflyingsaucer.extend.useragent;
 
 public enum FSErrorType
 {

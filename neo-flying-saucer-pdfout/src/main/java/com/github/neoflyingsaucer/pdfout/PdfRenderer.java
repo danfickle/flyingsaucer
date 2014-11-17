@@ -11,11 +11,8 @@ import org.w3c.dom.Document;
 import org.xhtmlrenderer.context.StyleReference;
 import org.xhtmlrenderer.css.parser.property.PageSize;
 import org.xhtmlrenderer.css.style.CalculatedStyle;
-import org.xhtmlrenderer.extend.FontContext;
-import org.xhtmlrenderer.extend.FontResolver;
 import org.xhtmlrenderer.extend.NamespaceHandler;
 import org.xhtmlrenderer.extend.ReplacedElementFactory;
-import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.layout.BoxBuilder;
 import org.xhtmlrenderer.layout.Layer;
 import org.xhtmlrenderer.layout.LayoutContext;
@@ -24,10 +21,13 @@ import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.render.PageBox;
 import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.render.ViewportBox;
-import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.resource.ResourceLoadHelper;
 import org.xhtmlrenderer.simple.HtmlNamespaceHandler;
 
+import com.github.neoflyingsaucer.extend.output.FontContext;
+import com.github.neoflyingsaucer.extend.output.FontResolver;
+import com.github.neoflyingsaucer.extend.useragent.HTMLResourceI;
+import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 import com.github.pdfstream.PDF;
 import com.github.pdfstream.Page;
 
@@ -82,7 +82,7 @@ public class PdfRenderer
     }
     
     private Document loadDocument(final String uri) {
-    	HTMLResource rs = ResourceLoadHelper.loadHtmlDocument(uri, _sharedContext.getUac());
+    	HTMLResourceI rs = ResourceLoadHelper.loadHtmlDocument(uri, _sharedContext.getUac());
     	_sharedContext.setDocumentURI(rs.getURI());
     	return rs.getDocument();
     }

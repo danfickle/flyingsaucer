@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.xhtmlrenderer</groupId>
+		<artifactId>flying-saucer-parent</artifactId>
+		<version>9.0.5-SNAPSHOTX</version>
+	</parent>
+
+	<artifactId>neo-flying-saucer-java2d-out</artifactId>
+
+	<packaging>jar</packaging>
+
+	<name>neo-flying-saucer-java2d-out</name>
+	<description>Flying Saucer is a CSS 2.1 renderer written in Java.  This artifact is is a Java2D output device that can print to images or Swing panels.</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.xhtmlrenderer</groupId>
+      <artifactId>neo-flying-saucer-interfaces</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.xhtmlrenderer</groupId>
+      <artifactId>neo-flying-saucer-display-list</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+</project>
+

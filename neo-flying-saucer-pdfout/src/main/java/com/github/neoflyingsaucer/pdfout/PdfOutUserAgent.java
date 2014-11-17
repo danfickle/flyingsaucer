@@ -4,16 +4,18 @@ import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xhtmlrenderer.extend.FSErrorType;
-import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.layout.SharedContext;
-import org.xhtmlrenderer.resource.CSSResource;
-import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.resource.ImageResource;
-import org.xhtmlrenderer.resource.ResourceCache;
-import org.xhtmlrenderer.swing.ImageResourceLoader;
-import org.xhtmlrenderer.util.LangId;
-import org.xhtmlrenderer.util.Optional;
+
+import com.github.neoflyingsaucer.extend.useragent.CSSResourceI;
+import com.github.neoflyingsaucer.extend.useragent.FSErrorType;
+import com.github.neoflyingsaucer.extend.useragent.HTMLResourceI;
+import com.github.neoflyingsaucer.extend.useragent.ImageResourceI;
+import com.github.neoflyingsaucer.extend.useragent.ImageResourceLoader;
+import com.github.neoflyingsaucer.extend.useragent.LangId;
+import com.github.neoflyingsaucer.extend.useragent.Optional;
+import com.github.neoflyingsaucer.extend.useragent.ResourceCache;
+import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 
 public class PdfOutUserAgent implements UserAgentCallback
 {
@@ -28,12 +30,12 @@ public class PdfOutUserAgent implements UserAgentCallback
 	}
 	
 	@Override
-	public Optional<CSSResource> getCSSResource(String uri) {
+	public Optional<CSSResourceI> getCSSResource(String uri) {
 		return _inner.getCSSResource(uri);
 	}
 
 	@Override
-	public Optional<ImageResource> getImageResource(String uri)
+	public Optional<ImageResourceI> getImageResource(String uri)
 	{
 		Optional<byte[]> bytes = getBinaryResource(uri);
 		
@@ -50,7 +52,7 @@ public class PdfOutUserAgent implements UserAgentCallback
 		
 		img.scaleToOutputResolution(_sharedContext);
 		
-		return Optional.of(new ImageResource(uri, img));
+		return Optional.of((ImageResourceI) new ImageResource(uri, img));
 	}
 	
 	public void setSharedContext(SharedContext ctx)
@@ -59,12 +61,12 @@ public class PdfOutUserAgent implements UserAgentCallback
 	}
 
 	@Override
-	public Optional<HTMLResource> getHTMLResource(String uri) {
+	public Optional<HTMLResourceI> getHTMLResource(String uri) {
 		return _inner.getHTMLResource(uri);
 	}
 
 	@Override
-	public HTMLResource getErrorDocument(String uri, int errorCode) {
+	public HTMLResourceI getErrorDocument(String uri, int errorCode) {
 		return _inner.getErrorDocument(uri, errorCode);
 	}
 

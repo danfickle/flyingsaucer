@@ -1,14 +1,13 @@
 package com.github.neoflyingsaucer.pdfout;
 
 import org.w3c.dom.Element;
-import org.xhtmlrenderer.extend.ReplacedElement;
 import org.xhtmlrenderer.extend.ReplacedElementFactory;
-import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
-import org.xhtmlrenderer.resource.ImageResource;
-import org.xhtmlrenderer.util.Optional;
-
+import com.github.neoflyingsaucer.extend.output.ReplacedElement;
+import com.github.neoflyingsaucer.extend.useragent.ImageResourceI;
+import com.github.neoflyingsaucer.extend.useragent.Optional;
+import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 import com.github.neoflyingsaucer.pdfout.form.CheckboxFormField;
 import com.github.neoflyingsaucer.pdfout.form.SelectFormField;
 
@@ -35,7 +34,7 @@ public class PdfReplacedElementFactory implements ReplacedElementFactory {
 
             	if (resolved.isPresent())
             	{
-            		Optional<ImageResource> image = uac.getImageResource(resolved.get());
+            		Optional<ImageResourceI> image = uac.getImageResource(resolved.get());
             		
             		if (image.isPresent())
             		{

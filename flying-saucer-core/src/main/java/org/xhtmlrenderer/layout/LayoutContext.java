@@ -35,13 +35,16 @@ import org.xhtmlrenderer.css.constants.IdentValue;
 import org.xhtmlrenderer.css.parser.CounterData;
 import org.xhtmlrenderer.css.style.CalculatedStyle;
 import org.xhtmlrenderer.css.style.CssContext;
-import org.xhtmlrenderer.css.value.FontSpecification;
 import org.xhtmlrenderer.extend.*;
 import org.xhtmlrenderer.render.Box;
-import org.xhtmlrenderer.render.FSFont;
-import org.xhtmlrenderer.render.FSFontMetrics;
 import org.xhtmlrenderer.render.MarkerData;
 import org.xhtmlrenderer.render.PageBox;
+
+import com.github.neoflyingsaucer.extend.output.FSFont;
+import com.github.neoflyingsaucer.extend.output.FSFontMetrics;
+import com.github.neoflyingsaucer.extend.output.FontContext;
+import com.github.neoflyingsaucer.extend.output.FontSpecificationI;
+import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 
 
 /**
@@ -265,15 +268,15 @@ public class LayoutContext implements CssContext {
         return _sharedContext.getDotsPerPixel();
     }
 
-    public float getFontSize2D(final FontSpecification font) {
+    public float getFontSize2D(final FontSpecificationI font) {
         return _sharedContext.getFont(font).getSize2D();
     }
 
-    public float getXHeight(final FontSpecification parentFont) {
+    public float getXHeight(final FontSpecificationI parentFont) {
         return _sharedContext.getXHeight(getFontContext(), parentFont);
     }
 
-    public FSFont getFont(final FontSpecification font) {
+    public FSFont getFont(final FontSpecificationI font) {
         return _sharedContext.getFont(font);
     }
 

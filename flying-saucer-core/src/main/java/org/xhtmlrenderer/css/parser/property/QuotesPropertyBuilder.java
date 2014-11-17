@@ -32,7 +32,8 @@ import org.xhtmlrenderer.css.parser.PropertyValueImp;
 import org.xhtmlrenderer.css.parser.PropertyValueImp.CSSValueType;
 import org.xhtmlrenderer.css.sheet.PropertyDeclaration;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
-import org.xhtmlrenderer.util.LangId;
+
+import com.github.neoflyingsaucer.extend.useragent.LangId;
 
 import static org.xhtmlrenderer.css.parser.property.BuilderUtil.*;
 

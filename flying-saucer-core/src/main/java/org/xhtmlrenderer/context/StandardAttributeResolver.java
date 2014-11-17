@@ -22,8 +22,9 @@ package org.xhtmlrenderer.context;
 import org.w3c.dom.Element;
 import org.xhtmlrenderer.css.extend.AttributeResolver;
 import org.xhtmlrenderer.extend.NamespaceHandler;
-import org.xhtmlrenderer.extend.UserAgentCallback;
-import org.xhtmlrenderer.util.Optional;
+
+import com.github.neoflyingsaucer.extend.useragent.Optional;
+import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 
 
 /**
@@ -33,7 +34,7 @@ import org.xhtmlrenderer.util.Optional;
  */
 public class StandardAttributeResolver implements AttributeResolver {
 
-    private final NamespaceHandler nsh;
+    private final org.xhtmlrenderer.extend.NamespaceHandler nsh;
     private final UserAgentCallback uac;
 
 

@@ -27,21 +27,24 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xhtmlrenderer.extend.FSErrorType;
-import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.layout.SharedContext;
 import org.xhtmlrenderer.resource.CSSResource;
 import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.resource.ImageResource;
-import org.xhtmlrenderer.resource.ResourceCache;
-import org.xhtmlrenderer.swing.ImageResourceLoader;
 
+import com.github.neoflyingsaucer.extend.useragent.CSSResourceI;
+import com.github.neoflyingsaucer.extend.useragent.FSErrorType;
+import com.github.neoflyingsaucer.extend.useragent.HTMLResourceI;
+import com.github.neoflyingsaucer.extend.useragent.ImageResourceI;
+import com.github.neoflyingsaucer.extend.useragent.ImageResourceLoader;
+import com.github.neoflyingsaucer.extend.useragent.LangId;
+import com.github.neoflyingsaucer.extend.useragent.Optional;
+import com.github.neoflyingsaucer.extend.useragent.ResourceCache;
+import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 import com.lowagie.text.BadElementException;
 import com.lowagie.text.Image;
 
 import org.xhtmlrenderer.util.ImageUtil;
-import org.xhtmlrenderer.util.LangId;
-import org.xhtmlrenderer.util.Optional;
 
 public class ITextUserAgent implements UserAgentCallback {
 
@@ -80,7 +83,7 @@ public class ITextUserAgent implements UserAgentCallback {
     }
 
     @Override
-    public Optional<ImageResource> getImageResource(String uri) {
+    public Optional<ImageResourceI> getImageResource(String uri) {
         ImageResource resource = null;
         if (ImageUtil.isEmbeddedBase64Image(uri)) {
             resource = loadEmbeddedBase64ImageResource(uri);
@@ -90,7 +93,7 @@ public class ITextUserAgent implements UserAgentCallback {
             	Optional<byte[]> bytes = _chainedUac.getBinaryResource(uri);
 				
             	if (!bytes.isPresent())
-            		return Optional.of(new ImageResource(uri, null));
+            		return Optional.of((ImageResourceI) new ImageResource(uri, null));
             	
             	Image image;
 				try {
@@ -101,13 +104,13 @@ public class ITextUserAgent implements UserAgentCallback {
 					_imageCache.put(uri, resource);
 
 				} catch (IOException e) {
-					return Optional.of(new ImageResource(uri, null));
+					return Optional.of((ImageResourceI) new ImageResource(uri, null));
 				} catch (BadElementException e) {
-					return Optional.of(new ImageResource(uri, null));
+					return Optional.of((ImageResourceI) new ImageResource(uri, null));
 				}
             }
         }
-        return Optional.of(resource);
+        return Optional.of((ImageResourceI) resource);
     }
     
     private ImageResource loadEmbeddedBase64ImageResource(final String uri) {
@@ -138,17 +141,17 @@ public class ITextUserAgent implements UserAgentCallback {
     }
 
 	@Override
-	public Optional<CSSResource> getCSSResource(String uri) {
+	public Optional<CSSResourceI> getCSSResource(String uri) {
 		return _chainedUac.getCSSResource(uri);
 	}
 
 	@Override
-	public Optional<HTMLResource> getHTMLResource(String uri) {
+	public Optional<HTMLResourceI> getHTMLResource(String uri) {
 		return _chainedUac.getHTMLResource(uri);
 	}
 
 	@Override
-	public HTMLResource getErrorDocument(String uri, int errorCode) {
+	public HTMLResourceI getErrorDocument(String uri, int errorCode) {
 		return _chainedUac.getErrorDocument(uri, errorCode);
 	}
 

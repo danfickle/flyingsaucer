@@ -24,6 +24,8 @@ import java.util.List;
 
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
 
+import com.github.neoflyingsaucer.extend.useragent.StylesheetI;
+
 
 /**
  * A representation of a CSS style sheet. A Stylesheet has the sheet's rules in
@@ -36,7 +38,7 @@ import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
  * @author Torbjoern Gannholm
  * @author Patrick Wright
  */
-public class Stylesheet implements RulesetContainer {
+public class Stylesheet implements RulesetContainer, StylesheetI {
     /**
      * The info for this stylesheet
      */

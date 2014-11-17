@@ -19,6 +19,12 @@
  */
 package org.xhtmlrenderer.pdf;
 
+import com.github.neoflyingsaucer.extend.output.FSFont;
+import com.github.neoflyingsaucer.extend.output.FontResolver;
+import com.github.neoflyingsaucer.extend.output.FontSpecificationI;
+import com.github.neoflyingsaucer.extend.output.FontSpecificationI.FontStyle;
+import com.github.neoflyingsaucer.extend.output.FontSpecificationI.FontVariant;
+import com.github.neoflyingsaucer.extend.useragent.Optional;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.BaseFont;
 
@@ -30,10 +36,7 @@ import org.xhtmlrenderer.css.sheet.FontFaceRule;
 import org.xhtmlrenderer.css.style.CalculatedStyle;
 import org.xhtmlrenderer.css.style.FSDerivedValue;
 import org.xhtmlrenderer.css.value.FontSpecification;
-import org.xhtmlrenderer.extend.FontResolver;
 import org.xhtmlrenderer.layout.SharedContext;
-import org.xhtmlrenderer.render.FSFont;
-import org.xhtmlrenderer.util.Optional;
 import org.xhtmlrenderer.util.XRRuntimeException;
 
 import java.io.*;
@@ -80,8 +83,8 @@ public class ITextFontResolver implements FontResolver {
         }
     }
 
-    public FSFont resolveFont(final SharedContext renderingContext, final FontSpecification spec) {
-        return resolveFont(renderingContext, spec.families, spec.size, spec.fontWeight, spec.fontStyle, spec.variant);
+    public FSFont resolveFont(final FontSpecificationI spec) {
+        return resolveFont(spec.getFamilies(), spec.getSize(), spec.getFontWeight(), spec.getStyle(), spec.getVariant());
     }
 
     public void flushCache() {
@@ -344,21 +347,22 @@ public class ITextFontResolver implements FontResolver {
         return fontFamily;
     }
 
-    private FSFont resolveFont(final SharedContext ctx, final String[] families, final float size, final IdentValue weight, IdentValue style, final IdentValue variant) {
-        if (! (style == IdentValue.NORMAL || style == IdentValue.OBLIQUE
-                || style == IdentValue.ITALIC)) {
-            style = IdentValue.NORMAL;
+    private FSFont resolveFont(final String[] families, final float size, final int weight, FontStyle style, final FontVariant variant) 
+    {
+        if (! (style == FontStyle.NORMAL || style == FontStyle.OBLIQUE
+                || style == FontStyle.ITALIC)) {
+            style = FontStyle.NORMAL;
         }
         if (families != null) {
             for (final String family : families) {
-                final FSFont font = resolveFont(ctx, family, size, weight, style, variant);
+                final FSFont font = resolveFont(family, size, weight, style, variant);
                 if (font != null) {
                     return font;
                 }
             }
         }
 
-        return resolveFont(ctx, "Serif", size, weight, style, variant);
+        return resolveFont("Serif", size, weight, style, variant);
     }
 
     private String normalizeFontFamily(final String fontFamily) {
@@ -385,7 +389,8 @@ public class ITextFontResolver implements FontResolver {
         return result;
     }
 
-    private FSFont resolveFont(final SharedContext ctx, final String fontFamily, final float size, final IdentValue weight, final IdentValue style, final IdentValue variant) {
+    private FSFont resolveFont(final String fontFamily, final float size, final int weight, final FontStyle style, final FontVariant variant) 
+    {
         final String normalizedFontFamily = normalizeFontFamily(fontFamily);
 
         final String cacheKey = getHashName(normalizedFontFamily, weight, style);
@@ -396,7 +401,7 @@ public class ITextFontResolver implements FontResolver {
 
         final FontFamily family = _fontFamilies.get(normalizedFontFamily);
         if (family != null) {
-            result = family.match(convertWeightToInt(weight), style);
+            result = family.match(weight, style);
             if (result != null) {
                 _fontCache.put(cacheKey, result);
                 return new ITextFSFont(result, size);
@@ -406,41 +411,8 @@ public class ITextFontResolver implements FontResolver {
         return null;
     }
 
-    public static int convertWeightToInt(final IdentValue weight) {
-        if (weight == IdentValue.NORMAL) {
-            return 400;
-        } else if (weight == IdentValue.BOLD) {
-            return 700;
-        } else if (weight == IdentValue.FONT_WEIGHT_100) {
-            return 100;
-        } else if (weight == IdentValue.FONT_WEIGHT_200) {
-            return 200;
-        } else if (weight == IdentValue.FONT_WEIGHT_300) {
-            return 300;
-        } else if (weight == IdentValue.FONT_WEIGHT_400) {
-            return 400;
-        } else if (weight == IdentValue.FONT_WEIGHT_500) {
-            return 500;
-        } else if (weight == IdentValue.FONT_WEIGHT_600) {
-            return 600;
-        } else if (weight == IdentValue.FONT_WEIGHT_700) {
-            return 700;
-        } else if (weight == IdentValue.FONT_WEIGHT_800) {
-            return 800;
-        } else if (weight == IdentValue.FONT_WEIGHT_900) {
-            return 900;
-        } else if (weight == IdentValue.LIGHTER) {
-            // FIXME
-            return 400;
-        } else if (weight == IdentValue.BOLDER) {
-            // FIXME
-            return 700;
-        }
-        throw new IllegalArgumentException();
-    }
-
     protected static String getHashName(
-            final String name, final IdentValue weight, final IdentValue style) {
+            final String name, final int weight, final FontStyle style) {
         return name + "-" + weight + "-" + style;
     }
 
@@ -480,13 +452,13 @@ public class ITextFontResolver implements FontResolver {
         courier.setName("Courier");
 
         courier.addFontDescription(new FontDescription(
-                createFont(BaseFont.COURIER_BOLDOBLIQUE), IdentValue.OBLIQUE, 700));
+                createFont(BaseFont.COURIER_BOLDOBLIQUE), FontStyle.OBLIQUE, 700));
         courier.addFontDescription(new FontDescription(
-                createFont(BaseFont.COURIER_OBLIQUE), IdentValue.OBLIQUE, 400));
+                createFont(BaseFont.COURIER_OBLIQUE), FontStyle.OBLIQUE, 400));
         courier.addFontDescription(new FontDescription(
-                createFont(BaseFont.COURIER_BOLD), IdentValue.NORMAL, 700));
+                createFont(BaseFont.COURIER_BOLD), FontStyle.NORMAL, 700));
         courier.addFontDescription(new FontDescription(
-                createFont(BaseFont.COURIER), IdentValue.NORMAL, 400));
+                createFont(BaseFont.COURIER), FontStyle.NORMAL, 400));
 
         result.put("DialogInput", courier);
         result.put("Monospaced", courier);
@@ -498,13 +470,13 @@ public class ITextFontResolver implements FontResolver {
         times.setName("Times");
 
         times.addFontDescription(new FontDescription(
-                createFont(BaseFont.TIMES_BOLDITALIC), IdentValue.ITALIC, 700));
+                createFont(BaseFont.TIMES_BOLDITALIC), FontStyle.ITALIC, 700));
         times.addFontDescription(new FontDescription(
-                createFont(BaseFont.TIMES_ITALIC), IdentValue.ITALIC, 400));
+                createFont(BaseFont.TIMES_ITALIC), FontStyle.ITALIC, 400));
         times.addFontDescription(new FontDescription(
-                createFont(BaseFont.TIMES_BOLD), IdentValue.NORMAL, 700));
+                createFont(BaseFont.TIMES_BOLD), FontStyle.NORMAL, 700));
         times.addFontDescription(new FontDescription(
-                createFont(BaseFont.TIMES_ROMAN), IdentValue.NORMAL, 400));
+                createFont(BaseFont.TIMES_ROMAN), FontStyle.NORMAL, 400));
 
         result.put("Serif", times);
         result.put("TimesRoman", times);
@@ -515,13 +487,13 @@ public class ITextFontResolver implements FontResolver {
         helvetica.setName("Helvetica");
 
         helvetica.addFontDescription(new FontDescription(
-                createFont(BaseFont.HELVETICA_BOLDOBLIQUE), IdentValue.OBLIQUE, 700));
+                createFont(BaseFont.HELVETICA_BOLDOBLIQUE), FontStyle.OBLIQUE, 700));
         helvetica.addFontDescription(new FontDescription(
-                createFont(BaseFont.HELVETICA_OBLIQUE), IdentValue.OBLIQUE, 400));
+                createFont(BaseFont.HELVETICA_OBLIQUE), FontStyle.OBLIQUE, 400));
         helvetica.addFontDescription(new FontDescription(
-                createFont(BaseFont.HELVETICA_BOLD), IdentValue.NORMAL, 700));
+                createFont(BaseFont.HELVETICA_BOLD), FontStyle.NORMAL, 700));
         helvetica.addFontDescription(new FontDescription(
-                createFont(BaseFont.HELVETICA), IdentValue.NORMAL, 400));
+                createFont(BaseFont.HELVETICA), FontStyle.NORMAL, 400));
 
         result.put("Dialog", helvetica);
         result.put("SansSerif", helvetica);
@@ -532,7 +504,7 @@ public class ITextFontResolver implements FontResolver {
         final FontFamily fontFamily = new FontFamily();
         fontFamily.setName("Symbol");
 
-        fontFamily.addFontDescription(new FontDescription(createFont(BaseFont.SYMBOL, BaseFont.CP1252, false), IdentValue.NORMAL, 400));
+        fontFamily.addFontDescription(new FontDescription(createFont(BaseFont.SYMBOL, BaseFont.CP1252, false), FontStyle.NORMAL, 400));
 
         result.put("Symbol", fontFamily);
     }
@@ -541,7 +513,7 @@ public class ITextFontResolver implements FontResolver {
         final FontFamily fontFamily = new FontFamily();
         fontFamily.setName("ZapfDingbats");
 
-        fontFamily.addFontDescription(new FontDescription(createFont(BaseFont.ZAPFDINGBATS, BaseFont.CP1252, false), IdentValue.NORMAL, 400));
+        fontFamily.addFontDescription(new FontDescription(createFont(BaseFont.ZAPFDINGBATS, BaseFont.CP1252, false), FontStyle.NORMAL, 400));
 
         result.put("ZapfDingbats", fontFamily);
     }
@@ -586,10 +558,10 @@ public class ITextFontResolver implements FontResolver {
         final FontFamily fontFamily = new FontFamily();
         fontFamily.setName(fontFamilyName);
 
-        fontFamily.addFontDescription(new FontDescription(createFont(fontName+",BoldItalic", encoding, false), IdentValue.OBLIQUE, 700));
-        fontFamily.addFontDescription(new FontDescription(createFont(fontName+",Italic", encoding, false), IdentValue.OBLIQUE, 400));
-        fontFamily.addFontDescription(new FontDescription(createFont(fontName+",Bold", encoding, false), IdentValue.NORMAL, 700));
-        fontFamily.addFontDescription(new FontDescription(createFont(fontName, encoding, false), IdentValue.NORMAL, 400));
+        fontFamily.addFontDescription(new FontDescription(createFont(fontName+",BoldItalic", encoding, false), FontStyle.OBLIQUE, 700));
+        fontFamily.addFontDescription(new FontDescription(createFont(fontName+",Italic", encoding, false), FontStyle.OBLIQUE, 400));
+        fontFamily.addFontDescription(new FontDescription(createFont(fontName+",Bold", encoding, false), FontStyle.NORMAL, 700));
+        fontFamily.addFontDescription(new FontDescription(createFont(fontName, encoding, false), FontStyle.NORMAL, 400));
 
         fontFamilyMap.put(fontFamilyName, fontFamily);
     }
@@ -628,7 +600,7 @@ public class ITextFontResolver implements FontResolver {
             _name = name;
         }
 
-        public FontDescription match(final int desiredWeight, final IdentValue style) {
+        public FontDescription match(final int desiredWeight, final FontStyle style) {
             if (_fontDescriptions == null) {
                 throw new RuntimeException("fontDescriptions is null");
             }
@@ -642,10 +614,10 @@ public class ITextFontResolver implements FontResolver {
             }
 
             if (candidates.size() == 0) {
-                if (style == IdentValue.ITALIC) {
-                    return match(desiredWeight, IdentValue.OBLIQUE);
-                } else if (style == IdentValue.OBLIQUE) {
-                    return match(desiredWeight, IdentValue.NORMAL);
+                if (style == FontStyle.ITALIC) {
+                    return match(desiredWeight, FontStyle.OBLIQUE);
+                } else if (style == FontStyle.OBLIQUE) {
+                    return match(desiredWeight, FontStyle.NORMAL);
                 } else {
                     candidates.addAll(_fontDescriptions);
                 }
@@ -718,7 +690,7 @@ public class ITextFontResolver implements FontResolver {
     }
 
     public static class FontDescription {
-        private IdentValue _style;
+        private FontStyle _style;
         private int _weight;
 
         private BaseFont _font;
@@ -735,10 +707,10 @@ public class ITextFontResolver implements FontResolver {
         }
 
         public FontDescription(final BaseFont font) {
-            this(font, IdentValue.NORMAL, 400);
+            this(font, FontStyle.NORMAL, 400);
         }
 
-        public FontDescription(final BaseFont font, final IdentValue style, final int weight) {
+        public FontDescription(final BaseFont font, final FontStyle style, final int weight) {
             _font = font;
             _style = style;
             _weight = weight;
@@ -761,11 +733,11 @@ public class ITextFontResolver implements FontResolver {
             _weight = weight;
         }
 
-        public IdentValue getStyle() {
+        public FontStyle getStyle() {
             return _style;
         }
 
-        public void setStyle(final IdentValue style) {
+        public void setStyle(final FontStyle style) {
             _style = style;
         }
 

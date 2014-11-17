@@ -32,6 +32,8 @@ import org.xhtmlrenderer.css.style.DerivedValue;
 import org.xhtmlrenderer.css.value.FontSpecification;
 import org.xhtmlrenderer.layout.SharedContext;
 
+import com.github.neoflyingsaucer.extend.output.FontSpecificationI;
+
 public class LengthValue extends DerivedValue {
 
 
@@ -151,10 +153,10 @@ public class LengthValue extends DerivedValue {
                 // to the font size of the parent element (spec: 4.3.2)
                 float xHeight;
                 if (cssName == CSSName.FONT_SIZE) {
-                    final FontSpecification parentFont = style.getParent().getFont(ctx);
+                    final FontSpecificationI parentFont = style.getParent().getFont(ctx);
                     xHeight = ctx.getXHeight(parentFont);
                 } else {
-                    final FontSpecification font = style.getFont(ctx);
+                    final FontSpecificationI font = style.getFont(ctx);
                     xHeight = ctx.getXHeight(font);
                 }
                 absVal = relVal * xHeight;
@@ -169,7 +171,7 @@ public class LengthValue extends DerivedValue {
                     final FontSpecification parentFont = style.getParent().getFont(ctx);
                     baseValue = parentFont.size;// WAS:   ctx.getFontSize2D(parentFont);
                 } else if (cssName == CSSName.LINE_HEIGHT) {
-                    final FontSpecification font = style.getFont(ctx);
+                    final FontSpecificationI font = style.getFont(ctx);
                     baseValue = ctx.getFontSize2D(font);
                 }
                 absVal = (relVal / 100f) * baseValue;

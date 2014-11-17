@@ -2,7 +2,6 @@ package com.github.neoflyingsaucer.pdfout;
 
 import java.awt.Point;
 import java.awt.Rectangle;
-import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.render.RenderingContext;
 
@@ -37,7 +36,7 @@ public class PdfImageElement implements PdfReplacedElement
 	}
 
 	@Override
-	public void detach(LayoutContext c) { }
+	public void detach() { }
 
 	@Override
 	public boolean hasBaseline() {

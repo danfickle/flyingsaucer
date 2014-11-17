@@ -6,8 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xhtmlrenderer.css.sheet.Stylesheet;
-import org.xhtmlrenderer.resource.ResourceCache;
-import org.xhtmlrenderer.util.Optional;
+
+import com.github.neoflyingsaucer.extend.useragent.Optional;
+import com.github.neoflyingsaucer.extend.useragent.ResourceCache;
+import com.github.neoflyingsaucer.extend.useragent.StylesheetI;
 
 public class ResourceCacheImpl implements ResourceCache
 {
@@ -15,7 +17,7 @@ public class ResourceCacheImpl implements ResourceCache
 
     private final int _cssCacheSize;
     private final int _htmlCacheSize;
-	private final Map<String, Stylesheet> _cache;
+	private final Map<String, StylesheetI> _cache;
 	private final Map<String, Document> _docCache;	
     
     public ResourceCacheImpl(int cssCacheSize, int htmlCacheSize)
@@ -23,13 +25,13 @@ public class ResourceCacheImpl implements ResourceCache
     	_cssCacheSize = cssCacheSize;
     	_htmlCacheSize = htmlCacheSize;
     	
-    	_cache = new java.util.LinkedHashMap<String, Stylesheet>(
+    	_cache = new java.util.LinkedHashMap<String, StylesheetI>(
     			_cssCacheSize, 0.75f, true)
     	{
     		private static final long serialVersionUID = 1L;
 
     		@Override
-    		protected boolean removeEldestEntry(final java.util.Map.Entry<String, Stylesheet> eldest) 
+    		protected boolean removeEldestEntry(final java.util.Map.Entry<String, StylesheetI> eldest) 
     		{
     			return size() > _cssCacheSize;
     		}
@@ -49,7 +51,7 @@ public class ResourceCacheImpl implements ResourceCache
     }
     
 	@Override
-	public void putCssStylesheet(String resolvedUri, Stylesheet sheet) 
+	public void putCssStylesheet(String resolvedUri, StylesheetI sheet) 
 	{
 		if (resolvedUri != null)
 		{
@@ -63,7 +65,7 @@ public class ResourceCacheImpl implements ResourceCache
 	}
 
 	@Override
-	public Optional<Stylesheet> getCssStylesheet(String resolvedUri) 
+	public Optional<StylesheetI> getCssStylesheet(String resolvedUri) 
 	{
 		return Optional.ofNullable(_cache.get(resolvedUri));
 	}

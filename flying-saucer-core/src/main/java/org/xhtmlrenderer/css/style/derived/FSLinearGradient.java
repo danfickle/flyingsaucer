@@ -18,7 +18,8 @@ import org.xhtmlrenderer.css.parser.property.Conversions;
 import org.xhtmlrenderer.css.style.CalculatedStyle;
 import org.xhtmlrenderer.css.style.CssContext;
 import org.xhtmlrenderer.util.GeneralUtil;
-import org.xhtmlrenderer.util.LangId;
+
+import com.github.neoflyingsaucer.extend.useragent.LangId;
 
 public class FSLinearGradient
 {

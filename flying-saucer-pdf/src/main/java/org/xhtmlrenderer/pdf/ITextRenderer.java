@@ -35,8 +35,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xhtmlrenderer.context.StyleReference;
 import org.xhtmlrenderer.css.style.CalculatedStyle;
-import org.xhtmlrenderer.extend.NamespaceHandler;
-import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.layout.BoxBuilder;
 import org.xhtmlrenderer.layout.Layer;
 import org.xhtmlrenderer.layout.LayoutContext;
@@ -45,11 +43,12 @@ import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.render.PageBox;
 import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.render.ViewportBox;
-import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.resource.ResourceLoadHelper;
 import org.xhtmlrenderer.simple.HtmlNamespaceHandler;
 import org.xhtmlrenderer.util.NodeHelper;
 
+import com.github.neoflyingsaucer.extend.useragent.HTMLResourceI;
+import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.PdfWriter;
 
@@ -120,7 +119,7 @@ public class ITextRenderer {
     }
 
     private Document loadDocument(final String uri) {
-    	HTMLResource rs = ResourceLoadHelper.loadHtmlDocument(uri, _sharedContext.getUac());
+    	HTMLResourceI rs = ResourceLoadHelper.loadHtmlDocument(uri, _sharedContext.getUac());
     	_sharedContext.setDocumentURI(rs.getURI());
     	return rs.getDocument();
     }
@@ -139,7 +138,7 @@ public class ITextRenderer {
         setDocument(loadDocument(file.toURI().toURL().toExternalForm()), (parent == null ? "" : parent.toURI().toURL().toExternalForm()));
     }
 
-    public void setDocument(final Document doc, final String url, final NamespaceHandler nsh) {
+    public void setDocument(final Document doc, final String url, final org.xhtmlrenderer.extend.NamespaceHandler nsh) {
         _doc = doc;
 
         getFontResolver().flushFontFaceFonts();

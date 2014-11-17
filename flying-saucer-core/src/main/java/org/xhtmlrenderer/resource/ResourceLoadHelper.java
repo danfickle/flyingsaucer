@@ -1,12 +1,14 @@
 package org.xhtmlrenderer.resource;
 
 import org.w3c.dom.Document;
-import org.xhtmlrenderer.extend.UserAgentCallback;
-import org.xhtmlrenderer.util.Optional;
+
+import com.github.neoflyingsaucer.extend.useragent.HTMLResourceI;
+import com.github.neoflyingsaucer.extend.useragent.Optional;
+import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 
 public class ResourceLoadHelper 
 {
-	public static HTMLResource loadHtmlDocument(String uri, UserAgentCallback uac)
+	public static HTMLResourceI loadHtmlDocument(String uri, UserAgentCallback uac)
 	{
 		// First give the uac a chance to resolve the uri.
 		Optional<String> resolved = uac.resolveURI(null, uri);
@@ -20,7 +22,7 @@ public class ResourceLoadHelper
 				return new HTMLResource(resolved.get(), doc.get());
 		
 			// Third try to get it from the uac proper.
-			Optional<HTMLResource> res = uac.getHTMLResource(resolved.get());
+			Optional<HTMLResourceI> res = uac.getHTMLResource(resolved.get());
 			
 			if (res.isPresent())
 				return res.get();

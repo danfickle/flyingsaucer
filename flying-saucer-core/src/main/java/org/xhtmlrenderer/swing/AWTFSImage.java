@@ -20,8 +20,9 @@
  */
 package org.xhtmlrenderer.swing;
 
-import org.xhtmlrenderer.extend.FSImage;
 import org.xhtmlrenderer.util.ImageUtil;
+
+import com.github.neoflyingsaucer.extend.output.FSImage;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

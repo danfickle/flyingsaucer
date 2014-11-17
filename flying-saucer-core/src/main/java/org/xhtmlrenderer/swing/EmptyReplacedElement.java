@@ -21,8 +21,7 @@ package org.xhtmlrenderer.swing;
 
 import java.awt.Point;
 
-import org.xhtmlrenderer.extend.ReplacedElement;
-import org.xhtmlrenderer.layout.LayoutContext;
+import com.github.neoflyingsaucer.extend.output.ReplacedElement;
 
 public class EmptyReplacedElement implements ReplacedElement {
     private final int _width;
@@ -35,7 +34,7 @@ public class EmptyReplacedElement implements ReplacedElement {
         _height = height;
     }
     
-    public void detach(final LayoutContext c) {
+    public void detach() {
     }
 
     public int getIntrinsicHeight() {

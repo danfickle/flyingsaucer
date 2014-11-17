@@ -18,11 +18,11 @@
 
 
 import org.xhtmlrenderer.event.DocumentListener;
-import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.layout.SharedContext;
 import org.xhtmlrenderer.swing.Java2DRenderer;
 
 import com.github.neoflyingsaucer.defaultuseragent.DefaultUserAgent;
+import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 
 import javax.print.*;
 import javax.print.attribute.Attribute;

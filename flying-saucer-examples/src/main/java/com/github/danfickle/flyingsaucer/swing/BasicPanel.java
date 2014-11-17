@@ -39,13 +39,11 @@ import org.w3c.dom.Document;
 import org.xhtmlrenderer.css.style.CalculatedStyle;
 import org.xhtmlrenderer.event.DocumentListener;
 import org.xhtmlrenderer.extend.NamespaceHandler;
-import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.layout.Layer;
 import org.xhtmlrenderer.layout.SharedContext;
 import org.xhtmlrenderer.render.Box;
 import org.xhtmlrenderer.render.PageBox;
 import org.xhtmlrenderer.render.RenderingContext;
-import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.resource.ResourceLoadHelper;
 import org.xhtmlrenderer.simple.HtmlNamespaceHandler;
 import org.xhtmlrenderer.swing.Java2DOutputDevice;
@@ -54,6 +52,8 @@ import org.xhtmlrenderer.util.Uu;
 
 import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
 import com.github.neoflyingsaucer.defaultuseragent.DefaultUserAgent;
+import com.github.neoflyingsaucer.extend.useragent.HTMLResourceI;
+import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 
 /**
  * A Swing {@link javax.swing.JPanel} that encloses the Flying Saucer renderer
@@ -437,7 +437,7 @@ public abstract class BasicPanel extends RootPanel {
     }
 
     protected Document loadDocument(final String uri) {
-    	HTMLResource rs = ResourceLoadHelper.loadHtmlDocument(uri, sharedContext.getUac());
+    	HTMLResourceI rs = ResourceLoadHelper.loadHtmlDocument(uri, sharedContext.getUac());
         sharedContext.setDocumentURI(rs.getURI());
         return rs.getDocument();
     }

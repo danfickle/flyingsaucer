@@ -23,6 +23,9 @@ import org.w3c.dom.Element;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
 
+import com.github.neoflyingsaucer.extend.output.ReplacedElement;
+import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
+
 public interface ReplacedElementFactory {
     
     /**

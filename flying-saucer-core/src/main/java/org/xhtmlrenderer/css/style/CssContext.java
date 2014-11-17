@@ -1,9 +1,10 @@
 package org.xhtmlrenderer.css.style;
 
 import org.xhtmlrenderer.context.StyleReference;
-import org.xhtmlrenderer.css.value.FontSpecification;
-import org.xhtmlrenderer.render.FSFont;
-import org.xhtmlrenderer.render.FSFontMetrics;
+
+import com.github.neoflyingsaucer.extend.output.FSFont;
+import com.github.neoflyingsaucer.extend.output.FSFontMetrics;
+import com.github.neoflyingsaucer.extend.output.FontSpecificationI;
 
 /**
  * Created by IntelliJ IDEA.
@@ -17,11 +18,11 @@ public interface CssContext {
     
     int getDotsPerPixel();
 
-    float getFontSize2D(FontSpecification font);
+    float getFontSize2D(FontSpecificationI font);
 
-    float getXHeight(FontSpecification parentFont);
+    float getXHeight(FontSpecificationI parentFont);
 
-    FSFont getFont(FontSpecification font);
+    FSFont getFont(FontSpecificationI font);
     
     // FIXME Doesn't really belong here, but this is
     // the only common interface of LayoutContext

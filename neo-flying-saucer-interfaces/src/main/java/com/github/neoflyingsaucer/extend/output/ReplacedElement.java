@@ -17,11 +17,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * }}}
  */
-package org.xhtmlrenderer.extend;
+package com.github.neoflyingsaucer.extend.output;
 
 import java.awt.Point;
-
-import org.xhtmlrenderer.layout.LayoutContext;
 
 /**
  * A replaced element is an XML element in the document being rendered whose visual output is delegated. For example,
@@ -52,11 +50,7 @@ public interface ReplacedElement {
      */
     void setLocation(int x, int y);
 
-    /**
-     *
-     * @param c
-     */
-    void detach(LayoutContext c);
+    void detach();
 
     boolean hasBaseline();
     

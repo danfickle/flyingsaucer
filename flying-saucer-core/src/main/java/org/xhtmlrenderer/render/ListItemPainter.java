@@ -25,7 +25,8 @@ import java.awt.RenderingHints;
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.IdentValue;
 import org.xhtmlrenderer.css.style.CalculatedStyle;
-import org.xhtmlrenderer.extend.FSImage;
+
+import com.github.neoflyingsaucer.extend.output.FSImage;
 
 /**
  * A utility class to paint list markers (all types).

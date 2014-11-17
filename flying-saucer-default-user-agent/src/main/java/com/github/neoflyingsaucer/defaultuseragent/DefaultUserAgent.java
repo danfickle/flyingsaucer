@@ -39,18 +39,22 @@ import javax.imageio.ImageIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.event.DocumentListener;
-import org.xhtmlrenderer.extend.FSErrorType;
-import org.xhtmlrenderer.extend.UserAgentCallback;
 import org.xhtmlrenderer.resource.CSSResource;
 import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.resource.ImageResource;
-import org.xhtmlrenderer.resource.ResourceCache;
 import org.xhtmlrenderer.swing.AWTFSImage;
-import org.xhtmlrenderer.swing.ImageResourceLoader;
 import org.xhtmlrenderer.util.GeneralUtil;
 import org.xhtmlrenderer.util.ImageUtil;
-import org.xhtmlrenderer.util.LangId;
-import org.xhtmlrenderer.util.Optional;
+
+import com.github.neoflyingsaucer.extend.useragent.CSSResourceI;
+import com.github.neoflyingsaucer.extend.useragent.FSErrorType;
+import com.github.neoflyingsaucer.extend.useragent.HTMLResourceI;
+import com.github.neoflyingsaucer.extend.useragent.ImageResourceI;
+import com.github.neoflyingsaucer.extend.useragent.ImageResourceLoader;
+import com.github.neoflyingsaucer.extend.useragent.LangId;
+import com.github.neoflyingsaucer.extend.useragent.Optional;
+import com.github.neoflyingsaucer.extend.useragent.ResourceCache;
+import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 
 /**
  * <p>NaiveUserAgent is a simple implementation of {@link UserAgentCallback} which places no restrictions on what
@@ -138,7 +142,7 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
      * @return A CSSResource containing the parsed CSS.
      */
     @Override
-    public Optional<CSSResource> getCSSResource(String uri)
+    public Optional<CSSResourceI> getCSSResource(String uri)
     {
         try
         {
@@ -146,7 +150,7 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
         	sr.connect();
         	final InputStream bs = sr.bufferedStream();
         	
-        	return Optional.<CSSResource>of(new CSSResource(sr.getFinalUri(), new InputStreamReader(bs, "UTF-8"))
+        	return Optional.<CSSResourceI>of(new CSSResource(sr.getFinalUri(), new InputStreamReader(bs, "UTF-8"))
         	{
         		@Override
         		public void onClose() throws IOException 
@@ -171,7 +175,7 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
      * @return An ImageResource containing the image.
      */
     @Override
-    public Optional<ImageResource> getImageResource(String uri) {
+    public Optional<ImageResourceI> getImageResource(String uri) {
         ImageResource ir;
         if (ImageUtil.isEmbeddedBase64Image(uri)) {
             final BufferedImage image = ImageUtil.loadEmbeddedBase64Image(uri);
@@ -218,7 +222,7 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
                 ir = createImageResource(uri, null);
             }
         }
-        return Optional.ofNullable(ir);
+        return Optional.ofNullable((ImageResourceI) ir);
     }
 
     /**
@@ -242,7 +246,7 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
      * @return An XMLResource containing the image.
      */
     @Override
-    public Optional<HTMLResource> getHTMLResource(String uri) 
+    public Optional<HTMLResourceI> getHTMLResource(String uri) 
     {
         HTMLResourceHelper xmlResource;
         InputStream bs = null;
@@ -266,7 +270,7 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
                 }
             }
         }
-        return Optional.of(new HTMLResource(sr.getFinalUri(), xmlResource.getDocument())); 
+        return Optional.of((HTMLResourceI) new HTMLResource(sr.getFinalUri(), xmlResource.getDocument())); 
     }
 
     @Override
@@ -392,7 +396,7 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
 	 * @return An XMLResource containing XML which about the failure.
 	 */
 	@Override
-	public HTMLResource getErrorDocument(final String uri, int errorCode) 
+	public HTMLResourceI getErrorDocument(final String uri, int errorCode) 
 	{
         HTMLResourceHelper xr;
 
