@@ -1,15 +1,29 @@
 package com.github.neoflyingsaucer.j2dout;
 
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Graphics2D;
-import com.github.neoflyingsaucer.displaylist.DlInstruction;
+import java.awt.Shape;
+
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlClip;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlDrawShape;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlLine;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlOpacity;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlOval;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlRGBColor;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlRectangle;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlSetClip;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlStroke;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlTranslate;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.Operation;
 import com.github.neoflyingsaucer.extend.output.DisplayList;
 import com.github.neoflyingsaucer.extend.output.DisplayListOuputDevice;
 import com.github.neoflyingsaucer.extend.output.DlItem;
 
 public class Java2DOut implements DisplayListOuputDevice 
 {
-	private final Graphics2D g2d;
+	protected final Graphics2D g2d;
 	
 	public Java2DOut(Graphics2D g2d)
 	{
@@ -21,18 +35,162 @@ public class Java2DOut implements DisplayListOuputDevice
 	{
 		for (DlItem item : dl.getDisplayList())
 		{
-			if (item instanceof DlInstruction.DlLine)
+			switch (item.getType())
+			{
+			case LINE:
 			{
 				DlLine obj = (DlLine) item;
-				drawLine(obj);
+				drawLine(obj.x1, obj.y1, obj.x2, obj.y2);
+				break;
+			}
+			case RGBCOLOR:
+			{
+				DlRGBColor obj = (DlRGBColor) item;
+				setRGBColor(obj.r, obj.g, obj.b, obj.a);
+				break;
+			}
+			case STROKE:
+			{
+				DlStroke stk = (DlStroke) item;
+				setStroke(stk.stroke);
+				break;
+			}
+			case OPACITY:
+			{
+				DlOpacity opac = (DlOpacity) item;
+				setOpacity(opac.opacity);
+				break;
+			}
+			case RECTANGLE:
+			{
+				DlRectangle rect = (DlRectangle) item;
+
+				if (rect.op == Operation.STROKE)
+					drawRect(rect.x, rect.y, rect.width, rect.height);
+				else if (rect.op == Operation.FILL)
+					fillRect(rect.x, rect.y, rect.width, rect.height);
+
+				break;
+			}
+			case TRANSLATE:
+			{
+				DlTranslate trans = (DlTranslate) item;
+				translate(trans.tx, trans.ty);
+				break;
+			}
+			case CLIP:
+			{
+				DlClip clip = (DlClip) item;
+				clip(clip.clip);
+				break;
+			}
+			case SET_CLIP:
+			{
+				DlSetClip clip = (DlSetClip) item;
+				setClip(clip.clip);
+				break;				
+			}
+			case OVAL:
+			{
+				DlOval oval = (DlOval) item;
+				
+				if (oval.op == Operation.STROKE)
+					drawOval(oval.x, oval.y, oval.width, oval.height);
+				else if (oval.op == Operation.FILL)
+					fillOval(oval.x, oval.y, oval.width, oval.height);
+				
+				break;
+			}
+			case DRAW_SHAPE:
+			{
+				DlDrawShape draw = (DlDrawShape) item;
+				
+				if (draw.op == Operation.STROKE)
+					draw(draw.shape);
+				else if (draw.op == Operation.FILL)
+					fill(draw.shape);
+				
+				break;
+			}
+			case CMYKCOLOR:
+			{
+				// TODO: Convert color to rgb.
+				break;
+			}
+
 			}
 		}
-		
-		g2d.dispose();
+	}
+	
+    protected void fillRect(int x, int y, int width, int height) 
+    {
+        g2d.fillRect(x, y, width, height);
+    }
+	
+	protected void fill(Shape s) 
+    {
+        g2d.fill(s);
+    }
+	
+	protected void draw(Shape s) 
+	{
+		g2d.draw(s);
+	}
+	
+    protected void fillOval(int x, int y, int width, int height) 
+    {
+        g2d.fillOval(x, y, width, height);
+    }
+	
+    protected void drawOval(int x, int y, int width, int height) 
+    {
+        g2d.drawOval(x, y, width, height);
+    }
+	
+    protected void setClip(Shape s) 
+    {
+        g2d.setClip(s);
+    }
+    
+    public void clip(Shape s) 
+    {
+        g2d.clip(s);
+    }
+	
+	protected void translate(double tx, double ty) 
+	{
+		g2d.translate(tx, ty);
 	}
 
-	private void drawLine(DlLine line)
+	protected void drawRect(int x, int y, int width, int height) 
 	{
-		g2d.drawLine(line.x1, line.y1, line.x2, line.y2);
+        g2d.drawRect(x, y, width, height);
+    }
+	
+	protected void drawLine(int x1, int y1, int x2, int y2)
+	{
+		g2d.drawLine(x1, y1, x2, y2);
+	}
+	
+	protected void setRGBColor(int r, int g, int b, int a)
+	{
+        g2d.setColor(new Color(r, g, b, a));
+	}
+	
+    protected void setStroke(BasicStroke s) 
+    {
+        g2d.setStroke(s);
+    }
+    
+	protected void setOpacity(float opacity) 
+	{
+		if (opacity == 1)
+		{
+			g2d.setComposite(AlphaComposite.SrcOver);
+		}
+		else
+		{
+			g2d.setComposite(AlphaComposite.SrcOver.derive(opacity));
+		}
 	}
 }

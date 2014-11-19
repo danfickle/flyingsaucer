@@ -6,7 +6,9 @@ import java.awt.BasicStroke;
 import java.awt.Shape;
 import java.awt.Stroke;
 
+import org.xhtmlrenderer.css.parser.FSCMYKColor;
 import org.xhtmlrenderer.css.parser.FSColor;
+import org.xhtmlrenderer.css.parser.FSRGBColor;
 import org.xhtmlrenderer.css.style.derived.FSLinearGradient;
 import org.xhtmlrenderer.extend.OutputDevice;
 import org.xhtmlrenderer.render.AbstractOutputDevice;
@@ -17,6 +19,7 @@ import org.xhtmlrenderer.render.RenderingContext;
 
 import com.github.neoflyingsaucer.displaylist.DisplayListImpl;
 import com.github.neoflyingsaucer.displaylist.DlInstruction;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.Operation;
 import com.github.neoflyingsaucer.extend.output.FSFont;
 import com.github.neoflyingsaucer.extend.output.FSImage;
 
@@ -58,6 +61,80 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
 		dl.add(new DlInstruction.DlStroke(basic));
 	}
 
+    @Override
+    public void setColor(final FSColor color) 
+    {
+        if (color instanceof FSRGBColor) 
+        {
+            FSRGBColor rgb = (FSRGBColor) color;
+            dl.add(new DlInstruction.DlRGBColor(rgb.getRed(), rgb.getGreen(), rgb.getBlue(), (int) (rgb.getAlpha() * 255)));
+        }
+        else if (color instanceof FSCMYKColor)
+        {
+        	FSCMYKColor cmyk = (FSCMYKColor) color;
+        	dl.add(new DlInstruction.DlCMYKColor(cmyk.getCyan(), cmyk.getMagenta(), cmyk.getYellow(), cmyk.getBlack()));
+        }
+        else 
+        {
+        	assert(false);
+        }
+    }
+	
+	@Override
+	public void fillRect(int x, int y, int width, int height) 
+	{
+		dl.add(new DlInstruction.DlRectangle(x, y, width, height, Operation.FILL));
+	}
+    
+	@Override
+	public void drawRect(int x, int y, int width, int height) 
+	{
+		dl.add(new DlInstruction.DlRectangle(x, y, width, height, Operation.STROKE));
+	}
+	
+	@Override
+	public void setClip(Shape s) 
+	{
+		dl.add(new DlInstruction.DlSetClip(s));
+	}
+	
+	@Override
+	public void clip(Shape s) 
+	{
+		dl.add(new DlInstruction.DlClip(s));
+	}
+	
+	@Override
+	public void drawOval(int x, int y, int width, int height) 
+	{
+		dl.add(new DlInstruction.DlOval(x, y, width, height, Operation.STROKE));
+	}
+	
+	@Override
+	public void fillOval(int x, int y, int width, int height) 
+	{
+		dl.add(new DlInstruction.DlOval(x, y, width, height, Operation.FILL));
+	}
+	
+	@Override
+	public void draw(Shape s) 
+	{
+		dl.add(new DlInstruction.DlDrawShape(s, Operation.STROKE));
+	}
+	
+	@Override
+	public void fill(Shape s) 
+	{
+		dl.add(new DlInstruction.DlDrawShape(s, Operation.FILL));
+	}
+	
+	@Override
+	public boolean isSupportsCMYKColors() 
+	{
+		return true;
+	}
+	
+	
 	@Override
 	public Stroke getStroke() {
 		// TODO Auto-generated method stub
@@ -83,12 +160,6 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
 	}
 
 	@Override
-	public boolean isSupportsCMYKColors() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public void drawSelection(RenderingContext c, InlineText inlineText) {
 		// TODO Auto-generated method stub
 		
@@ -102,30 +173,6 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
 
 	@Override
 	public void setFont(FSFont font) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setColor(FSColor color) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void drawRect(int x, int y, int width, int height) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void drawOval(int x, int y, int width, int height) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void draw(Shape s) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -172,7 +219,6 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
         }
     }
 
-
 	@Override
 	public void drawBorderLine(Shape bounds, int side, int width, boolean solid) {
 		// TODO Auto-generated method stub
@@ -193,38 +239,8 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
 	}
 
 	@Override
-	public void fill(Shape s) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void fillRect(int x, int y, int width, int height) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void fillOval(int x, int y, int width, int height) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void clip(Shape s) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public Shape getClip() {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public void setClip(Shape s) {
-		// TODO Auto-generated method stub
-		
 	}
 }

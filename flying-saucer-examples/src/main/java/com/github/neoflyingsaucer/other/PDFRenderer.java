@@ -98,7 +98,7 @@ public class PDFRenderer {
 		String html =
 				"<html><head><style>" +
 				"@page { size: 400px 400px; margin: 1px; }" +
-				"body { background-color: #00f; margin: 2px; border: 1px solid blue; height: 100px; }" +
+				"body { background-color: #f00; margin: 2px; border: 3px solid blue; height: 100px; border-radius: 8px; }" +
 				"</style></head><body></body></html>";
     	
     	
