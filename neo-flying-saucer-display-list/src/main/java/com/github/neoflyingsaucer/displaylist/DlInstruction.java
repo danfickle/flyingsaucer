@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.Locale;
 
 import com.github.neoflyingsaucer.extend.output.DlItem;
+import com.github.neoflyingsaucer.extend.output.FSFont;
+import com.github.neoflyingsaucer.extend.output.FSImage;
 
 public class DlInstruction
 {
@@ -241,6 +243,55 @@ public class DlInstruction
 		{
 			// TODO: More sensible string format.
 			return String.format(Locale.US, "{%s}", clip.toString());
+		}
+	}
+	
+	public static class DlImage implements DlItem
+	{
+		public final FSImage image;
+		public final int x, y;
+		public final DlType type = DlType.IMAGE;
+		
+		public DlImage(FSImage image, int x, int y)
+		{
+			this.image = image;
+			this.x = x;
+			this.y = y;
+		}
+		
+		@Override
+		public DlType getType()
+		{
+			return type;
+		}
+
+		@Override
+		public String toString() 
+		{
+			return String.format(Locale.US, "{%s %d %d}", image, x, y);
+		}
+	}
+	
+	public static class DlFont implements DlItem
+	{
+		public final FSFont font;
+		public final DlType type = DlType.FONT;
+		
+		public DlFont(FSFont font)
+		{
+			this.font = font;
+		}
+		
+		@Override
+		public DlType getType()
+		{
+			return type;
+		}
+
+		@Override
+		public String toString() 
+		{
+			return String.format(Locale.US, "{%s}", font);
 		}
 	}
 	

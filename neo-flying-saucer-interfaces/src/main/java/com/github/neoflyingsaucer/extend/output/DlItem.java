@@ -14,7 +14,9 @@ public interface DlItem
 		SET_CLIP,
 		OVAL,
 		DRAW_SHAPE,
-		CMYKCOLOR;
+		CMYKCOLOR,
+		IMAGE,
+		FONT;
 	}
 	
 	public DlType getType();

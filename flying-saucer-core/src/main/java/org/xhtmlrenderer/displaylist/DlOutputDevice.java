@@ -2,6 +2,7 @@ package org.xhtmlrenderer.displaylist;
 
 import java.awt.Rectangle;
 import java.awt.RenderingHints.Key;
+import java.awt.geom.Area;
 import java.awt.BasicStroke;
 import java.awt.Shape;
 import java.awt.Stroke;
@@ -26,6 +27,8 @@ import com.github.neoflyingsaucer.extend.output.FSImage;
 public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice 
 {
 	private final DisplayListImpl dl;
+    private Area clip;
+    private Stroke stroke;
 	
 	public DlOutputDevice(DisplayListImpl displayList) 
 	{
@@ -57,6 +60,8 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
 			return;
 		
 		BasicStroke basic = (BasicStroke) s;
+		
+		stroke = basic;
 		
 		dl.add(new DlInstruction.DlStroke(basic));
 	}
@@ -95,13 +100,23 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
 	@Override
 	public void setClip(Shape s) 
 	{
+        if (s == null) 
+            clip = null;
+        else
+            clip = new Area(s);
+		
 		dl.add(new DlInstruction.DlSetClip(s));
 	}
 	
 	@Override
-	public void clip(Shape s) 
+	public void clip(Shape s2) 
 	{
-		dl.add(new DlInstruction.DlClip(s));
+        if (clip == null)
+            clip = new Area(s2);
+        else
+            clip.intersect(new Area(s2));
+		
+		dl.add(new DlInstruction.DlClip(s2));
 	}
 	
 	@Override
@@ -134,11 +149,10 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
 		return true;
 	}
 	
-	
 	@Override
-	public Stroke getStroke() {
-		// TODO Auto-generated method stub
-		return null;
+	public Stroke getStroke()
+	{
+		return stroke;
 	}
 
 	@Override
@@ -154,15 +168,15 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
 	}
 
 	@Override
-	public boolean isSupportsSelection() {
-		// TODO Auto-generated method stub
+	public boolean isSupportsSelection()
+	{
 		return false;
 	}
 
 	@Override
-	public void drawSelection(RenderingContext c, InlineText inlineText) {
-		// TODO Auto-generated method stub
-		
+	public void drawSelection(RenderingContext c, InlineText inlineText)
+	{
+		// NOT IMPLEMENTED: We no longer support a selection.
 	}
 
 	@Override
@@ -172,9 +186,9 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
 	}
 
 	@Override
-	public void setFont(FSFont font) {
-		// TODO Auto-generated method stub
-		
+	public void setFont(FSFont font)
+	{
+		dl.add(new DlInstruction.DlFont(font));
 	}
 
     @Override
@@ -220,15 +234,15 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
     }
 
 	@Override
-	public void drawBorderLine(Shape bounds, int side, int width, boolean solid) {
-		// TODO Auto-generated method stub
-		
+	public void drawBorderLine(Shape bounds, int side, int width, boolean solid)
+	{
+		draw(bounds);
 	}
 
 	@Override
-	public void drawImage(FSImage image, int x, int y) {
-		// TODO Auto-generated method stub
-		
+	public void drawImage(FSImage image, int x, int y) 
+	{
+		dl.add(new DlInstruction.DlImage(image, x, y));
 	}
 
 	@Override
@@ -239,8 +253,8 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
 	}
 
 	@Override
-	public Shape getClip() {
-		// TODO Auto-generated method stub
-		return null;
+	public Shape getClip() 
+	{
+		return clip;
 	}
 }

@@ -11,7 +11,6 @@ import com.lowagie.text.pdf.PdfWriter;
 
 import org.w3c.dom.Document;
 import org.xhtmlrenderer.pdf.ITextRenderer;
-import org.xhtmlrenderer.swing.DisplayListRenderer;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;

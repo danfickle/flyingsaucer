@@ -8,6 +8,8 @@ import java.awt.Shape;
 
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlClip;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlDrawShape;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlFont;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlImage;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlLine;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlOpacity;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlOval;
@@ -20,6 +22,8 @@ import com.github.neoflyingsaucer.displaylist.DlInstruction.Operation;
 import com.github.neoflyingsaucer.extend.output.DisplayList;
 import com.github.neoflyingsaucer.extend.output.DisplayListOuputDevice;
 import com.github.neoflyingsaucer.extend.output.DlItem;
+import com.github.neoflyingsaucer.extend.output.FSFont;
+import com.github.neoflyingsaucer.extend.output.FSImage;
 
 public class Java2DOut implements DisplayListOuputDevice 
 {
@@ -112,6 +116,18 @@ public class Java2DOut implements DisplayListOuputDevice
 				
 				break;
 			}
+			case IMAGE:
+			{
+				DlImage img = (DlImage) item;
+				drawImage(img.image, img.x, img.y);
+				break;
+			}
+			case FONT:
+			{
+				DlFont font = (DlFont) item;
+				setFont(font.font);
+				break;
+			}
 			case CMYKCOLOR:
 			{
 				// TODO: Convert color to rgb.
@@ -121,6 +137,16 @@ public class Java2DOut implements DisplayListOuputDevice
 			}
 		}
 	}
+	
+    protected void setFont(FSFont font)
+    {
+       g2d.setFont(((Java2DFont) font).getAWTFont());
+    }
+	
+    protected void drawImage(FSImage image, int x, int y)
+    {
+        // TODO g2d.drawImage(((AWTFSImage) image).getImage(), x, y, null);
+    }
 	
     protected void fillRect(int x, int y, int width, int height) 
     {
