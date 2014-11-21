@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import org.w3c.dom.Document;
 import org.xhtmlrenderer.css.style.CalculatedStyle;
 import org.xhtmlrenderer.displaylist.DlOutputDevice;
+import org.xhtmlrenderer.displaylist.DlTextRenderer;
 import org.xhtmlrenderer.layout.BoxBuilder;
 import org.xhtmlrenderer.layout.Layer;
 import org.xhtmlrenderer.layout.LayoutContext;
@@ -18,12 +19,11 @@ import org.xhtmlrenderer.render.PageBox;
 import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.render.ViewportBox;
 import org.xhtmlrenderer.simple.HtmlNamespaceHandler;
-import org.xhtmlrenderer.swing.Java2DFontContext;
-import org.xhtmlrenderer.swing.Java2DTextRenderer;
 import org.xhtmlrenderer.swing.SwingReplacedElementFactory;
 
 import com.github.neoflyingsaucer.displaylist.DisplayListImpl;
 import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
+import com.github.neoflyingsaucer.j2dout.Java2DFontContext;
 import com.github.neoflyingsaucer.j2dout.Java2DFontResolver;
 
 public class DisplayListRenderer 
@@ -116,7 +116,7 @@ public class DisplayListRenderer
 
         context.setFontResolver(fontResolver);
         context.setReplacedElementFactory(new SwingReplacedElementFactory());
-        context.setTextRenderer(new Java2DTextRenderer());
+        context.setTextRenderer(new DlTextRenderer());
 
         return context;
     }

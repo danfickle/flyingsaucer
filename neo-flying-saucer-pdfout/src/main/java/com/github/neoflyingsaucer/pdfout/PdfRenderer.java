@@ -24,6 +24,8 @@ import org.xhtmlrenderer.render.ViewportBox;
 import org.xhtmlrenderer.resource.ResourceLoadHelper;
 import org.xhtmlrenderer.simple.HtmlNamespaceHandler;
 
+import com.github.neoflyingsaucer.extend.output.FSFont;
+import com.github.neoflyingsaucer.extend.output.FSFontMetrics;
 import com.github.neoflyingsaucer.extend.output.FontContext;
 import com.github.neoflyingsaucer.extend.output.FontResolver;
 import com.github.neoflyingsaucer.extend.useragent.HTMLResourceI;
@@ -134,6 +136,12 @@ public class PdfRenderer
     {
         final LayoutContext result = _sharedContext.newLayoutContextInstance();
         result.setFontContext(new FontContext() {
+
+			@Override
+			public FSFontMetrics getFontMetrics(FSFont font, String s) {
+				// TODO Auto-generated method stub
+				return null;
+			}
 		});
 
         _sharedContext.getTextRenderer().setup(result.getFontContext());
@@ -145,6 +153,12 @@ public class PdfRenderer
     {
         final RenderingContext result = _sharedContext.newRenderingContextInstance();
         result.setFontContext(new FontContext() {
+
+			@Override
+			public FSFontMetrics getFontMetrics(FSFont font, String s) {
+				// TODO Auto-generated method stub
+				return null;
+			}
 		});
 
         result.setOutputDevice(_outputDevice);

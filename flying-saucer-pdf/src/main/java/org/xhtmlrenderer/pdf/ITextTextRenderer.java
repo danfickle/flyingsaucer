@@ -24,12 +24,12 @@ import java.awt.Rectangle;
 import org.xhtmlrenderer.extend.OutputDevice;
 import org.xhtmlrenderer.extend.TextRenderer;
 import org.xhtmlrenderer.pdf.ITextFontResolver.FontDescription;
-import org.xhtmlrenderer.render.JustificationInfo;
 
 import com.github.neoflyingsaucer.extend.output.FSFont;
 import com.github.neoflyingsaucer.extend.output.FSFontMetrics;
 import com.github.neoflyingsaucer.extend.output.FSGlyphVector;
 import com.github.neoflyingsaucer.extend.output.FontContext;
+import com.github.neoflyingsaucer.extend.output.JustificationInfo;
 import com.lowagie.text.pdf.BaseFont;
 
 public class ITextTextRenderer implements TextRenderer {

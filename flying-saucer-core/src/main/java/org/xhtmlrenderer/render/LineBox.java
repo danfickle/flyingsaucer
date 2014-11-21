@@ -43,6 +43,8 @@ import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.layout.PaintingInfo;
 import org.xhtmlrenderer.util.XRRuntimeException;
 
+import com.github.neoflyingsaucer.extend.output.JustificationInfo;
+
 /**
  * A line box contains a single line of text (or other inline content).  It
  * is created during layout.  It also tracks floated and absolute content

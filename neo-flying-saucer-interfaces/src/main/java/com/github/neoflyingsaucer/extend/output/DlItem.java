@@ -16,7 +16,10 @@ public interface DlItem
 		DRAW_SHAPE,
 		CMYKCOLOR,
 		IMAGE,
-		FONT;
+		FONT,
+		STRING,
+		STRING_EX,
+		GLYPH_VECTOR;
 	}
 	
 	public DlType getType();

@@ -45,13 +45,13 @@ import org.xhtmlrenderer.render.BorderPainter;
 import org.xhtmlrenderer.render.Box;
 import org.xhtmlrenderer.render.InlineLayoutBox;
 import org.xhtmlrenderer.render.InlineText;
-import org.xhtmlrenderer.render.JustificationInfo;
 import org.xhtmlrenderer.render.PageBox;
 import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.util.Configuration;
 
 import com.github.neoflyingsaucer.extend.output.FSFont;
 import com.github.neoflyingsaucer.extend.output.FSImage;
+import com.github.neoflyingsaucer.extend.output.JustificationInfo;
 import com.github.neoflyingsaucer.extend.output.FontSpecificationI.FontStyle;
 import com.github.neoflyingsaucer.extend.useragent.Optional;
 import com.github.neoflyingsaucer.pdfout.PdfFontResolver.FontDescription;

@@ -19,8 +19,16 @@
  */
 package org.xhtmlrenderer.pdf;
 
+import com.github.neoflyingsaucer.extend.output.FSFont;
+import com.github.neoflyingsaucer.extend.output.FSFontMetrics;
 import com.github.neoflyingsaucer.extend.output.FontContext;
 
 public class ITextFontContext implements FontContext {
+
+	@Override
+	public FSFontMetrics getFontMetrics(FSFont font, String s) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

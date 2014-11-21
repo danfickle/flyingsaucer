@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * }}}
  */
-package org.xhtmlrenderer.swing;
+package com.github.neoflyingsaucer.j2dout;
 
 import java.awt.Graphics2D;
 
@@ -35,10 +35,15 @@ public class Java2DFontContext implements FontContext {
     public Graphics2D getGraphics() {
         return _graphics;
     }
-
-	@Override
-	public FSFontMetrics getFontMetrics(FSFont font, String s) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    
+    @Override
+    public FSFontMetrics getFontMetrics(FSFont font, String s)
+    {
+        // TODO: Antialias and fractional metrics.
+    	Java2DMetricsAdapter adapter = new Java2DMetricsAdapter(
+                ((Java2DFont) font).getAWTFont().getLineMetrics(
+                        s, _graphics.getFontRenderContext()));
+        
+        return adapter;
+    }
 }

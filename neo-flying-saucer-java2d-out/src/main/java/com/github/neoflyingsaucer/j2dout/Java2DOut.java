@@ -5,10 +5,13 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
+import java.awt.font.GlyphVector;
+import java.awt.geom.Point2D;
 
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlClip;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlDrawShape;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlFont;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlGlyphVector;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlImage;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlLine;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlOpacity;
@@ -16,6 +19,8 @@ import com.github.neoflyingsaucer.displaylist.DlInstruction.DlOval;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlRGBColor;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlRectangle;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlSetClip;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlString;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlStringEx;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlStroke;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlTranslate;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.Operation;
@@ -23,7 +28,9 @@ import com.github.neoflyingsaucer.extend.output.DisplayList;
 import com.github.neoflyingsaucer.extend.output.DisplayListOuputDevice;
 import com.github.neoflyingsaucer.extend.output.DlItem;
 import com.github.neoflyingsaucer.extend.output.FSFont;
+import com.github.neoflyingsaucer.extend.output.FSGlyphVector;
 import com.github.neoflyingsaucer.extend.output.FSImage;
+import com.github.neoflyingsaucer.extend.output.JustificationInfo;
 
 public class Java2DOut implements DisplayListOuputDevice 
 {
@@ -128,6 +135,24 @@ public class Java2DOut implements DisplayListOuputDevice
 				setFont(font.font);
 				break;
 			}
+			case STRING:
+			{
+				DlString s = (DlString) item;
+				drawString(s.txt, (int) s.x, (int) s.y);
+				break;
+			}
+			case STRING_EX:
+			{
+				DlStringEx s = (DlStringEx) item;
+				drawStringEx(s.txt, (int) s.x, (int) s.y, s.info);
+				break;
+			}
+			case GLYPH_VECTOR:
+			{
+				DlGlyphVector g = (DlGlyphVector) item;
+				drawGlyphVector(g.vec, (int) g.x, (int) g.y);
+				break;
+			}
 			case CMYKCOLOR:
 			{
 				// TODO: Convert color to rgb.
@@ -138,6 +163,81 @@ public class Java2DOut implements DisplayListOuputDevice
 		}
 	}
 	
+	protected void drawGlyphVector(FSGlyphVector vec, int x, int y)
+	{
+		// TODO: Set anti-aliasing and fractional metrics based on user settings.
+		GlyphVector vector = ((Java2DGlyphVector) vec).getGlyphVector();
+        g2d.drawGlyphVector(vector, x, y);
+	}
+	
+	protected void drawString(String txt, int x, int y)
+	{
+		// TODO: Set anti-aliasing and fractional metrics based on user settings.
+		g2d.drawString(txt, x, y);
+	}
+	
+	protected void drawStringEx(String txt, int x, int y, JustificationInfo info)
+	{
+		// TODO: Set anti-aliasing and fractional metrics based on user settings.
+		GlyphVector vector = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), txt);
+        
+		if (vector.getNumGlyphs() == txt.length())
+			adjustGlyphPositions(txt, info, vector);
+		else
+			adjustGlyphPositionsEx(txt, info, vector);
+
+		g2d.drawGlyphVector(vector, x, y);
+	}
+	
+	/* 
+	 * Experimental, untested.
+	 * Adjusts glyph positions, taking into account that there is not a one-to-one mapping between
+	 * glyphs and characters.
+	 */
+	protected void adjustGlyphPositionsEx(String txt, JustificationInfo info, GlyphVector vector)
+	{
+		int numGlyphs = vector.getNumGlyphs();
+        float adjust = 0.0f;
+        
+		for (int i = 0; i < numGlyphs; i++)
+		{
+			int ci = vector.getGlyphCharIndex(i);
+			int c = txt.charAt(ci);
+			
+			if (i != 0)
+            {
+                Point2D point = vector.getGlyphPosition(i);
+                vector.setGlyphPosition(i, new Point2D.Double(point.getX() + adjust, point.getY()));
+            }
+            
+            if (c == ' ' || c == '\u00a0' || c == '\u3000')
+                adjust += info.getSpaceAdjust();
+            else
+                adjust += info.getNonSpaceAdjust();
+		}
+	}
+	
+    protected void adjustGlyphPositions(String txt, JustificationInfo info, GlyphVector vector)
+    {
+        float adjust = 0.0f;
+       
+        for (int i = 0; i < txt.length(); i++)
+        {
+            final char c = txt.charAt(i);
+
+            if (i != 0)
+            {
+                Point2D point = vector.getGlyphPosition(i);
+                vector.setGlyphPosition(i, new Point2D.Double(point.getX() + adjust, point.getY()));
+            }
+            
+            if (c == ' ' || c == '\u00a0' || c == '\u3000')
+                adjust += info.getSpaceAdjust();
+            else
+                adjust += info.getNonSpaceAdjust();
+        }
+    }
+
     protected void setFont(FSFont font)
     {
        g2d.setFont(((Java2DFont) font).getAWTFont());

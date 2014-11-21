@@ -1,6 +1,6 @@
 /*
  * {{{ header & license
- * Copyright (c) 2006 Wisconsin Court System
+ * Copyright (c) 2007 Wisconsin Court System
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -9,7 +9,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
@@ -17,9 +17,20 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * }}}
  */
-package com.github.neoflyingsaucer.extend.output;
+package com.github.neoflyingsaucer.j2dout;
 
-public interface FontContext
-{
-	FSFontMetrics getFontMetrics(FSFont font, String s);
+import java.awt.font.GlyphVector;
+
+import com.github.neoflyingsaucer.extend.output.FSGlyphVector;
+
+public class Java2DGlyphVector implements FSGlyphVector {
+    private final GlyphVector _glyphVector;
+    
+    public Java2DGlyphVector(final GlyphVector vector) {
+        _glyphVector = vector;
+    }
+
+    public GlyphVector getGlyphVector() {
+        return _glyphVector;
+    }
 }

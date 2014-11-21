@@ -44,6 +44,7 @@ import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.layout.PaintingInfo;
 
 import com.github.neoflyingsaucer.extend.output.FSFontMetrics;
+import com.github.neoflyingsaucer.extend.output.JustificationInfo;
 
 /**
  * A {@link Box} which contains the portion of an inline element layed out on a

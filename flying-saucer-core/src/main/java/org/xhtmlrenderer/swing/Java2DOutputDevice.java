@@ -45,12 +45,12 @@ import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.render.BorderPainter;
 import org.xhtmlrenderer.render.InlineLayoutBox;
 import org.xhtmlrenderer.render.InlineText;
-import org.xhtmlrenderer.render.JustificationInfo;
 import org.xhtmlrenderer.render.RenderingContext;
 
 import com.github.neoflyingsaucer.extend.output.FSFont;
 import com.github.neoflyingsaucer.extend.output.FSGlyphVector;
 import com.github.neoflyingsaucer.extend.output.FSImage;
+import com.github.neoflyingsaucer.extend.output.JustificationInfo;
 import com.github.neoflyingsaucer.extend.output.ReplacedElement;
 
 public class Java2DOutputDevice extends AbstractOutputDevice implements OutputDevice {

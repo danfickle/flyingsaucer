@@ -7,7 +7,9 @@ import java.util.Locale;
 
 import com.github.neoflyingsaucer.extend.output.DlItem;
 import com.github.neoflyingsaucer.extend.output.FSFont;
+import com.github.neoflyingsaucer.extend.output.FSGlyphVector;
 import com.github.neoflyingsaucer.extend.output.FSImage;
+import com.github.neoflyingsaucer.extend.output.JustificationInfo;
 
 public class DlInstruction
 {
@@ -16,6 +18,89 @@ public class DlInstruction
 		FILL,
 		STROKE,
 		CLIP;
+	}
+	
+	public static class DlGlyphVector implements DlItem
+	{
+		public final FSGlyphVector vec;
+		public final float x, y;
+		public final DlType type = DlType.GLYPH_VECTOR;
+		
+		public DlGlyphVector(FSGlyphVector vec, float x, float y)
+		{
+			this.vec = vec;
+			this.x = x;
+			this.y = y;
+		}
+		
+		@Override
+		public DlType getType()
+		{
+			return type;
+		}
+
+		@Override
+		public String toString() 
+		{
+			// TODO: Make sure FSGlyphVector::toString returns something sensible.
+			return String.format(Locale.US, "{%s %f %f}", vec, x, y);
+		}
+	}
+	
+	
+	public static class DlStringEx implements DlItem
+	{
+		public final String txt;
+		public final float x, y;
+		public final JustificationInfo info;
+		public final DlType type = DlType.STRING_EX;
+		
+		public DlStringEx(String txt, float x, float y, JustificationInfo info)
+		{
+			this.txt = txt;
+			this.x = x;
+			this.y = y;
+			this.info = info;
+		}
+		
+		@Override
+		public DlType getType()
+		{
+			return type;
+		}
+		
+		@Override
+		public String toString() 
+		{
+			// TODO: Make sure JustificationInfo::toString returns something sensible.
+			return String.format(Locale.US, "{%s, %f, %f}", txt, x, y);
+		}
+	}
+	
+	public static class DlString implements DlItem
+	{
+		public final String txt;
+		public final float x, y;
+		public final DlType type = DlType.STRING;
+		
+		public DlString(String txt, float x, float y)
+		{
+			this.txt = txt;
+			this.x = x;
+			this.y = y;
+		}
+		
+		@Override
+		public DlType getType()
+		{
+			return type;
+		}
+		
+		@Override
+		public String toString() 
+		{
+			return String.format(Locale.US, "{%s, %f, %f}", txt, x, y);
+		}
 	}
 	
 	public static class DlLine implements DlItem

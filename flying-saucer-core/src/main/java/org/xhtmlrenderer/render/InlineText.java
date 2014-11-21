@@ -29,6 +29,7 @@ import org.xhtmlrenderer.layout.WhitespaceStripper;
 import org.xhtmlrenderer.util.Uu;
 
 import com.github.neoflyingsaucer.extend.output.FSGlyphVector;
+import com.github.neoflyingsaucer.extend.output.JustificationInfo;
 
 /**
  * A lightweight object which contains a chunk of text from an inline element.  

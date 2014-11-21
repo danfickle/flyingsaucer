@@ -45,6 +45,7 @@ import org.xhtmlrenderer.util.Configuration;
 
 import com.github.neoflyingsaucer.extend.output.FSFontMetrics;
 import com.github.neoflyingsaucer.extend.output.FSImage;
+import com.github.neoflyingsaucer.extend.output.JustificationInfo;
 import com.github.neoflyingsaucer.extend.useragent.ImageResourceI;
 import com.github.neoflyingsaucer.extend.useragent.Optional;
 

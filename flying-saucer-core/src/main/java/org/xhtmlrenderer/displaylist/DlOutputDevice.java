@@ -22,7 +22,9 @@ import com.github.neoflyingsaucer.displaylist.DisplayListImpl;
 import com.github.neoflyingsaucer.displaylist.DlInstruction;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.Operation;
 import com.github.neoflyingsaucer.extend.output.FSFont;
+import com.github.neoflyingsaucer.extend.output.FSGlyphVector;
 import com.github.neoflyingsaucer.extend.output.FSImage;
+import com.github.neoflyingsaucer.extend.output.JustificationInfo;
 
 public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice 
 {
@@ -35,6 +37,21 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
 		this.dl = displayList;
 	}
 
+	public void drawString(String s, float x, float y)
+	{
+		dl.add(new DlInstruction.DlString(s, x, y));
+	}
+	
+	public void drawString(String s, float x, float y, JustificationInfo info)
+	{
+		dl.add(new DlInstruction.DlStringEx(s, x, y, info));
+	}
+	
+	public void drawGlyphVector(FSGlyphVector vec, float x, float y)
+	{
+		dl.add(new DlInstruction.DlGlyphVector(vec, x, y));
+	}
+	
 	@Override
 	public void setOpacity(float opacity) 
 	{
