@@ -3,6 +3,7 @@ package com.github.neoflyingsaucer.other;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
 import org.w3c.dom.Document;
@@ -18,10 +19,13 @@ import org.xhtmlrenderer.render.Box;
 import org.xhtmlrenderer.render.PageBox;
 import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.render.ViewportBox;
+import org.xhtmlrenderer.resource.ResourceLoadHelper;
 import org.xhtmlrenderer.simple.HtmlNamespaceHandler;
 import org.xhtmlrenderer.swing.SwingReplacedElementFactory;
 
 import com.github.neoflyingsaucer.displaylist.DisplayListImpl;
+import com.github.neoflyingsaucer.extend.output.DisplayList;
+import com.github.neoflyingsaucer.extend.useragent.HTMLResourceI;
 import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 import com.github.neoflyingsaucer.j2dout.Java2DFontContext;
 import com.github.neoflyingsaucer.j2dout.Java2DFontResolver;
@@ -29,28 +33,43 @@ import com.github.neoflyingsaucer.j2dout.Java2DFontResolver;
 public class DisplayListRenderer 
 {
 	private Box rootBox;
-	private final SharedContext sharedContext;
 	private boolean needRelayout;
 	private Document doc;
+
 	private final UserAgentCallback cb;
-	private final DisplayListImpl displayList;
+	private final SharedContext sharedContext;
+	private final DisplayList displayList;
+	private final Graphics2D layoutGraphics;
 	
 	public DisplayListRenderer(UserAgentCallback cb)
 	{
 		this.cb = cb;
 		this.sharedContext = newSharedContext(cb);
 		this.displayList = new DisplayListImpl();
+		
+        BufferedImage bi = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+        this.layoutGraphics = bi.createGraphics();
+        
+        this.layoutGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        this.layoutGraphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
 	}
 	
-    public static DisplayListImpl renderToList(Document doc, int maxWidth, int maxHeight, UserAgentCallback cb, int pageNo)  
+    public static DisplayList renderToList(Document doc, int maxWidth, int maxHeight, UserAgentCallback cb, int pageNo, String baseUrl)  
     {
         DisplayListRenderer g2r = new DisplayListRenderer(cb);
         g2r.setDocument(doc);
+        g2r.sharedContext.setDocumentURI(baseUrl);
         g2r.print(pageNo);
         
         return g2r.displayList;
     }
-	
+
+    public static DisplayList renderToList(String uri, int maxWidth, int maxHeight, UserAgentCallback cb, int pageNo)  
+    {
+    	HTMLResourceI res = ResourceLoadHelper.loadHtmlDocument(uri, cb);
+    	return renderToList(res.getDocument(), 1000, 1000, cb, 0, res.getURI());
+    }
+    
     private void setDocument(Document doc2) 
     {
 		this.doc = doc2;
@@ -124,16 +143,8 @@ public class DisplayListRenderer
     private LayoutContext newLayoutContext()
     {
         LayoutContext result = getSharedContext().newLayoutContextInstance();
-
-        BufferedImage bi = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
-        
-        Graphics2D layoutGraphics =
-            bi.createGraphics();
-
         result.setFontContext(new Java2DFontContext(layoutGraphics));
-
         getSharedContext().getTextRenderer().setup(result.getFontContext());
-
         return result;
     }
     
@@ -145,12 +156,6 @@ public class DisplayListRenderer
     public RenderingContext newRenderingContext() 
     {
         RenderingContext result = getSharedContext().newRenderingContextInstance();
-
-        BufferedImage bi = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
-        
-        Graphics2D layoutGraphics =
-            bi.createGraphics();
-
         result.setFontContext(new Java2DFontContext(layoutGraphics));
         result.setOutputDevice(new DlOutputDevice(this.displayList));
 
@@ -168,7 +173,7 @@ public class DisplayListRenderer
     {
             getSharedContext().setPrint(true);
             getSharedContext().setDPI(72f);
-            getSharedContext().getTextRenderer().setSmoothingThreshold(0);
+            //getSharedContext().getTextRenderer().setSmoothingThreshold(0);
             getSharedContext().setUserAgentCallback(this.cb);
             getSharedContext().setReplacedElementFactory(new SwingReplacedElementFactory());
             getSharedContext().setNamespaceHandler(new HtmlNamespaceHandler());

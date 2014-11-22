@@ -78,23 +78,6 @@ public class ITextTextRenderer implements TextRenderer {
         }
     }
 
-    public void setFontScale(final float scale) {
-    }
-
-    public float getFontScale() {
-        return 1.0f;
-    }
-
-    public void setSmoothingThreshold(final float fontsize) {
-    }
-
-    public int getSmoothingLevel() {
-        return 0;
-    }
-
-    public void setSmoothingLevel(final int level) {
-    }
-
     public Rectangle getGlyphBounds(final OutputDevice outputDevice, final FSFont font, final FSGlyphVector fsGlyphVector, final int index, final float x, final float y) {
         throw new UnsupportedOperationException();
     }

@@ -2,7 +2,7 @@ package com.github.neoflyingsaucer.other;
 
 import com.github.neoflyingsaucer.defaultuseragent.DefaultUserAgent;
 import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
-import com.github.neoflyingsaucer.displaylist.DisplayListImpl;
+import com.github.neoflyingsaucer.extend.output.DisplayList;
 import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 import com.github.neoflyingsaucer.j2dout.Java2DOut;
 import com.github.neoflyingsaucer.pdfout.PdfRenderer;
@@ -13,6 +13,7 @@ import org.w3c.dom.Document;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -101,12 +102,15 @@ public class PDFRenderer {
 				"</style></head><body>TEST TEST LONG TEST LONG TEST LONG TEST LONG TEST LONG TEST LONG TEST LONG TEST</body></html>";
     	
     	
-    	Document doc = HTMLResourceHelper.load(html).getDocument();
-    	DisplayListImpl dl = DisplayListRenderer.renderToList(doc, 1000, 1000, uac, 0);
+    	// Document doc = HTMLResourceHelper.load(html).getDocument();
+    	DisplayList dl = DisplayListRenderer.renderToList(url, 1000, 1000, uac, 0);
     	System.err.println(dl.toString());
     	
     	BufferedImage img = new BufferedImage(1000, 1000, BufferedImage.TYPE_INT_ARGB);
     	Graphics2D g2d = img.createGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+  	
     	Java2DOut out = new Java2DOut(g2d);
     	out.render(dl);
     	g2d.dispose();

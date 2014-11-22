@@ -588,6 +588,7 @@ public class BrowserMenuBar extends JMenuBar {
 
     }
 
+    @Deprecated
     class AntiAliasedAction extends AbstractAction {
         int fontSizeThreshold;
 
@@ -597,8 +598,8 @@ public class BrowserMenuBar extends JMenuBar {
         }
 
         public void actionPerformed(final ActionEvent evt) {
-            root.panel.view.getSharedContext().getTextRenderer().setSmoothingThreshold(fontSizeThreshold);
-            root.panel.view.repaint();
+//            root.panel.view.getSharedContext().getTextRenderer().setSmoothingThreshold(fontSizeThreshold);
+//            root.panel.view.repaint();
         }
     }
 

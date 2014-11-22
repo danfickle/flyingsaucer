@@ -315,7 +315,7 @@ public class HTMLTest extends JFrame {
             panel.repaint();
         }
     }
-
+    @Deprecated
     class AntiAliasedAction extends AbstractAction {
         private static final long serialVersionUID = 1L;
 
@@ -327,8 +327,8 @@ public class HTMLTest extends JFrame {
         }
 
         public void actionPerformed(final ActionEvent evt) {
-            panel.getSharedContext().getTextRenderer().setSmoothingThreshold(fontSizeThreshold);
-            panel.repaint();
+//            panel.getSharedContext().getTextRenderer().setSmoothingThreshold(fontSizeThreshold);
+//            panel.repaint();
         }
     }
 

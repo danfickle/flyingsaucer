@@ -224,7 +224,7 @@ public class Printer implements Runnable, DocumentListener, Printable, PrintJobL
                 context.setPrint(true);
                 context.setDPI(72f);
 
-                context.getTextRenderer().setSmoothingThreshold(0);
+                // context.getTextRenderer().setSmoothingThreshold(0);
 
             }
 

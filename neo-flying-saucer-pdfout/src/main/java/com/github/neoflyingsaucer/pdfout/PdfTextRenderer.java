@@ -19,13 +19,11 @@ public class PdfTextRenderer implements TextRenderer
 	
 	public PdfTextRenderer() 
 	{
-
 	}
 
 	@Override
-	public void setup(FontContext context) {
-		// TODO Auto-generated method stub
-		
+	public void setup(FontContext context)
+	{
 	}
 
 	@Override
@@ -43,29 +41,30 @@ public class PdfTextRenderer implements TextRenderer
 
 	@Override
 	public void drawGlyphVector(OutputDevice outputDevice,
-			FSGlyphVector vector, float x, float y) {
-		// TODO Auto-generated method stub
-		
+			FSGlyphVector vector, float x, float y) 
+	{
+		assert(false);
 	}
 
 	@Override
-	public FSGlyphVector getGlyphVector(OutputDevice outputDevice, FSFont font,
-			String string) {
-		// TODO Auto-generated method stub
+	public FSGlyphVector getGlyphVector(OutputDevice outputDevice, FSFont font, String string)
+	{
+		assert(false);
 		return null;
 	}
 
 	@Override
-	public float[] getGlyphPositions(OutputDevice outputDevice, FSFont font,
-			FSGlyphVector fsGlyphVector) {
-		// TODO Auto-generated method stub
+	public float[] getGlyphPositions(OutputDevice outputDevice, FSFont font, FSGlyphVector fsGlyphVector)
+	{
+		assert(false);
 		return null;
 	}
 
 	@Override
 	public Rectangle getGlyphBounds(OutputDevice outputDevice, FSFont font,
-			FSGlyphVector fsGlyphVector, int index, float x, float y) {
-		// TODO Auto-generated method stub
+			FSGlyphVector fsGlyphVector, int index, float x, float y)
+	{
+		assert(false);
 		return null;
 	}
 
@@ -105,33 +104,4 @@ public class PdfTextRenderer implements TextRenderer
             return (int)Math.ceil(result); 
         }
 	}
-
-	@Override
-	public void setFontScale(float scale) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public float getFontScale() 
-	{
-		return 1.0f;
-	}
-
-	@Override
-	public void setSmoothingThreshold(float fontsize) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public int getSmoothingLevel() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public void setSmoothingLevel(int level) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

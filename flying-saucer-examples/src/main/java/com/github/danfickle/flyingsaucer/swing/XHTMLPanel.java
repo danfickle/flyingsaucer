@@ -237,10 +237,11 @@ public class XHTMLPanel extends BasicPanel {
      * Resets all rendered fonts on the current document to the font size
      * specified in the document's styling instructions.
      */
+    @Deprecated
     public void resetFontSize() {
-        final SharedContext rc = getSharedContext();
-        rc.getTextRenderer().setFontScale(1.0F);
-        setDocument(getDocument());
+//        final SharedContext rc = getSharedContext();
+//        rc.getTextRenderer().setFontScale(1f);
+//        setDocument(getDocument());
     }
 
     /**
@@ -259,12 +260,13 @@ public class XHTMLPanel extends BasicPanel {
      * Applies a change in scale for fonts using the rendering context's text
      * renderer.
      */
+    @Deprecated
     private void scaleFont(final float scaleBy) {
-        final SharedContext rc = getSharedContext();
-        final float fs = rc.getTextRenderer().getFontScale() * scaleBy;
-        if (fs < minFontScale || fs > maxFontScale) return;
-        rc.getTextRenderer().setFontScale(fs);
-        setDocument(getDocument());
+//        final SharedContext rc = getSharedContext();
+//        final float fs = rc.getTextRenderer().getFontScale() * scaleBy;
+//        if (fs < minFontScale || fs > maxFontScale) return;
+//        rc.getTextRenderer().setFontScale(fs);
+//        setDocument(getDocument());
     }
 
     /**

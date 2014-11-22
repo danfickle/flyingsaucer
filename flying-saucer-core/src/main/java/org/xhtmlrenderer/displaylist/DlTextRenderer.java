@@ -70,40 +70,4 @@ public class DlTextRenderer implements TextRenderer
 	{
 		return context.getWidth(font, string);
 	}
-
-	@Override
-	@Deprecated
-	public void setFontScale(float scale) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	@Deprecated
-	public float getFontScale() {
-		// TODO Auto-generated method stub
-		return 1f;
-	}
-
-	@Override
-	@Deprecated
-	public void setSmoothingThreshold(float fontsize) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	@Deprecated
-	public int getSmoothingLevel() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	@Deprecated
-	public void setSmoothingLevel(int level) {
-		// TODO Auto-generated method stub
-
-	}
-
 }

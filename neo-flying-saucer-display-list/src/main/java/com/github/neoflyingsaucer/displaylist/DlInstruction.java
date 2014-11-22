@@ -277,7 +277,7 @@ public class DlInstruction
 		public String toString()
 		{
 			// TODO: More sensible string format.
-			return String.format(Locale.US, "{%s}", clip.toString());
+			return String.format(Locale.US, "{%s}", clip);
 		}
 	}
 	

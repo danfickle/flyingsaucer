@@ -168,7 +168,7 @@ public class Java2DPageRenderer
             
             getSharedContext().setPrint(true);
             getSharedContext().setDPI(72f);
-            getSharedContext().getTextRenderer().setSmoothingThreshold(0);
+            // getSharedContext().getTextRenderer().setSmoothingThreshold(0);
             getSharedContext().setUserAgentCallback(this.cb);
             getSharedContext().setReplacedElementFactory(new SwingReplacedElementFactory());
             getSharedContext().setNamespaceHandler(new HtmlNamespaceHandler());

@@ -178,7 +178,6 @@ public class Java2DTextRenderer implements TextRenderer {
         threshold = fontsize;
     }
 
-    public void setSmoothingLevel( final int level ) { /* no-op */ }
 
     public FSFontMetrics getFSFontMetrics(final FontContext fc, final FSFont font, final String string ) {
         Object fracHint = null;
@@ -212,10 +211,6 @@ public class Java2DTextRenderer implements TextRenderer {
 
     public float getFontScale() {
         return this.scale;
-    }
-
-    public int getSmoothingLevel() {
-        return 0;
     }
 
     /**

@@ -18,9 +18,9 @@ import org.xhtmlrenderer.render.BorderPainter;
 import org.xhtmlrenderer.render.InlineText;
 import org.xhtmlrenderer.render.RenderingContext;
 
-import com.github.neoflyingsaucer.displaylist.DisplayListImpl;
 import com.github.neoflyingsaucer.displaylist.DlInstruction;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.Operation;
+import com.github.neoflyingsaucer.extend.output.DisplayList;
 import com.github.neoflyingsaucer.extend.output.FSFont;
 import com.github.neoflyingsaucer.extend.output.FSGlyphVector;
 import com.github.neoflyingsaucer.extend.output.FSImage;
@@ -28,11 +28,11 @@ import com.github.neoflyingsaucer.extend.output.JustificationInfo;
 
 public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice 
 {
-	private final DisplayListImpl dl;
+	private final DisplayList dl;
     private Area clip;
     private Stroke stroke;
 	
-	public DlOutputDevice(DisplayListImpl displayList) 
+	public DlOutputDevice(DisplayList displayList) 
 	{
 		this.dl = displayList;
 	}
