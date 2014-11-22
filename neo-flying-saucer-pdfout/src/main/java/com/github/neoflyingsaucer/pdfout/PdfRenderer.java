@@ -26,6 +26,7 @@ import org.xhtmlrenderer.simple.HtmlNamespaceHandler;
 
 import com.github.neoflyingsaucer.extend.output.FSFont;
 import com.github.neoflyingsaucer.extend.output.FSFontMetrics;
+import com.github.neoflyingsaucer.extend.output.FSGlyphVector;
 import com.github.neoflyingsaucer.extend.output.FontContext;
 import com.github.neoflyingsaucer.extend.output.FontResolver;
 import com.github.neoflyingsaucer.extend.useragent.HTMLResourceI;
@@ -142,6 +143,32 @@ public class PdfRenderer
 				// TODO Auto-generated method stub
 				return null;
 			}
+
+			@Override
+			public int getWidth(FSFont font, String s) {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+
+			@Override
+			public FSGlyphVector getGlyphVector(FSFont font, String s) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public float[] getGlyphPositions(FSFont font,
+					FSGlyphVector fsGlyphVector) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public Rectangle getGlyphBounds(FSFont font,
+					FSGlyphVector fsGlyphVector, int index, float x, float y) {
+				// TODO Auto-generated method stub
+				return null;
+			}
 		});
 
         _sharedContext.getTextRenderer().setup(result.getFontContext());
@@ -156,6 +183,32 @@ public class PdfRenderer
 
 			@Override
 			public FSFontMetrics getFontMetrics(FSFont font, String s) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public int getWidth(FSFont font, String s) {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+
+			@Override
+			public FSGlyphVector getGlyphVector(FSFont font, String s) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public float[] getGlyphPositions(FSFont font,
+					FSGlyphVector fsGlyphVector) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public Rectangle getGlyphBounds(FSFont font,
+					FSGlyphVector fsGlyphVector, int index, float x, float y) {
 				// TODO Auto-generated method stub
 				return null;
 			}

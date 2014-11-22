@@ -19,7 +19,17 @@
  */
 package com.github.neoflyingsaucer.extend.output;
 
+import java.awt.Rectangle;
+
 public interface FontContext
 {
 	FSFontMetrics getFontMetrics(FSFont font, String s);
+
+	int getWidth(FSFont font, String s);
+
+	FSGlyphVector getGlyphVector(FSFont font, String s);
+
+	float[] getGlyphPositions(FSFont font, FSGlyphVector fsGlyphVector);
+
+	Rectangle getGlyphBounds(FSFont font, FSGlyphVector fsGlyphVector, int index, float x, float y);
 }

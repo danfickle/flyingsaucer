@@ -11,12 +11,14 @@ import com.github.neoflyingsaucer.extend.output.FSGlyphVector;
 import com.github.neoflyingsaucer.extend.output.FontContext;
 import com.github.neoflyingsaucer.extend.output.JustificationInfo;
 
-public class DlTextRenderer implements TextRenderer {
-
+public class DlTextRenderer implements TextRenderer
+{
+	private FontContext ctx;
+	
 	@Override
-	public void setup(FontContext context) {
-		// TODO Auto-generated method stub
-
+	public void setup(FontContext context)
+	{
+		this.ctx = context;
 	}
 
 	@Override
@@ -38,24 +40,23 @@ public class DlTextRenderer implements TextRenderer {
 	}
 
 	@Override
-	public FSGlyphVector getGlyphVector(OutputDevice outputDevice, FSFont font,
-			String string) {
-		// TODO Auto-generated method stub
-		return null;
+	public FSGlyphVector getGlyphVector(OutputDevice outputDevice, FSFont font, String s)
+	{
+		return ctx.getGlyphVector(font, s);
 	}
 
 	@Override
 	public float[] getGlyphPositions(OutputDevice outputDevice, FSFont font,
-			FSGlyphVector fsGlyphVector) {
-		// TODO Auto-generated method stub
-		return null;
+			FSGlyphVector fsGlyphVector)
+	{
+		return ctx.getGlyphPositions(font, fsGlyphVector);
 	}
 
 	@Override
 	public Rectangle getGlyphBounds(OutputDevice outputDevice, FSFont font,
-			FSGlyphVector fsGlyphVector, int index, float x, float y) {
-		// TODO Auto-generated method stub
-		return null;
+			FSGlyphVector fsGlyphVector, int index, float x, float y) 
+	{
+		return ctx.getGlyphBounds(font, fsGlyphVector, index, x, y);
 	}
 
 	@Override
@@ -65,36 +66,41 @@ public class DlTextRenderer implements TextRenderer {
 	}
 
 	@Override
-	public int getWidth(FontContext context, FSFont font, String string) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int getWidth(FontContext context, FSFont font, String string)
+	{
+		return context.getWidth(font, string);
 	}
 
 	@Override
+	@Deprecated
 	public void setFontScale(float scale) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
+	@Deprecated
 	public float getFontScale() {
 		// TODO Auto-generated method stub
 		return 1f;
 	}
 
 	@Override
+	@Deprecated
 	public void setSmoothingThreshold(float fontsize) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
+	@Deprecated
 	public int getSmoothingLevel() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
+	@Deprecated
 	public void setSmoothingLevel(int level) {
 		// TODO Auto-generated method stub
 

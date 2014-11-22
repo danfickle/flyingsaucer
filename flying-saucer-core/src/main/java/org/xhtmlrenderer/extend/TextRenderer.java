@@ -49,8 +49,10 @@ public interface TextRenderer {
 
     public int getWidth(FontContext context, FSFont font, String string);
 
+    @Deprecated
     public void setFontScale(float scale);
 
+    @Deprecated
     public float getFontScale();
 
     /**
@@ -61,8 +63,10 @@ public interface TextRenderer {
      * Else, set to the threshold font size. does not take font scaling
      * into account.
      */
+    @Deprecated
     public void setSmoothingThreshold(float fontsize);
 
+    @Deprecated
     public int getSmoothingLevel();
 
     /**
@@ -70,6 +74,7 @@ public interface TextRenderer {
      * threshhold.
      * @param level no-op
      */
+    @Deprecated
     public void setSmoothingLevel(int level);
 }
 

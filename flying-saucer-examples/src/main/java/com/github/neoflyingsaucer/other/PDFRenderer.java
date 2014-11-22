@@ -96,9 +96,9 @@ public class PDFRenderer {
     	
 		String html =
 				"<html><head><style>" +
-				"@page { size: 400px 400px; margin: 1px; }" +
+				"@page { size: 200px 400px; margin: 1px; }" +
 				"body { background-color: #f00; margin: 2px; border: 3px solid blue; height: 100px; border-radius: 8px; color: white; padding: 10px; }" +
-				"</style></head><body>TEST</body></html>";
+				"</style></head><body>TEST TEST LONG TEST LONG TEST LONG TEST LONG TEST LONG TEST LONG TEST LONG TEST</body></html>";
     	
     	
     	Document doc = HTMLResourceHelper.load(html).getDocument();

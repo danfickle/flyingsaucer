@@ -20,9 +20,11 @@
 package org.xhtmlrenderer.swing;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 
 import com.github.neoflyingsaucer.extend.output.FSFont;
 import com.github.neoflyingsaucer.extend.output.FSFontMetrics;
+import com.github.neoflyingsaucer.extend.output.FSGlyphVector;
 import com.github.neoflyingsaucer.extend.output.FontContext;
 
 public class Java2DFontContext implements FontContext {
@@ -38,6 +40,31 @@ public class Java2DFontContext implements FontContext {
 
 	@Override
 	public FSFontMetrics getFontMetrics(FSFont font, String s) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getWidth(FSFont font, String s) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public FSGlyphVector getGlyphVector(FSFont font, String s) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public float[] getGlyphPositions(FSFont font, FSGlyphVector fsGlyphVector) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Rectangle getGlyphBounds(FSFont font, FSGlyphVector fsGlyphVector,
+			int index, float x, float y) {
 		// TODO Auto-generated method stub
 		return null;
 	}
