@@ -194,11 +194,11 @@ public class Java2DOutputDevice extends AbstractOutputDevice implements OutputDe
 //            pane.paintComponent(_graphics, component, canvas, contentBounds.x,  contentBounds.y, contentBounds.width, contentBounds.height,true);
 //        }
     if (replaced instanceof ImageReplacedElement) {
-            final Image image = ((ImageReplacedElement)replaced).getImage();
+            FSImage image = ((ImageReplacedElement)replaced).getImage();
             
             final Point location = replaced.getLocation();
             _graphics.drawImage(
-                    image, (int)location.getX(), (int)location.getY(), null);
+                    ((Java2DImage) image).getAWTImage(), (int)location.getX(), (int)location.getY(), null);
         }
     }
     
@@ -293,7 +293,7 @@ public class Java2DOutputDevice extends AbstractOutputDevice implements OutputDe
 
     @Override
     public void drawImage(final FSImage image, final int x, final int y) {
-        _graphics.drawImage(((AWTFSImage)image).getImage(), x, y, null);
+    	_graphics.drawImage(((Java2DImage)image).getAWTImage(), x, y, null);
     }
     
     @Override

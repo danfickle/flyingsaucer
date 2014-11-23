@@ -20,6 +20,7 @@ import org.w3c.dom.Document;
 import org.xhtmlrenderer.demo.browser.FSScrollPane;
 import org.xhtmlrenderer.event.DefaultDocumentListener;
 import org.xhtmlrenderer.resource.ResourceLoadHelper;
+import org.xhtmlrenderer.swing.Java2DImageResolver;
 import org.xhtmlrenderer.swing.SwingReplacedElementFactory;
 import org.xhtmlrenderer.util.GeneralUtil;
 
@@ -89,6 +90,7 @@ public class BrowsePanel {
 
         panel.getSharedContext().setUserAgentCallback(uac);
         panel.getSharedContext().setReplacedElementFactory(new SwingReplacedElementFactory());
+        panel.getSharedContext().setImageResolver(new Java2DImageResolver());
     }
 
     private void setupDocumentListener(final XHTMLPanel panel) {

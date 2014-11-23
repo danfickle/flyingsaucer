@@ -16,12 +16,20 @@ public class PdfImageElement implements PdfReplacedElement
 	}
 	
 	@Override
-	public int getIntrinsicWidth() {
+	public int getIntrinsicWidth()
+	{
+		if (_image == null)
+			return 0;
+		
 		return _image.getWidth();
 	}
 
 	@Override
-	public int getIntrinsicHeight() {
+	public int getIntrinsicHeight()
+	{
+		if (_image == null)
+			return 0;
+		
 		return _image.getHeight();
 	}
 

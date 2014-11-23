@@ -1,17 +1,12 @@
 package com.github.neoflyingsaucer.pdfout;
 
-import java.io.IOException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.layout.SharedContext;
-import org.xhtmlrenderer.resource.ImageResource;
-
 import com.github.neoflyingsaucer.extend.useragent.CSSResourceI;
 import com.github.neoflyingsaucer.extend.useragent.FSErrorType;
 import com.github.neoflyingsaucer.extend.useragent.HTMLResourceI;
 import com.github.neoflyingsaucer.extend.useragent.ImageResourceI;
-import com.github.neoflyingsaucer.extend.useragent.ImageResourceLoader;
 import com.github.neoflyingsaucer.extend.useragent.LangId;
 import com.github.neoflyingsaucer.extend.useragent.Optional;
 import com.github.neoflyingsaucer.extend.useragent.ResourceCache;
@@ -37,22 +32,9 @@ public class PdfOutUserAgent implements UserAgentCallback
 	@Override
 	public Optional<ImageResourceI> getImageResource(String uri)
 	{
-		Optional<byte[]> bytes = getBinaryResource(uri);
+		return _inner.getImageResource(uri);
 		
-		if (!bytes.isPresent())
-			return Optional.empty();
-
-		PdfOutImage img;
-		try {
-			img = new PdfOutImage(bytes.get(), uri);
-		} catch (IOException e) {
-			LOGGER.warn("Unable to decode image at uri({})", uri);
-			return Optional.empty();
-		}
-		
-		img.scaleToOutputResolution(_sharedContext);
-		
-		return Optional.of((ImageResourceI) new ImageResource(uri, img));
+		//img.scaleToOutputResolution(_sharedContext);
 	}
 	
 	public void setSharedContext(SharedContext ctx)
@@ -83,11 +65,6 @@ public class PdfOutUserAgent implements UserAgentCallback
 	@Override
 	public Optional<String> resolveURI(String baseUri, String uri) {
 		return _inner.resolveURI(baseUri, uri);
-	}
-
-	@Override
-	public ImageResourceLoader getImageResourceCache() {
-		return _inner.getImageResourceCache();
 	}
 
 	@Override

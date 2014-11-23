@@ -19,8 +19,6 @@
  */
 package com.github.neoflyingsaucer.defaultuseragent;
 
-import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -34,15 +32,12 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import javax.imageio.ImageIO;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.event.DocumentListener;
 import org.xhtmlrenderer.resource.CSSResource;
 import org.xhtmlrenderer.resource.HTMLResource;
 import org.xhtmlrenderer.resource.ImageResource;
-import org.xhtmlrenderer.swing.AWTFSImage;
 import org.xhtmlrenderer.util.GeneralUtil;
 import org.xhtmlrenderer.util.ImageUtil;
 
@@ -50,7 +45,6 @@ import com.github.neoflyingsaucer.extend.useragent.CSSResourceI;
 import com.github.neoflyingsaucer.extend.useragent.FSErrorType;
 import com.github.neoflyingsaucer.extend.useragent.HTMLResourceI;
 import com.github.neoflyingsaucer.extend.useragent.ImageResourceI;
-import com.github.neoflyingsaucer.extend.useragent.ImageResourceLoader;
 import com.github.neoflyingsaucer.extend.useragent.LangId;
 import com.github.neoflyingsaucer.extend.useragent.Optional;
 import com.github.neoflyingsaucer.extend.useragent.ResourceCache;
@@ -85,7 +79,6 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
 
     // TODO: Make this configurable.
     protected ResourceCache _resourceCache = new ResourceCacheImpl(32, 5);
-    protected ImageResourceLoader _imageCache2 = new ImageResourceLoaderImpl();
 
     // TODO: Customize resource locale.
     protected ResourceBundle messages = ResourceBundle.getBundle("languages.ErrorMessages", Locale.US);
@@ -178,10 +171,10 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
     public Optional<ImageResourceI> getImageResource(String uri) {
         ImageResource ir;
         if (ImageUtil.isEmbeddedBase64Image(uri)) {
-            final BufferedImage image = ImageUtil.loadEmbeddedBase64Image(uri);
+            final InputStream image = ImageUtil.loadEmbeddedBase64Image(uri);
             ir = createImageResource(null, image);
         } else {
-            ir = _imageCache.get(uri);
+            ir = null;
             //TODO: check that cached image is still valid
             if (ir == null) {
             	StreamResource sr = new StreamResource(uri);
@@ -190,12 +183,7 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
 				try 
 				{
 					is = sr.bufferedStream();
-					final BufferedImage img = ImageIO.read(is);
-
-					if (img == null) 
-						throw new IOException("ImageIO.read() returned null");
-
-					ir = createImageResource(uri, img);
+					ir = createImageResource(uri, is);
 					_imageCache.put(uri, ir);
 				}
 				catch (final FileNotFoundException e)
@@ -210,12 +198,12 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
 									+ uri + "'", e);
 				}
 				finally {
-					try {
-						if (is != null)
-							is.close();
-					} catch (final IOException e) {
-						// ignore
-					}
+//					try {
+////						if (is != null)
+////							is.close();
+//					} catch (final IOException e) {
+//						// ignore
+//					}
 				}
             }
             if (ir == null) {
@@ -233,8 +221,9 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
      *
      * @return An ImageResource containing the image.
      */
-    protected ImageResource createImageResource(final String uri, final Image img) {
-        return new ImageResource(uri, AWTFSImage.createImage(img));
+    protected ImageResource createImageResource(String uri, InputStream img) 
+    {
+        return new ImageResource(uri, img);
     }
 
     /**
@@ -381,12 +370,6 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
 
     @Override
     public void onRenderException(final Throwable t) { /* ignore*/ }
-
-	@Override
-	public ImageResourceLoader getImageResourceCache() 
-	{
-		return _imageCache2;
-	}
 
 	/**
 	 * Used internally when a document can't be loaded--returns XHTML as an XMLResource indicating that fact.

@@ -351,7 +351,7 @@ public class BlockBox extends Box implements InlinePaintable {
             if (!resource.isPresent())
             	return null;
             
-        	img = resource.get().getImage();
+        	img = c.getSharedContext().resolveImage(resource.get());
 
             if (img != null) {
                 final StrutMetrics strutMetrics = structMetrics;

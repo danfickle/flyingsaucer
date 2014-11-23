@@ -69,10 +69,10 @@ public class ITextReplacedElementFactory implements ReplacedElementFactory {
             	{
 	            	final Optional<ImageResourceI> resource = uac.getImageResource(resolved.get());
 
-	            	if (!resource.isPresent())
+	            	if (!resource.isPresent() || resource.get().getImage() == null)
 	            		return null;
 	            	
-	            	final FSImage fsImage = resource.get().getImage();
+	            	final FSImage fsImage = c.getSharedContext().resolveImage(resource.get());
 	
 	            	if (fsImage != null) {
 	                    if (cssWidth != -1 || cssHeight != -1) {

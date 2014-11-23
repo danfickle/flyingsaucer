@@ -22,12 +22,10 @@ package org.xhtmlrenderer.util;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
-import javax.imageio.ImageIO;
 import javax.xml.bind.DatatypeConverter;
 
 import org.imgscalr.Scalr;
@@ -302,16 +300,16 @@ public class ImageUtil {
      * @param imageDataUri URI of the embedded image
      * @return The BufferedImage
      */
-    public static BufferedImage loadEmbeddedBase64Image(final String imageDataUri) {
-        try {
-            final byte[] buffer = getEmbeddedBase64Image(imageDataUri);
-            if (buffer != null) {
-                return ImageIO.read(new ByteArrayInputStream(buffer));
-            }
-        } catch (final IOException ex) {
-            LOGGER.error("Can't read XHTML embedded image", ex);
+    public static ByteArrayInputStream loadEmbeddedBase64Image(String imageDataUri) 
+    {
+    	byte[] buffer = getEmbeddedBase64Image(imageDataUri);
+        
+    	if (buffer != null)
+    	{
+    		return new ByteArrayInputStream(buffer);
         }
-        return null;
+        
+    	return null;
     }
     
     interface Scaler {

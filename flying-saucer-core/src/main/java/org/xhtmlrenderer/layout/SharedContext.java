@@ -50,9 +50,12 @@ import org.xhtmlrenderer.swing.SwingReplacedElementFactory;
 
 import com.github.neoflyingsaucer.extend.output.FSFont;
 import com.github.neoflyingsaucer.extend.output.FSFontMetrics;
+import com.github.neoflyingsaucer.extend.output.FSImage;
 import com.github.neoflyingsaucer.extend.output.FontContext;
 import com.github.neoflyingsaucer.extend.output.FontResolver;
 import com.github.neoflyingsaucer.extend.output.FontSpecificationI;
+import com.github.neoflyingsaucer.extend.output.ImageResolver;
+import com.github.neoflyingsaucer.extend.useragent.ImageResourceI;
 import com.github.neoflyingsaucer.extend.useragent.Optional;
 import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 
@@ -74,6 +77,7 @@ public class SharedContext {
     private StylesheetInfo defaultStylesheet;
     private boolean lookedUpDefaultStylesheet;
     private Locale localeTextBreaker = Locale.US;
+    private ImageResolver imgResolver;
 
     private String _uri;
     /*
@@ -677,5 +681,15 @@ public class SharedContext {
 	public void setDocumentURI(String uri) 
 	{
 		_uri = uri;
+	}
+	
+	public void setImageResolver(ImageResolver imgResolver)
+	{
+		this.imgResolver = imgResolver;
+	}
+		
+	public FSImage resolveImage(ImageResourceI imgResource)
+	{
+		return imgResolver.resolveImage(imgResource.getImageUri(), imgResource.getImage());
 	}
 }

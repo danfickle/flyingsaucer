@@ -25,18 +25,13 @@ import org.w3c.dom.Element;
 import org.xhtmlrenderer.extend.ReplacedElementFactory;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
-import org.xhtmlrenderer.swing.AWTFSImage;
-import org.xhtmlrenderer.swing.EmptyReplacedElement;
 import org.xhtmlrenderer.swing.ImageReplacedElement;
-import org.xhtmlrenderer.util.ImageUtil;
-
+import com.github.neoflyingsaucer.extend.output.FSImage;
 import com.github.neoflyingsaucer.extend.output.ReplacedElement;
 import com.github.neoflyingsaucer.extend.useragent.ImageResourceI;
 import com.github.neoflyingsaucer.extend.useragent.Optional;
 import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -102,30 +97,28 @@ public class SwingReplacedElementFactory implements ReplacedElementFactory {
 
         String imageSrc = oImageSrc.get();
 
-        // TODO: Move this to stream handler.
-        if (ImageUtil.isEmbeddedBase64Image(imageSrc)) {
-            final BufferedImage image = ImageUtil.loadEmbeddedBase64Image(imageSrc);
-            if (image != null) {
-                re = new ImageReplacedElement(image, cssWidth, cssHeight);
-            }
-        } else {
-            // lookup in cache, or instantiate
-        	// TODO: Make sure we have the correct base uri.
-            final Optional<String> ruri = uac.resolveURI(context.getSharedContext().getBaseURL(), imageSrc);
+        // lookup in cache, or instantiate
+      	// TODO: Make sure we have the correct base uri.
+        Optional<String> ruri = uac.resolveURI(context.getSharedContext().getBaseURL(), imageSrc);
 
-            if (ruri.isPresent())
-            {
-            	re = lookupImageReplacedElement(elem, ruri.get(), cssWidth, cssHeight);
+        if (ruri.isPresent())
+        {
+        	re = null;// lookupImageReplacedElement(elem, ruri.get(), cssWidth, cssHeight);
            
-            	if (re == null) {
-            		LOGGER.debug("Swing: Image " + ruri + " requested at " + " to " + cssWidth + ", " + cssHeight);
+        	if (re == null) {
+        		LOGGER.debug("Swing: Image " + ruri + " requested at " + " to " + cssWidth + ", " + cssHeight);
 
-            		final ImageResourceI imageResource = uac.getImageResourceCache().get(ruri.get(), cssWidth, cssHeight);
-            		// TODO: ImageResource may be null.
+            	//ImageResourceI imageResource = uac.getImageResourceCache().get(ruri.get(), cssWidth, cssHeight);
+            	// TODO: ImageResource may be null.
             		
-            		re = new ImageReplacedElement(((AWTFSImage) imageResource.getImage()).getImage(), cssWidth, cssHeight);
-            		storeImageReplacedElement(elem, re, ruri.get(), cssWidth, cssHeight);
-            	}
+        		Optional<ImageResourceI> img = uac.getImageResource(ruri.get());
+        		
+        		if (img.isPresent())
+        		{
+        			FSImage image = context.getSharedContext().resolveImage(img.get());
+        			re = new ImageReplacedElement(image, cssWidth, cssHeight);
+        			storeImageReplacedElement(elem, re, ruri.get(), cssWidth, cssHeight);
+        		}
             }
             else
             {
@@ -154,23 +147,8 @@ public class SwingReplacedElementFactory implements ReplacedElementFactory {
      * @return A ReplacedElement to substitute for one that can't be generated.
      */
     protected ReplacedElement newIrreplaceableImageElement(final int cssWidth, final int cssHeight) {
-        BufferedImage missingImage;
         ReplacedElement mre;
-        try {
-            // TODO: we can come up with something better; not sure if we should use Alt text, how text should size, etc.
-            missingImage = ImageUtil.createCompatibleBufferedImage(cssWidth, cssHeight, BufferedImage.TYPE_INT_RGB);
-            final Graphics2D g = missingImage.createGraphics();
-            g.setColor(Color.BLACK);
-            g.setBackground(Color.WHITE);
-            g.setFont(new Font("Serif", Font.PLAIN, 12));
-            g.drawString("Missing", 0, 12);
-            g.dispose();
-            mre = new ImageReplacedElement(missingImage, cssWidth, cssHeight);
-        } catch (final Exception e) {
-            mre = new EmptyReplacedElement(
-                    cssWidth < 0 ? 0 : cssWidth,
-                    cssHeight < 0 ? 0 : cssHeight);
-        }
+        mre = new ImageReplacedElement(null, cssWidth, cssHeight);
         return mre;
     }
 

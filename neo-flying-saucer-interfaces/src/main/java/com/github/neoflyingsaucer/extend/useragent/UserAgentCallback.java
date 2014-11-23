@@ -102,8 +102,6 @@ public interface UserAgentCallback {
      */
     Optional<String> resolveURI(String baseUri, String uri);
 	
-	ImageResourceLoader getImageResourceCache();
-	
 	void onError(LangId msgId, int line, FSErrorType errorType, Object[] args);
 
 	/**

@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.event.DocumentListener;
 import org.xhtmlrenderer.layout.SharedContext;
+import org.xhtmlrenderer.swing.Java2DImageResolver;
 import org.xhtmlrenderer.swing.SwingReplacedElementFactory;
 import org.xhtmlrenderer.util.*;
 
@@ -158,6 +159,7 @@ public class BrowserPanel extends JPanel implements DocumentListener {
         //final ImageResourceLoader irl = new ImageResourceLoaderImpl();
         //manager.setImageResourceLoader(irl);
         view.getSharedContext().setReplacedElementFactory(new SwingReplacedElementFactory());
+        view.getSharedContext().setImageResolver(new Java2DImageResolver());
         view.addDocumentListener(manager);
         view.setCenteredPagedView(true);
         view.setBackground(Color.LIGHT_GRAY);

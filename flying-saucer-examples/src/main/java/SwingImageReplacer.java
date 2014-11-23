@@ -73,11 +73,11 @@ public class SwingImageReplacer extends ElementReplacer {
         // lookup in cache, or instantiate
         re = lookupImageReplacedElement(elem);
         if (re == null) {
-            Image im = null;
+            FSImage im = null;
             final Optional<String> oImageSrc = context.getNamespaceHandler().getImageSourceURI(elem);
             if (!oImageSrc.isPresent() || oImageSrc.get().isEmpty()) {
                 LOGGER.warn("No source provided for img element.");
-                re = newIrreplaceableImageElement(cssWidth, cssHeight);
+                //re = newIrreplaceableImageElement(cssWidth, cssHeight);
             } else {
                 //FSImage is here since we need to capture a target H/W
                 //for the image (as opposed to what the actual image size is).
@@ -89,10 +89,8 @@ public class SwingImageReplacer extends ElementReplacer {
             		
             		if (resource.isPresent())
             		{
-            			final FSImage fsImage = resource.get().getImage();
-            			if (fsImage != null) {
-            				im = ((AWTFSImage) fsImage).getImage();
-            			}
+            			im = context.getSharedContext().resolveImage(resource.get());
+
             		}
             	}
 
@@ -100,7 +98,7 @@ public class SwingImageReplacer extends ElementReplacer {
                     re = new ImageReplacedElement(im, cssWidth, cssHeight);
                 } else {
                     // TODO: Should return "broken" image icon, e.g. "not found"
-                    re = newIrreplaceableImageElement(cssWidth, cssHeight);
+                    //re = newIrreplaceableImageElement(cssWidth, cssHeight);
                 }
             }
             storeImageReplacedElement(elem, re);
@@ -132,34 +130,5 @@ public class SwingImageReplacer extends ElementReplacer {
         }
         final ReplacedElement replacedElement = imageComponents.get(e);
         return replacedElement;
-    }
-
-    /**
-     * Returns a ReplacedElement for some element in the stream which should be replaceable, but is not. This might
-     * be the case for an element like img, where the source isn't provided.
-     *
-     * @param cssWidth  Target width for the element.
-     * @param cssHeight Target height for the element
-     * @return A ReplacedElement to substitute for one that can't be generated.
-     */
-    protected ReplacedElement newIrreplaceableImageElement(final int cssWidth, final int cssHeight) {
-        BufferedImage missingImage = null;
-        ReplacedElement mre;
-        try {
-            // TODO: we can come up with something better; not sure if we should use Alt text, how text should size, etc.
-            missingImage = ImageUtil.createCompatibleBufferedImage(cssWidth, cssHeight, BufferedImage.TYPE_INT_RGB);
-            final Graphics2D g = missingImage.createGraphics();
-            g.setColor(Color.BLACK);
-            g.setBackground(Color.WHITE);
-            g.setFont(new Font("Serif", Font.PLAIN, 12));
-            g.drawString("Missing", 0, 12);
-            g.dispose();
-            mre = new ImageReplacedElement(missingImage, cssWidth, cssHeight);
-        } catch (final Exception e) {
-            mre = new EmptyReplacedElement(
-                    cssWidth < 0 ? 0 : cssWidth,
-                    cssHeight < 0 ? 0 : cssHeight);
-        }
-        return mre;
     }
 }

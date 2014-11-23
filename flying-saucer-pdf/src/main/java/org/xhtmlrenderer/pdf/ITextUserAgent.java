@@ -20,6 +20,7 @@
  */
 package org.xhtmlrenderer.pdf;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,7 +37,6 @@ import com.github.neoflyingsaucer.extend.useragent.CSSResourceI;
 import com.github.neoflyingsaucer.extend.useragent.FSErrorType;
 import com.github.neoflyingsaucer.extend.useragent.HTMLResourceI;
 import com.github.neoflyingsaucer.extend.useragent.ImageResourceI;
-import com.github.neoflyingsaucer.extend.useragent.ImageResourceLoader;
 import com.github.neoflyingsaucer.extend.useragent.LangId;
 import com.github.neoflyingsaucer.extend.useragent.Optional;
 import com.github.neoflyingsaucer.extend.useragent.ResourceCache;
@@ -84,45 +84,7 @@ public class ITextUserAgent implements UserAgentCallback {
 
     @Override
     public Optional<ImageResourceI> getImageResource(String uri) {
-        ImageResource resource = null;
-        if (ImageUtil.isEmbeddedBase64Image(uri)) {
-            resource = loadEmbeddedBase64ImageResource(uri);
-        } else {
-            resource = _imageCache.get(uri);
-            if (resource == null) {
-            	Optional<byte[]> bytes = _chainedUac.getBinaryResource(uri);
-				
-            	if (!bytes.isPresent())
-            		return Optional.of((ImageResourceI) new ImageResource(uri, null));
-            	
-            	Image image;
-				try {
-					image = Image.getInstance(bytes.get());
-					scaleToOutputResolution(image);
-					resource = new ImageResource(uri, new ITextFSImage(
-							image));
-					_imageCache.put(uri, resource);
-
-				} catch (IOException e) {
-					return Optional.of((ImageResourceI) new ImageResource(uri, null));
-				} catch (BadElementException e) {
-					return Optional.of((ImageResourceI) new ImageResource(uri, null));
-				}
-            }
-        }
-        return Optional.of((ImageResourceI) resource);
-    }
-    
-    private ImageResource loadEmbeddedBase64ImageResource(final String uri) {
-        try {
-            final byte[] buffer = ImageUtil.getEmbeddedBase64Image(uri);
-            final Image image = Image.getInstance(buffer);
-            scaleToOutputResolution(image);
-            return new ImageResource(null, new ITextFSImage(image));
-        } catch (final Exception e) {
-            LOGGER.error("Can't read XHTML embedded image.", e);
-        }
-        return new ImageResource(null, null);
+    	return _chainedUac.getImageResource(uri);
     }
 
     private void scaleToOutputResolution(final Image image) {
@@ -168,11 +130,6 @@ public class ITextUserAgent implements UserAgentCallback {
 	@Override
 	public Optional<String> resolveURI(String baseUri, String uri) {
 		return _chainedUac.resolveURI(baseUri, uri);
-	}
-
-	@Override
-	public ImageResourceLoader getImageResourceCache() {
-		return _chainedUac.getImageResourceCache();
 	}
 
 	@Override

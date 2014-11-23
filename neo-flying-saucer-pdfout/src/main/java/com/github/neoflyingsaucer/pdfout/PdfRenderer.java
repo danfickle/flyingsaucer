@@ -76,6 +76,8 @@ public class PdfRenderer
         _sharedContext.setFontResolver(fr);
         _textRenderer = new PdfTextRenderer();
 
+        _sharedContext.setImageResolver(new PdfImageResolver(_sharedContext));
+        
         final ReplacedElementFactory re = new PdfReplacedElementFactory();        
 		_sharedContext.setReplacedElementFactory(re);
         _sharedContext.setTextRenderer(_textRenderer);

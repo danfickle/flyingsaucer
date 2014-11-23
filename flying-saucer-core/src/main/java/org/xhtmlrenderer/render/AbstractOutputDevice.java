@@ -193,9 +193,14 @@ public abstract class AbstractOutputDevice implements OutputDevice {
             Optional<ImageResourceI> resource = c.getUac().getImageResource(uri);
             	
             if (resource.isPresent())
-            	return resource.get().getImage();
+            {
+            	return c.sharedContext.resolveImage(resource.get());
+            }
             else
+            {
+            	LOGGER.warn("Unable to load image");
             	return null;
+            }
         }
         return null;
     }

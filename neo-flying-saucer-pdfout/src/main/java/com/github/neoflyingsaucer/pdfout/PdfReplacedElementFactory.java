@@ -38,7 +38,7 @@ public class PdfReplacedElementFactory implements ReplacedElementFactory {
             		
             		if (image.isPresent())
             		{
-            			PdfOutImage pdfImage = (PdfOutImage) image.get().getImage();
+            			PdfOutImage pdfImage = (PdfOutImage) c.getSharedContext().resolveImage(image.get());
             			
             			if (cssWidth != -1 || cssHeight != -1)
             				pdfImage.scale(cssWidth, cssHeight);

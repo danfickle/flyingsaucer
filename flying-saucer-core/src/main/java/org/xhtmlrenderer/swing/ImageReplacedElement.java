@@ -20,11 +20,7 @@
 package org.xhtmlrenderer.swing;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
-
-import org.xhtmlrenderer.util.Configuration;
-import org.xhtmlrenderer.util.ImageUtil;
-
+import com.github.neoflyingsaucer.extend.output.FSImage;
 import com.github.neoflyingsaucer.extend.output.ReplacedElement;
 
 /**
@@ -32,7 +28,7 @@ import com.github.neoflyingsaucer.extend.output.ReplacedElement;
  * container for images included within XML being rendered. The image contained is immutable.
  */
 public class ImageReplacedElement implements ReplacedElement {
-    protected Image _image;
+    protected FSImage _image;
     
     private Point _location = new Point(0, 0);
 
@@ -49,36 +45,8 @@ public class ImageReplacedElement implements ReplacedElement {
      * @param targetWidth The width we'd like the image to have, in pixels.
      * @param targetHeight The height we'd like the image to have, in pixels.
      */
-    public ImageReplacedElement(Image image, final int targetWidth, final int targetHeight) {
-		if (targetWidth > 0 || targetHeight > 0) {
-            final int w = image.getWidth(null);
-            final int h = image.getHeight(null);
-
-		    int newW = targetWidth;
-		    int newH = targetHeight;
-
-		    if (newW == -1) {
-		        newW = (int)(w * ((double)newH / h));
-		    }
-
-	        if (newH == -1) {
-	            newH = (int)(h * ((double)newW / w));
-	        }
-
-			if (w != newW || h != newH) {
-                if (image instanceof BufferedImage) {
-                    image = ImageUtil.getScaledInstance((BufferedImage) image, newW, newH);
-                } else {
-                   final String scalingType = Configuration.valueFor("xr.image.scale", "HIGH").trim() ;
-
-                   if(scalingType.equalsIgnoreCase("HIGH") || scalingType.equalsIgnoreCase("MID") ){
-                       image = image.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
-                   } else{
-                    image = image.getScaledInstance(newW, newH, Image.SCALE_FAST);
-                }
-            }
-        }
-        }
+    public ImageReplacedElement(FSImage image, final int targetWidth, final int targetHeight)
+    {
         _image = image;
     }
 
@@ -89,12 +57,12 @@ public class ImageReplacedElement implements ReplacedElement {
 
     /** {@inheritDoc} */
     public int getIntrinsicHeight() {
-        return _image.getHeight(null);
+        return _image.getHeight();
     }
 
     /** {@inheritDoc} */
     public int getIntrinsicWidth() {
-        return _image.getWidth(null);
+        return _image.getWidth();
     }
 
     /** {@inheritDoc} */
@@ -116,7 +84,7 @@ public class ImageReplacedElement implements ReplacedElement {
      * The image we're replacing.
      * @return see desc
      */
-    public Image getImage() {
+    public FSImage getImage() {
         return _image;
     }
 

@@ -19,6 +19,8 @@
  */
 package org.xhtmlrenderer.resource;
 
+import java.io.InputStream;
+
 import org.xhtmlrenderer.swing.AWTFSImage;
 
 import com.github.neoflyingsaucer.extend.output.FSImage;
@@ -30,19 +32,19 @@ import com.github.neoflyingsaucer.extend.useragent.ImageResourceI;
  */
 public class ImageResource implements ImageResourceI {
     private final String _imageUri;
-    private final FSImage _img;
+    private final InputStream strm;
 
-    public ImageResource(final String uri, final FSImage img) {
+    public ImageResource(String uri, InputStream strm) {
         _imageUri = uri;
-        _img = img;
+        this.strm = strm;
     }
 
     /* (non-Javadoc)
 	 * @see com.github.neoflyingsaucer.extend.ImageResourceI#getImage()
 	 */
     @Override
-	public FSImage getImage() {
-        return _img;
+	public InputStream getImage() {
+        return strm;
     }
 
     /* (non-Javadoc)
@@ -51,19 +53,5 @@ public class ImageResource implements ImageResourceI {
     @Override
 	public String getImageUri() {
         return _imageUri;
-    }
-
-    /* (non-Javadoc)
-	 * @see com.github.neoflyingsaucer.extend.ImageResourceI#hasDimensions(int, int)
-	 */
-    @Override
-	public boolean hasDimensions(final int width, final int height) 
-    {
-		if (_img instanceof AWTFSImage) {
-			final AWTFSImage awtfi = (AWTFSImage) _img;
-			return awtfi.getWidth() == width && awtfi.getHeight() == height;
-		} else {
-			return false;
-		}
     }
 }
