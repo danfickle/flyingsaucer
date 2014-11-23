@@ -1,7 +1,3 @@
-import com.lowagie.text.pdf.BaseFont;
-
-import org.xhtmlrenderer.pdf.ITextFontResolver;
-
 import java.awt.*;
 import java.io.File;
 import java.io.FilenameFilter;
@@ -44,12 +40,12 @@ public class ListFontFamilyNames {
             }
             Set set;
             try {
-                set = ITextFontResolver.getDistinctFontFamilyNames(f.getAbsolutePath(), BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
-                System.out.println(
-                        "Font located at " + f.getPath() + "\n" +
-                                "  family name (reported by AWT): " + awtf.getFamily() + "\n" +
-                                "  family name (reported by iText): " + set.iterator().next() + "\n"
-                );
+//                set = ITextFontResolver.getDistinctFontFamilyNames(f.getAbsolutePath(), BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+//                System.out.println(
+//                        "Font located at " + f.getPath() + "\n" +
+//                                "  family name (reported by AWT): " + awtf.getFamily() + "\n" +
+//                                "  family name (reported by iText): " + set.iterator().next() + "\n"
+//                );
             } catch (final RuntimeException e) {
                 if (e.getMessage().contains("not a valid TTF or OTF file.")) {
                     errors.add(e.getMessage());

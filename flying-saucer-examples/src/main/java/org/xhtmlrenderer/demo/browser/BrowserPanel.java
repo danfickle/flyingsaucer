@@ -30,9 +30,6 @@ import org.xhtmlrenderer.util.*;
 import com.github.danfickle.flyingsaucer.swing.ScalableXHTMLPanel;
 import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
 import com.github.neoflyingsaucer.other.PDFRenderer;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.pdf.PdfWriter;
-
 import javax.swing.*;
 
 import java.awt.*;
@@ -363,14 +360,11 @@ public class BrowserPanel extends JPanel implements DocumentListener {
 	public void exportToPdf( final String path )
 	{
 		try {
-			PDFRenderer.renderToPDF(currentUri, path, PdfWriter.VERSION_1_7, this.manager);
+			PDFRenderer.renderToPDF(currentUri, path, this.manager);
 		} catch (final IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (final DocumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}		
+		}
 //       if (manager.getBaseURL() != null) {
 //           setStatus( "Exporting to " + path + "..." );
 //           OutputStream os = null;

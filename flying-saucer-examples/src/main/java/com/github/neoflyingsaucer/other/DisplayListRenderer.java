@@ -29,6 +29,7 @@ import com.github.neoflyingsaucer.extend.useragent.HTMLResourceI;
 import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 import com.github.neoflyingsaucer.j2dout.Java2DFontContext;
 import com.github.neoflyingsaucer.j2dout.Java2DFontResolver;
+import com.github.neoflyingsaucer.j2dout.Java2DImageResolver;
 
 public class DisplayListRenderer 
 {
@@ -59,6 +60,7 @@ public class DisplayListRenderer
         DisplayListRenderer g2r = new DisplayListRenderer(cb);
         g2r.setDocument(doc);
         g2r.sharedContext.setDocumentURI(baseUrl);
+        g2r.sharedContext.setImageResolver(new Java2DImageResolver());
         g2r.print(pageNo);
         
         return g2r.displayList;

@@ -108,13 +108,7 @@ public class BrowserActions {
                 }
             };
         export_pdf.putValue(Action.NAME, "Export PDF...");
-        //is iText in classpath? 
-        try{
-            Class.forName("com.lowagie.text.DocumentException");
-        } catch( final ClassNotFoundException e )
-        {
-            export_pdf.setEnabled(false);
-        }
+
         
         /*setAccel(export_pdf, KeyEvent.VK_E);
         setMnemonic(export_pdf, new Integer(KeyEvent.VK_E));*/

@@ -50,15 +50,11 @@ import javax.swing.SwingUtilities;
 import org.w3c.dom.Document;
 import org.xhtmlrenderer.demo.browser.FSScrollPane;
 import org.xhtmlrenderer.event.DefaultDocumentListener;
-import org.xhtmlrenderer.pdf.ITextFontResolver;
-import org.xhtmlrenderer.pdf.ITextRenderer;
 import org.xhtmlrenderer.simple.HtmlNamespaceHandler;
 
 import com.github.danfickle.flyingsaucer.swing.XHTMLPanel;
 import com.github.neoflyingsaucer.defaultuseragent.DefaultUserAgent;
 import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.pdf.BaseFont;
 
 /**
  * Opens a frame and displays, for a selected font, the glyphs for a range of Unicode code points. Can be used to
@@ -256,12 +252,13 @@ public class FontGlyphTableRender {
     }
 
     private String getITextFontFamilyName(final File selFile) {
-        final Set set = ITextFontResolver.getDistinctFontFamilyNames(
-                selFile.getPath(),
-                BaseFont.IDENTITY_H,
-                BaseFont.EMBEDDED);
-        System.out.println("All family names reported by iText for " + selFile.getPath() + ": " + set.toString());
-        return (String) set.iterator().next();
+//        final Set set = ITextFontResolver.getDistinctFontFamilyNames(
+//                selFile.getPath(),
+//                BaseFont.IDENTITY_H,
+//                BaseFont.EMBEDDED);
+//        System.out.println("All family names reported by iText for " + selFile.getPath() + ": " + set.toString());
+//        return (String) set.iterator().next();
+    	return "";
     }
 
     private void resetMouseListeners() {
@@ -354,55 +351,55 @@ public class FontGlyphTableRender {
     }
 
     private void renderPDF(final Document doc) {
-        String msgToUser = "";
-        File f;
-        try {
-            f = File.createTempFile("flying-saucer-glyph-test", ".pdf");
-        } catch (final IOException e) {
-            //
-            JOptionPane.showMessageDialog(frame, "Can't create temp file for PDF output, err: " + e.getMessage());
-            return;
-        }
-        final ITextRenderer renderer = new ITextRenderer(new DefaultUserAgent());
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(f);
-            final BufferedOutputStream bos = new BufferedOutputStream(fos);
-            renderer.setDocument(doc, null, new HtmlNamespaceHandler());
-            final ITextFontResolver resolver = renderer.getFontResolver();
-            // TODO: encoding is hard-coded as IDENTITY_H; maybe give user option to override
-            resolver.addFont(
-                    fontPathTF.getText(),
-                    BaseFont.IDENTITY_H,
-                    BaseFont.EMBEDDED
-            );
-            renderer.layout();
-            renderer.createPDF(bos);
-
-            msgToUser = "Rendered PDF: " + f.getCanonicalPath();
-        } catch (final FileNotFoundException e) {
-            msgToUser = "Can't create PDF, err: " + e.getMessage();
-        } catch (final DocumentException e) {
-            msgToUser = "Can't create PDF, err: " + e.getMessage();
-        } catch (final IOException e) {
-            msgToUser = "Can't create PDF, err: " + e.getMessage();
-        } finally {
-            if (fos != null) {
-                try {
-                    fos.close();
-                } catch (final IOException e) {
-                    // swallow
-                }
-            }
-        }
-        if (msgToUser.length() != 0) {
-            final String finalMsg = msgToUser;
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    JOptionPane.showMessageDialog(frame, finalMsg);
-                }
-            });
-        }
+//        String msgToUser = "";
+//        File f;
+//        try {
+//            f = File.createTempFile("flying-saucer-glyph-test", ".pdf");
+//        } catch (final IOException e) {
+//            //
+//            JOptionPane.showMessageDialog(frame, "Can't create temp file for PDF output, err: " + e.getMessage());
+//            return;
+//        }
+//        final ITextRenderer renderer = new ITextRenderer(new DefaultUserAgent());
+//        FileOutputStream fos = null;
+//        try {
+//            fos = new FileOutputStream(f);
+//            final BufferedOutputStream bos = new BufferedOutputStream(fos);
+//            renderer.setDocument(doc, null, new HtmlNamespaceHandler());
+//            final ITextFontResolver resolver = renderer.getFontResolver();
+//            // TODO: encoding is hard-coded as IDENTITY_H; maybe give user option to override
+//            resolver.addFont(
+//                    fontPathTF.getText(),
+//                    BaseFont.IDENTITY_H,
+//                    BaseFont.EMBEDDED
+//            );
+//            renderer.layout();
+//            renderer.createPDF(bos);
+//
+//            msgToUser = "Rendered PDF: " + f.getCanonicalPath();
+//        } catch (final FileNotFoundException e) {
+//            msgToUser = "Can't create PDF, err: " + e.getMessage();
+//        } catch (final DocumentException e) {
+//            msgToUser = "Can't create PDF, err: " + e.getMessage();
+//        } catch (final IOException e) {
+//            msgToUser = "Can't create PDF, err: " + e.getMessage();
+//        } finally {
+//            if (fos != null) {
+//                try {
+//                    fos.close();
+//                } catch (final IOException e) {
+//                    // swallow
+//                }
+//            }
+//        }
+//        if (msgToUser.length() != 0) {
+//            final String finalMsg = msgToUser;
+//            SwingUtilities.invokeLater(new Runnable() {
+//                public void run() {
+//                    JOptionPane.showMessageDialog(frame, finalMsg);
+//                }
+//            });
+//        }
     }
 
     // attempts to load Font given font path; if succeeds, currentFont will have the reference, otherwise it will
