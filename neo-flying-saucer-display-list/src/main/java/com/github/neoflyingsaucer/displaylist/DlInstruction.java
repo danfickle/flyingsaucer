@@ -20,6 +20,48 @@ public class DlInstruction
 		CLIP;
 	}
 	
+	public static class DlAntiAliasOff implements DlItem
+	{
+		public final DlType type = DlType.AA_OFF;
+		
+		public DlAntiAliasOff()
+		{
+		}
+
+		@Override
+		public DlType getType()
+		{
+			return type;
+		}
+
+		@Override
+		public String toString() 
+		{
+			return String.format(Locale.US, "");
+		}
+	}
+	
+	public static class DlAntiAliasDefault implements DlItem
+	{
+		public final DlType type = DlType.AA_DEFAULT;
+		
+		public DlAntiAliasDefault()
+		{
+		}
+
+		@Override
+		public DlType getType()
+		{
+			return type;
+		}
+
+		@Override
+		public String toString() 
+		{
+			return String.format(Locale.US, "");
+		}
+	}
+	
 	public static class DlGlyphVector implements DlItem
 	{
 		public final FSGlyphVector vec;

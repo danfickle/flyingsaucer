@@ -19,7 +19,9 @@ public interface DlItem
 		FONT,
 		STRING,
 		STRING_EX,
-		GLYPH_VECTOR;
+		GLYPH_VECTOR,
+		AA_OFF,
+		AA_DEFAULT;
 	}
 	
 	public DlType getType();

@@ -4,6 +4,7 @@ import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.font.GlyphVector;
 import java.awt.geom.Point2D;
@@ -35,10 +36,12 @@ import com.github.neoflyingsaucer.extend.output.JustificationInfo;
 public class Java2DOut implements DisplayListOuputDevice 
 {
 	protected final Graphics2D g2d;
+	protected final Object aaHint;
 	
-	public Java2DOut(Graphics2D g2d)
+	public Java2DOut(Graphics2D g2d, Object aaDefaultHint)
 	{
 		this.g2d = g2d;
+		this.aaHint = aaDefaultHint;
 	}
 	
 	@Override
@@ -151,6 +154,16 @@ public class Java2DOut implements DisplayListOuputDevice
 			{
 				DlGlyphVector g = (DlGlyphVector) item;
 				drawGlyphVector(g.vec, (int) g.x, (int) g.y);
+				break;
+			}
+			case AA_OFF:
+			{
+				g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+				break;
+			}
+			case AA_DEFAULT:
+			{
+				g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, aaHint);
 				break;
 			}
 			case CMYKCOLOR:
