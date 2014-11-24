@@ -178,20 +178,17 @@ public class Java2DOut implements DisplayListOuputDevice
 	
 	protected void drawGlyphVector(FSGlyphVector vec, int x, int y)
 	{
-		// TODO: Set anti-aliasing and fractional metrics based on user settings.
 		GlyphVector vector = ((Java2DGlyphVector) vec).getGlyphVector();
         g2d.drawGlyphVector(vector, x, y);
 	}
 	
 	protected void drawString(String txt, int x, int y)
 	{
-		// TODO: Set anti-aliasing and fractional metrics based on user settings.
 		g2d.drawString(txt, x, y);
 	}
 	
 	protected void drawStringEx(String txt, int x, int y, JustificationInfo info)
 	{
-		// TODO: Set anti-aliasing and fractional metrics based on user settings.
 		GlyphVector vector = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), txt);
         
 		if (vector.getNumGlyphs() == txt.length())

@@ -33,7 +33,7 @@ public class Java2DFontContext implements FontContext
 {
     private final Graphics2D _graphics;
     
-    public Java2DFontContext(final Graphics2D graphics)
+    public Java2DFontContext(Graphics2D graphics)
     {
         _graphics = graphics;
     }
@@ -46,7 +46,6 @@ public class Java2DFontContext implements FontContext
     @Override
     public FSFontMetrics getFontMetrics(FSFont font, String s)
     {
-        // TODO: Antialias and fractional metrics.
     	Java2DMetricsAdapter adapter = new Java2DMetricsAdapter(
                 ((Java2DFont) font).getAWTFont().getLineMetrics(
                         s, _graphics.getFontRenderContext()));
@@ -57,7 +56,6 @@ public class Java2DFontContext implements FontContext
 	@Override
 	public int getWidth(FSFont font, String s) 
 	{
-        // TODO: Antialias and fractional metrics.
 		Font awtFont = ((Java2DFont) font).getAWTFont();
         return (int) Math.round(_graphics.getFontMetrics(awtFont).getStringBounds(s, _graphics).getWidth());            
 	}
@@ -65,7 +63,6 @@ public class Java2DFontContext implements FontContext
 	@Override
 	public FSGlyphVector getGlyphVector(FSFont font, String s)
 	{
-		// TODO: Antialias and fractional metrics.
 		Font awtFont = ((Java2DFont) font).getAWTFont();
 		GlyphVector vector = awtFont.createGlyphVector(_graphics.getFontRenderContext(), s);
 		return new Java2DGlyphVector(vector);
@@ -74,7 +71,6 @@ public class Java2DFontContext implements FontContext
 	@Override
 	public float[] getGlyphPositions(FSFont font, FSGlyphVector fsGlyphVector) 
 	{
-		// TODO: Antialias and fractional metrics.
 		GlyphVector vector = ((Java2DGlyphVector) fsGlyphVector).getGlyphVector();
 		float[] result = vector.getGlyphPositions(0, vector.getNumGlyphs() + 1, null);
         return result;
@@ -84,7 +80,6 @@ public class Java2DFontContext implements FontContext
 	public Rectangle getGlyphBounds(FSFont font, FSGlyphVector fsGlyphVector,
 			int index, float x, float y)
 	{
-		// TODO: Antialias and fractional metrics.
         GlyphVector vector = ((Java2DGlyphVector) fsGlyphVector).getGlyphVector();
         Rectangle result = vector.getGlyphPixelBounds(index, _graphics.getFontRenderContext(), x, y);
         return result;
