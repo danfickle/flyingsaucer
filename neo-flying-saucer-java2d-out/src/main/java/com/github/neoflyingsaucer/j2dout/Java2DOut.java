@@ -245,7 +245,7 @@ public class Java2DOut implements DisplayListOuputDevice
 	
     protected void drawImage(FSImage image, int x, int y)
     {
-        // TODO g2d.drawImage(((AWTFSImage) image).getImage(), x, y, null);
+        g2d.drawImage(((Java2DImage) image).getAWTImage(), x, y, null);
     }
 	
     protected void fillRect(int x, int y, int width, int height) 

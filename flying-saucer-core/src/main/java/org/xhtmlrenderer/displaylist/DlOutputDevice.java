@@ -4,6 +4,7 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints.Key;
 import java.awt.geom.Area;
 import java.awt.BasicStroke;
+import java.awt.Point;
 import java.awt.Shape;
 import java.awt.Stroke;
 
@@ -17,7 +18,7 @@ import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.render.BorderPainter;
 import org.xhtmlrenderer.render.InlineText;
 import org.xhtmlrenderer.render.RenderingContext;
-
+import org.xhtmlrenderer.swing.ImageReplacedElement;
 import com.github.neoflyingsaucer.displaylist.DlInstruction;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.Operation;
 import com.github.neoflyingsaucer.extend.output.DisplayList;
@@ -25,6 +26,7 @@ import com.github.neoflyingsaucer.extend.output.FSFont;
 import com.github.neoflyingsaucer.extend.output.FSGlyphVector;
 import com.github.neoflyingsaucer.extend.output.FSImage;
 import com.github.neoflyingsaucer.extend.output.JustificationInfo;
+import com.github.neoflyingsaucer.extend.output.ReplacedElement;
 
 public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice 
 {
@@ -197,9 +199,16 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
 	}
 
 	@Override
-	public void paintReplacedElement(RenderingContext c, BlockBox box) {
-		// TODO Auto-generated method stub
+	public void paintReplacedElement(RenderingContext c, BlockBox box)
+	{
+		ReplacedElement replaced = box.getReplacedElement();
 		
+		if (replaced instanceof ImageReplacedElement)
+		{
+            FSImage image = ((ImageReplacedElement) replaced).getImage();
+            Point location = replaced.getLocation();
+            dl.add(new DlInstruction.DlImage(image, (int) location.getX(), (int) location.getY()));
+        }
 	}
 
 	@Override
