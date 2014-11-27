@@ -10,6 +10,7 @@ import com.github.neoflyingsaucer.extend.output.FSFont;
 import com.github.neoflyingsaucer.extend.output.FSGlyphVector;
 import com.github.neoflyingsaucer.extend.output.FSImage;
 import com.github.neoflyingsaucer.extend.output.JustificationInfo;
+import com.github.neoflyingsaucer.extend.output.ReplacedElement;
 
 public class DlInstruction
 {
@@ -18,6 +19,29 @@ public class DlInstruction
 		FILL,
 		STROKE,
 		CLIP;
+	}
+	
+	public static class DlReplaced implements DlItem
+	{
+		public final DlType type = DlType.REPLACED;
+		public final ReplacedElement replaced;
+		
+		public DlReplaced(ReplacedElement replaced)
+		{
+			this.replaced = replaced;
+		}
+
+		@Override
+		public DlType getType()
+		{
+			return type;
+		}
+
+		@Override
+		public String toString() 
+		{
+			return String.format(Locale.US, "{%s}", replaced);
+		}
 	}
 	
 	public static class DlAntiAliasOff implements DlItem

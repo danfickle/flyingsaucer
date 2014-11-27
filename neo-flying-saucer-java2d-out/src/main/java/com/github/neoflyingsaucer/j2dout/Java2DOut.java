@@ -4,6 +4,7 @@ import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.font.GlyphVector;
@@ -19,6 +20,7 @@ import com.github.neoflyingsaucer.displaylist.DlInstruction.DlOpacity;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlOval;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlRGBColor;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlRectangle;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlReplaced;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlSetClip;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlString;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlStringEx;
@@ -32,6 +34,8 @@ import com.github.neoflyingsaucer.extend.output.FSFont;
 import com.github.neoflyingsaucer.extend.output.FSGlyphVector;
 import com.github.neoflyingsaucer.extend.output.FSImage;
 import com.github.neoflyingsaucer.extend.output.JustificationInfo;
+import com.github.neoflyingsaucer.extend.output.ReplacedElement;
+import com.github.neoflyingsaucer.j2dout.Java2DReplacedElementResolver.Java2DImageReplacedElement;
 
 public class Java2DOut implements DisplayListOuputDevice 
 {
@@ -166,6 +170,12 @@ public class Java2DOut implements DisplayListOuputDevice
 				g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, aaHint);
 				break;
 			}
+			case REPLACED:
+			{
+				DlReplaced replaced = (DlReplaced) item;
+				drawReplaced(replaced.replaced);
+				break;
+			}
 			case CMYKCOLOR:
 			{
 				// TODO: Convert color to rgb.
@@ -175,6 +185,17 @@ public class Java2DOut implements DisplayListOuputDevice
 			}
 		}
 	}
+	
+	protected void drawReplaced(ReplacedElement replaced)
+	{
+		if (replaced instanceof Java2DImageReplacedElement)
+		{
+            FSImage image = ((Java2DImageReplacedElement) replaced).getImage();
+            Point location = replaced.getLocation();
+            drawImage(image, location.x, location.y);
+		}
+	}
+	
 	
 	protected void drawGlyphVector(FSGlyphVector vec, int x, int y)
 	{

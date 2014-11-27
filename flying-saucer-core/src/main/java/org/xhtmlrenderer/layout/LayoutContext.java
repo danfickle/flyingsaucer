@@ -304,6 +304,7 @@ public class LayoutContext implements CssContext {
         _currentMarkerData = currentMarkerData;
     }
 
+    @Deprecated
     public ReplacedElementFactory getReplacedElementFactory() {
         return _sharedContext.getReplacedElementFactory();
     }

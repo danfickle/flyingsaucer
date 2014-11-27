@@ -38,6 +38,7 @@ import java.util.Map;
 /**
  * A ReplacedElementFactory where Elements are replaced by Swing components.
  */
+@Deprecated
 public class SwingReplacedElementFactory implements ReplacedElementFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(SwingReplacedElementFactory.class);
     /**
@@ -45,6 +46,7 @@ public class SwingReplacedElementFactory implements ReplacedElementFactory {
      */
     protected Map<CacheKey, ReplacedElement> imageComponents;
 
+    @Deprecated
     public SwingReplacedElementFactory() 
     {
     }
@@ -52,6 +54,7 @@ public class SwingReplacedElementFactory implements ReplacedElementFactory {
     /**
      * {@inheritDoc}
      */
+    @Deprecated
     public ReplacedElement createReplacedElement(
             final LayoutContext context,
             final BlockBox box,
@@ -217,9 +220,11 @@ public class SwingReplacedElementFactory implements ReplacedElementFactory {
     }
 
 	@Override
+	@Deprecated
 	public void reset() { }
 
 	@Override
+	@Deprecated
 	public void remove(Element e)
 	{
         if (imageComponents != null)

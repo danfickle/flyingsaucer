@@ -55,6 +55,7 @@ import com.github.neoflyingsaucer.extend.output.FontContext;
 import com.github.neoflyingsaucer.extend.output.FontResolver;
 import com.github.neoflyingsaucer.extend.output.FontSpecificationI;
 import com.github.neoflyingsaucer.extend.output.ImageResolver;
+import com.github.neoflyingsaucer.extend.output.ReplacedElementResolver;
 import com.github.neoflyingsaucer.extend.useragent.ImageResourceI;
 import com.github.neoflyingsaucer.extend.useragent.Optional;
 import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
@@ -78,7 +79,9 @@ public class SharedContext {
     private boolean lookedUpDefaultStylesheet;
     private Locale localeTextBreaker = Locale.US;
     private ImageResolver imgResolver;
-
+    private NamespaceHandler namespaceHandler;
+	private ReplacedElementResolver replacedElementResolver;
+    
     private String _uri;
     /*
      * used to adjust fonts, ems, points, into screen resolution
@@ -331,8 +334,6 @@ public class SharedContext {
             return rect;
         }
     }
-
-    private NamespaceHandler namespaceHandler;
 
     public void setNamespaceHandler(final NamespaceHandler nh) {
         namespaceHandler = nh;
@@ -607,19 +608,28 @@ public class SharedContext {
        replacedElementFactory.reset();
     }
 
+    @Deprecated
     public ReplacedElementFactory getReplacedElementFactory() {
         return replacedElementFactory;
     }
 
+    @Deprecated
     public void setReplacedElementFactory(final ReplacedElementFactory ref) {
-        if (ref == null) {
-            throw new NullPointerException("replacedElementFactory may not be null");
-        }
-
         if (this.replacedElementFactory != null) {
             this.replacedElementFactory.reset();
         }
         this.replacedElementFactory = ref;
+    }
+    
+    public void setReplacedElementResolver(ReplacedElementResolver resolver)
+    {
+    	assert(resolver != null);
+    	this.replacedElementResolver = resolver;
+    }
+    
+    public ReplacedElementResolver getReplacedElementResolver()
+    {
+    	return this.replacedElementResolver;
     }
 
     public void removeElementReferences(final Element e) {
@@ -633,7 +643,6 @@ public class SharedContext {
         }
 
         getCss().removeStyle(e);
-        getReplacedElementFactory().remove(e);
 
         if (e.hasChildNodes())
         {
@@ -691,5 +700,10 @@ public class SharedContext {
 	public FSImage resolveImage(ImageResourceI imgResource)
 	{
 		return imgResolver.resolveImage(imgResource.getImageUri(), imgResource.getImage());
+	}
+
+	public ImageResolver getImageResolver()
+	{
+		return imgResolver;
 	}
 }

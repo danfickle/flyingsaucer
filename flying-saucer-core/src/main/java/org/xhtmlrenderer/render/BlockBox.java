@@ -720,8 +720,17 @@ public class BlockBox extends Box implements InlinePaintable {
                 //check if replaced
                 ReplacedElement re = getReplacedElement();
                 if (re == null) {
-                    re = c.getReplacedElementFactory().createReplacedElement(
+                	if (c.getReplacedElementFactory() != null)
+                	{
+                		re = c.getReplacedElementFactory().createReplacedElement(
                             c, this, c.getUac(), cssWidth, cssHeight);
+                	}
+                	else
+                	{
+                		re = c.getSharedContext().getReplacedElementResolver().createReplacedElement(getElement(),
+                    		c.getSharedContext().getBaseURL(), c.getUac(), c.getSharedContext().getImageResolver(), cssWidth, cssHeight);
+                	}
+                	
                     if (re != null){
                         re = fitReplacedElement(c, re);
                     }
@@ -1512,8 +1521,11 @@ public class BlockBox extends Box implements InlinePaintable {
                     width = getReplacedElement().getIntrinsicWidth();
                 } else {
                     final int height = getCSSHeight(c);
-                    ReplacedElement re = c.getReplacedElementFactory().createReplacedElement(
-                            c, this, c.getUac(), width, height);
+                    ReplacedElement re = c.getSharedContext().getReplacedElementFactory() != null ? c.getReplacedElementFactory().createReplacedElement(
+                            c, this, c.getUac(), width, height) :
+
+                            c.getSharedContext().getReplacedElementResolver().createReplacedElement(
+                            		getElement(), c.getSharedContext().getBaseURL(), c.getUac(), c.getSharedContext().getImageResolver(), width, height);
                     if (re != null) {
                         re = fitReplacedElement(c, re);
                         setReplacedElement(re);
@@ -1585,8 +1597,12 @@ public class BlockBox extends Box implements InlinePaintable {
         {
             final double oldWidth = (double)re.getIntrinsicWidth();
             final double scale = ((double)maxImageWidth)/oldWidth;
-            re = c.getReplacedElementFactory().createReplacedElement(
-                    c, this, c.getUac(), maxImageWidth, (int)Math.rint(scale * (double)re.getIntrinsicHeight()));
+            re = c.getReplacedElementFactory() != null ? c.getReplacedElementFactory().createReplacedElement(
+                    c, this, c.getUac(), maxImageWidth, (int)Math.rint(scale * (double)re.getIntrinsicHeight())) :
+                    	
+                 c.getSharedContext().getReplacedElementResolver().createReplacedElement(
+                        		getElement(), c.getSharedContext().getBaseURL(), c.getUac(), c.getSharedContext().getImageResolver(), maxImageWidth, (int)Math.rint(scale * (double)re.getIntrinsicHeight()));  	
+                  
         }
         return re;
     }

@@ -216,13 +216,7 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
 	public void paintReplacedElement(RenderingContext c, BlockBox box)
 	{
 		ReplacedElement replaced = box.getReplacedElement();
-		
-		if (replaced instanceof ImageReplacedElement)
-		{
-            FSImage image = ((ImageReplacedElement) replaced).getImage();
-            Point location = replaced.getLocation();
-            dl.add(new DlInstruction.DlImage(image, (int) location.getX(), (int) location.getY()));
-        }
+		dl.add(new DlInstruction.DlReplaced(replaced));
 	}
 
 	@Override

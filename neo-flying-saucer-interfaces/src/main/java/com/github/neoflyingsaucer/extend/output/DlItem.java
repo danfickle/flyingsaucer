@@ -21,7 +21,8 @@ public interface DlItem
 		STRING_EX,
 		GLYPH_VECTOR,
 		AA_OFF,
-		AA_DEFAULT;
+		AA_DEFAULT,
+		REPLACED;
 	}
 	
 	public DlType getType();

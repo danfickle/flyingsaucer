@@ -30,6 +30,7 @@ import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 import com.github.neoflyingsaucer.j2dout.Java2DFontContext;
 import com.github.neoflyingsaucer.j2dout.Java2DFontResolver;
 import com.github.neoflyingsaucer.j2dout.Java2DImageResolver;
+import com.github.neoflyingsaucer.j2dout.Java2DReplacedElementResolver;
 
 public class DisplayListRenderer 
 {
@@ -136,7 +137,8 @@ public class DisplayListRenderer
         Java2DFontResolver fontResolver = new Java2DFontResolver();
 
         context.setFontResolver(fontResolver);
-        context.setReplacedElementFactory(new SwingReplacedElementFactory());
+        context.setReplacedElementFactory(null);
+        context.setReplacedElementResolver(new Java2DReplacedElementResolver());
         context.setTextRenderer(new DlTextRenderer());
 
         return context;
@@ -177,7 +179,7 @@ public class DisplayListRenderer
             getSharedContext().setDPI(72f);
             //getSharedContext().getTextRenderer().setSmoothingThreshold(0);
             getSharedContext().setUserAgentCallback(this.cb);
-            getSharedContext().setReplacedElementFactory(new SwingReplacedElementFactory());
+            getSharedContext().setReplacedElementFactory(null);
             getSharedContext().setNamespaceHandler(new HtmlNamespaceHandler());
             getSharedContext().getCss().setDocumentContext(getSharedContext(), getSharedContext().getNamespaceHandler(), doc);
 
