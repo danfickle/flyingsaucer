@@ -4,7 +4,6 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints.Key;
 import java.awt.geom.Area;
 import java.awt.BasicStroke;
-import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Stroke;
@@ -19,8 +18,6 @@ import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.render.BorderPainter;
 import org.xhtmlrenderer.render.InlineText;
 import org.xhtmlrenderer.render.RenderingContext;
-import org.xhtmlrenderer.swing.ImageReplacedElement;
-
 import com.github.neoflyingsaucer.displaylist.DlInstruction;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.Operation;
 import com.github.neoflyingsaucer.extend.output.DisplayList;

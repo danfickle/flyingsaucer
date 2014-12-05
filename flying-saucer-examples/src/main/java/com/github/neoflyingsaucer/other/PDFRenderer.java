@@ -16,9 +16,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+
 import javax.imageio.ImageIO;
 
 import org.xhtmlrenderer.renderers.ContinuousRenderer;
+import org.xhtmlrenderer.renderers.PagedRenderer;
 
 /**
  * <p/>
@@ -73,7 +75,43 @@ public class PDFRenderer {
     	ImageIO.write(img, "png", new File(pdf + ".img.png")); 
     	
     	renderToContinuousImage(url, uac, pdf + ".imgc.png");
+    	renderToPagedImage(url, uac, 0, pdf + ".imgp.png");
     }
+    
+    private static void renderToPagedImage(String url, UserAgentCallback uac, int pageNo, String filename) throws IOException
+    {
+    	BufferedImage layoutGraphics = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+ 
+    	Graphics2D g2d2 = layoutGraphics.createGraphics();
+        g2d2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+    	
+    	PagedRenderer r3 = new PagedRenderer(uac);
+    	
+    	r3.setDocumentUri(url);
+    	r3.setImageResolver(new Java2DImageResolver());
+    	r3.setFontContext(new Java2DFontContext(g2d2));
+    	r3.setFontResolver(new Java2DFontResolver());
+    	r3.setReplacedElementResolver(new Java2DReplacedElementResolver());
+    	r3.prepare();
+    	
+    	DisplayList dl = r3.renderToList(pageNo);
+    	int height = r3.getPageHeight(pageNo);
+    	int width = r3.getPageWidth(pageNo);
+    	BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+    	
+    	Graphics2D g2d = img.createGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+  	
+    	Java2DOut out = new Java2DOut(g2d, RenderingHints.VALUE_ANTIALIAS_ON);
+    	out.render(dl);
+    	g2d.dispose();
+    	g2d2.dispose();
+    	
+    	ImageIO.write(img, "png", new File(filename)); 
+    }
+    
 
     private static void renderToContinuousImage(String url, UserAgentCallback uac, String filename) throws IOException
     {
