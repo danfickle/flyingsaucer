@@ -12,13 +12,16 @@ import org.xhtmlrenderer.css.parser.FSCMYKColor;
 import org.xhtmlrenderer.css.parser.FSColor;
 import org.xhtmlrenderer.css.parser.FSRGBColor;
 import org.xhtmlrenderer.css.style.derived.FSLinearGradient;
+import org.xhtmlrenderer.css.style.derived.FSLinearGradient.StopValue;
 import org.xhtmlrenderer.extend.OutputDevice;
 import org.xhtmlrenderer.render.AbstractOutputDevice;
 import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.render.BorderPainter;
 import org.xhtmlrenderer.render.InlineText;
 import org.xhtmlrenderer.render.RenderingContext;
+
 import com.github.neoflyingsaucer.displaylist.DlInstruction;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlRGBColor;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.Operation;
 import com.github.neoflyingsaucer.extend.output.DisplayList;
 import com.github.neoflyingsaucer.extend.output.FSFont;
@@ -277,10 +280,27 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
 	}
 
 	@Override
-	public void drawLinearGradient(FSLinearGradient gradient, int x, int y,
-			int width, int height) {
-		// TODO Auto-generated method stub
+	public void drawLinearGradient(FSLinearGradient gradient, int x, int y, int width, int height)
+	{
+		DlInstruction.DlLinearGradient linear = new DlInstruction.DlLinearGradient(
+				gradient.getStartX(), gradient.getStartY(), gradient.getEndX(), gradient.getEndY(), x, y, width, height);
 		
+		for (StopValue sv : gradient.getStopPoints())
+		{
+			if (sv.getColor() instanceof FSRGBColor)
+			{
+				FSRGBColor rgb = (FSRGBColor) sv.getColor();
+				DlRGBColor rgba = new DlRGBColor(rgb.getRed(), rgb.getGreen(), rgb.getBlue(), (int) (rgb.getAlpha() * 255));
+				DlInstruction.DlStopPoint stopPoint = new DlInstruction.DlStopPoint(sv.getLength(), rgba);
+				linear.stopPoints.add(stopPoint);
+			}
+			else
+			{
+				// TODO
+			}
+		}
+		
+		dl.add(linear);
 	}
 
 	@Override

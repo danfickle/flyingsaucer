@@ -2,7 +2,9 @@ package com.github.neoflyingsaucer.displaylist;
 
 import java.awt.BasicStroke;
 import java.awt.Shape;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 import com.github.neoflyingsaucer.extend.output.DlItem;
@@ -19,6 +21,52 @@ public class DlInstruction
 		FILL,
 		STROKE,
 		CLIP;
+	}
+	
+	public static class DlStopPoint
+	{
+		public final float dots;
+		public final DlRGBColor rgb;
+
+		public DlStopPoint(float dots, DlRGBColor rgb)
+		{
+			this.dots = dots;
+			this.rgb = rgb;
+		}
+	}
+	
+	public static class DlLinearGradient implements DlItem
+	{
+		public final DlType type = DlType.LINEAR_GRADIENT;
+		public final int x1, y1, x2, y2;
+		public final int x, y, width, height;
+		public final List<DlStopPoint> stopPoints = new ArrayList<DlStopPoint>(2);
+		
+		public DlLinearGradient(int x1, int y1, int x2, int y2,
+				int x, int y, int width, int height)
+		{
+			this.x1 = x1;
+			this.y1 = y1;
+			this.x2 = x2;
+			this.y2 = y2;
+			
+			this.x = x;
+			this.y = y;
+			this.width = width;
+			this.height = height;
+		}
+
+		@Override
+		public DlType getType() 
+		{
+			return type;
+		}
+
+		@Override
+		public String toString()
+		{
+			return ""; // TODO
+		}
 	}
 	
 	public static class DlReplaced implements DlItem

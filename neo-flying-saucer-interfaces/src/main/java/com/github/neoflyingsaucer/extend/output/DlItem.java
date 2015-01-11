@@ -22,7 +22,8 @@ public interface DlItem
 		GLYPH_VECTOR,
 		AA_OFF,
 		AA_DEFAULT,
-		REPLACED;
+		REPLACED,
+		LINEAR_GRADIENT;
 	}
 	
 	public DlType getType();

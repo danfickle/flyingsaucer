@@ -4,6 +4,7 @@ import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.LinearGradientPaint;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Shape;
@@ -16,12 +17,14 @@ import com.github.neoflyingsaucer.displaylist.DlInstruction.DlFont;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlGlyphVector;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlImage;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlLine;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlLinearGradient;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlOpacity;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlOval;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlRGBColor;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlRectangle;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlReplaced;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlSetClip;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlStopPoint;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlString;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlStringEx;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlStroke;
@@ -176,6 +179,12 @@ public class Java2DOut implements DisplayListOuputDevice
 				drawReplaced(replaced.replaced);
 				break;
 			}
+			case LINEAR_GRADIENT:
+			{
+				DlLinearGradient linear = (DlLinearGradient) item;
+				drawLinearGradient(linear);
+				break;
+			}
 			case CMYKCOLOR:
 			{
 				// TODO: Convert color to rgb.
@@ -184,6 +193,36 @@ public class Java2DOut implements DisplayListOuputDevice
 
 			}
 		}
+	}
+
+	protected void drawLinearGradient(DlLinearGradient linear)
+	{
+		assert(linear.stopPoints.size() >= 2);
+		if (linear.stopPoints.size() < 2)
+			return;
+		
+		float[] fractions = new float[linear.stopPoints.size()];
+		Color[] colors = new Color[linear.stopPoints.size()];
+		float range = linear.stopPoints.get(linear.stopPoints.size() - 1).dots - linear.stopPoints.get(0).dots;
+
+		assert(range != 0f);
+		if (range == 0f)
+			return;
+		
+		for (int i = 0; i < linear.stopPoints.size(); i++)
+		{
+			DlStopPoint sp = linear.stopPoints.get(i);
+
+			colors[i] = new Color(sp.rgb.r, sp.rgb.g, sp.rgb.b, sp.rgb.a);
+			fractions[i] = sp.dots / range;
+		}
+		
+		LinearGradientPaint paint = new LinearGradientPaint(linear.x1 + linear.x, linear.y1 + linear.y,
+				linear.x2 + linear.x, linear.y2 + linear.y, fractions, colors);
+
+		g2d.setPaint(paint);
+		g2d.fillRect(linear.x, linear.y, linear.width, linear.height);
+		g2d.setPaint(null);
 	}
 	
 	protected void drawReplaced(ReplacedElement replaced)
