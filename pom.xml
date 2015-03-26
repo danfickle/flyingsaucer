@@ -30,6 +30,7 @@
     <module>neo-flying-saucer-pdfout</module>
     <module>neo-flying-saucer-display-list</module>
     <module>neo-flying-saucer-java2d-out</module>
+    <module>neo-flying-saucer-pdf2-out</module>
     <module>neo-flying-saucer-interfaces</module>
     <module>neo-flying-saucer-browser</module>
   </modules>

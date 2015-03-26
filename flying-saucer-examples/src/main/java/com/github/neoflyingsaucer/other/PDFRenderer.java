@@ -7,11 +7,17 @@ import com.github.neoflyingsaucer.j2dout.Java2DFontResolver;
 import com.github.neoflyingsaucer.j2dout.Java2DImageResolver;
 import com.github.neoflyingsaucer.j2dout.Java2DOut;
 import com.github.neoflyingsaucer.j2dout.Java2DReplacedElementResolver;
+import com.github.neoflyingsaucer.pdf2dout.Pdf2FontContext;
+import com.github.neoflyingsaucer.pdf2dout.Pdf2FontResolver;
+import com.github.neoflyingsaucer.pdf2dout.Pdf2ImageResolver;
+import com.github.neoflyingsaucer.pdf2dout.Pdf2Out;
+import com.github.neoflyingsaucer.pdf2dout.Pdf2ReplacedElementResolver;
 import com.github.neoflyingsaucer.pdfout.PdfRenderer;
 
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -76,8 +82,50 @@ public class PDFRenderer {
     	
     	renderToContinuousImage(url, uac, pdf + ".imgc.png");
     	renderToPagedImage(url, uac, 0, pdf + ".imgp.png");
+    	renderToPagedPdf(url, uac, pdf + ".2.pdf");
     }
     
+    
+    private static final float PDF_DEFAULT_DOTS_PER_POINT = 20f * 4f / 3f;
+    private static final int PDF_DEFAULT_DOTS_PER_PIXEL = 20;
+    
+    private static void renderToPagedPdf(String url, UserAgentCallback uac, String filename) throws IOException
+    {
+    	PagedRenderer r3 = new PagedRenderer(uac, PDF_DEFAULT_DOTS_PER_POINT * 72f, PDF_DEFAULT_DOTS_PER_PIXEL);
+    	
+    	r3.setDocumentUri(url);
+    	r3.setImageResolver(new Pdf2ImageResolver(PDF_DEFAULT_DOTS_PER_PIXEL));
+    	r3.setFontContext(new Pdf2FontContext());
+    	r3.setFontResolver(new Pdf2FontResolver());
+    	r3.setReplacedElementResolver(new Pdf2ReplacedElementResolver());
+    	r3.prepare();
+    	
+    	Pdf2Out out = new Pdf2Out(PDF_DEFAULT_DOTS_PER_POINT);
+    	BufferedOutputStream bs = new BufferedOutputStream(new FileOutputStream(filename));
+    	try {
+			out.initializePdf(bs);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	out.setPageCount(r3.getPageCount());
+    	
+    	for (int i = 0; i < r3.getPageCount(); i++)
+    	{
+    		DisplayList dl = r3.renderToList(i);
+    		int height = r3.getPageHeight(i);
+    		int width = r3.getPageWidth(i);
+    	
+    		out.initializePage(width, height);
+    		out.render(dl);
+    		out.finishPage();
+    	}
+
+    	out.finish();
+    	bs.close();
+    }
+
     private static void renderToPagedImage(String url, UserAgentCallback uac, int pageNo, String filename) throws IOException
     {
     	BufferedImage layoutGraphics = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
@@ -86,7 +134,7 @@ public class PDFRenderer {
         g2d2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
     	
-    	PagedRenderer r3 = new PagedRenderer(uac);
+    	PagedRenderer r3 = new PagedRenderer(uac, 72, 1);
     	
     	r3.setDocumentUri(url);
     	r3.setImageResolver(new Java2DImageResolver());

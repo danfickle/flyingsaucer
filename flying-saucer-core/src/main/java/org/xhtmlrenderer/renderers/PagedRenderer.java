@@ -41,13 +41,17 @@ public class PagedRenderer
 	
 	private final UserAgentCallback cb;
 	private final SharedContext sharedContext;
+	private final float dpi;
+	private final int dpp;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(PagedRenderer.class);
 	
-	public PagedRenderer(UserAgentCallback cb)
+	public PagedRenderer(UserAgentCallback cb, float dpi, int dpp)
 	{
 		this.cb = cb;
 		this.sharedContext = newSharedContext(cb);
+		this.dpi = dpi;
+		this.dpp = dpp;
 	}
 	
 	public void setDocumentUri(String uri)
@@ -169,7 +173,9 @@ public class PagedRenderer
 		doc = res.getDocument();
     	
     	getSharedContext().setPrint(true);
-        getSharedContext().setDPI(72f);
+    	// TODO: Make configurable.
+        getSharedContext().setDPI(dpi);
+        getSharedContext().setDotsPerPixel(dpp);
         getSharedContext().setUserAgentCallback(this.cb);
         getSharedContext().setNamespaceHandler(new HtmlNamespaceHandler());
         getSharedContext().getCss().setDocumentContext(getSharedContext(), getSharedContext().getNamespaceHandler(), doc);
