@@ -190,7 +190,11 @@ public class Java2DOut implements DisplayListOuputDevice
 				// TODO: Convert color to rgb.
 				break;
 			}
-
+			case BOOKMARK:
+			{
+				// Do nothing.
+				break;
+			}
 			}
 		}
 	}

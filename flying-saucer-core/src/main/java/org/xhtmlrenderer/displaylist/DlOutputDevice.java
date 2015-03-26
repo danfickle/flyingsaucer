@@ -8,16 +8,22 @@ import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Stroke;
 
+import org.xhtmlrenderer.css.constants.CSSName;
+import org.xhtmlrenderer.css.constants.IdentValue;
 import org.xhtmlrenderer.css.parser.FSCMYKColor;
 import org.xhtmlrenderer.css.parser.FSColor;
 import org.xhtmlrenderer.css.parser.FSRGBColor;
+import org.xhtmlrenderer.css.style.CalculatedStyle;
 import org.xhtmlrenderer.css.style.derived.FSLinearGradient;
 import org.xhtmlrenderer.css.style.derived.FSLinearGradient.StopValue;
 import org.xhtmlrenderer.extend.OutputDevice;
 import org.xhtmlrenderer.render.AbstractOutputDevice;
 import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.render.BorderPainter;
+import org.xhtmlrenderer.render.Box;
+import org.xhtmlrenderer.render.InlineLayoutBox;
 import org.xhtmlrenderer.render.InlineText;
+import org.xhtmlrenderer.render.PageBox;
 import org.xhtmlrenderer.render.RenderingContext;
 
 import com.github.neoflyingsaucer.displaylist.DlInstruction;
@@ -36,10 +42,13 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
     private Area clip;
     private Stroke stroke;
     private Object renderingHint = RenderingHints.VALUE_ANTIALIAS_DEFAULT;
+    private Box _root;
+    private final float dpi;
 	
-	public DlOutputDevice(DisplayList displayList) 
+	public DlOutputDevice(DisplayList displayList, float dpi) 
 	{
 		this.dl = displayList;
+		this.dpi = dpi;
 	}
 
 	public void drawString(String s, float x, float y)
@@ -308,4 +317,60 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
 	{
 		return clip;
 	}
+	
+	@Override
+    public void paintBackground(final RenderingContext c, final Box box) 
+	{
+        super.paintBackground(c, box);
+
+        // TODO
+        //processLink(c, box);
+        
+        if (!box.getStyle().isIdent(CSSName.FS_BOOKMARK_LEVEL, IdentValue.NONE))
+        {
+        	processBookmark(c, box);
+        }
+    }
+	
+	public void setRoot(Box box) 
+	{
+		_root = box;
+	}
+	
+	private void processBookmark(RenderingContext c, Box box)
+	{
+		// Continuous renderer does not support bookmarks currently.
+		if (_root.getLayer().getPages().isEmpty())
+    		return;
+		
+		int bookmarkLevel = (int) box.getStyle().asFloat(CSSName.FS_BOOKMARK_LEVEL);
+
+    	String bookmarkContent = box.getElement().getTextContent();
+ 
+    	PageBox page = _root.getLayer().getPage(c, getPageRefY(box));
+    	
+        if (page != null)
+        {
+            int distanceFromTop = page.getMarginBorderPadding(c, CalculatedStyle.TOP);
+            distanceFromTop += box.getAbsY() + box.getMargin(c).top() - page.getTop();
+            
+            DlInstruction.DlBookmark dlBookmark = new DlInstruction.DlBookmark(bookmarkLevel, page.getHeight(c) / dpi - distanceFromTop, 
+            		bookmarkContent, page.getPageNo());
+            
+            dl.add(dlBookmark);
+        }
+	}
+	
+    private int getPageRefY(Box box) 
+    {
+        if (box instanceof InlineLayoutBox) 
+        {
+            InlineLayoutBox iB = (InlineLayoutBox) box;
+            return iB.getAbsY() + iB.getBaseline();
+        }
+        else 
+        {
+            return box.getAbsY();
+        }
+    }
 }

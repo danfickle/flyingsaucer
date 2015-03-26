@@ -23,7 +23,8 @@ public interface DlItem
 		AA_OFF,
 		AA_DEFAULT,
 		REPLACED,
-		LINEAR_GRADIENT;
+		LINEAR_GRADIENT,
+		BOOKMARK;
 	}
 	
 	public DlType getType();

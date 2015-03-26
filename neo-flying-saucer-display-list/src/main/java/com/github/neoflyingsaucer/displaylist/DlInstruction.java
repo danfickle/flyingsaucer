@@ -23,6 +23,38 @@ public class DlInstruction
 		CLIP;
 	}
 	
+	/*
+	 * A PDF bookmark.
+	 */
+	public static class DlBookmark implements DlItem
+	{
+		public final int level;  /* PDF bookmarks can be nested. */
+		public final String content;
+		public final float y;
+		public final int pageNo;
+		
+		public DlBookmark(int level, float y, String content, int pageNo)
+		{
+			this.level = level;
+			this.y = y;
+			this.content = content;
+			this.pageNo = pageNo;
+		}
+
+		@Override
+		public DlType getType() 
+		{
+			return DlType.BOOKMARK;
+		}
+		
+		@Override
+		public String toString()
+		{
+			// TODO
+			return "";
+		}
+	}
+	
 	public static class DlStopPoint
 	{
 		public final float dots;

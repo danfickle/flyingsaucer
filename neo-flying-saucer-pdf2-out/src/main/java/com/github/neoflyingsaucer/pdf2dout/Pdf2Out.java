@@ -22,6 +22,7 @@ import javax.imageio.ImageIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlBookmark;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlCMYKColor;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlClip;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlDrawShape;
@@ -50,6 +51,8 @@ import com.github.neoflyingsaucer.extend.output.JustificationInfo;
 import com.github.neoflyingsaucer.extend.output.ReplacedElement;
 import com.github.neoflyingsaucer.pdf2dout.Pdf2FontResolver.FontDescription;
 import com.github.neoflyingsaucer.pdf2dout.Pdf2ReplacedElementResolver.Pdf2ImageReplacedElement;
+import com.github.pdfstream.Bookmark;
+import com.github.pdfstream.Destination;
 import com.github.pdfstream.JPGImage;
 import com.github.pdfstream.LinearGradient;
 import com.github.pdfstream.PDF;
@@ -226,11 +229,25 @@ public class Pdf2Out implements DisplayListOuputDevice
 				setColor(obj);
 				break;
 			}
-
+			case BOOKMARK:
+			{
+				DlBookmark bm = (DlBookmark) item;
+				createBookmark(bm);
+				break;
+			}
 			}
 		}
 	}
 	
+	private void createBookmark(DlBookmark bm)
+	{
+        Destination destination = new Destination(0, bm.y, 0);
+        destination.setPageObjNumber(bm.pageNo);
+		
+    	Bookmark pdfbm = new Bookmark(destination, bm.content, bm.level);
+    	_currentPage.getPdf().addBookmark(pdfbm);
+	}
+
 	public void finish()
 	{
 		try {

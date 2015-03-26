@@ -148,10 +148,14 @@ public class PagedRenderer
     {
         RenderingContext result = getSharedContext().newRenderingContextInstance();
         result.setFontContext(fontContext);
-        result.setOutputDevice(new DlOutputDevice(this.displayList));
+        
+        DlOutputDevice dlOut = new DlOutputDevice(this.displayList, dpi);
+        result.setOutputDevice(dlOut);
 
         getSharedContext().getTextRenderer().setup(result.getFontContext());
-
+        
+        dlOut.setRoot(getRootBox());
+        
         final Box rb = getRootBox();
 
         if (rb != null) 

@@ -161,10 +161,14 @@ public class DisplayListRenderer
     {
         RenderingContext result = getSharedContext().newRenderingContextInstance();
         result.setFontContext(new Java2DFontContext(layoutGraphics));
-        result.setOutputDevice(new DlOutputDevice(this.displayList));
+        
+        DlOutputDevice dlOut = new DlOutputDevice(this.displayList, 72f);
+        result.setOutputDevice(dlOut);
 
         getSharedContext().getTextRenderer().setup(result.getFontContext());
 
+        dlOut.setRoot(getRootBox());
+        
         final Box rb = getRootBox();
 
         if (rb != null) 
