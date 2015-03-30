@@ -25,9 +25,9 @@ import com.github.neoflyingsaucer.extend.useragent.Optional;
 
 /**
  * @author scott
- *         <p/>
+ *
  *         Gives the css matcher access to the information it needs about the tree structure.
- *         <p/>
+ *
  *         Elements are the "things" in the tree structure that can be matched by the matcher.
  */
 public interface TreeResolver {

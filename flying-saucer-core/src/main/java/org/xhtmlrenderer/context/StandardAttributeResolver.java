@@ -43,7 +43,6 @@ public class StandardAttributeResolver implements AttributeResolver {
      *
      * @param nsh PARAM
      * @param uac PARAM
-     * @param ui  PARAM
      */
     public StandardAttributeResolver(final NamespaceHandler nsh, final UserAgentCallback uac) {
         this.nsh = nsh;

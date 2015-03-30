@@ -29,7 +29,6 @@ import com.github.neoflyingsaucer.extend.useragent.Optional;
 
 /**
  * @author scott
- *         <p/>
  *         works for a w3c DOM tree
  */
 public class DOMTreeResolver implements TreeResolver {

@@ -22,13 +22,10 @@ package org.xhtmlrenderer.util;
 
 /**
  * Simple enumerated constants for downscaling (scaling to smaller image size)--since we have various options
- * for what algorithm to use. Not general-purpose, applies only to methods used in ImageUtil. Types constants
- * can be looked up using {@link #forString(String, DownscaleQuality)} and the corresponding string
- * for the quality
+ * for what algorithm to use.
 */
-// made a separate class only to reduce size of ImageUtil
-public enum DownscaleQuality {
-
+public enum DownscaleQuality 
+{
 	HIGH_QUALITY,
 	STANDARD,
 	MEDIUM,

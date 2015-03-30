@@ -149,15 +149,15 @@ public class ImageUtil {
     }
 
     /**
-     * Scales an image to the requested width and height, assuming these are both >= 1; size given in pixels.
-     * If either width or height is <=0, the current image width or height will be used. This method assumes
+     * Scales an image to the requested width and height, assuming these are both &gt;= 1; size given in pixels.
+     * If either width or height is &lt;=0, the current image width or height will be used. This method assumes
      * that, at the moment the method is called, the width and height of the image are available; it won't wait for
      * them. Therefore, the method should be called once the image has completely loaded and not before.
-     * <p/>
+     * 
      * Override this method in a subclass to optimize image scaling operations; note that the legacy
      * {@link java.awt.Image#getScaledInstance(int,int,int)} is considered to perform poorly compared to more
      * recent developed techniques.
-     * <p/>
+     *
      * For a discussion of the options from a member of the Java2D team, see
      * http://today.java.net/pub/a/today/2007/04/03/perils-of-image-getscaledinstance.html
      *
@@ -183,15 +183,15 @@ public class ImageUtil {
     }
 
     /**
-     * Scales an image to the requested width and height, assuming these are both >= 1; size given in pixels.
-     * If either width or height is <=0, the current image width or height will be used. This method assumes       y
+     * Scales an image to the requested width and height, assuming these are both &gt;= 1; size given in pixels.
+     * If either width or height is &lt;=0, the current image width or height will be used. This method assumes       y
      * that, at the moment the method is called, the width and height of the image are available; it won't wait for
      * them. Therefore, the method should be called once the image has completely loaded and not before.
-     * <p/>
+     *
      * Override this method in a subclass to optimize image scaling operations; note that the legacy
      * {@link java.awt.Image#getScaledInstance(int,int,int)} is considered to perform poorly compared to more
      * recent developed techniques.
-     * <p/>
+	 *
      * For a discussion of the options from a member of the Java2D team, see
      * http://today.java.net/pub/a/today/2007/04/03/perils-of-image-getscaledinstance.html
      *

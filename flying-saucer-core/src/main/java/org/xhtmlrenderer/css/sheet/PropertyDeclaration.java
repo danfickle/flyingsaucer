@@ -115,8 +115,7 @@ public class PropertyDeclaration {
      *                not.
      * @param orig    int constant from {@link Stylesheet} for the origin of
      *                the property declaration, that is, the origin of the style sheet
-     *                where it was declared. See {@link StylesheetInfo#USER_AGENT}, {@link
-     *                StylesheetInfo#USER}, and {@link StylesheetInfo#AUTHOR}.
+     *                where it was declared. See {@link CSSOrigin}.
      */
     public PropertyDeclaration(final CSSName cssName,
                                final PropertyValue value,

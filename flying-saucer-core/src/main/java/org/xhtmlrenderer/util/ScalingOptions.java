@@ -23,8 +23,6 @@ import java.awt.*;
 
 
 /**
- * POJO used when calling
- * {@link org.xhtmlrenderer.util.ImageUtil#getScaledInstance(ScalingOptions,java.awt.Image)}.
  * Encapsulates a set of parameters related to scaling quality and output. Values are final once constructed, except
  * for target width and height, which can be change and the options instance reused.
  * There is a default constructor for average quality and performance.
@@ -38,10 +36,7 @@ public class ScalingOptions {
 	 * Constructor with all options.
 	 *
 	 * @param downscalingHint   Directs downscaling quality. One of the enumerated types of
-	 *                          {@link org.xhtmlrenderer.util.DownscaleQuality} such as
-	 *                          {@link org.xhtmlrenderer.util.ImageUtil.DOWNSCALE_FAST}.
-	 * @param interpolationHint Hint for interpolation to AWT image renderer, one of the Object constants from
-	 *                          {@link java.awt.RenderingHints} using {@link java.awt.RenderingHints.KEY_INTERPOLATION}
+	 *                          {@link org.xhtmlrenderer.util.DownscaleQuality}.
 	 */
 	public ScalingOptions(final DownscaleQuality downscalingHint) {
 		this.downscalingHint = downscalingHint;
@@ -63,10 +58,7 @@ public class ScalingOptions {
 	 * @param type		 Type of {@link java.awt.image.BufferedImage} to create for output; see docs for
 	 *                     {@link java.awt.image.BufferedImage#BufferedImage(int,int,int)}
 	 * @param downscalingHint   Directs downscaling quality. One of the enumerated types of
-	 *                          {@link org.xhtmlrenderer.util.DownscaleQuality} such as
-	 *                          {@link org.xhtmlrenderer.util.ImageUtil.DOWNSCALE_FAST}.
-	 * @param hint		 Hint for interpolation to AWT image renderer, one of the Object constants from
-	 *                     {@link java.awt.RenderingHints} using {@link java.awt.RenderingHints.KEY_INTERPOLATION}
+	 *                          {@link org.xhtmlrenderer.util.DownscaleQuality}.
 	 */
 	public ScalingOptions(final int targetWidth, final int targetHeight, final int type, final DownscaleQuality downscalingHint) {
 		this(downscalingHint);
@@ -75,7 +67,7 @@ public class ScalingOptions {
 	}
 
 	/**
-	 * @return {@link ScalingOptions#ScalingOptions(int,DownscaleQuality,Object)} docs.
+	 * @deprecated
 	 */
 	public DownscaleQuality getDownscalingHint() {
 		return downscalingHint;

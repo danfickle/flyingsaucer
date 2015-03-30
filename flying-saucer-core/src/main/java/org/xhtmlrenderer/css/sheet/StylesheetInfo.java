@@ -63,8 +63,7 @@ public class StylesheetInfo {
     }
 
     /**
-     * @param m  a single media identifier
-     * @param _context 
+     * @param context 
      * @return   true if the stylesheet referenced applies to the medium
      */
     public boolean appliesToMedia(SharedContext context) 

@@ -54,10 +54,7 @@ import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
  * BufferedImage image = rend.getImage();
  * </pre>
  *
- * <p>The document is not loaded, and layout and render don't take place, until {@link #getImage(int)}  is called.
- * Subsequent calls to {@link #getImage()} don't result in a reload; create a new Java2DRenderer instance to do so.</p>
- *
- * <p>As with {@link org.xhtmlrenderer.swing.RootPanel}, you can access the
+ * <p>You can access the
  * {@link org.xhtmlrenderer.layout.SharedContext} instance that will be used by this renderer and change settings
  * to control the rendering process; use {@link #getSharedContext()}.</p>
  *
@@ -67,8 +64,6 @@ import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
  * the image we render to.</p>
  *
  * <p>Not thread-safe.</p>
- *
- * @see ITextRenderer
  */
 public class Java2DRenderer {
 	private static final int DEFAULT_HEIGHT = 1000;
@@ -118,11 +113,10 @@ public class Java2DRenderer {
 	}
 
 	/**
-	 * Creates a new instance for a given URL. Does not render until {@link #getImage(int)} is called for
-	 * the first time.
+	 * Creates a new instance for a given URL.
 	 *
 	 * @param url The location of the document to be rendered.
-	 * @param baseurl The base url for the document, against which  relative paths are resolved.
+	 * @param baseUrl The base url for the document, against which  relative paths are resolved.
 	 * @param width Target width, in pixels, for the image; required to provide horizontal bounds for the layout.
 	 */
 	public Java2DRenderer(final String url, final String baseUrl, final int width, final int height, final UserAgentCallback userAgent) {
@@ -138,8 +132,7 @@ public class Java2DRenderer {
 	}
 
 	/**
-	 * Creates a new instance for a given File. Does not render until {@link #getImage(int)} is called for
-	 * the first time.
+	 * Creates a new instance for a given File.
 	 *
 	 * @param file The file to be rendered.
 	 * @param width Target width, in pixels, for the image; required to provide horizontal bounds for the layout.
@@ -151,8 +144,7 @@ public class Java2DRenderer {
    
    
         /**
-         * Creates a new instance pointing to the given Document. Does not render until {@link #getImage(int)} is called for
-         * the first time.
+         * Creates a new instance pointing to the given Document. 
          *
          * @param doc The document to be rendered.
          * @param width Target width, in pixels, for the image; required to provide horizontal bounds for the layout.
@@ -167,8 +159,7 @@ public class Java2DRenderer {
 
 
         /**
-         * Creates a new instance pointing to the given Document. Does not render until {@link #getImage(int)} is called for
-         * the first time.
+         * Creates a new instance pointing to the given Document. 
          *
          * @param doc The document to be rendered.
          * @param baseUrl The base url for the document, against which  relative paths are resolved.
@@ -181,9 +172,8 @@ public class Java2DRenderer {
         }
 
 	/**
-	 * Creates a new instance for a given File. Does not render until {@link #getImage(int)} is called for
-	 * the first time.
-	 *
+	 * Creates a new instance for a given File. 
+	 * 
 	 * @param file The file to be rendered.
 	 * @param width Target width, in pixels, for the image; required to provide horizontal bounds for the layout.
 	 * Heght is calculated based on content
@@ -223,7 +213,6 @@ public class Java2DRenderer {
 	 * automatically.
 	 *
 	 * @param url The location of the document to be rendered.
-	 * @param baseurl The base url for the document, against which  relative paths are resolved.
 	 * @param width Target width, in pixels, for the image; required to provide horizontal bounds for the layout.
 	 * @param height Target height, in pixels, for the image
 	 */
@@ -271,8 +260,6 @@ public class Java2DRenderer {
 	 * Renders the XML document if necessary and returns the resulting image. If already rendered, same image
 	 * reference will be returned.
 	 *
-	 * {@link #getImage(int)} with the target width.
-	 * 
 	 * @return The XML rendered as a BufferedImage.
 	 */
 	public BufferedImage getImage() {

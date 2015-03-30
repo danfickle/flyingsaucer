@@ -55,7 +55,6 @@ public class RenderingContext implements CssContext {
     private int initialPageNo;
     
     /**
-     * <p/>
      * needs a new instance every run
      */
     public RenderingContext(final SharedContext sharedContext) {

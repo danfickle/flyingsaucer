@@ -134,7 +134,6 @@ public class Java2DFontResolver implements FontResolver
     /**
      * Description of the Method
      *
-     * @param ctx
      * @param font    PARAM
      * @param size    PARAM
      * @param weight  PARAM
@@ -210,8 +209,7 @@ public class Java2DFontResolver implements FontResolver
     /**
      * Gets the fontInstanceHashName attribute of the FontResolverTest object
      *
-     * @param ctx
-     *@param name    PARAM
+     * @param name    PARAM
      * @param size    PARAM
      * @param weight  PARAM
      * @param style   PARAM

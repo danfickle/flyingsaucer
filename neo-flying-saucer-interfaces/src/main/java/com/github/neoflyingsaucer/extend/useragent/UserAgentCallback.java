@@ -25,13 +25,11 @@ package com.github.neoflyingsaucer.extend.useragent;
  * <p>To be implemented by any user agent using the panel. "User agent" is a
  * term defined by the W3C in the documentation for XHTML and CSS; in most
  * cases, you can think of this as the rendering component for a browser.</p>
- * <p/>
  *
  * <p>This interface defines a simple callback mechanism for Flying Saucer to
  * interact with a user agent. The FS toolkit provides a default implementation
- * for this interface which in most cases you can leave as is. You can provide your
- * own UserAgentCallback when constructing an {@link org.xhtmlrenderer.simple.XHTMLPanel}
- * or {@link org.xhtmlrenderer.swing.BasicPanel}.</p>
+ * for this interface which in most cases you can leave as is. 
+ * </p>
  *
  * <p>The user agent in this case is responsible for retrieving external resources. For
  * privacy reasons, if using the library in an application that can access URIs
@@ -39,7 +37,7 @@ package com.github.neoflyingsaucer.extend.useragent;
  * retrieved from external sources; that's one of the purposes of the UAC.</p>
  *
  * <p>To understand how to create your own UAC, it's best to look at some of the
- * implemetations shipped with the library, like the {@link com.github.neoflyingsaucer.defaultuseragent.NaiveUserAgent}.
+ * implemetations shipped with the library.
  * </p>
  *
  * @author Torbjoern Gannholm

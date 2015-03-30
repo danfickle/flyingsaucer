@@ -56,15 +56,13 @@ import java.util.Map;
  * <p>The document is not loaded, and layout and render don't take place, until {@link #render()}  is called.
  * Subsequent calls to {@link #render()} don't result in a reload; create a new BoxRenderer instance to do so.</p>
  *
- * <p>As with {@link RootPanel}, you can access the
+ * <p>You can access the
  * {@link org.xhtmlrenderer.layout.SharedContext} instance that will be used by this renderer and change settings
  * to control the rendering process; use {@link #getSharedContext()}.</p>
  *
  *
  *
  * <p>Not thread-safe.</p>
- *
- * @see org.xhtmlrenderer.pdf.ITextRenderer
  */
 public class BoxRenderer {
 	private static final int DEFAULT_HEIGHT = 1000;

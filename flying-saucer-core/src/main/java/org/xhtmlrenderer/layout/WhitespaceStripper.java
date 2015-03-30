@@ -50,7 +50,6 @@ public class WhitespaceStripper {
      * 
      * <b>NOTE:</b> The <code>inlineContent</code> parameter may be modified
      *
-     * @param c
      * @param inlineContent
      */
     public static void stripInlineContent(final List<Styleable> inlineContent) {

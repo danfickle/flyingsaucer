@@ -83,7 +83,6 @@ public class AWTFontResolver implements FontResolver {
     /**
      * Description of the Method
      *
-     * @param ctx
      * @param families PARAM
      * @param size     PARAM
      * @param weight   PARAM
@@ -131,7 +130,6 @@ public class AWTFontResolver implements FontResolver {
     /**
      * Description of the Method
      *
-     * @param ctx
      * @param root_font PARAM
      * @param size      PARAM
      * @param weight    PARAM
@@ -171,7 +169,6 @@ public class AWTFontResolver implements FontResolver {
     /**
      * Description of the Method
      *
-     * @param ctx
      * @param font    PARAM
      * @param size    PARAM
      * @param weight  PARAM
@@ -246,8 +243,7 @@ public class AWTFontResolver implements FontResolver {
     /**
      * Gets the fontInstanceHashName attribute of the FontResolverTest object
      *
-     * @param ctx
-     *@param name    PARAM
+     * @param name    PARAM
      * @param size    PARAM
      * @param weight  PARAM
      * @param style   PARAM

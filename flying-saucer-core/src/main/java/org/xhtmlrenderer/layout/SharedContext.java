@@ -378,12 +378,11 @@ public class SharedContext {
     }// = "screen";
 
     /**
-     * <p/>
-     * <p/>
+
      * Set the current media type. This is usually something like <i>screen</i>
      * or <i>print</i> . See the <a href="http://www.w3.org/TR/CSS21/media.html">
      * media section</a> of the CSS 2.1 spec for more information on media
-     * types.</p>
+     * types.
      *
      * @param media The new media value
      */
@@ -514,29 +513,23 @@ public class SharedContext {
     }
 
     /**
-     * <p/>
-     * <p/>
      * Adds or overrides a font mapping, meaning you can associate a particular
      * font with a particular string. For example, the following would load a
      * font out of the cool.ttf file and associate it with the name <i>CoolFont
-     * </i>:</p> <p/>
-     * <p/>
+     * </i>:
+  	 *
      * <pre>
      *   Font font = Font.createFont(Font.TRUETYPE_FONT,
      *   new FileInputStream("cool.ttf");
      *   setFontMapping("CoolFont", font);
-     * </pre> <p/>
-     * <p/>
-     * <p/>
-     * <p/>
-     * You could then put the following css in your page </p> <pre>
+     * </pre>
+	 *
+     * You could then put the following css in your page <pre>
      *   p { font-family: CoolFont Arial sans-serif; }
-     * </pre> <p/>
-     * <p/>
-     * <p/>
-     * <p/>
+     * </pre>
+	 *
      * You can also override existing font mappings, like replacing Arial with
-     * Helvetica.</p>
+     * Helvetica.
      *
      * @param name The new font name
      * @param font The actual Font to map
