@@ -9,6 +9,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Line2D;
 import java.awt.geom.PathIterator;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
@@ -26,9 +27,11 @@ import com.github.neoflyingsaucer.displaylist.DlInstruction.DlBookmark;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlCMYKColor;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlClip;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlDrawShape;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlExternalLink;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlFont;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlGlyphVector;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlImage;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlInternalLink;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlLine;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlLinearGradient;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlOpacity;
@@ -51,6 +54,7 @@ import com.github.neoflyingsaucer.extend.output.JustificationInfo;
 import com.github.neoflyingsaucer.extend.output.ReplacedElement;
 import com.github.neoflyingsaucer.pdf2dout.Pdf2FontResolver.FontDescription;
 import com.github.neoflyingsaucer.pdf2dout.Pdf2ReplacedElementResolver.Pdf2ImageReplacedElement;
+import com.github.pdfstream.Annotation;
 import com.github.pdfstream.Bookmark;
 import com.github.pdfstream.Destination;
 import com.github.pdfstream.JPGImage;
@@ -78,7 +82,7 @@ public class Pdf2Out implements DisplayListOuputDevice
     private Pdf2Font _font;
     
     private static final BasicStroke STROKE_ONE = new BasicStroke(1);
-    private static AffineTransform IDENTITY = new AffineTransform();
+    private static final AffineTransform IDENTITY = new AffineTransform();
     private static final Logger LOGGER = LoggerFactory.getLogger(Pdf2Out.class);
     private static final int FILL = 1;
     private static final int STROKE = 2;
@@ -235,13 +239,75 @@ public class Pdf2Out implements DisplayListOuputDevice
 				createBookmark(bm);
 				break;
 			}
+			case EXTERNAL_LINK:
+			{
+				DlExternalLink link = (DlExternalLink) item;
+				createLink(link);
+				break;
+			}
+			case INTERNAL_LINK:
+			{
+				DlInternalLink link = (DlInternalLink) item;
+				createInternalLink(link);
+				break;
+			}
 			}
 		}
 	}
-	
-	private void createBookmark(DlBookmark bm)
+
+	protected void createInternalLink(DlInternalLink link)
 	{
-        Destination destination = new Destination(0, bm.y, 0);
+		Point2D docCorner = new Point2D.Double(link.x1, link.y1);
+		Point2D pdfCorner = new Point2D.Double();
+		
+		_transform.transform(docCorner, pdfCorner);
+
+		pdfCorner.setLocation(pdfCorner.getX(), normalizeY((float) pdfCorner.getY()));
+
+		Rectangle2D targetArea = new Rectangle2D.Float((float) pdfCorner.getX(), (float) pdfCorner.getY(),
+	                (float) getDeviceLength(link.w), (float) getDeviceLength(link.h));
+		
+		float destY = _pageHeight - link.y / _dotsPerPoint;
+		
+		Destination destination = new Destination(0, destY, 0);
+        destination.setPageObjNumber(link.pageNo);
+
+        Annotation annot = new Annotation(null, destination,
+        		(float) targetArea.getMinX(), (float) targetArea.getMinY(),
+                (float) targetArea.getMaxX(), (float) targetArea.getMaxY());
+
+        _currentPage.addAnnotation(annot);
+	}
+		
+	protected void createLink(DlExternalLink link)
+	{
+		Point2D docCorner = new Point2D.Double(link.x1, link.y1);
+		Point2D pdfCorner = new Point2D.Double();
+		
+		_transform.transform(docCorner, pdfCorner);
+
+		pdfCorner.setLocation(pdfCorner.getX(), normalizeY((float) pdfCorner.getY()));
+
+		Rectangle2D targetArea = new Rectangle2D.Float((float) pdfCorner.getX(), (float) pdfCorner.getY(),
+	                (float) getDeviceLength(link.w), (float) getDeviceLength(link.h));
+		
+        Annotation annot = new Annotation(link.uri, (Destination) null,
+        		(float) targetArea.getMinX(), (float) targetArea.getMinY(),
+                (float) targetArea.getMaxX(), (float) targetArea.getMaxY());
+
+        _currentPage.addAnnotation(annot);
+	}
+	
+    private float getDeviceLength(float length) 
+    {
+        return length / _dotsPerPoint;
+    }
+	
+	protected void createBookmark(DlBookmark bm)
+	{
+		float destY = _pageHeight - bm.y / _dotsPerPoint;
+System.err.println(destY + "   " + bm.y + "  " + bm.content);
+		Destination destination = new Destination(0, destY, 0);
         destination.setPageObjNumber(bm.pageNo);
 		
     	Bookmark pdfbm = new Bookmark(destination, bm.content, bm.level);

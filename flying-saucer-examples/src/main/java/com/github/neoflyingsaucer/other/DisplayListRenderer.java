@@ -168,6 +168,7 @@ public class DisplayListRenderer
         getSharedContext().getTextRenderer().setup(result.getFontContext());
 
         dlOut.setRoot(getRootBox());
+        dlOut.setSharedContext(sharedContext);
         
         final Box rb = getRootBox();
 

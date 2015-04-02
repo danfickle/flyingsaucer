@@ -398,7 +398,7 @@ public class PdfOutputDevice extends AbstractOutputDevice implements OutputDevic
         {
             int distanceFromTop = page.getMarginBorderPadding(c, CalculatedStyle.TOP);
             distanceFromTop += box.getAbsY() + box.getMargin(c).top() - page.getTop();
-            
+         
             result = new Destination(0, page.getHeight(c) / _dotsPerPoint - distanceFromTop / _dotsPerPoint, 0);
             result.setPageObjNumber(_startPageNo + page.getPageNo());
         }

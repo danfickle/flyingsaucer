@@ -191,10 +191,11 @@ public class Java2DOut implements DisplayListOuputDevice
 				break;
 			}
 			case BOOKMARK:
-			{
-				// Do nothing.
 				break;
-			}
+			case EXTERNAL_LINK:
+				break;
+			case INTERNAL_LINK:
+				break;
 			}
 		}
 	}

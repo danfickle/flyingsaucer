@@ -23,8 +23,69 @@ public class DlInstruction
 		CLIP;
 	}
 	
+	public static class DlInternalLink implements DlItem
+	{
+		public final int pageNo; /* Destination page no. */
+		public final float y;    /* Destination y position */
+		public final float x1, y1; /* Link location */
+		public final float w, h;   /* Link area */
+		
+		public DlInternalLink(int pageNo, float y, float x1, float y1, float w, float h)
+		{
+			this.pageNo = pageNo;
+			this.y = y;
+			this.x1 = x1;
+			this.y1 = y1;
+			this.w = w;
+			this.h = h;
+		}
+
+		@Override
+		public DlType getType()
+		{
+			return DlType.INTERNAL_LINK;
+		}
+		
+		@Override
+		public String toString() 
+		{
+			// TODO
+			return "";
+		}
+	}
+	
+	public static class DlExternalLink implements DlItem
+	{
+		public final String uri;  /* Destination uri */
+		public final float x1, y1;
+		public final float w, h;
+		
+		public DlExternalLink(String uri, float x1, float y1, float w, float h)
+		{
+			this.uri = uri;
+			this.x1 = x1;
+			this.y1 = y1;
+			this.w = w;
+			this.h = h;
+		}
+
+		@Override
+		public DlType getType()
+		{
+			return DlType.EXTERNAL_LINK;
+		}
+		
+		@Override
+		public String toString() 
+		{
+			// TODO
+			return "";
+		}
+	}
+	
+	
 	/*
-	 * A PDF bookmark.
+	 * A PDF (or other) bookmark.
 	 */
 	public static class DlBookmark implements DlItem
 	{

@@ -155,7 +155,7 @@ public class PagedRenderer
         getSharedContext().getTextRenderer().setup(result.getFontContext());
         
         dlOut.setRoot(getRootBox());
-        
+        dlOut.setSharedContext(sharedContext);
         final Box rb = getRootBox();
 
         if (rb != null) 

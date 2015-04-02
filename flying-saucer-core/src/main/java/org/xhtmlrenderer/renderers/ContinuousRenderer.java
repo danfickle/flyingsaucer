@@ -146,7 +146,8 @@ public class ContinuousRenderer
 
         Box rb = getRootBox();
         dlOut.setRoot(rb);
-
+        dlOut.setSharedContext(sharedContext);
+        
         if (rb != null) 
             result.setRootLayer(rb.getLayer());
 

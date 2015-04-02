@@ -24,7 +24,9 @@ public interface DlItem
 		AA_DEFAULT,
 		REPLACED,
 		LINEAR_GRADIENT,
-		BOOKMARK;
+		BOOKMARK,
+		INTERNAL_LINK,
+		EXTERNAL_LINK;
 	}
 	
 	public DlType getType();
