@@ -256,6 +256,10 @@ public class Pdf2Out implements DisplayListOuputDevice
 		}
 	}
 
+	/**
+	 * Creates an internal link.
+	 * @param link
+	 */
 	protected void createInternalLink(DlInternalLink link)
 	{
 		Point2D docCorner = new Point2D.Double(link.x1, link.y1);
@@ -279,7 +283,11 @@ public class Pdf2Out implements DisplayListOuputDevice
 
         _currentPage.addAnnotation(annot);
 	}
-		
+
+	/**
+	 * Creates an external link.
+	 * @param link
+	 */
 	protected void createLink(DlExternalLink link)
 	{
 		Point2D docCorner = new Point2D.Double(link.x1, link.y1);
@@ -304,6 +312,10 @@ public class Pdf2Out implements DisplayListOuputDevice
         return length / _dotsPerPoint;
     }
 	
+    /**
+     * Creates a PDF bookmark. Some PDF viewers use this as the table of contents.
+     * @param bm
+     */
 	protected void createBookmark(DlBookmark bm)
 	{
 		float destY = _pageHeight - bm.y / _dotsPerPoint;
@@ -325,11 +337,18 @@ public class Pdf2Out implements DisplayListOuputDevice
 		}
 	}
 	
+	/**
+	 * MUST be called after rendering every page.
+	 */
 	public void finishPage() 
 	{
 		_currentPage.restore();
 	}
 	
+	/**
+	 * Draws a linear gradient on the PDF page.
+	 * @param g DlLinearGradient using display list coordinate system.
+	 */
 	protected void drawLinearGradient(DlLinearGradient g) 
 	{
         Rectangle2D.Float rect = new Rectangle2D.Float(g.x, g.y, g.width, g.height);
@@ -369,6 +388,15 @@ public class Pdf2Out implements DisplayListOuputDevice
     	return res;
     }
 
+    
+    /**
+     * Draws a string on the PDF page. This entails ouputting the string and a transformation matrix specifying its
+     * position and size.
+     * @param s
+     * @param x
+     * @param y
+     * @param info An optional spacing info for custom letter spacing.
+     */
 	protected void drawString(String s, float x, float y, JustificationInfo info)
 	{
 		if (s.isEmpty())
@@ -448,13 +476,19 @@ public class Pdf2Out implements DisplayListOuputDevice
 	}
 	
 
-	public void setFont(FSFont font) 
+	protected void setFont(FSFont font) 
 	{
 		_font = (Pdf2Font) font;
 		
 		_currentPage.getPdf().registerFont(_font.getFontDescription().getFont());
 	}
 	
+	/**
+	 * Adds a flip y transformaton to the given AffineTransform.
+	 * @see {@link #normalizeY(float)}
+	 * @param current
+	 * @return The flipped y transformation.
+	 */
     private AffineTransform normalizeMatrix(final AffineTransform current) {
         final double[] mx = new double[6];
         AffineTransform result = new AffineTransform();
@@ -466,7 +500,17 @@ public class Pdf2Out implements DisplayListOuputDevice
         return result;
     }
 
-	public void drawImage(FSImage fsImage, int x, int y) 
+    /**
+     * Draws an image. JPEGs can be directly inserted into a PDF document, while other image types (PNG, GIF)
+     * must be decompressed and then compressed in PDF format.
+     * 
+     * Currently, we add images in their original size and then instruct the PDF to scale them to the desired
+     * size and position with a transformation matrix.
+     * @param fsImage
+     * @param x
+     * @param y
+     */
+	protected void drawImage(FSImage fsImage, int x, int y) 
 	{
 		final Pdf2Image image = ((Pdf2Image) fsImage);
 
@@ -624,6 +668,11 @@ public class Pdf2Out implements DisplayListOuputDevice
 		followPath(d, FILL);
 	}
 	
+	/**
+	 * Transforms stroke details into PDF coordinates.
+	 * @param stroke Stroke in display list units.
+	 * @return Stroke in PDF units.
+	 */
 	private Stroke transformStroke(final Stroke stroke)
     {
         if (!(stroke instanceof BasicStroke))
@@ -665,6 +714,10 @@ public class Pdf2Out implements DisplayListOuputDevice
 		followPath(line, STROKE);
 	}
 	
+	/**
+	 * Converts an AWT stroke to a PDF compatible stroke setting string.
+	 * @param newStroke
+	 */
 	private void setStrokeDiff(Stroke newStroke) 
 	{
 		final Page cb = _currentPage;
@@ -746,12 +799,23 @@ public class Pdf2Out implements DisplayListOuputDevice
 	    	
 	    	return pdfColor;
 	}
-	    	
+
+	/**
+	 * PDF documents use a system where y is zero at the bottom of the document and counts up
+	 * to the top of the document. The display list provides a top to bottom system of units.
+	 * This method converts from display list to PDF y units.
+	 * @param y The y position in display list system.
+	 * @return The y position in PDF y units.
+	 */
 	private float normalizeY(final float y) 
 	{
         return _pageHeight - y;
     }
 
+	/**
+	 * @see {@link #normalizeY(float)}
+	 * @param coords An array of x y coordinates.
+	 */
     private void normalizeY(final float[] coords) 
     {
         coords[1] = normalizeY(coords[1]);
@@ -771,6 +835,11 @@ public class Pdf2Out implements DisplayListOuputDevice
 		_currentPage.setPenColor(pdfColor);
 	}
 	
+	/**
+	 * Follows an AWT shape, converting into PDF operations.
+	 * @param s The shape to follow.
+	 * @param drawType One of STROKE, FILL, CLIP.
+	 */
     private void followPath(Shape s, final int drawType) 
     {
         if (s == null)
