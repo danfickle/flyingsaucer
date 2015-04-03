@@ -17,6 +17,7 @@ import java.awt.image.Raster;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
@@ -306,7 +307,7 @@ public class Pdf2Out implements DisplayListOuputDevice
 	protected void createBookmark(DlBookmark bm)
 	{
 		float destY = _pageHeight - bm.y / _dotsPerPoint;
-System.err.println(destY + "   " + bm.y + "  " + bm.content);
+
 		Destination destination = new Destination(0, destY, 0);
         destination.setPageObjNumber(bm.pageNo);
 		
@@ -873,5 +874,30 @@ System.err.println(destY + "   " + bm.y + "  " + bm.content);
     public void setPageCount(int pageCount)
 	{
 		_pdfDoc.setPageCount(pageCount);
+	}
+
+    /**
+     * Sets document information in a PDF document.
+     * @param meta A map which may contain values for title, subject, author and keywords.
+     * Usually obtained from html meta items in the head section of an html document.
+     */
+	public void setDocumentInformationDictionary(Map<String, String> meta) 
+	{
+		String title = meta.get("title");
+		String subject = meta.get("subject");
+		String author = meta.get("author");
+		String keywords = meta.get("keywords");
+		
+		if (title != null)
+			_pdfDoc.setTitle(title);
+		
+		if (subject != null)
+			_pdfDoc.setSubject(subject);
+		
+		if (author != null)
+			_pdfDoc.setAuthor(author);
+		
+		if (keywords != null)
+			_pdfDoc.setKeywords(keywords);
 	}
 }

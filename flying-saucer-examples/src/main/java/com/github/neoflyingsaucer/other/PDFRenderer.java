@@ -110,6 +110,7 @@ public class PDFRenderer {
 		}
     	
     	out.setPageCount(r3.getPageCount());
+    	out.setDocumentInformationDictionary(r3.getHtmlMetadata());
     	
     	for (int i = 0; i < r3.getPageCount(); i++)
     	{
