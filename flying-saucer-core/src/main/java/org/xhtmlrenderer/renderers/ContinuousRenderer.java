@@ -139,14 +139,12 @@ public class ContinuousRenderer
         RenderingContext result = getSharedContext().newRenderingContextInstance();
         result.setFontContext(fontContext);
 
-        DlOutputDevice dlOut = new DlOutputDevice(this.displayList, 72f);
+        DlOutputDevice dlOut = new DlOutputDevice(this.displayList, getSharedContext(), getRootBox());
         result.setOutputDevice(dlOut);
 
         getSharedContext().getTextRenderer().setup(result.getFontContext());
 
         Box rb = getRootBox();
-        dlOut.setRoot(rb);
-        dlOut.setSharedContext(sharedContext);
         
         if (rb != null) 
             result.setRootLayer(rb.getLayer());

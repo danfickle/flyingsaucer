@@ -162,15 +162,12 @@ public class DisplayListRenderer
         RenderingContext result = getSharedContext().newRenderingContextInstance();
         result.setFontContext(new Java2DFontContext(layoutGraphics));
         
-        DlOutputDevice dlOut = new DlOutputDevice(this.displayList, 72f);
+        DlOutputDevice dlOut = new DlOutputDevice(this.displayList, getSharedContext(), getRootBox());
         result.setOutputDevice(dlOut);
 
         getSharedContext().getTextRenderer().setup(result.getFontContext());
 
-        dlOut.setRoot(getRootBox());
-        dlOut.setSharedContext(sharedContext);
-        
-        final Box rb = getRootBox();
+        Box rb = getRootBox();
 
         if (rb != null) 
             result.setRootLayer(rb.getLayer());

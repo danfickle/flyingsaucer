@@ -9,6 +9,8 @@ import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Stroke;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.IdentValue;
@@ -32,10 +34,29 @@ import org.xhtmlrenderer.render.PageBox;
 import org.xhtmlrenderer.render.RenderingContext;
 
 import com.github.neoflyingsaucer.displaylist.DlInstruction;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlAntiAliasDefault;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlAntiAliasOff;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlBookmark;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlCMYKColor;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlClip;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlDrawShape;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlExternalLink;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlFont;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlGlyphVector;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlImage;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlInternalLink;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlLine;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlLinearGradient;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlOpacity;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlOval;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlRGBColor;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlRectangle;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlReplaced;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlSetClip;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlString;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlStringEx;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlStroke;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlTranslate;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.Operation;
 import com.github.neoflyingsaucer.extend.output.DisplayList;
 import com.github.neoflyingsaucer.extend.output.FSFont;
@@ -58,55 +79,90 @@ import com.github.neoflyingsaucer.extend.useragent.Optional;
 public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice 
 {
 	private final DisplayList dl;
-    private final float dpi;
-	private Area clip;
+    private final SharedContext sharedContext;
+    private final Box root;
+    private static final Logger LOGGER = LoggerFactory.getLogger(DlOutputDevice.class);
+    
+    private Area clip;
     private Stroke stroke;
     private Object renderingHint = RenderingHints.VALUE_ANTIALIAS_DEFAULT;
-    private Box root;
-	private SharedContext sharedContext;
 	
-	public DlOutputDevice(DisplayList displayList, float dpi) 
+	public DlOutputDevice(DisplayList displayList, SharedContext ctx, Box root) 
 	{
 		this.dl = displayList;
-		this.dpi = dpi;
+		this.sharedContext = ctx;
+		this.root = root;
 	}
 
+	/**
+	 * @see {@link DlString}
+	 * @param s
+	 * @param x
+	 * @param y
+	 */
 	public void drawString(String s, float x, float y)
 	{
 		dl.add(new DlInstruction.DlString(s, x, y));
 	}
 	
+	/**
+	 * @see {@link DlStringEx}
+	 * @param s
+	 * @param x
+	 * @param y
+	 * @param info
+	 */
 	public void drawString(String s, float x, float y, JustificationInfo info)
 	{
 		dl.add(new DlInstruction.DlStringEx(s, x, y, info));
 	}
 	
+	/**
+	 * @see {@link DlGlyphVector}
+	 * @param vec
+	 * @param x
+	 * @param y
+	 */
 	public void drawGlyphVector(FSGlyphVector vec, float x, float y)
 	{
 		dl.add(new DlInstruction.DlGlyphVector(vec, x, y));
 	}
 	
+	/**
+	 * @see {@link DlOpacity}
+	 */
 	@Override
 	public void setOpacity(float opacity) 
 	{
 		dl.add(new DlInstruction.DlOpacity(opacity));
 	}
 
+	/**
+	 * @see {@link DlLine}
+	 */
 	@Override
     protected void drawLine(int x1, int y1, int x2, int y2) 
     {
     	dl.add(new DlInstruction.DlLine(x1, y1, x2, y2));
     }
 
+	/**
+	 * @see {@link DlTranslate}
+	 */
 	@Override
 	public void translate(double tx, double ty) 
 	{
 		dl.add(new DlInstruction.DlTranslate(tx, ty));
 	}
 
+	/**
+	 * @see {@link DlStroke}
+	 */
 	@Override
 	public void setStroke(Stroke s) 
 	{
+		assert(s instanceof BasicStroke);
+		
 		if (!(s instanceof BasicStroke))
 			return;
 		
@@ -117,10 +173,17 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
 		dl.add(new DlInstruction.DlStroke(basic));
 	}
 
+	/**
+	 * Set color. We support CMYK, RGB and RGBA colors.
+	 * @see {@link DlRGBColor}, {@link DlCMYKColor}
+	 */
     @Override
     public void setColor(final FSColor color) 
     {
-        if (color instanceof FSRGBColor) 
+    	assert(color instanceof FSRGBColor || 
+    	       color instanceof FSCMYKColor);
+    	
+    	if (color instanceof FSRGBColor) 
         {
             FSRGBColor rgb = (FSRGBColor) color;
             dl.add(new DlInstruction.DlRGBColor(rgb.getRed(), rgb.getGreen(), rgb.getBlue(), (int) (rgb.getAlpha() * 255)));
@@ -130,24 +193,29 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
         	FSCMYKColor cmyk = (FSCMYKColor) color;
         	dl.add(new DlInstruction.DlCMYKColor(cmyk.getCyan(), cmyk.getMagenta(), cmyk.getYellow(), cmyk.getBlack()));
         }
-        else 
-        {
-        	assert(false);
-        }
     }
 	
+    /**
+     * @see {@link DlRectangle}
+     */
 	@Override
 	public void fillRect(int x, int y, int width, int height) 
 	{
 		dl.add(new DlInstruction.DlRectangle(x, y, width, height, Operation.FILL));
 	}
     
+	/**
+	 * @see {@link DlRectangle}
+	 */
 	@Override
 	public void drawRect(int x, int y, int width, int height) 
 	{
 		dl.add(new DlInstruction.DlRectangle(x, y, width, height, Operation.STROKE));
 	}
 	
+	/**
+	 * @see {@link DlSetClip}
+	 */
 	@Override
 	public void setClip(Shape s) 
 	{
@@ -159,6 +227,9 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
 		dl.add(new DlInstruction.DlSetClip(s));
 	}
 	
+	/**
+	 * @see {@link DlClip}
+	 */
 	@Override
 	public void clip(Shape s2) 
 	{
@@ -170,24 +241,36 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
 		dl.add(new DlInstruction.DlClip(s2));
 	}
 	
+	/**
+	 * @see {@link DlOval}
+	 */
 	@Override
 	public void drawOval(int x, int y, int width, int height) 
 	{
 		dl.add(new DlInstruction.DlOval(x, y, width, height, Operation.STROKE));
 	}
 	
+	/**
+	 * @see {@link DlOval}
+	 */
 	@Override
 	public void fillOval(int x, int y, int width, int height) 
 	{
 		dl.add(new DlInstruction.DlOval(x, y, width, height, Operation.FILL));
 	}
 	
+	/**
+	 * @see {@link DlDrawShape}
+	 */
 	@Override
 	public void draw(Shape s) 
 	{
 		dl.add(new DlInstruction.DlDrawShape(s, Operation.STROKE));
 	}
 	
+	/**
+	 * @see {@link DlDrawShape}
+	 */
 	@Override
 	public void fill(Shape s) 
 	{
@@ -213,6 +296,9 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
 		return renderingHint;
 	}
 
+	/**
+	 * @see {@link DlAntiAliasDefault}, {@link DlAntiAliasOff}
+	 */
 	@Override
 	public void setRenderingHint(Key key, Object value) 
 	{
@@ -243,6 +329,9 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
 		// NOT IMPLEMENTED: We no longer support a selection.
 	}
 
+	/**
+	 * @see {@link DlReplaced}
+	 */
 	@Override
 	public void paintReplacedElement(RenderingContext c, BlockBox box)
 	{
@@ -250,6 +339,9 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
 		dl.add(new DlInstruction.DlReplaced(replaced));
 	}
 
+	/**
+	 * @see {@link DlFont}
+	 */
 	@Override
 	public void setFont(FSFont font)
 	{
@@ -304,12 +396,19 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
 		draw(bounds);
 	}
 
+	/**
+	 * @see {@link DlImage}
+	 */
 	@Override
 	public void drawImage(FSImage image, int x, int y) 
 	{
 		dl.add(new DlInstruction.DlImage(image, x, y));
 	}
 
+	/**
+	 * Draw a linear gradient.
+	 * @see {@link DlLinearGradient}
+	 */
 	@Override
 	public void drawLinearGradient(FSLinearGradient gradient, int x, int y, int width, int height)
 	{
@@ -327,19 +426,29 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
 			}
 			else
 			{
-				// TODO
+				LOGGER.warn("We only support RGBA stop pointsw for linear gradients currently.");
+				// TODO: Convert to RGB or support CMYK gradients.
 			}
 		}
 		
 		dl.add(linear);
 	}
 
+	/**
+	 * @return The clip in display list units.
+	 */
 	@Override
 	public Shape getClip() 
 	{
 		return clip;
 	}
 	
+	/**
+	 * Paints the background. We also use this to process any bookmarks on the element
+	 * for the box and links.
+	 * @param c
+	 * @param box
+	 */
 	@Override
     public void paintBackground(RenderingContext c, Box box) 
 	{
@@ -353,15 +462,6 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
         }
     }
 	
-	public void setRoot(Box box) 
-	{
-		root = box;
-	}
-	
-	public void setSharedContext(SharedContext sharedContext) 
-	{
-		this.sharedContext = sharedContext;
-	}
 	
 	/**
 	 * @param c
@@ -462,13 +562,20 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
                    
                     Box target = sharedContext.getBoxById(anchor);
                     if (target == null)
+                    {
+                    	LOGGER.warn("Unable to find hash link target: {}", uri);
                     	return;
+                    }
                     
                		// Continuous renderer does not support internal links currently.
                		if (root.getLayer().getPages().isEmpty())
-                   		return;
+               		{
+               			LOGGER.info("Continuous renderer does not currently support internal links.");
+               			return;
+               		}
 
                    	PageBox page = root.getLayer().getPage(c, getPageRefY(target));
+                   	assert(page != null);
                    	if (page == null)
                    		return;
 
@@ -478,6 +585,7 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
                     int pageNo = page.getPageNo();
                             
                     Rectangle2D linkArea = calcTotalLinkArea(c, box);
+                    assert(linkArea != null);
                     if (linkArea == null) 
                       	return;
                     
@@ -493,6 +601,8 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
             		
             		Rectangle2D pdfPageRect = calcTotalLinkArea(c, box);
 
+            		assert(pdfPageRect != null);
+            		
             		if (pdfPageRect == null)
             			return;
             		
@@ -514,15 +624,21 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
      */
 	private void processBookmark(RenderingContext c, Box box)
 	{
-		// Continuous renderer does not support bookmarks currently.
+		assert(!box.getStyle().isIdent(CSSName.FS_BOOKMARK_LEVEL, IdentValue.NONE));
+		
 		if (root.getLayer().getPages().isEmpty())
-    		return;
+		{
+			LOGGER.info("Continuous renderer does not support bookmarks currently.");
+			return;
+		}
 		
 		int bookmarkLevel = (int) box.getStyle().asFloat(CSSName.FS_BOOKMARK_LEVEL);
 
     	String bookmarkContent = box.getElement().getTextContent();
  
     	PageBox page = root.getLayer().getPage(c, getPageRefY(box));
+    	
+    	assert(page != null);
     	
         if (page != null)
         {

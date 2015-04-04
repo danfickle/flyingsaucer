@@ -155,14 +155,12 @@ public class PagedRenderer
         RenderingContext result = getSharedContext().newRenderingContextInstance();
         result.setFontContext(fontContext);
         
-        DlOutputDevice dlOut = new DlOutputDevice(this.displayList, dpi);
+        DlOutputDevice dlOut = new DlOutputDevice(this.displayList, getSharedContext(), getRootBox());
         result.setOutputDevice(dlOut);
 
         getSharedContext().getTextRenderer().setup(result.getFontContext());
         
-        dlOut.setRoot(getRootBox());
-        dlOut.setSharedContext(sharedContext);
-        final Box rb = getRootBox();
+        Box rb = getRootBox();
 
         if (rb != null) 
             result.setRootLayer(rb.getLayer());
