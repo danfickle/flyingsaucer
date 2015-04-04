@@ -59,15 +59,11 @@ public class PDFRenderer {
      *                           while building the Document.
      */
     public static void renderToPDF(final String url, final String pdf, final UserAgentCallback uac)
-            throws IOException {
-//
-    	final PdfRenderer renderer = new PdfRenderer(uac);
-    	renderer.setDocument(url);  
-    	doRenderToPDF(renderer, pdf);
-
+            throws IOException 
+    {
     	renderToContinuousImage(url, uac, pdf + ".imgc.png");
     	renderToPagedImage(url, uac, 0, pdf + ".imgp.png");
-    	renderToPagedPdf(url, uac, pdf + ".2.pdf");
+    	renderToPagedPdf(url, uac, pdf);
     }
     
     
@@ -180,26 +176,4 @@ public class PDFRenderer {
     	
     	ImageIO.write(img, "png", new File(filename)); 
     }
-    
-    
-    private static void doRenderToPDF(PdfRenderer renderer, String pdf) throws IOException {
-        OutputStream os = null;
-        try {
-            os = new FileOutputStream(pdf);
-            renderer.layout();
-            renderer.createPDF(os);
-
-            os.close();
-            os = null;
-        } finally {
-            if (os != null) {
-                try {
-                    os.close();
-                } catch (final IOException e) {
-                    // ignore
-                }
-            }
-        }
-		
-	}
 }

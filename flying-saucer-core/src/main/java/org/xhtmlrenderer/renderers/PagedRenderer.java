@@ -139,6 +139,7 @@ public class PagedRenderer
     {
     	SharedContext context = new SharedContext(userAgent);
         context.setTextRenderer(new DlTextRenderer());
+        context.setPrint(true);
         return context;
     }
 
