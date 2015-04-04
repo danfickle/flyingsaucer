@@ -44,11 +44,6 @@
     </dependency>
     <dependency>
       <groupId>org.xhtmlrenderer</groupId>
-      <artifactId>neo-flying-saucer-pdfout</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.xhtmlrenderer</groupId>
       <artifactId>neo-flying-saucer-pdf2-out</artifactId>
       <version>${project.version}</version>
     </dependency>    
