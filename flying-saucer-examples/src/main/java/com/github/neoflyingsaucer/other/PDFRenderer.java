@@ -64,22 +64,7 @@ public class PDFRenderer {
     	final PdfRenderer renderer = new PdfRenderer(uac);
     	renderer.setDocument(url);  
     	doRenderToPDF(renderer, pdf);
-    	
-    	// Document doc = HTMLResourceHelper.load(html).getDocument();
-    	DisplayList dl = DisplayListRenderer.renderToList(url, 1000, 1000, uac, 0);
-    	System.err.println(dl.toString());
-    	
-    	BufferedImage img = new BufferedImage(1000, 1000, BufferedImage.TYPE_INT_ARGB);
-    	Graphics2D g2d = img.createGraphics();
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-  	
-    	Java2DOut out = new Java2DOut(g2d, RenderingHints.VALUE_ANTIALIAS_ON);
-    	out.render(dl);
-    	g2d.dispose();
-    	
-    	ImageIO.write(img, "png", new File(pdf + ".img.png")); 
-    	
+
     	renderToContinuousImage(url, uac, pdf + ".imgc.png");
     	renderToPagedImage(url, uac, 0, pdf + ".imgp.png");
     	renderToPagedPdf(url, uac, pdf + ".2.pdf");
