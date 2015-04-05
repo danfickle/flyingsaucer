@@ -431,8 +431,9 @@ public abstract class Box implements Styleable {
         c.getOutputDevice().paintBorder(c, this);
     }
 
-    private boolean isPaintsRootElementBackground() {
-        return (isRoot() && getStyle().isHasBackground()) ||
+    private boolean isPaintsRootElementBackground() 
+    {
+    	return (isRoot() && getStyle().isHasBackground()) ||
                 (isBody() && ! getParent().getStyle().isHasBackground());
     }
 
@@ -446,7 +447,7 @@ public abstract class Box implements Styleable {
         final PaintingInfo pI = getPaintingInfo();
         if (pI != null) {
             if (getStyle().isHasBackground()) {
-                paintRootElementBackground(c, pI);
+            	paintRootElementBackground(c, pI);
             } else if (getChildCount() > 0) {
                 final Box body = getChild(0);
                 body.paintRootElementBackground(c, pI);
@@ -454,9 +455,10 @@ public abstract class Box implements Styleable {
         }
     }
 
-    private void paintRootElementBackground(final RenderingContext c, final PaintingInfo pI) {
-        final Dimension marginCorner = pI.getOuterMarginCorner();
-        final Rectangle canvasBounds = new Rectangle(0, 0, marginCorner.width, marginCorner.height);
+    private void paintRootElementBackground(RenderingContext c, PaintingInfo pI) 
+    {
+        Dimension marginCorner = pI.getOuterMarginCorner();
+        Rectangle canvasBounds = new Rectangle(0, 0, marginCorner.width, marginCorner.height);
         canvasBounds.add(c.getViewportRectangle());
         c.getOutputDevice().paintBackground(c, getStyle(), canvasBounds, canvasBounds, null);
     }

@@ -160,7 +160,7 @@ public class PDFRenderer {
     	
     	DisplayList dl = r3.renderToList();
     	int height = r3.getLayoutHeight();
-    	
+    	r3.setViewportSize(1000, height);
     	BufferedImage img = new BufferedImage(1000, height, BufferedImage.TYPE_INT_ARGB);
     	
     	Graphics2D g2d = img.createGraphics();

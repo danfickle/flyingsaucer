@@ -318,7 +318,7 @@ public class PageBox {
         } else {
             bounds = getPrintPaintingBounds(c);
         }
-        
+
         c.getOutputDevice().paintBackground(c, getStyle(), bounds, bounds, getStyle().getBorder(c));
     }
     

@@ -268,6 +268,11 @@ public class CalculatedStyle {
         return valueByName(cssName) == val;
     }
 
+    public boolean isNotIdent(CSSName cssName, IdentValue val)
+    {
+    	return !isIdent(cssName, val);
+    }
+    
     /**
      * Gets the ident attribute of the CalculatedStyle object
      *
@@ -1195,9 +1200,18 @@ public class CalculatedStyle {
         return isCollapseBorders() || isIdent(CSSName.EMPTY_CELLS, IdentValue.SHOW);
     }
 
-    public boolean isHasBackground() {
-        return ! (isIdent(CSSName.BACKGROUND_COLOR, IdentValue.TRANSPARENT) &&
-                isIdent(CSSName.BACKGROUND_IMAGE, IdentValue.NONE));
+    public boolean isHasBackground()
+    {
+    	if (isNotIdent(CSSName.BACKGROUND_IMAGE, IdentValue.NONE))
+    		return true;
+    	
+    	// If the background color is completely transparent, return false.
+    	// Note that CMYK colors do not support alpha.
+    	if (getBackgroundColor() instanceof FSRGBColor &&
+     		((FSRGBColor) getBackgroundColor()).getAlpha() == 0f)
+     		return false;
+
+    	return isNotIdent(CSSName.BACKGROUND_COLOR, IdentValue.TRANSPARENT);
     }
 
     public List<FSDerivedValue> getTextDecorations() {

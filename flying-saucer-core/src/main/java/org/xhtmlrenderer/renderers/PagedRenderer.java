@@ -2,6 +2,7 @@ package org.xhtmlrenderer.renderers;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.awt.Shape;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,6 +64,11 @@ public class PagedRenderer
 	public void setDocumentUri(String uri)
 	{
 		this.uri = uri;
+	}
+	
+	public void setDocumentHtml(Document html)
+	{
+		this.doc = html;
 	}
 
 	public void setImageResolver(ImageResolver imgResolver)
@@ -139,7 +145,6 @@ public class PagedRenderer
     {
     	SharedContext context = new SharedContext(userAgent);
         context.setTextRenderer(new DlTextRenderer());
-        context.setPrint(true);
         return context;
     }
 
@@ -177,12 +182,14 @@ public class PagedRenderer
 	
     public void prepare() 
     {
-		HTMLResourceI res = ResourceLoadHelper.loadHtmlDocument(uri, cb);
-		sharedContext.setDocumentURI(res.getURI());
-		doc = res.getDocument();
+    	if (this.doc == null)
+    	{
+    		HTMLResourceI res = ResourceLoadHelper.loadHtmlDocument(uri, cb);
+    		sharedContext.setDocumentURI(res.getURI());
+    		doc = res.getDocument();
+    	}
     	
     	getSharedContext().setPrint(true);
-    	// TODO: Make configurable.
         getSharedContext().setDPI(dpi);
         getSharedContext().setDotsPerPixel(dpp);
         getSharedContext().setUserAgentCallback(this.cb);
@@ -288,7 +295,7 @@ public class PagedRenderer
 
             // If there is no title meta data attribute,
         	// use the document title.
-            if (title == null) 
+            if (title == null || title.isEmpty()) 
             {
             	Optional<Element> tt = NodeHelper.getFirstMatchingChildByTagName(head.get(), "title");
             	

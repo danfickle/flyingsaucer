@@ -240,7 +240,6 @@ public class Java2DOut implements DisplayListOuputDevice
 		}
 	}
 	
-	
 	protected void drawGlyphVector(FSGlyphVector vec, int x, int y)
 	{
 		GlyphVector vector = ((Java2DGlyphVector) vec).getGlyphVector();

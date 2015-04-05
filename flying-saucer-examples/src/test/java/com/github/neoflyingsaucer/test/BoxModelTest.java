@@ -21,7 +21,7 @@ public class BoxModelTest
 			"#BB#" +
 			"####";
 
-		BufferedImageTest.assertImgEquals(html, expected, 4, 100, 100, 0);
+		BufferedImageTest.assertImgEquals(html, expected, 4, 0, "PageMarginSize");
 	}
 	
 	@Test
@@ -38,7 +38,7 @@ public class BoxModelTest
 			"###GG##" +
 			"###GG##";
 
-		BufferedImageTest.assertImgEquals(html, expected, 7, 100, 100, 0);
+		BufferedImageTest.assertImgEquals(html, expected, 7, 0, "DifferingPageMarginSizes");
 	}
 	
 	@Test
@@ -57,7 +57,7 @@ public class BoxModelTest
 			"#RR#" +
 			"####";
 
-		BufferedImageTest.assertImgEquals(html, expected, 4, 100, 100, 0);
+		BufferedImageTest.assertImgEquals(html, expected, 4, 0, "MultiplePages.1");
 
 		expected = 
 			"####" +
@@ -65,7 +65,7 @@ public class BoxModelTest
 			"#GG#" +
 			"####";
 		
-		BufferedImageTest.assertImgEquals(html, expected, 4, 100, 100, 1);
+		BufferedImageTest.assertImgEquals(html, expected, 4, 1, "MultiplePages.2");
 	}
 	
 	@Test
@@ -84,7 +84,7 @@ public class BoxModelTest
 			"GGGR" +
 			"GGGG";
 
-		BufferedImageTest.assertImgEquals(html, expected, 4, 100, 100, 0);
+		BufferedImageTest.assertImgEquals(html, expected, 4, 0, "FloatRight");
 	}
 	
 	@Test
@@ -102,7 +102,7 @@ public class BoxModelTest
 			"GGRG" +
 			"GGRG";
 
-		BufferedImageTest.assertImgEquals(html, expected, 4, 100, 100, 0);
+		BufferedImageTest.assertImgEquals(html, expected, 4, 0, "AbsolutePositioning");
 	}
 	
 	@Test
@@ -119,13 +119,13 @@ public class BoxModelTest
 			"RGGG" +
 			"RGGG";
 
-		BufferedImageTest.assertImgEquals(html, expected, 4, 100, 100, 0);
+		BufferedImageTest.assertImgEquals(html, expected, 4, 0, "FloatLeftAcrossPages.1");
 
 		expected = 
 			"RGGG" +
 			"GGGG";
 
-		BufferedImageTest.assertImgEquals(html, expected, 4, 100, 100, 1);
+		BufferedImageTest.assertImgEquals(html, expected, 4, 1, "FloatLeftAcrossPages.2");
 	}
 	
 	@Test
@@ -147,7 +147,7 @@ public class BoxModelTest
 			"GGGGGG" +
 			"BBBBBB";
 
-		BufferedImageTest.assertImgEquals(html, expected, 6, 100, 100, 0);
+		BufferedImageTest.assertImgEquals(html, expected, 6, 0, "DivMargins");
 	}
 	
 	@Test
@@ -171,7 +171,7 @@ public class BoxModelTest
 			"GGGGGGGG" +
 			"GGGGGGGG";
 
-		BufferedImageTest.assertImgEquals(html, expected, 8, 100, 100, 0);
+		BufferedImageTest.assertImgEquals(html, expected, 8, 0, "DivPadding");
 	}
 	
 	@Test
@@ -192,7 +192,7 @@ public class BoxModelTest
 			"BBBGGG" +
 			"GGGGGG";
 
-		BufferedImageTest.assertImgEquals(html, expected, 6, 100, 100, 0);
+		BufferedImageTest.assertImgEquals(html, expected, 6, 0, "DivBorder");
 	}
 	
 	@Test
@@ -215,7 +215,7 @@ public class BoxModelTest
 			"GGGGGGGG" +
 			"GGGGGGGG";
 
-		BufferedImageTest.assertImgEquals(html, expected, 8, 100, 100, 0);
+		BufferedImageTest.assertImgEquals(html, expected, 8, 0, "DivPaddingBorderMargin");
 	}
 
 	@Test
@@ -234,9 +234,9 @@ public class BoxModelTest
 			"RG" +
 			"BG" +
 			"RG" +
-			"GG";;
+			"GG";
 		
-		BufferedImageTest.assertImgEquals(html, expected, 2, 100, 100, 0);
+		BufferedImageTest.assertImgEquals(html, expected, 2, 0, "NegativeRelativePositioning");
 	}
 
 	@Test
@@ -259,7 +259,7 @@ public class BoxModelTest
 			"BB" +
 			"GG";
 		
-		BufferedImageTest.assertImgEquals(html, expected, 2, 100, 100, 0);
+		BufferedImageTest.assertImgEquals(html, expected, 2, 0, "PositiveRelativePositioning");
 	}
 	
 	@Test
@@ -280,7 +280,7 @@ public class BoxModelTest
 			"RR" +
 			"GG";
 		
-		BufferedImageTest.assertImgEquals(html, expected, 2, 100, 100, 0);
+		BufferedImageTest.assertImgEquals(html, expected, 2, 0, "BeforeInsertedContent");
 	}
 	
 	@Test
@@ -306,6 +306,6 @@ public class BoxModelTest
 			"RR" +
 			"GG";
 		
-		BufferedImageTest.assertImgEquals(html, expected, 2, 100, 100, 0);
+		BufferedImageTest.assertImgEquals(html, expected, 2, 0, "AfterInsertedContent");
 	}	
 }
