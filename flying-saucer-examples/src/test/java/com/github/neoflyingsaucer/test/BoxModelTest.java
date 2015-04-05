@@ -1,11 +1,67 @@
 package com.github.neoflyingsaucer.test;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.github.neoflyingsaucer.test.support.BufferedImageTest;
 
 public class BoxModelTest 
 {
+	@Test
+	public void testBodyPaintsBehindTransparency()
+	{
+		String html =
+			"<html><head><style>" +
+			"@page { size: 1px 3px; margin: 0; }" +
+			"body { background-color: #00f; margin: 0; }" +
+			"#one { height: 1px; background-color: #f00; }" +
+			"#two { height: 1px; background-color: transparent; }" +
+			"#three { height: 1px; background-color: #0f0; }" +
+			"</style></head><body><div id=\"one\"></div><div id=\"two\"></div><div id=\"three\"></div></body></html>";
+
+		String expected = 
+			"R" +
+			"B" +
+			"G";
+
+		BufferedImageTest.assertImgEquals(html, expected, 1, 0, "BodyPaintsBehindTransparency");
+	}
+	
+	@Test
+	@Ignore("Failing")
+	public void testTopBottomLeftRightForAbsolutePositioning()
+	{
+		String html =
+			"<html><head><style>" +
+			"@page { size: 4px 4px; margin: 0; }" +
+			"body { background-color: #00f; margin: 0; }" +
+			"div { background-color: #f00; position: absolute; top: 1px; left: 1px; right: 0; bottom: 0; }" +
+			"</style></head><body><div></div></body></html>";
+
+		String expected = 
+			"BBBB" +
+			"BRRR" +
+			"BRRR" +
+			"BRRR";
+
+		BufferedImageTest.assertImgEquals(html, expected, 4, 0, "TopBottomLeftRightForAbsolutePositioning");		
+	}
+	
+	@Test
+	public void testLinearGradientWithSameStartAndEnd()
+	{
+		String html = 
+			"<html><head><style>" +
+			"@page { size: 2px 1px; margin: 0; }" +
+			"body { background-image: linear-gradient(to right, #f00, #f00); }" +
+			"</style></head><body></body></html>";
+
+		String expected = 
+			"RR";
+		
+		BufferedImageTest.assertImgEquals(html, expected, 2, 0, "LinearGradientWithSameStartAndEnd");
+	}
+	
 	@Test
 	public void testPageMarginSize()
 	{
