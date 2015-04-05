@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/danfickle/neoflyingsaucer.svg)](https://travis-ci.org/danfickle/neoflyingsaucer)
+
 OVERVIEW
 --------
 neoFlying Saucer is a pure-Java library for rendering arbitrary HTML 
