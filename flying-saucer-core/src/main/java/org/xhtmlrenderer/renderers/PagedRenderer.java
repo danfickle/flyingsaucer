@@ -174,9 +174,8 @@ public class PagedRenderer
         return result;
     }
     
-    private void assignPagePrintPositions() 
+    private void assignPagePrintPositions(RenderingContext c) 
     {
-        RenderingContext c = newRenderingContext();
         getRootLayer().assignPagePaintingPositions(c, Layer.PAGED_MODE_PRINT);
     }
 	
@@ -197,7 +196,7 @@ public class PagedRenderer
         getSharedContext().getCss().setDocumentContext(getSharedContext(), getSharedContext().getNamespaceHandler(), doc);
 
         doDocumentLayout();
-        assignPagePrintPositions();
+        
     }
     
 	private Dimension paintPage(int pageNo)
@@ -210,28 +209,31 @@ public class PagedRenderer
 	        }
 
 	        RenderingContext c = newRenderingContext();
-
+	        
 	        PageBox page = root.getPages().get(pageNo);
 	        c.setPageCount(root.getPages().size());
 	        c.setPage(pageNo, page);
+	        assignPagePrintPositions(c);
 
+	        Shape working = c.getOutputDevice().getClip();
+	        
 	        page.paintBackground(c, 0, Layer.PAGED_MODE_PRINT);
 	        page.paintMarginAreas(c, 0, Layer.PAGED_MODE_PRINT);
 	        page.paintBorder(c, 0, Layer.PAGED_MODE_PRINT);
 
 	        // TODO: Clipping not working!
-	        //Shape working = c.getOutputDevice().getClip();
-	        //Rectangle content = page.getPrintClippingBounds(c);
-	        //c.getOutputDevice().clip(content);
 
+	        Rectangle content = page.getPrintClippingBounds(c);
+	        c.getOutputDevice().clip(content, false);
+	        
 	        int top = -page.getPaintingTop() + page.getMarginBorderPadding(c, CalculatedStyle.TOP);
 	        int left = page.getMarginBorderPadding(c, CalculatedStyle.LEFT);
 
 	        c.getOutputDevice().translate(left, top);
-	          root.paint(c);
+	        	root.paint(c);
 	        c.getOutputDevice().translate(-left, -top);
 
-	        //c.getOutputDevice().setClip(working);
+	        c.getOutputDevice().setClip(working);
 	        
 	        return new Dimension(page.getWidth(c), page.getHeight(c));
 	}

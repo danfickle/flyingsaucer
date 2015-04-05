@@ -349,7 +349,7 @@ public class Java2DOut implements DisplayListOuputDevice
 	
     protected void setClip(Shape s) 
     {
-        g2d.setClip(s);
+    	g2d.setClip(s);
     }
     
     protected void clip(Shape s) 

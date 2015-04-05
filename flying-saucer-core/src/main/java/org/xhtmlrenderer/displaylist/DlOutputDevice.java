@@ -668,4 +668,13 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
             return box.getAbsY();
         }
     }
+
+	@Override
+	public void clip(Shape s, boolean store)
+	{
+		if (store)
+			clip(s);
+		else
+			dl.add(new DlInstruction.DlClip(s));
+	}
 }

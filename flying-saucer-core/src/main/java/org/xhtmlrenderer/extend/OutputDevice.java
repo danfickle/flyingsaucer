@@ -87,6 +87,7 @@ public interface OutputDevice {
     public void fillOval(int x, int y, int width, int height);
     
     public void clip(Shape s);
+    public void clip(Shape s, boolean store);
     public Shape getClip();
     public void setClip(Shape s);
     

@@ -365,4 +365,12 @@ public class Java2DOutputDevice extends AbstractOutputDevice implements OutputDe
 			_graphics.setComposite(AlphaComposite.SrcOver.derive(opacity));
 		}
 	}
+
+	@Override
+	public void clip(Shape s, boolean store) {
+		if (store)
+			clip(s);
+		else
+			_graphics.clip(s);
+	}
 }
