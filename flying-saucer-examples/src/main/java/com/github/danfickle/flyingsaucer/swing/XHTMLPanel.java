@@ -31,21 +31,16 @@ import org.xhtmlrenderer.simple.HtmlNamespaceHandler;
 import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 
 /**
- * <p/>
- * <p/>
- * XHTMLPanel is a simple Swing component that renders valid XHTML content in a
+ * <p>XHTMLPanel is a simple Swing component that renders valid XHTML content in a
  * Java program. It is scrolling aware so you can safely drop it into a
  * {@link javax.swing.JScrollPane}. The most common usage is to stuff a {@link URL}
  * into it and then add it to your JFrame. Ex:</p>
  * <pre>
  * import org.xhtmlrenderer.simple.*;
  * .....
- * <p/>
  * public static void main(String[] args) {
- * <p/>
  * // set up the xhtml panel XHTMLPanel xhtml = new XHTMLPanel();
  * xhtml.setDocument(new URL("http://myserver.com/page.xhtml"));
- * <p/>
  * JScrollPane scroll = new JScrollPane(xhtml);
  * JFrame frame = new JFrame("Demo");
  * frame.getContentPane().add(scroll);
@@ -54,24 +49,19 @@ import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
  * frame.show();
  * }
  * </pre>
- * <p/>
- * <p>XHTMLPanel renders XHTML and XML which can be loaded as valid {@link Document}
+ * <p>XHTMLPanel renders XHTML and XML which can be loaded as valid Document
  * instances. You should make sure the document you want to render is well-formed. For XHTML,
  * there is always a default stylesheet available, even if no CSS is attached to the
  * XHTML you are loading. For XML, there is no default stylesheet, so you should have
  * one attached to your XML before trying to render it using the xml-stylesheer processing
  * instruction. XHTMLPanel has methods to load
  * documents from a uri ({@link #setDocument(String uri)}),
- * from a Document instance ({@link #setDocument(Document)}) or from an InputStream
- * ({@link org.xhtmlrenderer.swing.BasicPanel#setDocument(java.io.InputStream,String)}).</p>
- * <p/>
- * <p/>
- * <p/>
+ * from a Document instance ({@link #setDocument(Document)}) or from an InputStream.</p>
  * XHTMLPanel also lets you make simple changes with simple methods like
  * {@link #setFontScalingFactor(float)}. If you want to make other changes you will
  * need to get the rendering context ({@link #getSharedContext()}) and call methods on
- * that. Ex: </p> <p/>
- * <p/>
+ * that. Ex:
+ * 
  * <pre>
  * XHTMLPanel xhtml = new XHTMLPanel();
  * RenderingContext ctx = xhtml.getRenderingContext();
@@ -80,7 +70,6 @@ import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
  * ctx.addFont(fnt,"Arial"); // redefine a font
  * ctx.setDomImplementation("com.cooldom.DomImpl");
  * </pre>
- * <p/>
  * <p>XHTMLPanel comes with a pre-installed MouseListener which handles :hover events used for rollovers
  * ( @see org.xhtmlrenderer.swing.HoverListener ). XHTMLPanel also comes with a pre-installed LinkListener
  * used to follow links.  ( @see org.xhtmlrenderer.swing.LinkListener )

@@ -27,16 +27,13 @@ import org.xhtmlrenderer.renderers.ContinuousRenderer;
 import org.xhtmlrenderer.renderers.PagedRenderer;
 
 /**
- * <p/>
  * PDFRenderer supports headless rendering of XHTML documents, outputting
- * to PDF format. There are two static utility methods, one for rendering
- * a {@link java.net.URL}, {@link #renderToPDF(String, String)} and one
- * for rendering a {@link File}, {@link #renderToPDF(File, String)}</p>
+ * to PDF format.
  * <p>You can use this utility from the command line by passing in
  * the URL or file location as first parameter, and PDF path as second
- * parameter:
+ * parameter:</p>
  * <pre>
- * java -cp %classpath% org.xhtmlrenderer.simple.PDFRenderer <url> <pdf>
+ * java -cp %classpath% org.xhtmlrenderer.simple.PDFRenderer url pdf
  * </pre>
  *
  * @author Pete Brant
@@ -50,11 +47,9 @@ public class PDFRenderer {
      *
      * @param url url for the XML file to render
      * @param pdf path to the PDF file to create
-     * @param pdfVersion version of PDF to output; null uses default version
+     * @param uac
      * @throws IOException       if the URL or PDF location is
      *                           invalid
-     * @throws DocumentException if an error occurred
-     *                           while building the Document.
      */
     public static void renderToPDF(final String url, final String pdf, final UserAgentCallback uac)
             throws IOException 

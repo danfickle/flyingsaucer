@@ -35,7 +35,7 @@ import org.xhtmlrenderer.swing.Java2DOutputDevice;
 import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 
 /**
- * ScalableXHTMLPanel extends {@see XHTMLPanel} to allow zoom on output.
+ * ScalableXHTMLPanel extends XHTMLPanel to allow zoom on output.
  *
  * @author chm
  */
@@ -122,7 +122,7 @@ public class ScalableXHTMLPanel extends XHTMLPanel {
 	 * Force scale to use
 	 *
 	 * @param newScale The scale to use
-	 * @throws IllegalArgumentException If newScale <= <tt>0.0d</tt>.
+	 * @throws IllegalArgumentException If newScale &lt;= <tt>0.0d</tt>.
 	 */
 	public void setScale(final double newScale) throws IllegalArgumentException {
 		if (newScale <= 0.0d) throw new IllegalArgumentException("Only positive scales are allowed.");

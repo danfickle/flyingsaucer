@@ -14,16 +14,13 @@ import java.awt.print.Printable;
  * requires an XHTMLPanel, so it's easiest to prepare an XHTMLPanel as normal, and then
  * wrap a printable around it.ex:
  * </p>
- * <p/>
  * <pre>
  * import org.xhtmlrenderer.simple.*;
  * import java.awt.print.*;
  * // . . . .
  * // xhtml_panel created earlier
- * <p/>
  * PrinterJob printJob = PrinterJob.getPrinterJob();
  * printJob.setPrintable(new XHTMLPrintable(xhtml_panel));
- * <p/>
  * if(printJob.printDialog()) {
  * printJob.print();
  * }

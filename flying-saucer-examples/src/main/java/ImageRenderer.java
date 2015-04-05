@@ -29,17 +29,14 @@ import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 
 
 /**
- * <p/>
  * ImageRenderer supports rendering of XHTML documents to image formats, writing out the generated image to an outputstream
- * or a file in a given image formate. There are two static utility methods, one for rendering
- * a {@link java.net.URL}, {@link #renderToImage(String,String)} and one
- * for rendering a {@link java.io.File}, {@link #renderToImage(java.io.File,String)}</p>
+ * or a file in a given image formate.
  *
  * <p>You can use this utility from the command line by passing in
  * the URL or file location as first parameter, and output file path as second
- * parameter:
+ * parameter:</p>
  * <pre>
- * java -cp %classpath% org.xhtmlrenderer.simple.ImageRenderer <url> <img>
+ * java -cp %classpath% org.xhtmlrenderer.simple.ImageRenderer url img
  * </pre>
  * <p>If the second parameters is not provided, a PNG-format image will be created
  * in the same directory as the source (if source is a file) or as a temp file
@@ -48,7 +45,6 @@ import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
  *
  * <p>Image width must always be supplied; height is determined automatically.</p>
  *
- * @see org.xhtmlrenderer.simple.PDFRenderer
  * @author Pete Brant
  * @author Patrick Wright
  */
