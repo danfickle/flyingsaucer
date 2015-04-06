@@ -48,21 +48,6 @@ public class BoxModelTest
 	}
 	
 	@Test
-	public void testLinearGradientWithSameStartAndEnd()
-	{
-		String html = 
-			"<html><head><style>" +
-			"@page { size: 2px 1px; margin: 0; }" +
-			"body { background-image: linear-gradient(to right, #f00, #f00); }" +
-			"</style></head><body></body></html>";
-
-		String expected = 
-			"RR";
-		
-		BufferedImageTest.assertImgEquals(html, expected, 2, 0, "LinearGradientWithSameStartAndEnd");
-	}
-	
-	@Test
 	public void testPageMarginSize()
 	{
 		String html =
@@ -125,25 +110,6 @@ public class BoxModelTest
 	}
 	
 	@Test
-	public void testFloatRight()
-	{
-		String html =
-			"<html><head><style>" +
-			"@page { size: 4px 4px; margin: 0; }" +
-			"body { background-color: #0f0; margin: 0; }" +
-			"div { float:right; width: 1px; background-color: #f00; height: 3px; }" +
-			"</style></head><body><div></div></body></html>";
-		
-		String expected = 
-			"GGGR" +
-			"GGGR" +
-			"GGGR" +
-			"GGGG";
-
-		BufferedImageTest.assertImgEquals(html, expected, 4, 0, "FloatRight");
-	}
-	
-	@Test
 	public void testAbsolutePositioning()
 	{
 		String html =
@@ -159,29 +125,6 @@ public class BoxModelTest
 			"GGRG";
 
 		BufferedImageTest.assertImgEquals(html, expected, 4, 0, "AbsolutePositioning");
-	}
-	
-	@Test
-	public void testFloatLeftAcrossPages()
-	{
-		String html =
-			"<html><head><style>" +
-			"@page { size: 4px 2px; margin: 0; }" +
-			"body { background-color: #0f0; margin: 0; }" +
-			"div { float: left; width: 1px; height: 3px; background-color: #f00; }" +
-			"</style></head><body><div></div></body></html>";
-		
-		String expected = 
-			"RGGG" +
-			"RGGG";
-
-		BufferedImageTest.assertImgEquals(html, expected, 4, 0, "FloatLeftAcrossPages.1");
-
-		expected = 
-			"RGGG" +
-			"GGGG";
-
-		BufferedImageTest.assertImgEquals(html, expected, 4, 1, "FloatLeftAcrossPages.2");
 	}
 	
 	@Test

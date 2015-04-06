@@ -175,17 +175,17 @@ public class BufferedImageTest
 		
 		List<String> pixelMapOriginal = imageToPixelMap(original);
 		
-		System.out.println("TEST FAILED(" + name + ")");
-		System.out.println(" GOT:");
+		System.err.println("TEST FAILED(" + name + ")");
+		System.err.println(" GOT:");
 
 		for (int i = 0; i < pixelMapOriginal.size(); i++)
 		{
-			System.out.print("\t\"" + pixelMapOriginal.get(i) + "\"");
+			System.err.print("\t\"" + pixelMapOriginal.get(i) + "\"");
 			
 			if (i != pixelMapOriginal.size() - 1)
-				System.out.println(" +");
+				System.err.println(" +");
 			else
-				System.out.println(";");
+				System.err.println(";");
 		}
 		
 		throw new RuntimeException("Images didn't match");
