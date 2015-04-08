@@ -37,6 +37,33 @@ public class BackgroundTest
 	}
 
 	@Test
+	public void testBackgroundRepeatOnMultiplePages()
+	{
+		String html =
+			"<html><head><style>" +
+			"@page { size: 4px 4px; margin: 0 }" +
+			"body {  margin: 0; }" +
+			"#1 { background-image: url(" + PATTERN_IMAGE_DATA_URL + "); width: 4px; height: 8px; }" +
+			"</style></head><body><div id=1></div></body></html>";
+		
+		String expected = 
+			"RBBB" +
+			"BBBB" +
+			"BBBB" +
+			"BBBB";
+		
+		BufferedImageTest.assertImgEquals(html, expected, 4, 0, "BackgroundRepeatOnMultiplePages.1");
+
+		expected = 
+			"RBBB" +
+			"BBBB" +
+			"BBBB" +
+			"BBBB";
+		
+		BufferedImageTest.assertImgEquals(html, expected, 4, 1, "BackgroundRepeatOnMultiplePages.2");
+	}
+
+	@Test
 	public void testOverlappingBackgrounds()
 	{
 		String html =
@@ -57,6 +84,115 @@ public class BackgroundTest
 			"#BBBB###";
 		
 		BufferedImageTest.assertImgEquals(html, expected, 8, 0, "OverlappingBackgrounds");
+	}
+
+	@Test
+	public void testBackgroundColorClipping()
+	{
+		String html =
+			"<html><head><style>" +
+			"@page { size: 8px 6px; margin: 0 }" +
+			"body {  margin: 0; }" +
+			"div { background-color: #f00; width: 4px; height: 2px; margin: 0 auto; }" +
+			"</style></head><body><div></div></body></html>";
+		
+		String expected = 
+			"##RRRR##" +
+			"##RRRR##" +
+			"########" +
+			"########" +
+			"########" +
+			"########";
+		
+		BufferedImageTest.assertImgEquals(html, expected, 8, 0, "BackgroundColorClipping");
+	}
+
+	@Test
+	@Ignore("Failing (html background-image overrides body / off by one)")
+	public void testBackgroundImageOnBodyAndHtml()
+	{
+		String html =
+			"<html><head><style>" +
+			"@page { size: 8px 6px; margin: 0; }" +
+			"body {  margin: 2px; background-image: url(" + PATTERN_IMAGE_DATA_URL + "); }" +
+			"html { background-image: url(" + PATTERN_IMAGE_DATA_URL + "); }" +
+			"</style></head><body></body></html>";
+		
+		String expected = 
+			"RBBBBRBBB" +
+			"BBBBBBBBB" +
+			"BBRBBBBBB" +
+			"BBBBBBBBB" +
+			"RBBBBRBBB" +
+			"BBBBBBBBB";
+		
+		BufferedImageTest.assertImgEquals(html, expected, 8, 0, "BackgroundImageOnBodyAndHtml");
+	}
+
+	@Test
+	@Ignore("Failing (html background-color overrides body)")
+	public void testBackgroundColorOnBodyAndHtml()
+	{
+		String html =
+			"<html><head><style>" +
+			"@page { size: 8px 6px; margin: 0; }" +
+			"body {  margin: 2px; background-color: #f00; }" +
+			"html { background-color: #0f0; }" +
+			"</style></head><body></body></html>";
+		
+		String expected = 
+			"RRRRRRRR" +
+			"RRRRRRRR" +
+			"RRGGGGRR" +
+			"RRGGGGRR" +
+			"RRRRRRRR" +
+			"RRRRRRRR";
+		
+		BufferedImageTest.assertImgEquals(html, expected, 8, 0, "BackgroundColorOnBodyAndHtml");
+	}
+
+	@Test
+	public void testBackgroundImageClipping()
+	{
+		String html =
+			"<html><head><style>" +
+			"@page { size: 8px 6px; margin: 0 }" +
+			"body {  margin: 0; }" +
+			"div { background-image: url(" + PATTERN_IMAGE_DATA_URL + "); background-repeat: no-repeat; background-position: 50% 0; width: 8px; height: 2px; }" +
+			"</style></head><body><div></div></body></html>";
+		
+		String expected = 
+			"##RBBB##" +
+			"##BBBB##" +
+			"########" +
+			"########" +
+			"########" +
+			"########";
+		
+		BufferedImageTest.assertImgEquals(html, expected, 8, 0, "BackgroundImageClipping");
+	}
+
+	@Test
+	public void testBackgroundPositionPercentOffset()
+	{
+		String html =
+			"<html><head><style>" +
+			"@page { size: 8px 6px; margin: 0 }" +
+			"body {  margin: 0; }" +
+			"div { background-image: url(" + PATTERN_IMAGE_DATA_URL + "); background-repeat: no-repeat; background-position: 50% 25%; width: 8px; height: 6px; }" +
+			"</style></head><body><div></div></body></html>";
+		
+		// Calculation for correct background-position in percentage terms is:
+		// left = (container_width - image_width) * percentage
+		String expected = 
+			"########" +
+			"##RBBB##" +
+			"##BBBB##" +
+			"##BBBB##" +
+			"##BBBB##" +
+			"########";
+		
+		BufferedImageTest.assertImgEquals(html, expected, 8, 0, "BackgroundPositionPercentOffset");
 	}
 
 	@Test
@@ -265,6 +401,26 @@ public class BackgroundTest
 			"BBBB";
 		
 		BufferedImageTest.assertImgEquals(html, expected, 4, 0, "BackgroundImageOnDiv");
+	}
+
+	@Test
+	@Ignore("Failing (off by one)")
+	public void testBackgroundImageOnHtml()
+	{
+		String html =
+			"<html><head><style>" +
+			"@page { size: 4px 4px; margin: 0 }" +
+			"html { background-image: url(" + PATTERN_IMAGE_DATA_URL + "); }" +
+			"body { margin: 0; }" +
+			"</style></head><body></body></html>";
+		
+		String expected = 
+			"RBBB" +
+			"BBBB" +
+			"BBBB" +
+			"BBBB";
+		
+		BufferedImageTest.assertImgEquals(html, expected, 8, 0, "BackgroundImageOnHtml");
 	}
 
 	@Test
