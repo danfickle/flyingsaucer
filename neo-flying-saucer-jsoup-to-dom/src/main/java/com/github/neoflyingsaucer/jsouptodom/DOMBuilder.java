@@ -16,7 +16,9 @@ package com.github.neoflyingsaucer.jsouptodom;
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -24,7 +26,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
 *
@@ -51,13 +55,36 @@ public class DOMBuilder {
       /* Obtain the document builder for the configured XML parser. */
       DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory
           .newInstance();
+
       DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
 
       /* Create a document to contain the content. */
       document = docBuilder.newDocument();
-      createDOM(jsoupDocument, document, document,
-          new HashMap<String, String>());
 
+      List<org.jsoup.nodes.Element> styleElements = new ArrayList<org.jsoup.nodes.Element>();
+      Map<String, String> nsMap = new HashMap<String, String>();
+
+      createDOM(jsoupDocument, document, document, nsMap, styleElements);
+
+      // Now we insert the found style elements into the last head section.
+      NodeList nl = document.getElementsByTagName("head");
+      Element head;
+      
+      if (nl == null || nl.getLength() == 0)
+      {
+    	  head = document.createElement("head");
+    	  document.appendChild(head);
+      }
+      else
+      {
+    	  head = (Element) nl.item(nl.getLength() - 1);
+      }
+      
+      for(org.jsoup.nodes.Element e : styleElements)
+      {
+    	  createDOM(e, head, document, nsMap, new ArrayList<org.jsoup.nodes.Element>(0));
+      }
+      
     } catch (ParserConfigurationException pce) {
       throw new RuntimeException(pce);
     }
@@ -76,16 +103,28 @@ public class DOMBuilder {
    * The W3C {@link Node} that receives the DOM content.
    */
   private static void createDOM(org.jsoup.nodes.Node node, Node out,
-      Document doc, Map<String, String> ns) {
+      Document doc, Map<String, String> ns, java.util.List<org.jsoup.nodes.Element> styleElements) 
+  {
 
     if (node instanceof org.jsoup.nodes.Document) {
 
       org.jsoup.nodes.Document d = ((org.jsoup.nodes.Document) node);
       for (org.jsoup.nodes.Node n : d.childNodes()) {
-        createDOM(n, out, doc, ns);
+        createDOM(n, out, doc, ns, styleElements);
       }
 
-    } else if (node instanceof org.jsoup.nodes.Element) {
+    }
+    else if (node instanceof org.jsoup.nodes.Element &&
+    		 out instanceof Element &&
+    		 ((org.jsoup.nodes.Element) node).tagName().equals("style") &&
+    		 !((Element) out).getTagName().equals("head"))
+    {
+    	// We've found a style element outside head.
+    	// Save it so we can add it to head at the end.
+    	org.jsoup.nodes.Element e = ((org.jsoup.nodes.Element) node);
+    	styleElements.add(e);
+    }
+    else if (node instanceof org.jsoup.nodes.Element) {
 
       org.jsoup.nodes.Element e = ((org.jsoup.nodes.Element) node);
       org.w3c.dom.Element _e = doc.createElement(e.tagName());
@@ -117,7 +156,7 @@ public class DOMBuilder {
       }
 
       for (org.jsoup.nodes.Node n : e.childNodes()) {
-        createDOM(n, _e, doc, ns);
+        createDOM(n, _e, doc, ns, styleElements);
       }
 
     } else if (node instanceof org.jsoup.nodes.TextNode) {
@@ -130,8 +169,7 @@ public class DOMBuilder {
       final org.jsoup.nodes.DataNode d = (org.jsoup.nodes.DataNode) node;
       out.appendChild(doc.createCDATASection(d.getWholeData()));
     } else if (node instanceof org.jsoup.nodes.DocumentType) {
-      System.out.println("Doc type not handled.");
-      // TODO
+      // Ignored
     } else if (node instanceof org.jsoup.nodes.Comment) {
       // Ignored
     } else {

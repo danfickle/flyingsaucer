@@ -37,6 +37,26 @@ public class BackgroundTest
 	}
 
 	@Test
+	public void testBackgroundImageWithStyleOutsideHead()
+	{
+		String html =
+			"<html><head><style>" +
+			"@page { size: 4px 4px; margin: 0 }" +
+			"body {  margin: 0; }" +
+			"</style></head><body><div><style>" + 
+			"#1 { background-image: url(" + PATTERN_IMAGE_DATA_URL + "); width: 4px; height: 4px; }" +
+			"</style></div><div id=1></div></body></html>";
+		
+		String expected = 
+			"RBBB" +
+			"BBBB" +
+			"BBBB" +
+			"BBBB";
+		
+		BufferedImageTest.assertImgEquals(html, expected, 4, 0, "BackgroundImageWithStyleOutsideHead");
+	}
+
+	@Test
 	public void testBackgroundRepeatOnMultiplePages()
 	{
 		String html =
