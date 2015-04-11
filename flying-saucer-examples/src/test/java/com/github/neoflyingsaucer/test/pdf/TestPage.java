@@ -105,4 +105,47 @@ public class TestPage
 		
 		pdf.assertContains(bodyPaintOperation);
 	}
+
+	@Test
+	public void testListStyleTypeDisc()
+	{
+		PdfTest pdf = new PdfTest("ListStyleTypeDisc");
+
+		String html =
+			"<html><head><style>" +
+		    "@page { size: 60px; margin: 0; }" +
+		    "body { margin: 0; font-size: 10px; }" +
+		    "ul { list-style-position: inside; margin: 0; padding: 0; list-style-type: disc; }</style></head><body>" +
+		    "<ul><li>TEST</li></ul></body></html>";
+		
+		pdf.prepare(html);
+		
+		// Correct based on visual inspection of resulting PDF.
+		String drawEllipseOperation = 
+			"2.775 41.588 m\n" +
+			"3.541 41.588 4.163 40.966 4.163 40.2 c\n" +
+			"4.163 39.434 3.541 38.812 2.775 38.812 c\n" +
+			"2.009 38.812 1.388 39.434 1.388 40.2 c\n" +
+			"1.388 40.966 2.009 41.588 2.775 41.588 c\n" +
+			"h\n" +
+			"f*\n";
+		
+		pdf.assertContains(drawEllipseOperation);
+	}
+
+	@Test
+	@Ignore("Failing (infinite loop somewhere in code)")
+	public void testInfiniteLoopBugOnTooWideContent()
+	{
+		PdfTest pdf = new PdfTest("InfiniteLoopBugOnTooWideContent");
+
+		String html =
+			"<html><head><style>" +
+		    "@page { size: 30px; margin: 0; }" +
+		    "</style></head><body>" +
+		    "<ul><li>TEST</li></ul></body></html>";
+		
+		pdf.prepare(html);
+		pdf.assertContains("/MediaBox");
+	}
 }

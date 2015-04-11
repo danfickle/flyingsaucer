@@ -28,6 +28,9 @@ public class Pdf2ImageResolver implements ImageResolver
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		int l;
 		
+		if (strm == null)
+			return null;
+		
 		try {
 			while ((l = strm.read(bytes)) != -1)
 			{

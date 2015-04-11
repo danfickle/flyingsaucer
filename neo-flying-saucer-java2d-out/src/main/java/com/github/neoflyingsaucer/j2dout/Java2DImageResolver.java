@@ -22,6 +22,9 @@ public class Java2DImageResolver implements ImageResolver
 	{
 		BufferedImage img;
 		
+		if (strm == null)
+			return new Java2DImage(NULL_IMG);
+		
 		try
 		{
 			img = ImageIO.read(strm);

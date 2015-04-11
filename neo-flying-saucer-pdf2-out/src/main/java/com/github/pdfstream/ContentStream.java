@@ -99,7 +99,7 @@ public class ContentStream
     	append('l');
     	append('\n');
     }
-    
+   
     /**
      * Sets the color for stroking operations.
      * The pen color is used when drawing lines and splines.

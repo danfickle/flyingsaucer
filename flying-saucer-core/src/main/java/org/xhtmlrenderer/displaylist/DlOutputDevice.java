@@ -303,9 +303,13 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
 	public void setRenderingHint(Key key, Object value) 
 	{
 		assert(key == RenderingHints.KEY_ANTIALIASING);
-		assert(value == RenderingHints.VALUE_ANTIALIAS_DEFAULT || value == RenderingHints.VALUE_ANTIALIAS_OFF);
+
+		assert(value == RenderingHints.VALUE_ANTIALIAS_DEFAULT ||
+			   value == RenderingHints.VALUE_ANTIALIAS_OFF ||
+			   value == RenderingHints.VALUE_ANTIALIAS_ON);
 		
-		if (value == RenderingHints.VALUE_ANTIALIAS_DEFAULT)
+		if (value == RenderingHints.VALUE_ANTIALIAS_DEFAULT ||
+			value == RenderingHints.VALUE_ANTIALIAS_ON)
 		{
 			dl.add(new DlInstruction.DlAntiAliasDefault());
 		}

@@ -11,6 +11,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.Point2D.Float;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.awt.image.Raster;
@@ -611,14 +612,63 @@ public class Pdf2Out implements DisplayListOuputDevice
 		followPath(s, STROKE);
 	}
 	
-	protected void drawOval(int x, int y, int width, int height) 
+	protected void drawOval(int x1, int y1, int width, int height) 
 	{
-		// TODO Auto-generated method stub
+		drawEllipse(x1, y1, width, height, STROKE);
 	}
+	
+	private void drawEllipse(int x1, int y1, int width, int height, int operation)
+	{
+       // The best 4-spline magic number
+       final float m4 = 0.551784f;
 
+       Point2D point = new Point2D.Float(x1, y1);
+       Point2D correctedPoint = new Point2D.Float();
+       _transform.transform(point, correctedPoint);
+       
+       float x = (float) correctedPoint.getX();
+       float y = (float) correctedPoint.getY();
+       float r1 = (float) (width * _transform.getScaleX());
+       float r2 = (float) (height * _transform.getScaleY());
+
+       y += r2;
+       x += r1;
+       r1 *= 0.5f;
+       r2 *= 0.5f;
+       
+       _currentPage.pathOpen();
+       _currentPage.pathMoveTo(x, normalizeY(y - r2));
+
+       float[] coords = new float[] { x + m4 * r1, y - r2, x + r1, y - m4 * r2, x + r1, y };  
+       normalizeY(coords);
+       
+       _currentPage.pathCurveTo(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5]);
+
+       coords = new float[] { x + r1, y + m4*r2, x + m4*r1, y + r2,x, y + r2 };
+       normalizeY(coords);
+      
+       _currentPage.pathCurveTo(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5]);
+       
+       coords = new float[] { x - m4 * r1, y + r2, x - r1, y + m4 * r2, x - r1, y }; 
+       normalizeY(coords);
+       
+       _currentPage.pathCurveTo(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5]);
+       
+       coords = new float[] { x - r1, y - m4 * r2, x - m4 * r1, y - r2, x, y - r2 }; 
+       normalizeY(coords);
+       
+       _currentPage.pathCurveTo(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5]);
+       _currentPage.pathCloseSubpath();
+
+		if (operation == FILL)
+			_currentPage.pathFillEvenOdd();
+		else if (operation == STROKE)
+			_currentPage.pathStroke();
+    }
+	
 	protected void fillOval(int x, int y, int width, int height) 
 	{
-		// TODO Auto-generated method stub
+		drawEllipse(x, y, width, height, FILL);
 	}
 	
 	protected void setClip(Shape s) 
