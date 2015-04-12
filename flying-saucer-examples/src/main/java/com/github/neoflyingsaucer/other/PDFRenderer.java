@@ -12,6 +12,7 @@ import com.github.neoflyingsaucer.pdf2dout.Pdf2FontResolver;
 import com.github.neoflyingsaucer.pdf2dout.Pdf2ImageResolver;
 import com.github.neoflyingsaucer.pdf2dout.Pdf2Out;
 import com.github.neoflyingsaucer.pdf2dout.Pdf2ReplacedElementResolver;
+import com.github.neoflyingsaucer.pdf2dout.Pdf2Out.PdfOutMode;
 
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -74,7 +75,7 @@ public class PDFRenderer {
     	r3.setReplacedElementResolver(new Pdf2ReplacedElementResolver());
     	r3.prepare();
     	
-    	Pdf2Out out = new Pdf2Out(PDF_DEFAULT_DOTS_PER_POINT);
+    	Pdf2Out out = new Pdf2Out(PDF_DEFAULT_DOTS_PER_POINT, PdfOutMode.PRODUCTION_MODE);
     	BufferedOutputStream bs = new BufferedOutputStream(new FileOutputStream(filename));
     	try {
 			out.initializePdf(bs);

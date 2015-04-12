@@ -72,6 +72,7 @@ import com.github.pdfstream.PdfRgbaColor;
 public class Pdf2Out implements DisplayListOuputDevice 
 {
 	private final float _dotsPerPoint;
+	private final PdfOutMode _mode;
     private Page _currentPage;
     private Stroke _stroke = STROKE_ONE;
     private Stroke _originalStroke = STROKE_ONE;
@@ -90,9 +91,16 @@ public class Pdf2Out implements DisplayListOuputDevice
     private static final int STROKE = 2;
     private static final int CLIP = 3;
 	
-	public Pdf2Out(float dotsPerPoint)
+    public static enum PdfOutMode
+    {
+    	PRODUCTION_MODE,
+    	TEST_MODE;
+    }
+    
+	public Pdf2Out(float dotsPerPoint, PdfOutMode mode)
 	{
 		this._dotsPerPoint = dotsPerPoint;
+		this._mode = mode;
 	}
 	
 	@Override
@@ -575,7 +583,10 @@ public class Pdf2Out implements DisplayListOuputDevice
 
 	public void initializePdf(OutputStream os) throws Exception
 	{
-		_pdfDoc = new PDF(os);
+		if (_mode == PdfOutMode.PRODUCTION_MODE)
+			_pdfDoc = new PDF(os);
+		else
+			_pdfDoc = new PDF(os, true);
 	}
 	
 	public void initializePage(float w, float h)

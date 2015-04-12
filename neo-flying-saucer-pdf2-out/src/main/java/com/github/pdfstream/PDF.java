@@ -83,6 +83,8 @@ public class PDF
 	private int outlinesObjNumber;
 	private List<LinearGradient> linearGradients = new ArrayList<LinearGradient>();
     
+	private boolean _testMode = false;
+	
     /**
      * The default constructor - use when reading PDF files.
      * 
@@ -103,6 +105,12 @@ public class PDF
      */
     public PDF(OutputStream os) throws Exception { this(os, 0); }
 
+    public PDF(OutputStream os, boolean testMode) throws Exception
+    {
+    	this(os, 0);
+    	this._testMode = testMode;
+    }
+    
 
     // Here is the layout of the PDF document:
     //
@@ -568,34 +576,52 @@ public class PDF
 
     private void addPageContent(Page page)
     {
-        ByteArrayOutputStream baos =
+    	if (_testMode)
+    	{
+    		byte[] buf = page.getContentStream().getContent();
+    		
+    		// Write stream uncompressed in test mode.
+            newobj();
+            append("<<\n");
+            append("/Length ");
+            append(buf.length);
+            append("\n");
+            append(">>\n");
+            append("stream\n");
+            append(page.getContentStream().buf);
+            append("\nendstream\n");
+            endobj();
+    	}
+    	else
+    	{
+    		ByteArrayOutputStream baos =
                 new ByteArrayOutputStream();
-        DeflaterOutputStream dos =
+    		
+    		DeflaterOutputStream dos =
                 new DeflaterOutputStream(baos, new Deflater());
-        byte[] buf = page.getContentStream().getContent();
+    		
+    		byte[] buf = page.getContentStream().getContent();
 
-        try {
-			dos.write(buf, 0, buf.length);
-	        dos.finish();
-        } catch (IOException e) {
-			throw new PdfException(e);
-		}
+    		try {
+    			dos.write(buf, 0, buf.length);
+    			dos.finish();
+    		} catch (IOException e) {
+    			throw new PdfException(e);
+    		}
 
-        //page.buf = null;    // Release the page content memory!
-
-        newobj();
-        append("<<\n");
-        //append("/Filter /FlateDecode\n");
-        append("/Length ");
-        //append(baos.size());
-append(buf.length);
-        append("\n");
-        append(">>\n");
-        append("stream\n");
-        //append(baos);
-append(page.getContentStream().buf);
-        append("\nendstream\n");
-        endobj();
+            newobj();
+            append("<<\n");
+            append("/Filter /FlateDecode\n");
+            append("/Length ");
+            append(baos.size());
+            append("\n");
+            append(">>\n");
+            append("stream\n");
+            append(baos);
+            append("\nendstream\n");
+            endobj();
+    	}
+    		
         page.contents.add(objNumber);
     }
 

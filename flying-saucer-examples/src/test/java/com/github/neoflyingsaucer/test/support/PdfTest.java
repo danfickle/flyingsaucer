@@ -17,6 +17,7 @@ import com.github.neoflyingsaucer.pdf2dout.Pdf2FontResolver;
 import com.github.neoflyingsaucer.pdf2dout.Pdf2ImageResolver;
 import com.github.neoflyingsaucer.pdf2dout.Pdf2Out;
 import com.github.neoflyingsaucer.pdf2dout.Pdf2ReplacedElementResolver;
+import com.github.neoflyingsaucer.pdf2dout.Pdf2Out.PdfOutMode;
 
 public class PdfTest 
 {
@@ -44,7 +45,7 @@ public class PdfTest
     	r3.setReplacedElementResolver(new Pdf2ReplacedElementResolver());
     	r3.prepare();
     	
-    	Pdf2Out out = new Pdf2Out(PDF_DEFAULT_DOTS_PER_POINT);
+    	Pdf2Out out = new Pdf2Out(PDF_DEFAULT_DOTS_PER_POINT, PdfOutMode.TEST_MODE);
 
     	try {
 			out.initializePdf(bs);
