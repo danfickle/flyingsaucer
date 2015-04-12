@@ -148,4 +148,40 @@ public class TestPage
 		pdf.prepare(html);
 		pdf.assertContains("/MediaBox");
 	}
+	
+	@Test
+	public void testWhitespaceHandling()
+	{
+		PdfTest pdf = new PdfTest("WhitespaceHandling");
+
+		String html =
+			"<html><head><style>" +
+		    "@page { size: A4; margin: 0; }" +
+		    "</style></head><body>" +
+		    "<span>TEST    WS-COLLAPSE</span>" +
+		    "<pre>TEST     WS-PRE</pre></body></html>";
+		
+		pdf.prepare(html);
+		pdf.assertContains("(TEST WS-COLLAPSE)");
+		pdf.assertContains("(TEST     WS-PRE)");
+	}
+
+	@Test
+	@Ignore("Failing (eating a space before the newline in the pre test)")
+	public void testWhitespaceHandlingWithNewlines()
+	{
+		PdfTest pdf = new PdfTest("WhitespaceHandlingWithNewlines");
+
+		String html =
+			"<html><head><style>" +
+		    "@page { size: A4; margin: 0; }" +
+		    "</style></head><body>" +
+		    "<span>TEST  \n  WS-COLLAPSE</span>" +
+		    "<pre>TEST   \n  WS-PRE</pre></body></html>";
+		
+		pdf.prepare(html);
+		pdf.assertContains("(TEST WS-COLLAPSE)");
+		pdf.assertContains("(TEST   )");
+		pdf.assertContains("(  WS-PRE)");
+	}
 }

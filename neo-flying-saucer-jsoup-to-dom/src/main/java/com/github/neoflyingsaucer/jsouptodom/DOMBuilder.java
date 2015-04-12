@@ -163,7 +163,7 @@ public class DOMBuilder {
 
       org.jsoup.nodes.TextNode t = ((org.jsoup.nodes.TextNode) node);
       if (!(out instanceof Document)) {
-        out.appendChild(doc.createTextNode(t.text()));
+        out.appendChild(doc.createTextNode(t.getWholeText()));
       }
     } else if (node instanceof org.jsoup.nodes.DataNode) {
       final org.jsoup.nodes.DataNode d = (org.jsoup.nodes.DataNode) node;
