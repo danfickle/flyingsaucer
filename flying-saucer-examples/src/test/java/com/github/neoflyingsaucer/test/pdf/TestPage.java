@@ -12,6 +12,29 @@ public class TestPage
 			"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAAE0lEQVR4nGP4zwAE/2EIwcLDAQCQsQ/xhr9I3AAAAABJRU5ErkJggg==";
 	
 	@Test
+	public void testLinearGradientWithAlpha()
+	{
+		PdfTest pdf = new PdfTest("LinearGradientWithAlpha");
+		
+		String html = 
+			"<html><head><style>" +
+			"@page { size: 100px 20px; margin: 0 }" +
+			"body { margin: 0; }" +
+			"div { background-color: white; background-image: linear-gradient(to right, rgba(255, 0, 0, 0.5), rgba(0, 255, 0, 0.2)); width: 100px; height: 20px; }" +
+			"</style></head><body><div></div></body></html>";
+
+		pdf.prepare(html);
+		
+		String xObjectDict = 
+			"/BBox [0.0 0.0 75.0 15.0]\n" +
+			"/FormType 1\n" +
+			"/Subtype /Form\n" +
+			"/Type /XObject\n";
+		
+		pdf.assertContains(xObjectDict);
+	}
+	
+	@Test
 	public void testLinearGradient()
 	{
 		PdfTest pdf = new PdfTest("LinearGradient");
