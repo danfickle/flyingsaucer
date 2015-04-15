@@ -24,22 +24,20 @@ import com.github.neoflyingsaucer.extend.output.FontResolver;
 import com.github.neoflyingsaucer.extend.output.FontSpecificationI;
 import com.github.neoflyingsaucer.extend.output.FontSpecificationI.FontStyle;
 import com.github.neoflyingsaucer.extend.output.FontSpecificationI.FontVariant;
-import com.github.pdfstream.CoreFont;
-import com.github.pdfstream.Font;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
-/**
- * Description of the Class
- *
- * @author Joshua Marinacci
- */
+import static com.github.neoflyingsaucer.pdf2dout.Pdf2PdfBoxWrapper.*;
+
 public class Pdf2FontResolver implements FontResolver
 {
 	private Map<String, FontFamily> _fontFamilies = createInitialFontMap();
@@ -55,7 +53,6 @@ public class Pdf2FontResolver implements FontResolver
         final FontStyle styleN = 
     	    (! (style == FontStyle.NORMAL || style == FontStyle.OBLIQUE
              || style == FontStyle.ITALIC)) ? FontStyle.NORMAL : style;
-        
         
         if (families != null) 
         {
@@ -75,10 +72,12 @@ public class Pdf2FontResolver implements FontResolver
 	private FSFont resolveFont(String fontFamily, float size,
 			int weight, FontStyle style, FontVariant variant)
 	{
-        final String normalizedFontFamily = normalizeFontFamily(fontFamily);
+        String normalizedFontFamily = normalizeFontFamily(fontFamily);
 
-        final FontFamily family = _fontFamilies.get(normalizedFontFamily);
+        FontFamily family = _fontFamilies.get(normalizedFontFamily);
 
+        // TODO: Case insensitive comparison.
+        
         if (family != null) {
             FontDescription result = family.match(weight, style);
             if (result != null) {
@@ -138,22 +137,22 @@ public class Pdf2FontResolver implements FontResolver
         courier.setName("Courier");
 
         courier.addFontDescription(new FontDescription(
-                createFont(CoreFont.COURIER_BOLD_OBLIQUE), FontStyle.OBLIQUE, 700));
+                createFont(PDType1Font.COURIER_BOLD_OBLIQUE), FontStyle.OBLIQUE, 700));
         courier.addFontDescription(new FontDescription(
-                createFont(CoreFont.COURIER_OBLIQUE), FontStyle.OBLIQUE, 400));
+                createFont(PDType1Font.COURIER_OBLIQUE), FontStyle.OBLIQUE, 400));
         courier.addFontDescription(new FontDescription(
-                createFont(CoreFont.COURIER_BOLD), FontStyle.NORMAL, 700));
+                createFont(PDType1Font.COURIER_BOLD), FontStyle.NORMAL, 700));
         courier.addFontDescription(new FontDescription(
-                createFont(CoreFont.COURIER), FontStyle.NORMAL, 400));
+                createFont(PDType1Font.COURIER), FontStyle.NORMAL, 400));
 
         result.put("DialogInput", courier);
         result.put("Monospaced", courier);
         result.put("Courier", courier);
     }
 
-    private static Font createFont(CoreFont coreFont) 
+    private static PDFont createFont(PDType1Font coreFont) 
     {
-    	return new Font(coreFont);
+    	return coreFont;
     }
 
 	private static void addTimes(final HashMap<String, FontFamily> result) 
@@ -162,13 +161,13 @@ public class Pdf2FontResolver implements FontResolver
         times.setName("Times");
 
         times.addFontDescription(new FontDescription(
-                createFont(CoreFont.TIMES_BOLD_ITALIC), FontStyle.ITALIC, 700));
+                createFont(PDType1Font.TIMES_BOLD_ITALIC), FontStyle.ITALIC, 700));
         times.addFontDescription(new FontDescription(
-                createFont(CoreFont.TIMES_ITALIC), FontStyle.ITALIC, 400));
+                createFont(PDType1Font.TIMES_ITALIC), FontStyle.ITALIC, 400));
         times.addFontDescription(new FontDescription(
-                createFont(CoreFont.TIMES_BOLD), FontStyle.NORMAL, 700));
+                createFont(PDType1Font.TIMES_BOLD), FontStyle.NORMAL, 700));
         times.addFontDescription(new FontDescription(
-                createFont(CoreFont.TIMES_ROMAN), FontStyle.NORMAL, 400));
+                createFont(PDType1Font.TIMES_ROMAN), FontStyle.NORMAL, 400));
 
         result.put("Serif", times);
         result.put("TimesRoman", times);
@@ -180,13 +179,13 @@ public class Pdf2FontResolver implements FontResolver
         helvetica.setName("Helvetica");
 
         helvetica.addFontDescription(new FontDescription(
-                createFont(CoreFont.HELVETICA_BOLD_OBLIQUE), FontStyle.OBLIQUE, 700));
+                createFont(PDType1Font.HELVETICA_BOLD_OBLIQUE), FontStyle.OBLIQUE, 700));
         helvetica.addFontDescription(new FontDescription(
-                createFont(CoreFont.HELVETICA_OBLIQUE), FontStyle.OBLIQUE, 400));
+                createFont(PDType1Font.HELVETICA_OBLIQUE), FontStyle.OBLIQUE, 400));
         helvetica.addFontDescription(new FontDescription(
-                createFont(CoreFont.HELVETICA_BOLD), FontStyle.NORMAL, 700));
+                createFont(PDType1Font.HELVETICA_BOLD), FontStyle.NORMAL, 700));
         helvetica.addFontDescription(new FontDescription(
-                createFont(CoreFont.HELVETICA), FontStyle.NORMAL, 400));
+                createFont(PDType1Font.HELVETICA), FontStyle.NORMAL, 400));
 
         result.put("Dialog", helvetica);
         result.put("SansSerif", helvetica);
@@ -219,7 +218,7 @@ public class Pdf2FontResolver implements FontResolver
         private FontStyle _style;
         private int _weight;
 
-        private Font _font;
+        private PDFont _font;
 
         private float _underlinePosition;
         private float _underlineThickness;
@@ -232,22 +231,22 @@ public class Pdf2FontResolver implements FontResolver
         public FontDescription() {
         }
 
-        public FontDescription(final Font font) {
+        public FontDescription(PDFont font) {
             this(font, FontStyle.NORMAL, 400);
         }
 
-        public FontDescription(final Font font, final FontStyle style, final int weight) {
+        public FontDescription(PDFont font, FontStyle style, int weight) {
             _font = font;
             _style = style;
             _weight = weight;
             setMetricDefaults();
         }
 
-        public Font getFont() {
+        public PDFont getFont() {
             return _font;
         }
 
-        public void setFont(final Font font) {
+        public void setFont(PDFont font) {
             _font = font;
         }
 
@@ -255,7 +254,7 @@ public class Pdf2FontResolver implements FontResolver
             return _weight;
         }
 
-        public void setWeight(final int weight) {
+        public void setWeight(int weight) {
             _weight = weight;
         }
 
@@ -263,7 +262,7 @@ public class Pdf2FontResolver implements FontResolver
             return _style;
         }
 
-        public void setStyle(final FontStyle style) {
+        public void setStyle(FontStyle style) {
             _style = style;
         }
 
@@ -312,7 +311,7 @@ public class Pdf2FontResolver implements FontResolver
 //                _yStrikeoutSize = 100;
 //            } else {
                 // Do what the JDK does, size will be calculated by ITextTextRenderer
-                _yStrikeoutPosition = (_font.getBBoxURy() * 1000f) / 3.0f;
+                _yStrikeoutPosition = (pdfGetFontBoundingBox(_font).getUpperRightY() * 1000f) / 3.0f;
 //            }
         }
 

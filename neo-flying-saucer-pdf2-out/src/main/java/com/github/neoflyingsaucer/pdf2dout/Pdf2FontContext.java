@@ -21,12 +21,14 @@ package com.github.neoflyingsaucer.pdf2dout;
 
 import java.awt.Rectangle;
 
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDFont;
+
 import com.github.neoflyingsaucer.extend.output.FSFont;
 import com.github.neoflyingsaucer.extend.output.FSFontMetrics;
 import com.github.neoflyingsaucer.extend.output.FSGlyphVector;
 import com.github.neoflyingsaucer.extend.output.FontContext;
 import com.github.neoflyingsaucer.pdf2dout.Pdf2FontResolver.FontDescription;
-import com.github.pdfstream.Font;
 
 public class Pdf2FontContext implements FontContext 
 {
@@ -35,13 +37,14 @@ public class Pdf2FontContext implements FontContext
 	@Override
     public FSFontMetrics getFontMetrics(FSFont font, String string) 
 	{
-        final FontDescription descr = ((Pdf2Font )font).getFontDescription();
-        final Font bf = descr.getFont();
-        final float size = font.getSize2D() / 1000f;
-        final Pdf2MetricsAdapter result = new Pdf2MetricsAdapter();
-
-        result.setAscent(bf.getBBoxURy() * size);
-        result.setDescent(-bf.getBBoxLLy() * size);
+        FontDescription descr = ((Pdf2Font )font).getFontDescription();
+        PDFont bf = descr.getFont();
+        float size = font.getSize2D() / 1000f;
+        Pdf2MetricsAdapter result = new Pdf2MetricsAdapter();
+        PDRectangle bbox = Pdf2PdfBoxWrapper.pdfGetFontBoundingBox(bf);
+        
+        result.setAscent(bbox.getUpperRightY() * size);
+        result.setDescent(-bbox.getLowerLeftY() * size);
         
         result.setStrikethroughOffset(-descr.getYStrikeoutPosition() / 1000f * size);
         if (descr.getYStrikeoutSize() != 0) {
@@ -59,8 +62,8 @@ public class Pdf2FontContext implements FontContext
 	@Override
 	public int getWidth(FSFont font, String s) 
 	{
-        final Font bf = ((Pdf2Font)font).getFontDescription().getFont();
-        final float result = (bf.stringWidth(s)) * (font.getSize2D() / 1000f);
+        PDFont bf = ((Pdf2Font) font).getFontDescription().getFont();
+        float result = (Pdf2PdfBoxWrapper.pdfGetStringWidth(bf, s)) * (font.getSize2D() / 1000f);
         
         if (result - Math.floor(result) < TEXT_MEASURING_DELTA) {
             return (int)result;

@@ -7,6 +7,109 @@ import com.github.neoflyingsaucer.test.support.PdfTest;
 
 public class TestPage 
 {
+	// An image (4px x 4px) with one red(R) pixel at top left and the rest blue(B).
+	private static final String PATTERN_IMAGE_DATA_URL = 
+			"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAAE0lEQVR4nGP4zwAE/2EIwcLDAQCQsQ/xhr9I3AAAAABJRU5ErkJggg==";
+	
+	@Test
+	public void testLinearGradient()
+	{
+		PdfTest pdf = new PdfTest("LinearGradient");
+		
+		String html = 
+			"<html><head><style>" +
+			"@page { size: 100px 20px; margin: 0 }" +
+			"body { margin: 0; }" +
+			"div { background-color: white; background-image: linear-gradient(to right, #f00, #00f); width: 100px; height: 20px; }" +
+			"</style></head><body><div></div></body></html>";
+
+		pdf.prepare(html);
+		
+		String patternDict = 
+			"/Type /Pattern\n" +
+			"/PatternType 2\n";
+		
+		String shadingDict = 
+			"/ShadingType 2\n" +
+			"/ColorSpace /DeviceRGB\n" +
+			"/Extend [true true]\n";
+
+		String stitcherDict = 
+			"/FunctionType 3\n" +
+			"/Domain [0.0 1.0]\n" +
+			"/Bounds []\n" +
+			"/Encode [0.0 1.0]\n";
+		
+		String terminalDict = 
+			"/FunctionType 2\n" +
+			"/N 1.0\n" +
+			"/Domain [0.0 1.0]\n" +
+			"/C0 [1.0 0.0 0.0]\n" +
+			"/C1 [0.0 0.0 1.0]\n";
+		
+		pdf.assertContains(patternDict);
+		pdf.assertContains(shadingDict);
+		pdf.assertContains(stitcherDict);
+		pdf.assertContains(terminalDict);
+	}
+
+	@Test
+	public void testPNGImage()
+	{
+		PdfTest pdf = new PdfTest("PNGImage");
+		
+		String html =
+			"<html><head><style>" +
+			"@page { size: 4px 4px; margin: 0 }" +
+			"body {  margin: 0; }" +
+			"div { background-image: url(" + PATTERN_IMAGE_DATA_URL + "); width: 4px; height: 4px; }" +
+			"</style></head><body><div></div></body></html>";
+		
+		String imgObject =
+			"/Type /XObject\n" +
+			"/Subtype /Image\n" +
+			"/Filter /FlateDecode\n" +
+			"/ColorSpace /DeviceRGB\n" +
+			"/BitsPerComponent 8\n" +
+			"/Height 4\n" +
+			"/Width 4\n";
+		
+		pdf.prepare(html);
+		pdf.assertContains(imgObject);
+	}
+
+	@Test
+	public void testBasicFonts()
+	{
+		PdfTest pdf = new PdfTest("BasicFonts");
+		
+		String html =
+			"<html><head><style>" +
+		     "#1 { font-family: Times; font-weight: bold; font-size: 12pt; }" +
+			 "#2 { font-family: Courier; font-weight: normal; font-size: 36px; }" +
+		     "#3 { font-family: Helvetica; font-weight: 800; font-size: 10em; }" +
+			 "</style></head><body><div id=1>TEST1</div><div id=2>TEST2</div><div id=3>TEST3</div></body></html>";
+		
+		pdf.prepare(html);
+		pdf.assertContains("/BaseFont /Times-Bold");
+		pdf.assertContains("/BaseFont /Courier");
+		pdf.assertContains("/BaseFont /Helvetica-Bold");
+	}
+
+	@Test
+	public void testBasicColors()
+	{
+		PdfTest pdf = new PdfTest("BasicColors");
+		
+		String html =
+			"<html><head><style>body { color: #f00; background-color: #0f0; border: 1px solid #00f; }</style></head><body>TESTING</body></html>";
+		
+		pdf.prepare(html);
+		pdf.assertContains("1 0 0 rg");
+		pdf.assertContains("0 0 1 rg");
+		pdf.assertContains("0 1 0 rg");
+	}
+
 	@Test
 	public void testPageSizeA4()
 	{
@@ -28,7 +131,7 @@ public class TestPage
 			"<html><head><style>@page { size: legal; }</style></head><body></body></html>";
 		
 		pdf.prepare(html);
-		pdf.assertContains("/MediaBox [0.0 0.0 612 1008]");
+		pdf.assertContains("/MediaBox [0.0 0.0 612.0 1008.0]");
 	}
 	
 	@Test
@@ -52,7 +155,7 @@ public class TestPage
 			"<html><head><style>@page { size: 3in 4in; margin: 0; }</style></head><body></body></html>";
 		
 		pdf.prepare(html);
-		pdf.assertContains("/MediaBox [0.0 0.0 216 288]");
+		pdf.assertContains("/MediaBox [0.0 0.0 216.0 288.0]");
 	}
 	
 	@Test
@@ -67,7 +170,6 @@ public class TestPage
 		pdf.assertContains("/MediaBox [0.0 0.0 22.5 22.5]");
 
 		String pageClipOperation = 
-			"q\n" +
 			"3 21.75 m\n" +
 			"21 21.75 l\n" +
 			"21 2.25 l\n" +
@@ -122,11 +224,11 @@ public class TestPage
 		
 		// Correct based on visual inspection of resulting PDF.
 		String drawEllipseOperation = 
-			"2.775 41.588 m\n" +
-			"3.541 41.588 4.163 40.966 4.163 40.2 c\n" +
-			"4.163 39.434 3.541 38.812 2.775 38.812 c\n" +
-			"2.009 38.812 1.388 39.434 1.388 40.2 c\n" +
-			"1.388 40.966 2.009 41.588 2.775 41.588 c\n" +
+			"2.7750000954 41.5875015259 m\n" +
+			"3.5406002998 41.5875015259 4.1625003815 40.9655990601 4.1625003815 40.2000007629 c\n" +
+			"4.1625003815 39.4343986511 3.5406002998 38.8125 2.7750000954 38.8125 c\n" +
+			"2.0093998909 38.8125 1.3875000477 39.4343986511 1.3875000477 40.2000007629 c\n" +
+			"1.3875000477 40.9655990601 2.0093998909 41.5875015259 2.7750000954 41.5875015259 c\n" +
 			"h\n" +
 			"f*\n";
 		

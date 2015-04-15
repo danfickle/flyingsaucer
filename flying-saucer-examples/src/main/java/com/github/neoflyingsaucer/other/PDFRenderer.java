@@ -75,7 +75,7 @@ public class PDFRenderer {
     	r3.setReplacedElementResolver(new Pdf2ReplacedElementResolver());
     	r3.prepare();
     	
-    	Pdf2Out out = new Pdf2Out(PDF_DEFAULT_DOTS_PER_POINT, PdfOutMode.PRODUCTION_MODE);
+    	Pdf2Out out = new Pdf2Out(PDF_DEFAULT_DOTS_PER_POINT, PdfOutMode.TEST_MODE);
     	BufferedOutputStream bs = new BufferedOutputStream(new FileOutputStream(filename));
     	try {
 			out.initializePdf(bs);

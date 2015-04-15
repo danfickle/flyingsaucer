@@ -1,7 +1,6 @@
 package com.github.neoflyingsaucer.pdf2dout;
 
 import java.awt.BasicStroke;
-import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Shape;
 import java.awt.Stroke;
@@ -11,17 +10,36 @@ import java.awt.geom.Line2D;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.Point2D.Float;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
-import java.awt.image.Raster;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.imageio.ImageIO;
 
+import org.apache.pdfbox.cos.COSArray;
+import org.apache.pdfbox.cos.COSBoolean;
+import org.apache.pdfbox.cos.COSDictionary;
+import org.apache.pdfbox.cos.COSFloat;
+import org.apache.pdfbox.cos.COSInteger;
+import org.apache.pdfbox.cos.COSName;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDDocumentInformation;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDResources;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.graphics.PDExtendedGraphicsState;
+import org.apache.pdfbox.pdmodel.graphics.pattern.PDPatternResources;
+import org.apache.pdfbox.pdmodel.graphics.xobject.PDJpeg;
+import org.apache.pdfbox.pdmodel.graphics.xobject.PDPixelMap;
+import org.apache.pdfbox.pdmodel.interactive.action.type.PDActionURI;
+import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationLink;
+import org.apache.pdfbox.pdmodel.interactive.annotation.PDBorderStyleDictionary;
+import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +60,7 @@ import com.github.neoflyingsaucer.displaylist.DlInstruction.DlRGBColor;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlRectangle;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlReplaced;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlSetClip;
+import com.github.neoflyingsaucer.displaylist.DlInstruction.DlStopPoint;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlString;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlStringEx;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlStroke;
@@ -56,24 +75,14 @@ import com.github.neoflyingsaucer.extend.output.JustificationInfo;
 import com.github.neoflyingsaucer.extend.output.ReplacedElement;
 import com.github.neoflyingsaucer.pdf2dout.Pdf2FontResolver.FontDescription;
 import com.github.neoflyingsaucer.pdf2dout.Pdf2ReplacedElementResolver.Pdf2ImageReplacedElement;
-import com.github.pdfstream.Annotation;
-import com.github.pdfstream.Bookmark;
-import com.github.pdfstream.Destination;
-import com.github.pdfstream.JPGImage;
-import com.github.pdfstream.LinearGradient;
-import com.github.pdfstream.PDF;
-import com.github.pdfstream.PNGImage;
-import com.github.pdfstream.Page;
-import com.github.pdfstream.PdfCmykColor;
-import com.github.pdfstream.PdfColor;
-import com.github.pdfstream.PdfGreyScaleColor;
-import com.github.pdfstream.PdfRgbaColor;
+
+import static com.github.neoflyingsaucer.pdf2dout.Pdf2PdfBoxWrapper.*;
 
 public class Pdf2Out implements DisplayListOuputDevice 
 {
 	private final float _dotsPerPoint;
 	private final PdfOutMode _mode;
-    private Page _currentPage;
+    //private Page _currentPage;
     private Stroke _stroke = STROKE_ONE;
     private Stroke _originalStroke = STROKE_ONE;
     private float _opacity = 1;
@@ -81,8 +90,11 @@ public class Pdf2Out implements DisplayListOuputDevice
     private AffineTransform _transform = new AffineTransform();
     private DlItem _color;
     private Area _clip;
-    private PDF _pdfDoc;
     private Pdf2Font _font;
+	private PDDocument _pdf;
+	private OutputStream _os;
+	private PDPage _currentPg;
+	private PDPageContentStream _content;
     
     private static final BasicStroke STROKE_ONE = new BasicStroke(1);
     private static final AffineTransform IDENTITY = new AffineTransform();
@@ -283,14 +295,26 @@ public class Pdf2Out implements DisplayListOuputDevice
 		
 		float destY = _pageHeight - link.y / _dotsPerPoint;
 		
-		Destination destination = new Destination(0, destY, 0);
-        destination.setPageObjNumber(link.pageNo);
-
-        Annotation annot = new Annotation(null, destination,
-        		(float) targetArea.getMinX(), (float) targetArea.getMinY(),
-                (float) targetArea.getMaxX(), (float) targetArea.getMaxY());
-
-        _currentPage.addAnnotation(annot);
+		PDPageXYZDestination destination = new PDPageXYZDestination();
+		destination.setPageNumber(link.pageNo);
+		destination.setTop((int) destY);
+		
+		PDRectangle rect = new PDRectangle();
+		rect.setLowerLeftX((float) targetArea.getMinX());
+		rect.setLowerLeftY((float) targetArea.getMinY());
+		rect.setUpperRightX((float) targetArea.getMaxX());
+		rect.setUpperRightY((float) targetArea.getMaxY());
+		
+		PDBorderStyleDictionary borderNone = new PDBorderStyleDictionary();
+		borderNone.setWidth(0);
+		
+		PDAnnotationLink annotation = new PDAnnotationLink();
+		annotation.setDestination(destination);
+		annotation.setPage(_currentPg);
+		annotation.setRectangle(rect); 
+		annotation.setBorderStyle(borderNone);
+		
+		pdfAddAnnotation(_currentPg, annotation);
 	}
 
 	/**
@@ -309,11 +333,24 @@ public class Pdf2Out implements DisplayListOuputDevice
 		Rectangle2D targetArea = new Rectangle2D.Float((float) pdfCorner.getX(), (float) pdfCorner.getY(),
 	                (float) getDeviceLength(link.w), (float) getDeviceLength(link.h));
 		
-        Annotation annot = new Annotation(link.uri, (Destination) null,
-        		(float) targetArea.getMinX(), (float) targetArea.getMinY(),
-                (float) targetArea.getMaxX(), (float) targetArea.getMaxY());
+		PDRectangle rect = new PDRectangle();
+		rect.setLowerLeftX((float) targetArea.getMinX());
+		rect.setLowerLeftY((float) targetArea.getMinY());
+		rect.setUpperRightX((float) targetArea.getMaxX());
+		rect.setUpperRightY((float) targetArea.getMaxY());
+		
+		PDBorderStyleDictionary borderNone = new PDBorderStyleDictionary();
+		borderNone.setWidth(0);
+		
+		PDActionURI action = new PDActionURI();
+		action.setURI(link.uri);
+		
+		PDAnnotationLink annotation = new PDAnnotationLink();
+		annotation.setAction(action);
+		annotation.setBorderStyle(borderNone);
+		annotation.setRectangle(rect);
 
-        _currentPage.addAnnotation(annot);
+		pdfAddAnnotation(_currentPg, annotation);
 	}
 	
     private float getDeviceLength(float length) 
@@ -327,38 +364,146 @@ public class Pdf2Out implements DisplayListOuputDevice
      */
 	protected void createBookmark(DlBookmark bm)
 	{
-		float destY = _pageHeight - bm.y / _dotsPerPoint;
-
-		Destination destination = new Destination(0, destY, 0);
-        destination.setPageObjNumber(bm.pageNo);
+		// TODO
 		
-    	Bookmark pdfbm = new Bookmark(destination, bm.content, bm.level);
-    	_currentPage.getPdf().addBookmark(pdfbm);
+		//		float destY = _pageHeight - bm.y / _dotsPerPoint;
+//
+//		Destination destination = new Destination(0, destY, 0);
+//        destination.setPageObjNumber(bm.pageNo);
+//		
+//    	Bookmark pdfbm = new Bookmark(destination, bm.content, bm.level);
+//    	_currentPage.getPdf().addBookmark(pdfbm);
 	}
 
 	public void finish()
 	{
-		try {
-			_pdfDoc.close();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		pdfSavePdf(_pdf, _os);
+		pdfCloseDocument(_pdf);
 	}
 	
 	/**
 	 * MUST be called after rendering every page.
 	 */
-	public void finishPage() 
+	public void finishPage()
 	{
-		_currentPage.restore();
+		pdfCloseContent(_content);
 	}
 	
-	/**
+	private COSDictionary createStitcherFunction(DlLinearGradient g, float dotsPerPoint, COSArray shadingFunctions)
+	{
+        COSDictionary shadingDictionary = new COSDictionary();
+        shadingDictionary.setItem("FunctionType", COSInteger.THREE);
+
+        COSArray domainArray = new COSArray();
+        domainArray.add(new COSFloat(0));
+        domainArray.add(new COSFloat(1));
+        shadingDictionary.setItem("Domain", domainArray);
+		
+        float lastStopPosition = g.stopPoints.get(g.stopPoints.size() - 1).dots;
+        
+        COSArray bounds = new COSArray();
+ 		for (int i = 1; i < g.stopPoints.size() - 1;i++)
+		{
+			bounds.add(new COSFloat(g.stopPoints.get(i).dots / lastStopPosition));
+		}
+ 		shadingDictionary.setItem("Bounds", bounds);
+		
+ 		COSArray encoding = new COSArray();
+		for (int i = 0; i < g.stopPoints.size() - 1;i++)
+		{
+			encoding.add(new COSFloat(0));
+			encoding.add(new COSFloat(1));
+		}
+		shadingDictionary.setItem("Encode", encoding);
+		
+		shadingDictionary.setItem("Functions", shadingFunctions);
+		return shadingDictionary;
+	}
+	
+    private COSArray addLowerLevelFunctions(DlLinearGradient g, boolean isOpacity)
+    {
+		COSArray array = new COSArray();
+    	
+    	for (int i = 0; i < g.stopPoints.size() - 1; i++)
+		{
+			COSDictionary obj = new COSDictionary();
+
+			DlStopPoint sv = g.stopPoints.get(i);
+			DlStopPoint nxt = g.stopPoints.get(i + 1);
+
+			obj.setItem("FunctionType", COSInteger.TWO);
+			obj.setItem("N", new COSFloat(1));
+			
+			COSArray domain = new COSArray();
+			domain.add(new COSFloat(0));
+			domain.add(new COSFloat(1));
+			obj.setItem("Domain", domain);
+
+			if (!isOpacity)
+			{
+				// Color at start of function domain.
+				COSArray startColor = new COSArray();
+				startColor.add(new COSFloat(sv.rgb.r / 255f));
+				startColor.add(new COSFloat(sv.rgb.g / 255f));
+				startColor.add(new COSFloat(sv.rgb.b / 255f));
+				obj.setItem("C0", startColor);
+				
+				// Color at end of function domain.
+				COSArray endColor = new COSArray();
+				endColor.add(new COSFloat(nxt.rgb.r / 255f));
+				endColor.add(new COSFloat(nxt.rgb.g / 255f));
+				endColor.add(new COSFloat(nxt.rgb.b / 255f));
+				obj.setItem("C1", endColor);
+			}
+//			else if (colorSpace == PColorSpace.OPACITY)
+//			{
+// TODO
+//				pdf.append("/C0 [");
+//				pdf.append(sv.rgb.a / 255f);
+//				pdf.append("]\n");
+//				
+//				pdf.append("/C1 [");
+//				pdf.append(nxt.rgb.a / 255f);
+//				pdf.append("]\n");
+//			}
+
+			array.add(obj);
+		}
+
+    	return array;
+    }
+    
+    private COSDictionary createShadingDictionary(DlLinearGradient g, COSDictionary stitcher, float x, float y)
+    {
+    	COSDictionary dict = new COSDictionary();
+ 
+   		dict.setItem("ShadingType", COSInteger.TWO);
+   		dict.setItem("ColorSpace", COSName.DEVICERGB);
+   		
+   		COSArray extend = new COSArray();
+   		extend.add(COSBoolean.TRUE);
+   		extend.add(COSBoolean.TRUE);
+   		dict.setItem("Extend", extend);
+   		
+   		COSArray coords = new COSArray();
+   		coords.add(new COSFloat((g.x1 + x * _dotsPerPoint) / _dotsPerPoint));
+   		coords.add(new COSFloat((g.y2 + y * _dotsPerPoint) / _dotsPerPoint));
+   		coords.add(new COSFloat((g.x2 + x * _dotsPerPoint) / _dotsPerPoint));
+   		coords.add(new COSFloat((g.y1 + y * _dotsPerPoint) / _dotsPerPoint));
+   		
+   		dict.setItem("Coords", coords);
+   		dict.setItem("Function", stitcher);
+   		
+   		return dict;
+    }
+
+    private int lGradientObjNumber = 0;
+    
+    /**
 	 * Draws a linear gradient on the PDF page.
 	 * @param g DlLinearGradient using display list coordinate system.
 	 */
-	protected void drawLinearGradient(DlLinearGradient g) 
+	protected void drawLinearGradient(DlLinearGradient g)
 	{
         Rectangle2D.Float rect = new Rectangle2D.Float(g.x, g.y, g.width, g.height);
         Shape s = _transform.createTransformedShape(rect);
@@ -368,9 +513,33 @@ public class Pdf2Out implements DisplayListOuputDevice
         float y2 = (float) (_pageHeight - rect2.getMaxY());
         float y3 = Math.min(y1,  y2);
 
-		LinearGradient lg = _currentPage.getPdf().addLinearGradient(g, _dotsPerPoint, (float) rect2.getMinX(), y3, (float) rect2.getWidth(), (float) rect2.getHeight());
-     
-        _currentPage.drawLinearGradient(lg);
+        COSArray functions = addLowerLevelFunctions(g, false);
+        COSDictionary stitcher = createStitcherFunction(g, _dotsPerPoint, functions);
+        COSDictionary shading = createShadingDictionary(g, stitcher, (float) rect2.getMinX(), (float) y3);
+        
+        PDResources resources = _currentPg.findResources();
+
+        Map<String, PDPatternResources> patterns = pdfGetPatterns(resources);
+        if (patterns == null)
+        	patterns = new TreeMap<String, PDPatternResources>();
+        
+        COSDictionary patternDictionary = new COSDictionary();
+        patternDictionary.setItem("Type", COSName.PATTERN);
+        patternDictionary.setItem("PatternType", COSInteger.TWO);
+        patternDictionary.setItem("Shading", shading);
+        
+        PDPatternResources patternResources = pdfCreatePatterns(patternDictionary);
+        patterns.put("LGRADIENT" + lGradientObjNumber, patternResources);
+        
+        resources.setPatterns(patterns);
+
+        pdfSaveGraphics(_content);
+        pdfAppendRawCommand("/Pattern cs\n", _content);
+        pdfAppendRawCommand("/LGRADIENT" + lGradientObjNumber + " scn\n", _content);
+        pdfFillRect((float) rect2.getMinX(), y3, (float) rect2.getWidth(), (float) rect2.getHeight(), _content);
+        pdfRestoreGraphics(_content);
+        
+        lGradientObjNumber++;
 	}
 	
     private float[] makeJustificationArray(final char[] cc, final JustificationInfo info) 
@@ -411,8 +580,6 @@ public class Pdf2Out implements DisplayListOuputDevice
 		if (s.isEmpty())
 			return;
 
-		final Page cb = _currentPage;
-
 		// The fill color is also used for text.
 		ensureFillColor();
 
@@ -427,69 +594,69 @@ public class Pdf2Out implements DisplayListOuputDevice
 	    final double[] mx = new double[6];
 	    inverse.getMatrix(mx);
 
-	    cb.beginText();
+	    pdfBeginText(_content);
 	    
 	    // Check if bold or italic need to be emulated
 	    boolean resetMode = false;
-
-	    final FontDescription desc = _font.getFontDescription();
-	    final float fontSize = _font.getSize2D() / _dotsPerPoint;
-	    cb.setTextFont(desc.getFont(), fontSize);
+//
+	    FontDescription desc = _font.getFontDescription();
+	    float fontSize = _font.getSize2D() / _dotsPerPoint;
+	    pdfSetFont(desc.getFont(), fontSize, _content);
 
 	    float b = (float) mx[1];
 	    float c = (float) mx[2];
-
-//     TODO
-//	    final FontSpecificationI fontSpec = getFontSpecification();
 //
-//	    if (fontSpec != null) 
-//	    {
-//	        final int need = fontSpec.getFontWeight();
-//	        final int have = desc.getWeight();
+////     TODO
+////	    final FontSpecificationI fontSpec = getFontSpecification();
+////
+////	    if (fontSpec != null) 
+////	    {
+////	        final int need = fontSpec.getFontWeight();
+////	        final int have = desc.getWeight();
+////
+////	        if (need > have) {
+////                cb.setTextRenderingMode(2); // TEXT_RENDER_MODE_FILL_STROKE
+////                final float lineWidth = fontSize * 0.04f; // 4% of font size
+////                cb.setPenWidth(lineWidth);
+////                ensureStrokeColor();
+////                resetMode = true;
+////            }
+////
+////	        if ((fontSpec.getStyle() == FontStyle.ITALIC) && (desc.getStyle() != FontStyle.ITALIC)) 
+////	        {
+////	        	b = 0f;
+////	            c = 0.21256f;
+////	        }
+////	    }
 //
-//	        if (need > have) {
-//                cb.setTextRenderingMode(2); // TEXT_RENDER_MODE_FILL_STROKE
-//                final float lineWidth = fontSize * 0.04f; // 4% of font size
-//                cb.setPenWidth(lineWidth);
-//                ensureStrokeColor();
-//                resetMode = true;
-//            }
-//
-//	        if ((fontSpec.getStyle() == FontStyle.ITALIC) && (desc.getStyle() != FontStyle.ITALIC)) 
-//	        {
-//	        	b = 0f;
-//	            c = 0.21256f;
-//	        }
-//	    }
-
-	    cb.setTextMatrix((float) mx[0], b, c, (float) mx[3], (float) mx[4], (float) mx[5]);
-
+	    pdfSetTextMatrix((float) mx[0], b, c, (float) mx[3], (float) mx[4], (float) mx[5], _content);
+	    
 	    if (info == null) 
 	    {
-	    	cb.showText(s);
+	    	pdfDrawString(s, _content);
 	    }
 	    else
 	    {
 	    	final char[] cc = s.toCharArray();
 	    	final float[] justification = makeJustificationArray(cc, info);
-	    	cb.showText(cc, justification);
-	    }
-	    
-	    if (resetMode)
-	    {
-	    	cb.setTextRenderingMode(0 /* TEXT_RENDER_MODE_FILL */);
-	        cb.setPenWidth(1);
-	    }
 
-	    cb.endText();
+	    	// TODO: cb.showText(cc, justification);
+	    	pdfDrawString(s, _content);
+	    }
+//	    
+//	    if (resetMode)
+//	    {
+//	    	cb.setTextRenderingMode(0 /* TEXT_RENDER_MODE_FILL */);
+//	        cb.setPenWidth(1);
+//	    }
+//
+	    pdfEndText(_content);
 	}
 	
 
 	protected void setFont(FSFont font) 
 	{
 		_font = (Pdf2Font) font;
-		
-		_currentPage.getPdf().registerFont(_font.getFontDescription().getFont());
 	}
 	
 	/**
@@ -499,7 +666,7 @@ public class Pdf2Out implements DisplayListOuputDevice
 	 * @return The flipped y transformation.
 	 */
     private AffineTransform normalizeMatrix(final AffineTransform current) {
-        final double[] mx = new double[6];
+        double[] mx = new double[6];
         AffineTransform result = new AffineTransform();
         result.getMatrix(mx);
         mx[3] = -1;
@@ -521,86 +688,71 @@ public class Pdf2Out implements DisplayListOuputDevice
      */
 	protected void drawImage(FSImage fsImage, int x, int y) 
 	{
-		final Pdf2Image image = ((Pdf2Image) fsImage);
+		Pdf2Image image = ((Pdf2Image) fsImage);
 
         if (fsImage.getHeight() <= 0 || fsImage.getWidth() <= 0) {
             return;
         }
 
-        final AffineTransform at = AffineTransform.getTranslateInstance(x, y);
+        AffineTransform at = AffineTransform.getTranslateInstance(x, y);
         at.translate(0, fsImage.getHeight());
         at.scale(fsImage.getWidth(), fsImage.getHeight());
 
-        final AffineTransform inverse = normalizeMatrix(_transform);
-        final AffineTransform flipper = AffineTransform.getScaleInstance(1, -1);
+        AffineTransform inverse = normalizeMatrix(_transform);
+        AffineTransform flipper = AffineTransform.getScaleInstance(1, -1);
         inverse.concatenate(at);
         inverse.concatenate(flipper);
 
-        final double[] mx = new double[6];
-        inverse.getMatrix(mx);
-        
-        _currentPage.setOpacity(_opacity);
+        String name = registerExtGState(_opacity, _currentPg);
+		pdfAppendRawCommand("/" + name + " gs\n", _content);
         
         if (image.isJpeg())
         {
-        	JPGImage img = new JPGImage(image.getUri(), image.getBytes(), image.getIntrinsicWidth(), image.getIntrinsicHeight(), image.getNumberComponents());
-        	_currentPage.addImage(img, (float) mx[0], (float) mx[1], (float) mx[2], (float) mx[3], (float) mx[4], (float) mx[5]);
+        	PDJpeg jpeg = pdfCreateJpeg(_pdf, new ByteArrayInputStream(image.getBytes()));
+        	pdfDrawXObject(jpeg, inverse, _content);
         }
         else
         {
-        	BufferedImage img;
-			try {
-				img = ImageIO.read(new ByteArrayInputStream(image.getBytes()));
-			} catch (IOException e) {
-				LOGGER.warn("Unable to read image at uri({})", image.getUri(), e);
-				return;
-			}
-
-			Raster raster;
-			
-        	if (img.getType() != BufferedImage.TYPE_INT_ARGB)
+        	PDPixelMap pixel;
+        	
+        	try
         	{
-        		BufferedImage buf = new BufferedImage(image.getOriginalWidth(), image.getOriginalHeight(), BufferedImage.TYPE_INT_ARGB);
-
-        		Graphics g = buf.createGraphics();
-        		g.drawImage(img, 0, 0, null);
-        		g.dispose();
-
-        		raster = buf.getData();
+        		BufferedImage img = ImageIO.read(new ByteArrayInputStream(image.getBytes()));
+        		pixel = new PDPixelMap(_pdf, img);
         	}
-        	else
+        	catch (IOException e)
         	{
-        		raster = img.getData();
+        		LOGGER.warn("Unable to read img({})", image.getUri());
+        		return;
         	}
         	
-        	DataBufferInt buf = (DataBufferInt) raster.getDataBuffer();
-        	int[] arr = buf.getData();
-
-        	PNGImage png = new PNGImage(image.getUri(), arr, image.getOriginalWidth(), image.getOriginalHeight(), 3);
-        	_currentPage.addImage(png, (float) mx[0], (float) mx[1], (float) mx[2], (float) mx[3], (float) mx[4], (float) mx[5]);
+        	pdfDrawXObject(pixel, inverse, _content);
         }
     }
 
-	public void initializePdf(OutputStream os) throws Exception
+	public void initializePdf(OutputStream os)
 	{
-		if (_mode == PdfOutMode.PRODUCTION_MODE)
-			_pdfDoc = new PDF(os);
-		else
-			_pdfDoc = new PDF(os, true);
+		_pdf = new PDDocument();
+		_os = os;
 	}
 	
 	public void initializePage(float w, float h)
 	{
-        float[] nextPageSize = new float[] { 
-        		w / _dotsPerPoint,
-        		h / _dotsPerPoint };
+		_currentPg = new PDPage();
+		_pdf.addPage(_currentPg);
 		
-		_currentPage = new Page(_pdfDoc, nextPageSize);
-		_pageHeight = nextPageSize[1];
+		_currentPg.setMediaBox(new PDRectangle(w / _dotsPerPoint, h / _dotsPerPoint));
+		_content = pdfCreateContentStream(_pdf, _currentPg, _mode);
+
 		_transform = new AffineTransform();
 		_transform.scale(1.0d / _dotsPerPoint, 1.0d / _dotsPerPoint);
-		_currentPage.save();
-        //_linkTargetAreas = new HashSet<Rectangle2D>();
+
+		_pageHeight = h / _dotsPerPoint;
+		
+		opacityExtGStates.clear();
+		
+		pdfSaveGraphics(_content);
+		//_linkTargetAreas = new HashSet<Rectangle2D>();
 	}
 	
 	protected void drawReplaced(ReplacedElement replaced)
@@ -630,7 +782,9 @@ public class Pdf2Out implements DisplayListOuputDevice
 	
 	private void drawEllipse(int x1, int y1, int width, int height, int operation)
 	{
-       // The best 4-spline magic number
+	   assert(operation == STROKE || operation == FILL);
+		
+		// The best 4-spline magic number
        final float m4 = 0.551784f;
 
        Point2D point = new Point2D.Float(x1, y1);
@@ -647,34 +801,33 @@ public class Pdf2Out implements DisplayListOuputDevice
        r1 *= 0.5f;
        r2 *= 0.5f;
        
-       _currentPage.pathOpen();
-       _currentPage.pathMoveTo(x, normalizeY(y - r2));
+       pdfMoveTo(x, normalizeY(y - r2), _content);
 
        float[] coords = new float[] { x + m4 * r1, y - r2, x + r1, y - m4 * r2, x + r1, y };  
        normalizeY(coords);
        
-       _currentPage.pathCurveTo(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5]);
+       pdfCurveTo(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5], _content);
 
        coords = new float[] { x + r1, y + m4*r2, x + m4*r1, y + r2,x, y + r2 };
        normalizeY(coords);
       
-       _currentPage.pathCurveTo(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5]);
+       pdfCurveTo(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5], _content);
        
        coords = new float[] { x - m4 * r1, y + r2, x - r1, y + m4 * r2, x - r1, y }; 
        normalizeY(coords);
        
-       _currentPage.pathCurveTo(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5]);
+       pdfCurveTo(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5], _content);
        
        coords = new float[] { x - r1, y - m4 * r2, x - m4 * r1, y - r2, x, y - r2 }; 
        normalizeY(coords);
        
-       _currentPage.pathCurveTo(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5]);
-       _currentPage.pathCloseSubpath();
+       pdfCurveTo(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5], _content);
+       pdfCloseSubpath(_content);
 
-		if (operation == FILL)
-			_currentPage.pathFillEvenOdd();
-		else if (operation == STROKE)
-			_currentPage.pathStroke();
+       if (operation == FILL)
+			pdfFillEvenOdd(_content);
+       else if (operation == STROKE)
+			pdfStroke(_content);
     }
 	
 	protected void fillOval(int x, int y, int width, int height) 
@@ -684,16 +837,19 @@ public class Pdf2Out implements DisplayListOuputDevice
 	
 	protected void setClip(Shape s) 
 	{
-		_currentPage.restore();
-		_currentPage.save();
+		pdfRestoreGraphics(_content);
+		pdfSaveGraphics(_content);
 
+		Shape s2 = null;
+		
 		if (s != null)
-            s = _transform.createTransformedShape(s);
-        if (s == null) {
+            s2 = _transform.createTransformedShape(s);
+
+        if (s2 == null) {
             _clip = null;
         } else {
-            _clip = new Area(s);
-            followPath(s, CLIP);
+            _clip = new Area(s2);
+            followPath(s2, CLIP);
         }
 	}
 	
@@ -781,85 +937,49 @@ public class Pdf2Out implements DisplayListOuputDevice
 	 */
 	private void setStrokeDiff(Stroke newStroke) 
 	{
-		final Page cb = _currentPage;
 		if (!(newStroke instanceof BasicStroke))
 			return;
 
 		final BasicStroke nStroke = (BasicStroke) newStroke;
 
-		cb.setPenWidth(nStroke.getLineWidth());
-
+		pdfSetLineWidth(nStroke.getLineWidth(), _content);
+		
 		switch (nStroke.getEndCap()) {
         case BasicStroke.CAP_BUTT:
-            cb.setLineCapStyle(0);
+            pdfSetLineCap(0, _content);
             break;
         case BasicStroke.CAP_SQUARE:
-            cb.setLineCapStyle(2);
+            pdfSetLineCap(2, _content);
             break;
         default:
-            cb.setLineCapStyle(1);
+            pdfSetLineCap(1, _content);
             break;
         }
 		
         switch (nStroke.getLineJoin()) {
         case BasicStroke.JOIN_MITER:
-            cb.setLineJoinStyle(0);
+            pdfSetLineJoin(0, _content);
             break;
         case BasicStroke.JOIN_BEVEL:
-            cb.setLineJoinStyle(2);
+            pdfSetLineJoin(2, _content);
             break;
         default:
-            cb.setLineJoinStyle(1);
+            pdfSetLineJoin(1, _content);
             break;
         }
 
-        cb.setMiterLimit(nStroke.getMiterLimit());
-        final float dash[] = nStroke.getDashArray();
+        // TODO cb.setMiterLimit(nStroke.getMiterLimit());
+        float dash[] = nStroke.getDashArray();
 
         if (dash == null)
         {
-        	cb.setLinePattern("[] 0");
+        	pdfSetLineDash(new float[] {}, 0, _content);
         }
         else 
         {
-        	StringBuilder sb = new StringBuilder(15);
-        	sb.append('[');
-        	
-            for (int k = 0; k < dash.length; ++k) 
-            {
-            	sb.append(PDF.formatFloat(dash[k]));
-
-            	if (k != dash.length - 1)
-            		sb.append(' ');
-            }
-            sb.append(']');
-            sb.append(PDF.formatFloat(nStroke.getDashPhase()));
-            cb.setLinePattern(sb.toString());
+        	pdfSetLineDash(dash, nStroke.getDashPhase(), _content);
         }
     }
-	
-	private PdfColor getPdfColor(DlItem col, float opacity)
-	{
-			PdfColor pdfColor = PdfGreyScaleColor.BLACK;
-
-			if (col instanceof DlRGBColor)
-			{
-				DlRGBColor rgba = (DlRGBColor) col;
-				pdfColor = new PdfRgbaColor(
-					rgba.r, rgba.g, rgba.b, (int) (rgba.a * opacity));			
-			}
-			else if (col instanceof DlCMYKColor)
-			{
-				DlCMYKColor cmyk = (DlCMYKColor) col;
-				pdfColor = new PdfCmykColor(cmyk.c, cmyk.m, cmyk.y, cmyk.k, 1.0f);
-			}
-			else
-			{
-				assert(false);
-			}
-	    	
-	    	return pdfColor;
-	}
 
 	/**
 	 * PDF documents use a system where y is zero at the bottom of the document and counts up
@@ -870,7 +990,7 @@ public class Pdf2Out implements DisplayListOuputDevice
 	 */
 	private float normalizeY(final float y) 
 	{
-        return _pageHeight - y;
+		return _pageHeight - y;
     }
 
 	/**
@@ -883,17 +1003,78 @@ public class Pdf2Out implements DisplayListOuputDevice
         coords[3] = normalizeY(coords[3]);
         coords[5] = normalizeY(coords[5]);
     }
+
+	private int nextGStateNumber;
+	private Map<Float, String> opacityExtGStates = new HashMap<Float, String>();
 	
-	private void ensureFillColor() 
+	private String registerExtGState(float opacity, PDPage page)
 	{
-		PdfColor pdfColor = getPdfColor(_color, _opacity);
-		_currentPage.setBrushColor(pdfColor);
+		String name = opacityExtGStates.get(opacity);
+		
+		if (name != null)
+			return name;
+		
+		PDResources resources = _currentPg.findResources();
+
+		PDExtendedGraphicsState extgstate = new PDExtendedGraphicsState();
+		extgstate.setStrokingAlphaConstant(opacity);
+		extgstate.setNonStrokingAlphaConstant(opacity);
+
+		name = "MYGS" + nextGStateNumber++;
+		Map<String, PDExtendedGraphicsState> gss = resources.getGraphicsStates();
+
+		if (gss == null)
+		{
+			gss = new TreeMap<String, PDExtendedGraphicsState>();
+		}
+		
+		gss.put(name, extgstate);
+		opacityExtGStates.put(opacity, name);
+		
+		resources.setGraphicsStates(gss);
+		return name;
 	}
 
+	private void ensureFillColor()
+	{
+		if (_color instanceof DlRGBColor)
+		{
+			DlRGBColor rgba = (DlRGBColor) _color;
+			pdfSetFillColor(rgba.r, rgba.g, rgba.b, _content);
+
+			float opac = _opacity * (rgba.a / 255);
+			String name = registerExtGState(opac, _currentPg);
+			pdfAppendRawCommand("/" + name + " gs\n", _content);
+		}
+		else if (_color instanceof DlCMYKColor)
+		{
+			DlCMYKColor cmyk = (DlCMYKColor) _color;
+			pdfSetFillColor(cmyk.c, cmyk.m, cmyk.y, cmyk.k, _content);
+
+			String name = registerExtGState(_opacity, _currentPg);
+			pdfAppendRawCommand("/" + name + " gs\n", _content);
+		}
+	}
+	
 	private void ensureStrokeColor()
 	{
-		PdfColor pdfColor = getPdfColor(_color, _opacity);
-		_currentPage.setPenColor(pdfColor);
+		if (_color instanceof DlRGBColor)
+		{
+			DlRGBColor rgba = (DlRGBColor) _color;
+			pdfSetStrokingColor(rgba.r, rgba.g, rgba.b, _content);
+			
+			float opac = _opacity * (rgba.a / 255);
+			String name = registerExtGState(opac, _currentPg);
+			pdfAppendRawCommand("/" + name + " gs\n", _content);
+		}
+		else if (_color instanceof DlCMYKColor)
+		{
+			DlCMYKColor cmyk = (DlCMYKColor) _color;
+			pdfSetStrokingColor(cmyk.c, cmyk.m, cmyk.y, cmyk.k, _content);
+
+			String name = registerExtGState(_opacity, _currentPg);
+			pdfAppendRawCommand("/" + name + " gs\n", _content);
+		}
 	}
 	
 	/**
@@ -905,8 +1086,6 @@ public class Pdf2Out implements DisplayListOuputDevice
     {
         if (s == null)
             return;
-
-    	final Page cb = _currentPage;
         
         if (drawType == STROKE) 
         {
@@ -939,8 +1118,6 @@ public class Pdf2Out implements DisplayListOuputDevice
         final float[] coords = new float[6];
         int traces = 0;
 
-        cb.pathOpen();
-        
         while (!points.isDone())
         {
             ++traces;
@@ -950,24 +1127,23 @@ public class Pdf2Out implements DisplayListOuputDevice
             switch (segtype)
             {
             case PathIterator.SEG_CLOSE:
-            	cb.pathCloseSubpath();
+            	pdfCloseSubpath(_content);
             	break;
 
             case PathIterator.SEG_CUBICTO:
-            	cb.pathCurveTo(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5]);
+            	pdfCurveTo(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5], _content);
                 break;
 
             case PathIterator.SEG_LINETO:
-            	cb.pathLineTo(coords[0], coords[1]);
+            	pdfLineTo(coords[0], coords[1], _content);
                 break;
 
             case PathIterator.SEG_MOVETO:
-            	cb.pathOpen();
-            	cb.pathMoveTo(coords[0], coords[1]);
-                break;
+            	pdfMoveTo(coords[0], coords[1], _content);
+            	break;
 
             case PathIterator.SEG_QUADTO:
-            	cb.pathCurveTo(coords[0], coords[1], coords[2], coords[3]);
+            	pdfCurveTo(coords[0], coords[1], coords[2], coords[3], _content);
             	break;
             }
 
@@ -978,32 +1154,32 @@ public class Pdf2Out implements DisplayListOuputDevice
         case FILL:
             if (traces > 0) {
                 if (points.getWindingRule() == PathIterator.WIND_EVEN_ODD)
-                	cb.pathFillEvenOdd();
+                	pdfFillEvenOdd(_content);
                 else
-                	cb.pathFillNonZero();
+                	pdfFillNonZero(_content);
             }
             break;
         case STROKE:
             if (traces > 0)
-                cb.pathStroke();
+                pdfStroke(_content);
             break;
         default: // drawType==CLIP
             if (traces == 0)
                 ;//cb.rectangle(0, 0, 0, 0);
             if (points.getWindingRule() == PathIterator.WIND_EVEN_ODD)
-            	cb.pathClipEvenOdd();
+            	pdfClipEvenOdd(_content);
             else
-                cb.pathClipNonZero();
+                pdfClipNonZero(_content);
         }
     }
 
     /**
-     * Sets the page count. MUST be called before outputting the first page.
+     * Sets the page count.
      * @param pageCount
      */
+    @Deprecated
     public void setPageCount(int pageCount)
 	{
-		_pdfDoc.setPageCount(pageCount);
 	}
 
     /**
@@ -1018,16 +1194,20 @@ public class Pdf2Out implements DisplayListOuputDevice
 		String author = meta.get("author");
 		String keywords = meta.get("keywords");
 		
+		PDDocumentInformation info = _pdf.getDocumentInformation();
+		
 		if (title != null)
-			_pdfDoc.setTitle(title);
-		
+			info.setTitle(title);
+			
 		if (subject != null)
-			_pdfDoc.setSubject(subject);
-		
+			info.setSubject(subject);
+			
 		if (author != null)
-			_pdfDoc.setAuthor(author);
+			info.setAuthor(author);
 		
 		if (keywords != null)
-			_pdfDoc.setKeywords(keywords);
+			info.setKeywords(keywords);
+		
+		info.setProducer("neoFlyingSaucer (https://github.com/danfickle/neoflyingsaucer)");
 	}
 }
