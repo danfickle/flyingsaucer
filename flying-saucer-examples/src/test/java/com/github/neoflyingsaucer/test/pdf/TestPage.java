@@ -10,7 +10,39 @@ public class TestPage
 	// An image (4px x 4px) with one red(R) pixel at top left and the rest blue(B).
 	private static final String PATTERN_IMAGE_DATA_URL = 
 			"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAAE0lEQVR4nGP4zwAE/2EIwcLDAQCQsQ/xhr9I3AAAAABJRU5ErkJggg==";
-	
+
+	@Test
+	public void testLinearGradientWithOpacity()
+	{
+		PdfTest pdf = new PdfTest("LinearGradientWithOpacity");
+		
+		String html = 
+			"<html><head><style>" +
+			"@page { size: 100px 20px; margin: 0 }" +
+			"body { margin: 0; }" +
+			"#1 { background-color: white; opacity: 0.3; width: 100px; height: 20px; }" +
+			"#2 { background-image: linear-gradient(to bottom, red, green); width: 100%; height: 100%; }" +
+			"</style></head><body><div id=1><div id=2></div></div></body></html>";
+
+		pdf.prepare(html);
+		
+		String transparencyShading = 
+			"/ColorSpace /DeviceGray\n" +
+			"/ShadingType 2\n" +
+			"/Extend [true true]\n";
+		
+		pdf.assertContains(transparencyShading);
+		
+		String terminalFunction =
+			"/FunctionType 2\n" +
+			"/N 1.0\n" +
+			"/Domain [0.0 1.0]\n" +
+			"/C0 [0.3]\n" +
+			"/C1 [0.3]\n";
+		
+		pdf.assertContains(terminalFunction);
+	}
+
 	@Test
 	public void testLinearGradientWithAlpha()
 	{
