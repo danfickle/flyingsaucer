@@ -3,8 +3,7 @@
 OVERVIEW
 --------
 neoFlying Saucer is a pure-Java library for rendering arbitrary HTML 
-using CSS 2.1 (and some CSS3) for layout and formatting, output to PDF, Swing panels
-and images.
+using CSS 2.1 (and some CSS3) for layout and formatting, outputting to PDF and images.
 
 SCOPE OF THIS PROJECT
 ---------------------
@@ -12,21 +11,19 @@ To provide the best open-source static, paged HTML renderer around. Interactive 
 
 TODO
 ----
-+ Replace iText with a new PDF library (partially implemented).
 + Support the WOFF font format for embedded fonts.
 + Make cancelable/interrupted support.
 + Make case insensitive and locale insensitive.
-+ Gradients.
 + Replace StringBuffer with StringBuilder.
 + Remove redundant casts.
 + Update LICENSE.
 + Update Samples.
 + Support Bootstrap styles.
-+ Lots more tests.
-+ Implement builder API. See [proposed interface](/flying-saucer-core/src/main/java/org/xhtmlrenderer/service/HtmlRenderServiceConfigBuilder.java).
 
 DONE
 ----
++ Lots more tests.
++ Replace iText with a new PDF library (Apache PDF-BOX).
 + Media query support.
 + Replace java.util logging with slf4j.
 + Redirects and gzip response encoding.
@@ -53,9 +50,7 @@ BROWSER
 
 HOW TO HELP
 -----------
-Once you have setup the project and looked at the browser, please consider running the manual test runner located at:
-`com.github.neoflyingsaucer.manualtestrunner` in the flying-saucer-examples module. If you can figure out why individual
-tests are failing, file an issue with details or send a pull request. Thanks.
+See issues.
 
 LICENSE
 -------
