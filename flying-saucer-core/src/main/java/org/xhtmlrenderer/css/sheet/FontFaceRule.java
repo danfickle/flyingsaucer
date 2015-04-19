@@ -19,11 +19,20 @@
  */
 package org.xhtmlrenderer.css.sheet;
 
+import org.xhtmlrenderer.css.constants.CSSName;
+import org.xhtmlrenderer.css.constants.IdentValue;
 import org.xhtmlrenderer.css.newmatch.CascadedStyle;
+import org.xhtmlrenderer.css.parser.property.Conversions;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
 import org.xhtmlrenderer.css.style.CalculatedStyle;
 import org.xhtmlrenderer.css.style.EmptyStyle;
+import org.xhtmlrenderer.css.style.FSDerivedValue;
+import org.xhtmlrenderer.layout.SharedContext;
 import org.xhtmlrenderer.util.XRRuntimeException;
+
+import com.github.neoflyingsaucer.extend.output.FSFontFaceItem;
+import com.github.neoflyingsaucer.extend.output.FontSpecificationI;
+import com.github.neoflyingsaucer.extend.useragent.Optional;
 
 public class FontFaceRule implements RulesetContainer {
     private CSSOrigin _origin;
@@ -66,5 +75,83 @@ public class FontFaceRule implements RulesetContainer {
         }
 
         return false;
+    }
+    
+    public static class FontFaceItem implements FSFontFaceItem
+    {
+    	private final byte[] bytes;
+    	private final String fontFamily;
+    	private final String encoding;
+    	private final int weight;
+    	private final FontSpecificationI spec;
+    	
+    	FontFaceItem(String fontFamily, byte[] bytes, String encoding, int weight, FontSpecificationI spec)
+    	{
+    		this.fontFamily = fontFamily;
+    		this.bytes = bytes;
+    		this.encoding = encoding;
+    		this.weight = weight;
+    		this.spec = spec;
+    	}
+    	
+		@Override
+		public String getFontFamily() 
+		{
+			return fontFamily;
+		}
+
+		@Override
+		public byte[] getFontBytes() 
+		{
+			return bytes;
+		}
+
+		@Override
+		public String getEncoding() 
+		{
+			return encoding;
+		}
+
+		@Override
+		public int getWeight() 
+		{
+			return weight;
+		}
+
+		@Override
+		public FontSpecificationI getSpecification() 
+		{
+			return spec;
+		}
+    }
+    
+    public Optional<FSFontFaceItem> getFontFaceItem(SharedContext ctx)
+    {
+    	CalculatedStyle style = getCalculatedStyle();
+    	
+    	String family;
+    	String encoding;
+    	int weight;
+    	FontSpecificationI spec;
+    	
+    	if (style.isIdent(CSSName.SRC, IdentValue.NONE) ||
+    		style.isIdent(CSSName.FONT_FAMILY, IdentValue.NONE))
+    		return Optional.empty();
+    	
+    	FSDerivedValue src = style.valueByName(CSSName.SRC);
+    	FSDerivedValue fontEncoding = style.valueByName(CSSName.FS_PDF_FONT_ENCODING);
+    	FSDerivedValue fontFamily = style.valueByName(CSSName.FONT_FAMILY);
+    	FSDerivedValue fontWeight = style.valueByName(CSSName.FONT_WEIGHT);
+    	
+    	Optional<byte[]> fontBytes = ctx.getUac().getBinaryResource(src.asString());
+    	if (!fontBytes.isPresent())
+    		return Optional.empty();
+    	
+    	family = fontFamily.asString();
+    	spec = style.getFontSpecification();
+    	weight = spec == null ? 400 : spec.getFontWeight(); 
+     	encoding = fontEncoding.asString();
+    	
+    	return Optional.<FSFontFaceItem>of(new FontFaceItem(family, fontBytes.get(), encoding, weight, spec));
     }
 }

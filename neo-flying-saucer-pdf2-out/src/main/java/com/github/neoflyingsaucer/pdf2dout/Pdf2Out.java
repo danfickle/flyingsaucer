@@ -1080,4 +1080,9 @@ public class Pdf2Out implements DisplayListOuputDevice
 		
 		info.setProducer("neoFlyingSaucer (https://github.com/danfickle/neoflyingsaucer)");
 	}
+
+	public PDDocument getDocument() 
+	{
+		return _pdf;
+	}
 }

@@ -78,7 +78,7 @@ import com.github.neoflyingsaucer.extend.useragent.Optional;
  */
 public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice 
 {
-	private final DisplayList dl;
+	private DisplayList dl;
     private final SharedContext sharedContext;
     private final Box root;
     private static final Logger LOGGER = LoggerFactory.getLogger(DlOutputDevice.class);
@@ -680,5 +680,10 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
 			clip(s);
 		else
 			dl.add(new DlInstruction.DlClip(s));
+	}
+
+	public void setDisplayList(DisplayList displayList)
+	{
+		this.dl = displayList;
 	}
 }

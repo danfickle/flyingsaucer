@@ -1,6 +1,7 @@
 package com.github.neoflyingsaucer.other;
 
 import com.github.neoflyingsaucer.extend.output.DisplayList;
+import com.github.neoflyingsaucer.extend.output.FSFontFaceItem;
 import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 import com.github.neoflyingsaucer.j2dout.Java2DFontContext;
 import com.github.neoflyingsaucer.j2dout.Java2DFontResolver;
@@ -21,9 +22,11 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import org.xhtmlrenderer.css.sheet.FontFaceRule;
 import org.xhtmlrenderer.renderers.ContinuousRenderer;
 import org.xhtmlrenderer.renderers.PagedRenderer;
 
@@ -68,13 +71,8 @@ public class PDFRenderer {
     {
     	PagedRenderer r3 = new PagedRenderer(uac, PDF_DEFAULT_DOTS_PER_POINT * 72f, PDF_DEFAULT_DOTS_PER_PIXEL);
     	
-    	r3.setDocumentUri(url);
-    	r3.setImageResolver(new Pdf2ImageResolver(PDF_DEFAULT_DOTS_PER_PIXEL));
-    	r3.setFontContext(new Pdf2FontContext());
-    	r3.setFontResolver(new Pdf2FontResolver());
-    	r3.setReplacedElementResolver(new Pdf2ReplacedElementResolver());
-    	r3.prepare();
     	
+
     	Pdf2Out out = new Pdf2Out(PDF_DEFAULT_DOTS_PER_POINT, PdfOutMode.TEST_MODE);
     	BufferedOutputStream bs = new BufferedOutputStream(new FileOutputStream(filename));
     	try {
@@ -84,15 +82,23 @@ public class PDFRenderer {
 			e.printStackTrace();
 		}
     	
-    	out.setPageCount(r3.getPageCount());
+    	Pdf2FontResolver fontResolver = new Pdf2FontResolver(out.getDocument());
+    	
+    	r3.setDocumentUri(url);
+    	r3.setImageResolver(new Pdf2ImageResolver(PDF_DEFAULT_DOTS_PER_PIXEL));
+    	r3.setFontContext(new Pdf2FontContext());
+    	r3.setFontResolver(fontResolver);
+    	r3.setReplacedElementResolver(new Pdf2ReplacedElementResolver());
+    	r3.prepare();
+
     	out.setDocumentInformationDictionary(r3.getHtmlMetadata());
     	
     	for (int i = 0; i < r3.getPageCount(); i++)
     	{
-    		DisplayList dl = r3.renderToList(i);
     		int height = r3.getPageHeight(i);
     		int width = r3.getPageWidth(i);
-    	
+    		DisplayList dl = r3.renderToList(i);
+
     		out.initializePage(width, height);
     		out.render(dl);
     		out.finishPage();

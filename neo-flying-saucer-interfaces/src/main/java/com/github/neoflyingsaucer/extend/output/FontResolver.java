@@ -20,8 +20,11 @@
  */
 package com.github.neoflyingsaucer.extend.output;
 
+import java.util.List;
+
 
 public interface FontResolver {
     public FSFont resolveFont(FontSpecificationI spec);
     public void flushCache();
+	public void importFontFaceItems(List<FSFontFaceItem> fontFaceItems);
 }

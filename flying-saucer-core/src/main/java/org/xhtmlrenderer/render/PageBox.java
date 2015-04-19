@@ -26,8 +26,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
-
 import org.w3c.dom.Element;
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.CSSPrimitiveUnit;
@@ -133,14 +131,18 @@ public class PageBox {
     }
     
     private boolean isUseLetterSize() {
-        final Locale l = Locale.getDefault();
-        final String county = l.getCountry();
+        // final Locale l = Locale.getDefault();
+        // final String county = l.getCountry();
         
         // Per http://en.wikipedia.org/wiki/Paper_size, letter paper is
         // a de facto standard in Canada (although the government uses
         // its own standard) and Mexico (even though it is officially an ISO
         // country)
-        return county.equals("US") || county.equals("CA") || county.equals("MX"); 
+        
+        // return county.equals("US") || county.equals("CA") || county.equals("MX"); 
+        
+        // Updated: To be consistent always use A4 for auto page height/width.
+        return false;
     }
     
     private int resolveAutoPageWidth(final CssContext cssCtx) {

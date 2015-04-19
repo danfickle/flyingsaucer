@@ -38,13 +38,6 @@ public class PdfTest
 
     	Document doc = HTMLResourceHelper.load(html).getDocument();
 
-    	r3.setDocumentHtml(doc);
-    	r3.setImageResolver(new Pdf2ImageResolver(PDF_DEFAULT_DOTS_PER_PIXEL));
-    	r3.setFontContext(new Pdf2FontContext());
-    	r3.setFontResolver(new Pdf2FontResolver());
-    	r3.setReplacedElementResolver(new Pdf2ReplacedElementResolver());
-    	r3.prepare();
-    	
     	Pdf2Out out = new Pdf2Out(PDF_DEFAULT_DOTS_PER_POINT, PdfOutMode.TEST_MODE);
 
     	try {
@@ -53,7 +46,13 @@ public class PdfTest
 			throw new RuntimeException(e);
 		}
     	
-    	out.setPageCount(r3.getPageCount());
+    	r3.setDocumentHtml(doc);
+    	r3.setImageResolver(new Pdf2ImageResolver(PDF_DEFAULT_DOTS_PER_PIXEL));
+    	r3.setFontContext(new Pdf2FontContext());
+    	r3.setFontResolver(new Pdf2FontResolver(out.getDocument()));
+    	r3.setReplacedElementResolver(new Pdf2ReplacedElementResolver());
+    	r3.prepare();
+    	
     	out.setDocumentInformationDictionary(r3.getHtmlMetadata());
     	
     	for (int i = 0; i < r3.getPageCount(); i++)

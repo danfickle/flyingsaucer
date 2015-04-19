@@ -20,6 +20,7 @@
 package com.github.neoflyingsaucer.j2dout;
 
 import com.github.neoflyingsaucer.extend.output.FSFont;
+import com.github.neoflyingsaucer.extend.output.FSFontFaceItem;
 import com.github.neoflyingsaucer.extend.output.FontResolver;
 import com.github.neoflyingsaucer.extend.output.FontSpecificationI;
 import com.github.neoflyingsaucer.extend.output.FontSpecificationI.FontStyle;
@@ -28,6 +29,7 @@ import com.github.neoflyingsaucer.extend.output.FontSpecificationI.FontVariant;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.util.HashMap;
+import java.util.List;
 
 
 /**
@@ -235,4 +237,10 @@ public class Java2DFontResolver implements FontResolver
     {
         return resolveFont(spec.getFamilies(), spec.getSize(), spec.getFontWeight(), spec.getStyle(), spec.getVariant());
     }
+
+	@Override
+	public void importFontFaceItems(List<FSFontFaceItem> fontFaceItems) {
+		// TODO Auto-generated method stub
+		
+	}
 }

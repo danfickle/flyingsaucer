@@ -3,7 +3,9 @@ package org.xhtmlrenderer.renderers;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -12,6 +14,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xhtmlrenderer.css.sheet.FontFaceRule;
 import org.xhtmlrenderer.css.style.CalculatedStyle;
 import org.xhtmlrenderer.displaylist.DlOutputDevice;
 import org.xhtmlrenderer.displaylist.DlTextRenderer;
@@ -30,6 +33,7 @@ import org.xhtmlrenderer.util.NodeHelper;
 
 import com.github.neoflyingsaucer.displaylist.DisplayListImpl;
 import com.github.neoflyingsaucer.extend.output.DisplayList;
+import com.github.neoflyingsaucer.extend.output.FSFontFaceItem;
 import com.github.neoflyingsaucer.extend.output.FontContext;
 import com.github.neoflyingsaucer.extend.output.FontResolver;
 import com.github.neoflyingsaucer.extend.output.ImageResolver;
@@ -45,11 +49,14 @@ public class PagedRenderer
 	private String uri;
 	private FontContext fontContext;
 	private DisplayList displayList;
+	private RenderingContext c;
 	
 	private final UserAgentCallback cb;
 	private final SharedContext sharedContext;
 	private final float dpi;
 	private final int dpp;
+	private DlOutputDevice dlOut;
+	private LayoutContext c1;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(PagedRenderer.class);
 	
@@ -106,39 +113,45 @@ public class PagedRenderer
     private Rectangle getInitialExtents(LayoutContext c)
     {
         PageBox first = Layer.createPageBox(c, "first");
-
         return new Rectangle(0, 0, first.getContentWidth(c), first.getContentHeight(c));
     }
 	
-    private void doDocumentLayout() 
+    private void doDocumentLayout1() 
     {
             if (doc == null) 
             	return;
 
-            LayoutContext c = newLayoutContext();
-
-            long start = System.currentTimeMillis();
+            c1 = newLayoutContext();
 
             BlockBox root = (BlockBox) getRootBox();
 
             if (root != null) {
-                root.reset(c);
+                root.reset(c1);
             } else {
-                root = BoxBuilder.createRootBox(c, doc);
+                root = BoxBuilder.createRootBox(c1, doc);
                 setRootBox(root);
             }
 
-            root.setContainingBlock(new ViewportBox(getInitialExtents(c)));
-            root.layout(c);
 
-            Dimension intrinsicSize = root.getLayer().getPaintingDimension(c);
-            
-            root.getLayer().trimEmptyPages(c, intrinsicSize.height);
-            root.getLayer().layoutPages(c);
-            
-            long end = System.currentTimeMillis();
-            
-            LOGGER.info("Layout took " + (end - start) + " milliseconds");
+    }
+    
+    private void doDocumentLayout2()
+    {
+        BlockBox root = (BlockBox) getRootBox();
+    	
+        long start = System.currentTimeMillis();
+        
+    	root.setContainingBlock(new ViewportBox(getInitialExtents(c1)));
+        root.layout(c1);
+
+        Dimension intrinsicSize = root.getLayer().getPaintingDimension(c1);
+        
+        root.getLayer().trimEmptyPages(c, intrinsicSize.height);
+        root.getLayer().layoutPages(c1);
+        
+        long end = System.currentTimeMillis();
+        
+        LOGGER.info("Layout took " + (end - start) + " milliseconds");	
     }
 
     private SharedContext newSharedContext(final UserAgentCallback userAgent) 
@@ -160,9 +173,6 @@ public class PagedRenderer
     {
         RenderingContext result = getSharedContext().newRenderingContextInstance();
         result.setFontContext(fontContext);
-        
-        DlOutputDevice dlOut = new DlOutputDevice(this.displayList, getSharedContext(), getRootBox());
-        result.setOutputDevice(dlOut);
 
         getSharedContext().getTextRenderer().setup(result.getFontContext());
         
@@ -195,8 +205,17 @@ public class PagedRenderer
         getSharedContext().setNamespaceHandler(new HtmlNamespaceHandler());
         getSharedContext().getCss().setDocumentContext(getSharedContext(), getSharedContext().getNamespaceHandler(), doc);
 
-        doDocumentLayout();
+        doDocumentLayout1();
+        sharedContext.getFontResolver().importFontFaceItems(getFontFaceItems());
+        doDocumentLayout2();
+        c = newRenderingContext();
         
+        c.setPageCount(getRootLayer().getPages().size());
+        c.setFontContext(fontContext);
+        assignPagePrintPositions(c);
+        
+        dlOut = new DlOutputDevice(null, getSharedContext(), getRootBox());
+        c.setOutputDevice(dlOut);
     }
     
 	private Dimension paintPage(int pageNo)
@@ -208,30 +227,27 @@ public class PagedRenderer
 	            throw new IllegalArgumentException("Page " + pageNo + " is not between 0 " + "and " + root.getPages().size());
 	        }
 
-	        RenderingContext c = newRenderingContext();
-	        
 	        PageBox page = root.getPages().get(pageNo);
-	        c.setPageCount(root.getPages().size());
 	        c.setPage(pageNo, page);
-	        assignPagePrintPositions(c);
-
+	        
+	        dlOut.setDisplayList(displayList);
+	        
 	        Shape working = c.getOutputDevice().getClip();
 	        
 	        page.paintBackground(c, 0, Layer.PAGED_MODE_PRINT);
 	        page.paintMarginAreas(c, 0, Layer.PAGED_MODE_PRINT);
 	        page.paintBorder(c, 0, Layer.PAGED_MODE_PRINT);
 
-	        // TODO: Clipping not working!
-
 	        Rectangle content = page.getPrintClippingBounds(c);
-	        c.getOutputDevice().clip(content, false);
 	        
-	        int top = -page.getPaintingTop() + page.getMarginBorderPadding(c, CalculatedStyle.TOP);
-	        int left = page.getMarginBorderPadding(c, CalculatedStyle.LEFT);
+        	c.getOutputDevice().clip(content, false);
+	        
+        	int top = -page.getPaintingTop() + page.getMarginBorderPadding(c, CalculatedStyle.TOP);
+        	int left = page.getMarginBorderPadding(c, CalculatedStyle.LEFT);
 
-	        c.getOutputDevice().translate(left, top);
+        	c.getOutputDevice().translate(left, top);
 	        	root.paint(c);
-	        c.getOutputDevice().translate(-left, -top);
+        	c.getOutputDevice().translate(-left, -top);
 
 	        c.getOutputDevice().setClip(working);
 	        
@@ -257,14 +273,27 @@ public class PagedRenderer
 
 	public int getPageHeight(int pageNo) 
 	{
-		RenderingContext c = newRenderingContext();
 		return getRootLayer().getPages().get(pageNo).getHeight(c);
 	}
 	
 	public int getPageWidth(int pageNo) 
 	{
-		RenderingContext c = newRenderingContext();
 		return getRootLayer().getPages().get(pageNo).getWidth(c);
+	}
+	
+	public List<FSFontFaceItem> getFontFaceItems()
+	{
+		List<FSFontFaceItem> faces = new ArrayList<FSFontFaceItem>();
+		
+		for (FontFaceRule rule : sharedContext.getCss().getFontFaceRules())
+		{
+			Optional<FSFontFaceItem> item = rule.getFontFaceItem(sharedContext);
+			
+			if (item.isPresent())
+				faces.add(item.get());
+		}
+
+		return faces;
 	}
 	
 	public Map<String, String> getHtmlMetadata()

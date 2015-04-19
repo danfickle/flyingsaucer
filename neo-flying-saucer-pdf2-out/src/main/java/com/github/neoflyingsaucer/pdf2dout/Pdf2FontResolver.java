@@ -20,11 +20,14 @@
 package com.github.neoflyingsaucer.pdf2dout;
 
 import com.github.neoflyingsaucer.extend.output.FSFont;
+import com.github.neoflyingsaucer.extend.output.FSFontFaceItem;
 import com.github.neoflyingsaucer.extend.output.FontResolver;
 import com.github.neoflyingsaucer.extend.output.FontSpecificationI;
 import com.github.neoflyingsaucer.extend.output.FontSpecificationI.FontStyle;
 import com.github.neoflyingsaucer.extend.output.FontSpecificationI.FontVariant;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,7 +36,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.pdfbox.encoding.Encoding;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDTrueTypeFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 import static com.github.neoflyingsaucer.pdf2dout.Pdf2PdfBoxWrapper.*;
@@ -41,6 +47,12 @@ import static com.github.neoflyingsaucer.pdf2dout.Pdf2PdfBoxWrapper.*;
 public class Pdf2FontResolver implements FontResolver
 {
 	private Map<String, FontFamily> _fontFamilies = createInitialFontMap();
+	private final PDDocument doc;
+	
+	public Pdf2FontResolver(PDDocument doc)
+	{
+		this.doc = doc;
+	}
 	
 	@Override
 	public FSFont resolveFont(FontSpecificationI spec) 
@@ -449,4 +461,35 @@ public class Pdf2FontResolver implements FontResolver
             return null;
         }
     }
+
+    @Override
+	public void importFontFaceItems(List<FSFontFaceItem> fontFaces)
+	{
+		for (FSFontFaceItem item : fontFaces)
+		{
+			PDTrueTypeFont font = null;
+			try {
+				font = PDTrueTypeFont.loadTTF(doc, new ByteArrayInputStream(item.getFontBytes()));
+			} catch (IOException e) {
+				//TODO LOGGER.warn("Couldn't load font");
+				continue;
+			}
+			
+			FontFamily family = _fontFamilies.get(item.getFontFamily());
+			
+			if (family == null)
+				family = new FontFamily();
+			else
+				family.setName(item.getFontFamily());
+
+			FontDescription description = new FontDescription(font);
+			description.setWeight(item.getWeight());
+			description.setFromFontFace(true);
+			description.setStyle(item.getSpecification() == null ? FontStyle.NORMAL : item.getSpecification().getStyle());
+			
+			family.addFontDescription(description);
+			
+			_fontFamilies.put(item.getFontFamily(), family);
+		}
+	}
 }

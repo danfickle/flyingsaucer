@@ -22,6 +22,7 @@ package org.xhtmlrenderer.context;
 import org.xhtmlrenderer.swing.AWTFSFont;
 
 import com.github.neoflyingsaucer.extend.output.FSFont;
+import com.github.neoflyingsaucer.extend.output.FSFontFaceItem;
 import com.github.neoflyingsaucer.extend.output.FontResolver;
 import com.github.neoflyingsaucer.extend.output.FontSpecificationI;
 import com.github.neoflyingsaucer.extend.output.FontSpecificationI.FontStyle;
@@ -33,6 +34,7 @@ import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -200,4 +202,10 @@ public class AWTFontResolver implements FontResolver
     {
         return resolveFont(spec.getFamilies(), spec.getSize(), spec.getFontWeight(), spec.getStyle(), spec.getVariant());
     }
+
+	@Override
+	public void importFontFaceItems(List<FSFontFaceItem> fontFaceItems) {
+		// TODO Auto-generated method stub
+		
+	}
 }
