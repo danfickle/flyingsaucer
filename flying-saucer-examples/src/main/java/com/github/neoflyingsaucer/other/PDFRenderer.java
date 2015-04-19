@@ -1,7 +1,6 @@
 package com.github.neoflyingsaucer.other;
 
 import com.github.neoflyingsaucer.extend.output.DisplayList;
-import com.github.neoflyingsaucer.extend.output.FSFontFaceItem;
 import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 import com.github.neoflyingsaucer.j2dout.Java2DFontContext;
 import com.github.neoflyingsaucer.j2dout.Java2DFontResolver;
@@ -22,11 +21,8 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
-
 import javax.imageio.ImageIO;
 
-import org.xhtmlrenderer.css.sheet.FontFaceRule;
 import org.xhtmlrenderer.renderers.ContinuousRenderer;
 import org.xhtmlrenderer.renderers.PagedRenderer;
 

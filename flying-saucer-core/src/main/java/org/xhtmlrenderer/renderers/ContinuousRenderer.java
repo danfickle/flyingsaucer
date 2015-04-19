@@ -1,9 +1,13 @@
 package org.xhtmlrenderer.renderers;
 
 import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
+import org.xhtmlrenderer.css.sheet.FontFaceRule;
 import org.xhtmlrenderer.displaylist.DlOutputDevice;
 import org.xhtmlrenderer.displaylist.DlTextRenderer;
 import org.xhtmlrenderer.layout.BoxBuilder;
@@ -16,13 +20,16 @@ import org.xhtmlrenderer.render.RenderingContext;
 import org.xhtmlrenderer.render.ViewportBox;
 import org.xhtmlrenderer.resource.ResourceLoadHelper;
 import org.xhtmlrenderer.simple.HtmlNamespaceHandler;
+
 import com.github.neoflyingsaucer.displaylist.DisplayListImpl;
 import com.github.neoflyingsaucer.extend.output.DisplayList;
+import com.github.neoflyingsaucer.extend.output.FSFontFaceItem;
 import com.github.neoflyingsaucer.extend.output.FontContext;
 import com.github.neoflyingsaucer.extend.output.FontResolver;
 import com.github.neoflyingsaucer.extend.output.ImageResolver;
 import com.github.neoflyingsaucer.extend.output.ReplacedElementResolver;
 import com.github.neoflyingsaucer.extend.useragent.HTMLResourceI;
+import com.github.neoflyingsaucer.extend.useragent.Optional;
 import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 
 public class ContinuousRenderer 
@@ -110,6 +117,8 @@ public class ContinuousRenderer
                 setRootBox(root);
             }
 
+            sharedContext.getFontResolver().importFontFaceItems(getFontFaceItems());
+            
             sharedContext.set_TempCanvas(viewportSize);
             root.setContainingBlock(new ViewportBox(viewportSize));
             root.layout(c);
@@ -181,5 +190,20 @@ public class ContinuousRenderer
 
 	public int getLayoutHeight() {
 		return getRootBox().getHeight();
+	}
+	
+	public List<FSFontFaceItem> getFontFaceItems()
+	{
+		List<FSFontFaceItem> faces = new ArrayList<FSFontFaceItem>();
+		
+		for (FontFaceRule rule : sharedContext.getCss().getFontFaceRules())
+		{
+			Optional<FSFontFaceItem> item = rule.getFontFaceItem(sharedContext);
+			
+			if (item.isPresent())
+				faces.add(item.get());
+		}
+
+		return faces;
 	}
 }

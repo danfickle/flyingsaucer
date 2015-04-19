@@ -27,59 +27,70 @@ import com.github.neoflyingsaucer.extend.output.FontSpecificationI.FontStyle;
 import com.github.neoflyingsaucer.extend.output.FontSpecificationI.FontVariant;
 
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-
-/**
- * Description of the Class
- *
- * @author Joshua Marinacci
- */
 public class Java2DFontResolver implements FontResolver
 {
-    private final HashMap<String, Font> instance_hash = new HashMap<String, Font>();;
-    private final HashMap<String, Font> available_fonts_hash = new HashMap<String, Font>();;
+    private final HashMap<String, Font> instanceStore = new HashMap<String, Font>();
+    private final HashMap<String, List<FontDescription>> availableFontStore = new HashMap<String, List<FontDescription>>();;
     private float fontScale = 1f;
     
-    /**
-     * Constructor for the FontResolverTest object
-     */
-    public Java2DFontResolver() {
+    public Java2DFontResolver() 
+    {
         init();
     }
     
     private void init()
     {
         GraphicsEnvironment gfx = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        String[] available_fonts = gfx.getAvailableFontFamilyNames();
+        String[] availableFonts = gfx.getAvailableFontFamilyNames();
 
         // preload the font map with the font names as keys
         // don't add the actual font objects because that would be a waste of memory
         // we will only add them once we need to use them
-        for (final String available_font : available_fonts)
+        for (String availableFont : availableFonts)
         {
-            available_fonts_hash.put(available_font, null);
+            availableFontStore.put(availableFont, new ArrayList<FontDescription>(0));
         }
+        
+        FontDescription serif = new FontDescription(400, FontStyle.NORMAL, new Font("Serif", Font.PLAIN, 1));
+        List<FontDescription> serifList = new ArrayList<FontDescription>(1);
+        serifList.add(serif);
 
+        FontDescription sansSerif = new FontDescription(400, FontStyle.NORMAL, new Font("SansSerif", Font.PLAIN, 1));
+        List<FontDescription> sansSerifList = new ArrayList<FontDescription>(1); 
+        sansSerifList.add(sansSerif);
+        
+        FontDescription monospace = new FontDescription(400, FontStyle.NORMAL, new Font("Monospaced", Font.PLAIN, 1));
+        List<FontDescription> monospaceList = new ArrayList<FontDescription>(1);        
+        monospaceList.add(monospace);
+        
         // preload sans, serif, and monospace into the available font hash
-        available_fonts_hash.put("Serif", new Font("Serif", Font.PLAIN, 1));
-        available_fonts_hash.put("SansSerif", new Font("SansSerif", Font.PLAIN, 1));
-        available_fonts_hash.put("Monospaced", new Font("Monospaced", Font.PLAIN, 1));
+        availableFontStore.put("Serif", serifList);
+        availableFontStore.put("SansSerif", sansSerifList);
+        availableFontStore.put("Monospaced", monospaceList);
     }
     
-    public void flushCache() {
+    public void flushCache() 
+    {
         init();
     }
 
-    public FSFont resolveFont(final String[] families, final float size, final int weight, final FontStyle style, final FontVariant variant) 
+    public FSFont resolveFont(String[] families, float size, int weight, FontStyle style, FontVariant variant) 
     {
         // for each font family
         if (families != null) {
-            for (final String family : families) {
-                final Font font = resolveFont(family, size, weight, style, variant);
-                if (font != null) {
+            for (String family : families)
+            {
+                Font font = resolveFont(family, size, weight, style, variant);
+                if (font != null) 
+                {
                     return new Java2DFont(font);
                 }
             }
@@ -87,62 +98,56 @@ public class Java2DFontResolver implements FontResolver
 
         // if we get here then no font worked, so just return default sans
         String family = "SansSerif";
-        if (style == FontStyle.ITALIC) {
+        if (style == FontStyle.ITALIC)
+        {
             family = "Serif";
         }
 
-        Font fnt = createFont(available_fonts_hash.get(family), size, weight, style, variant);
-        instance_hash.put(getFontInstanceHashName(family, size, weight, style, variant), fnt);
+        Font fnt = createFont(availableFontStore.get(family).get(0), size, weight, style, variant);
+        instanceStore.put(getFontInstanceHashName(family, size, weight, style, variant), fnt);
         return new Java2DFont(fnt);
     }
 
-    /**
-     * Sets the fontMapping attribute of the FontResolver object
-     *
-     * @param name The new fontMapping value
-     * @param font The new fontMapping value
-     */
-    public void setFontMapping(final String name, final Font font)
+    protected Font createFont(FontDescription baseFont, float size, int weight, FontStyle style, FontVariant variant) 
     {
-        available_fonts_hash.put(name, font.deriveFont(1f));
-    }
+    	int fontConst = Font.PLAIN;
 
-    protected Font createFont(final Font root_font, float size, final int weight, final FontStyle style, final FontVariant variant) 
-    {
-        int font_const = Font.PLAIN;
-        if (weight >= 600) 
-        {
-            font_const = font_const | Font.BOLD;
-        }
-
-        if (style != null && (style == FontStyle.ITALIC || style == FontStyle.OBLIQUE)) 
-        {
-            font_const = font_const | Font.ITALIC;
-        }
-
-        // scale vs font scale value too
-        size *= fontScale;
-
-        Font fnt = root_font.deriveFont(font_const, size);
-        if (variant != null) {
-            if (variant == FontVariant.SMALL_CAPS) {
-                fnt = fnt.deriveFont((float) (((float) fnt.getSize()) * 0.6));
+    	if (weight >= 600) 
+            fontConst = fontConst | Font.BOLD;
+    	
+    	Font created = null;
+    	
+    	if (baseFont.getStyle() == style &&
+    		baseFont.getWeight() == weight)
+    	{
+    		// Just adjust size.
+    		created = baseFont.getFont().deriveFont(size * fontScale);
+    	}
+    	else if (baseFont.getStyle() == style)
+    	{
+    		// Just adjust size and weight.
+    		created = baseFont.getFont().deriveFont(baseFont.getFont().getStyle() | fontConst, size * fontScale);
+    	}
+    	else
+    	{
+            if (style != null && (style == FontStyle.ITALIC || style == FontStyle.OBLIQUE)) 
+            {
+                fontConst = fontConst | Font.ITALIC;
             }
+
+            // Adjust size, weight and italic.
+    		created = baseFont.getFont().deriveFont(baseFont.getFont().getStyle() | fontConst, size * fontScale);
+    	}
+    	
+        if (variant != null &&
+        	variant == FontVariant.SMALL_CAPS) 
+        {
+        	created = created.deriveFont((float) (((float) created.getSize()) * 0.6));
         }
 
-        return fnt;
+        return created;
     }
 
-    /**
-     * Description of the Method
-     *
-     * @param font    PARAM
-     * @param size    PARAM
-     * @param weight  PARAM
-     * @param style   PARAM
-     * @param variant PARAM
-     * @return Returns
-     */
     protected Font resolveFont(String font, final float size, final int weight, final FontStyle style, final FontVariant variant)
     {
         // strip off the "s if they are there
@@ -170,37 +175,57 @@ public class Java2DFontResolver implements FontResolver
         	font = "Serif";
 
         // assemble a font instance hash name
-        final String font_instance_name = getFontInstanceHashName(font, size, weight, style, variant);
+        final String fontInstanceName = getFontInstanceHashName(font, size, weight, style, variant);
         //Uu.p("looking for font: " + font_instance_name);
         // check if the font instance exists in the hash table
-        if (instance_hash.containsKey(font_instance_name)) {
+        if (instanceStore.containsKey(fontInstanceName)) {
             // if so then return it
-            return instance_hash.get(font_instance_name);
+            return instanceStore.get(fontInstanceName);
         }
 
-        //Uu.p("font lookup failed for: " + font_instance_name);
-        //Uu.p("searching for : " + font + " " + size + " " + weight + " " + style + " " + variant);
-
-
+        FontDescription baseFont = null;
+        
         // if not then
         //  does the font exist
-        if (available_fonts_hash.containsKey(font)) {
-            //Uu.p("found an available font for: " + font);
-            Font value = available_fonts_hash.get(font);
-            // have we actually allocated the root font object yet?
-            Font root_font = null;
-            if (value instanceof Font) {
-                root_font = value;
-            } else {
-                root_font = new Font(font, Font.PLAIN, 1);
-                available_fonts_hash.put(font, root_font);
-            }
+        if (availableFontStore.containsKey(font)) 
+        {
+            List<FontDescription> description = availableFontStore.get(font);
+            
+            // First match on style and weight.
+           	for (FontDescription item : description)
+           	{
+           		if (item.getStyle() == style &&
+           			item.getWeight() == weight)
+           		{
+           			baseFont = item;
+           		}
+           	}
+            
+           	// Next match on style alone.
+           	if (baseFont == null)
+           	{
+           	   	for (FontDescription item : description)
+           	   	{
+           	   		if (item.getStyle() == style)
+           	   		{
+           	   			baseFont = item;
+           	   		}
+           	   	}
+           	}
 
+           	// Finally, create the font if we have to.
+           	if (baseFont == null)
+           	{
+           	  	Font rootFont = new Font(font, Font.PLAIN, 1);
+            	baseFont = new FontDescription(400, FontStyle.NORMAL, rootFont);
+            	description.add(baseFont);
+            }
+ 
             // now that we have a root font, we need to create the correct version of it
-            Font fnt = createFont(root_font, size, weight, style, variant);
+            Font fnt = createFont(baseFont, size, weight, style, variant);
 
             // add the font to the hash so we don't have to do this again
-            instance_hash.put(font_instance_name, fnt);
+            instanceStore.put(fontInstanceName, fnt);
             return fnt;
         }
 
@@ -208,15 +233,6 @@ public class Java2DFontResolver implements FontResolver
         return null;
     }
 
-    /**
-     * Gets the fontInstanceHashName attribute of the FontResolverTest object
-     *
-     * @param name    PARAM
-     * @param size    PARAM
-     * @param weight  PARAM
-     * @param style   PARAM
-     * @param variant PARAM @return The fontInstanceHashName value
-     */
     protected String getFontInstanceHashName(final String name, final float size, final int weight, final FontStyle style, final FontVariant variant) 
     {
     	 return name + "-" + (size * fontScale) + "-" + weight + "-" + style + "-" + variant;
@@ -238,9 +254,62 @@ public class Java2DFontResolver implements FontResolver
         return resolveFont(spec.getFamilies(), spec.getSize(), spec.getFontWeight(), spec.getStyle(), spec.getVariant());
     }
 
+    private static class FontDescription
+    {
+    	private final int weight;
+    	private final FontStyle style;
+    	private final Font f;
+    	
+    	FontDescription(int weight, FontStyle style, Font f)
+    	{
+    		this.weight = weight;
+    		this.style = style;
+    		this.f = f;
+    	}
+
+    	private int getWeight()
+    	{
+    		return weight;
+    	}
+
+    	private FontStyle getStyle()
+    	{
+    		return style;
+    	}
+    	
+    	private Font getFont()
+    	{
+    		return f;
+    	}
+    }
+    
 	@Override
-	public void importFontFaceItems(List<FSFontFaceItem> fontFaceItems) {
-		// TODO Auto-generated method stub
-		
+	public void importFontFaceItems(List<FSFontFaceItem> fontFaces)
+	{
+		for (FSFontFaceItem item : fontFaces)
+		{
+			Font font = null;
+			try {
+				font = Font.createFont(Font.TRUETYPE_FONT, new ByteArrayInputStream(item.getFontBytes()));
+			} catch (IOException e) {
+				//TODO LOGGER.warn("Couldn't load font");
+				continue;
+			} catch (FontFormatException e) {
+				continue;
+			}
+
+			List<FontDescription> fontFamily = availableFontStore.get(item.getFontFamily());
+			
+			if (fontFamily == null)
+			{
+				fontFamily = new ArrayList<FontDescription>();
+				availableFontStore.put(item.getFontFamily(), fontFamily);
+			}
+			
+			FontDescription description = new FontDescription(item.getWeight(),
+				item.getSpecification() == null ? FontStyle.NORMAL : item.getSpecification().getStyle(), font);
+
+			fontFamily.add(description);
+		}
 	}
 }
