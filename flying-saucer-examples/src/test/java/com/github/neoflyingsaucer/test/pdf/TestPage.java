@@ -324,7 +324,6 @@ public class TestPage
 	}
 
 	@Test
-	@Ignore("Failing (eating a space before the newline in the pre test)")
 	public void testWhitespaceHandlingWithNewlines()
 	{
 		PdfTest pdf = new PdfTest("WhitespaceHandlingWithNewlines");

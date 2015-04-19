@@ -149,7 +149,8 @@ public class WhitespaceStripper {
         if (whitespace == IdentValue.NORMAL || whitespace == IdentValue.NOWRAP) {
             text = linefeed_space_collapse.matcher(text).replaceAll(EOL);
         } else if (whitespace == IdentValue.PRE) {
-            text = space_before_linefeed_collapse.matcher(text).replaceAll(EOL);
+        	// NOTE: Removed by danfickle, this doesn't seem to be in the CSS2 spec.
+        	//text = space_before_linefeed_collapse.matcher(text).replaceAll(EOL);
         }
 
         if (whitespace == IdentValue.NORMAL || whitespace == IdentValue.NOWRAP) {
