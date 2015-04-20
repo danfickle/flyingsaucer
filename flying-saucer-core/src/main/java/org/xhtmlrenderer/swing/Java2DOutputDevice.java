@@ -349,7 +349,7 @@ public class Java2DOutputDevice extends AbstractOutputDevice implements OutputDe
 				gradient.getEndX() + x, gradient.getEndY() + y, fractions, colors);
 		
 		_graphics.setPaint(paint);
-		_graphics.fillRect(x, y, x + width, y + width);
+		_graphics.fillRect(x, y, x + width, y + height);
 		_graphics.setPaint(null);
 	}
 
