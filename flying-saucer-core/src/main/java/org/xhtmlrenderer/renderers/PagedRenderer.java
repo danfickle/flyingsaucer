@@ -240,7 +240,7 @@ public class PagedRenderer
 
 	        Rectangle content = page.getPrintClippingBounds(c);
 	        
-        	c.getOutputDevice().clip(content, false);
+        	c.getOutputDevice().clip(content);
 	        
         	int top = -page.getPaintingTop() + page.getMarginBorderPadding(c, CalculatedStyle.TOP);
         	int left = page.getMarginBorderPadding(c, CalculatedStyle.LEFT);

@@ -2,7 +2,9 @@ package org.xhtmlrenderer.displaylist;
 
 import java.awt.Rectangle;
 import java.awt.RenderingHints.Key;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
+import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Rectangle2D;
 import java.awt.BasicStroke;
 import java.awt.RenderingHints;
@@ -83,6 +85,7 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
     private final Box root;
     private static final Logger LOGGER = LoggerFactory.getLogger(DlOutputDevice.class);
     
+    private AffineTransform transform = new AffineTransform();
     private Area clip;
     private Stroke stroke;
     private Object renderingHint = RenderingHints.VALUE_ANTIALIAS_DEFAULT;
@@ -152,6 +155,7 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
 	@Override
 	public void translate(double tx, double ty) 
 	{
+		transform.translate(tx, ty);
 		dl.add(new DlInstruction.DlTranslate(tx, ty));
 	}
 
@@ -220,9 +224,14 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
 	public void setClip(Shape s) 
 	{
         if (s == null) 
+        {
             clip = null;
+        }
         else
-            clip = new Area(s);
+        {
+        	Shape s2 = transform.createTransformedShape(s);
+        	clip = new Area(s2);
+        }
 		
 		dl.add(new DlInstruction.DlSetClip(s));
 	}
@@ -233,10 +242,11 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
 	@Override
 	public void clip(Shape s2) 
 	{
-        if (clip == null)
-            clip = new Area(s2);
+        Shape s3 = transform.createTransformedShape(s2);
+		if (clip == null)
+            clip = new Area(s3);
         else
-            clip.intersect(new Area(s2));
+        	clip.intersect(new Area(s3));
 		
 		dl.add(new DlInstruction.DlClip(s2));
 	}
@@ -444,7 +454,11 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
 	@Override
 	public Shape getClip() 
 	{
-		return clip;
+		try {
+			return clip != null ? transform.createInverse().createTransformedShape(clip) : null;
+		} catch (NoninvertibleTransformException e) {
+			return null;
+		}
 	}
 	
 	/**
@@ -672,15 +686,6 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
             return box.getAbsY();
         }
     }
-
-	@Override
-	public void clip(Shape s, boolean store)
-	{
-		if (store)
-			clip(s);
-		else
-			dl.add(new DlInstruction.DlClip(s));
-	}
 
 	public void setDisplayList(DisplayList displayList)
 	{
