@@ -12,6 +12,25 @@ public class TestPage
 			"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAAE0lEQVR4nGP4zwAE/2EIwcLDAQCQsQ/xhr9I3AAAAABJRU5ErkJggg==";
 
 	@Test
+	public void testPdfBookmarks()
+	{
+		PdfTest pdf = new PdfTest("PdfBookmarks");
+		
+		String html =
+			"<html><head><style>h1 { fs-bookmark-level: 1; } h2 { fs-bookmark-level: 2; }</style></head>" +
+			"<body><h1>My bookmark test</h1><h2>Second test</h2></body></html>";
+		
+		pdf.prepare(html);
+		
+		String bookmark =
+			"/Dest [0 /XYZ null 799 null]\n" +
+			"/Title (My bookmark test)\n";
+		
+		pdf.assertContains(bookmark);
+		pdf.assertContains("/Type /Outlines");
+	}
+	
+	@Test
 	public void testLinearGradientWithOpacity()
 	{
 		PdfTest pdf = new PdfTest("LinearGradientWithOpacity");

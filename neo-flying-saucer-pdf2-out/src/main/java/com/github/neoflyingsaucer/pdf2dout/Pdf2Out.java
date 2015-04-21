@@ -67,16 +67,17 @@ import com.github.neoflyingsaucer.extend.output.JustificationInfo;
 import com.github.neoflyingsaucer.extend.output.ReplacedElement;
 import com.github.neoflyingsaucer.pdf2dout.Pdf2FontResolver.FontDescription;
 import com.github.neoflyingsaucer.pdf2dout.Pdf2ReplacedElementResolver.Pdf2ImageReplacedElement;
+
 import static com.github.neoflyingsaucer.pdf2dout.Pdf2PdfBoxWrapper.*;
 
 public class Pdf2Out implements DisplayListOuputDevice 
 {
 	private final float _dotsPerPoint;
 	private final PdfOutMode _mode;
-	
-    //private Page _currentPage;
+	private final Pdf2BookmarkManager bookmarkManager = new Pdf2BookmarkManager();
+
     private Stroke _stroke = STROKE_ONE;
-    private Stroke _originalStroke = STROKE_ONE;
+
     private float _opacity = 1;
     private float _pageHeight;
     private AffineTransform _transform = new AffineTransform();
@@ -361,19 +362,16 @@ public class Pdf2Out implements DisplayListOuputDevice
      */
 	protected void createBookmark(DlBookmark bm)
 	{
-		// TODO
+		PDPageXYZDestination destination = new PDPageXYZDestination();
+		destination.setTop((int) (_pageHeight - (bm.y / _dotsPerPoint)));
+		destination.setPageNumber(bm.pageNo);
 		
-		//		float destY = _pageHeight - bm.y / _dotsPerPoint;
-//
-//		Destination destination = new Destination(0, destY, 0);
-//        destination.setPageObjNumber(bm.pageNo);
-//		
-//    	Bookmark pdfbm = new Bookmark(destination, bm.content, bm.level);
-//    	_currentPage.getPdf().addBookmark(pdfbm);
+		bookmarkManager.addBookmark(bm, destination);
 	}
 
 	public void finish()
 	{
+		bookmarkManager.outputBookmarks(_pdf);
 		pdfSavePdf(_pdf, _os);
 		pdfCloseDocument(_pdf);
 	}
@@ -789,7 +787,6 @@ public class Pdf2Out implements DisplayListOuputDevice
 
 	protected void setStroke(Stroke s)
 	{
-		_originalStroke = s;
 		_stroke = transformStroke(s);
 	}
 	
