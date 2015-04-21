@@ -22,7 +22,6 @@ import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObject;
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationLink;
 
 import com.github.neoflyingsaucer.pdf2dout.Pdf2Out.PdfOutMode;
-import com.github.pdfstream.PdfException;
 
 public class Pdf2PdfBoxWrapper 
 {
@@ -363,6 +362,6 @@ public class Pdf2PdfBoxWrapper
 	
 	public static PDPatternResources pdfCreatePatterns(COSDictionary dict)
 	{
-		return new PDShadingPatternResources(dict);//PDPatternResources.create(dict);
+		return new PDShadingPatternResources(dict);
 	}
 }

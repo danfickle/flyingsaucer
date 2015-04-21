@@ -31,7 +31,6 @@ import org.apache.pdfbox.pdmodel.graphics.pattern.PDPatternResources;
 
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlLinearGradient;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlStopPoint;
-import com.github.pdfstream.PdfException;
 
 public class Pdf2LinearGradient
 {
