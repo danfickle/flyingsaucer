@@ -514,4 +514,29 @@ public class BackgroundTest
 		
 		BufferedImageTest.assertImgEquals(html, expected, 2, 0, "LinearGradientWithHeightGreaterThanWidth");
 	}
+	
+	@Test
+	public void testLinearGradientAcrossPages()
+	{
+		String html = 
+			"<html><head><style>" +
+			"@page { size: 2px 3px; margin: 0; }" +
+			"body { margin: 0; }" +
+			"div { background-image: linear-gradient(to bottom, #f00, #f00); width: 2px; height: 5px; }" +
+			"</style></head><body><div></div></body></html>";
+
+		String expected = 
+			"RR" +
+			"RR" +
+			"RR";
+		
+		BufferedImageTest.assertImgEquals(html, expected, 2, 0, "LinearGradientAcrossPages.1");
+
+		expected =
+			"RR" +
+			"RR" +
+			"##";
+	
+		BufferedImageTest.assertImgEquals(html, expected, 2, 1, "LinearGradientAcrossPages.2");
+	}
 }
