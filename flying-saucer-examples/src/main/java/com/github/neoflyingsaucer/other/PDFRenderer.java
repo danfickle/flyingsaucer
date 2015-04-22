@@ -26,24 +26,10 @@ import javax.imageio.ImageIO;
 import org.xhtmlrenderer.renderers.ContinuousRenderer;
 import org.xhtmlrenderer.renderers.PagedRenderer;
 
-/**
- * PDFRenderer supports headless rendering of XHTML documents, outputting
- * to PDF format.
- * <p>You can use this utility from the command line by passing in
- * the URL or file location as first parameter, and PDF path as second
- * parameter:</p>
- * <pre>
- * java -cp %classpath% org.xhtmlrenderer.simple.PDFRenderer url pdf
- * </pre>
- *
- * @author Pete Brant
- * @author Patrick Wright
- */
-public class PDFRenderer {
-
+public class PDFRenderer
+{
     /**
-     * Renders the XML file at the given URL as a PDF file
-     * at the target location.
+     * Renders the HTML file at the given URL as a PDF file, paged images and continuous image.
      *
      * @param url url for the XML file to render
      * @param pdf path to the PDF file to create
@@ -54,8 +40,17 @@ public class PDFRenderer {
     public static void renderToPDF(final String url, final String pdf, final UserAgentCallback uac)
             throws IOException 
     {
-    	renderToContinuousImage(url, uac, pdf + ".imgc.png");
-    	renderToPagedImage(url, uac, 0, pdf + ".imgp.png");
+    	int ext = pdf.lastIndexOf('.');
+    	String filename;
+    	
+    	if (ext != -1)
+    		filename = pdf.substring(0, ext);
+    	else
+    		filename = pdf;
+    	
+    	
+    	renderToContinuousImage(url, uac, filename);
+    	renderToPagedImage(url, uac, filename);
     	renderToPagedPdf(url, uac, pdf);
     }
     
@@ -66,8 +61,6 @@ public class PDFRenderer {
     private static void renderToPagedPdf(String url, UserAgentCallback uac, String filename) throws IOException
     {
     	PagedRenderer r3 = new PagedRenderer(uac, PDF_DEFAULT_DOTS_PER_POINT * 72f, PDF_DEFAULT_DOTS_PER_PIXEL);
-    	
-    	
 
     	Pdf2Out out = new Pdf2Out(PDF_DEFAULT_DOTS_PER_POINT, PdfOutMode.TEST_MODE);
     	BufferedOutputStream bs = new BufferedOutputStream(new FileOutputStream(filename));
@@ -104,7 +97,7 @@ public class PDFRenderer {
     	bs.close();
     }
 
-    private static void renderToPagedImage(String url, UserAgentCallback uac, int pageNo, String filename) throws IOException
+    private static void renderToPagedImage(String url, UserAgentCallback uac, String filename) throws IOException
     {
     	BufferedImage layoutGraphics = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
  
@@ -121,21 +114,25 @@ public class PDFRenderer {
     	r3.setReplacedElementResolver(new Java2DReplacedElementResolver());
     	r3.prepare();
     	
-    	DisplayList dl = r3.renderToList(pageNo);
-    	int height = r3.getPageHeight(pageNo);
-    	int width = r3.getPageWidth(pageNo);
-    	BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+    	for (int pageNo = 0; pageNo < r3.getPageCount(); pageNo++)
+    	{
+    	   	DisplayList dl = r3.renderToList(pageNo);
+    	   	int height = r3.getPageHeight(pageNo);
+    	   	int width = r3.getPageWidth(pageNo);
+    	   	BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     	
-    	Graphics2D g2d = img.createGraphics();
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+    	   	Graphics2D g2d = img.createGraphics();
+    	   	g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    	   	g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
   	
-    	Java2DOut out = new Java2DOut(g2d, RenderingHints.VALUE_ANTIALIAS_ON);
-    	out.render(dl);
-    	g2d.dispose();
-    	g2d2.dispose();
+    	   	Java2DOut out = new Java2DOut(g2d, RenderingHints.VALUE_ANTIALIAS_ON);
+    	   	out.render(dl);
+    	   	g2d.dispose();
     	
-    	ImageIO.write(img, "png", new File(filename)); 
+    	   	ImageIO.write(img, "png", new File(filename + ".page-" + (pageNo + 1) + ".png"));
+    	}
+
+	   	g2d2.dispose();
     }
     
 
@@ -170,6 +167,6 @@ public class PDFRenderer {
     	g2d.dispose();
     	g2d2.dispose();
     	
-    	ImageIO.write(img, "png", new File(filename)); 
+    	ImageIO.write(img, "png", new File(filename + ".png")); 
     }
 }
