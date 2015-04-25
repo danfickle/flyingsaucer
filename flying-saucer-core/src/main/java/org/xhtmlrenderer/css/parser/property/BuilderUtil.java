@@ -15,7 +15,7 @@ import org.xhtmlrenderer.css.parser.PropertyValueImp.CSSValueType;
 import org.xhtmlrenderer.css.sheet.PropertyDeclaration;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
 
-import com.github.neoflyingsaucer.extend.useragent.LangId;
+import com.github.neoflyingsaucer.extend.controller.error.LangId;
 
 /**
  * Static utility functions to check types, etc for builders to use.
@@ -54,20 +54,6 @@ public class BuilderUtil {
 		throw new CSSParseException(key, -1, args);
 	}
 
-	@Deprecated
-	public static void checkValueType(final CSSName cssName, final PropertyValue value, final EnumSet<CSSPrimitiveUnit> in)
-	{
-		if (!in.contains(value.getPrimitiveTypeN()))
-			cssThrowError(LangId.UNSUPPORTED_TYPE, value.getPrimitiveTypeN(), cssName);
-	}
-
-	@Deprecated
-	public static void checkValueType(final CSSName cssName, final PropertyValue value, final EnumSet<CSSPrimitiveUnit> in, final EnumSet<CSSPrimitiveUnit> in2)
-	{
-		if (!in.contains(value.getPrimitiveTypeN()) && !in2.contains(value.getPrimitiveTypeN()))
-			cssThrowError(LangId.UNSUPPORTED_TYPE, value.getPrimitiveTypeN(), cssName);
-	}
-	
 	public static void checkGenericType(CSSName cssName, PropertyValue val, EnumSet<GenericType> typesAllowed)
 	{
 		if (!checkType(val.getPrimitiveTypeN(), typesAllowed) &&
@@ -219,127 +205,9 @@ public class BuilderUtil {
 			cssThrowError(LangId.MIN_MAX_VALUE_COUNT_MISMATCH, found, cssName, min, max);
 	}
 
-	@Deprecated
-	public static void checkIdentType(final CSSName cssName, final PropertyValue value) {
-		if (value.getPrimitiveTypeN() != CSSPrimitiveUnit.CSS_IDENT) 
-			cssThrowError(LangId.MUST_BE_IDENTIFIER, cssName);
-	}
-
-	@Deprecated
-	public static void checkIdentOrURIType(final CSSName cssName, final PropertyValue value) {
-		final CSSPrimitiveUnit type = value.getPrimitiveTypeN();
-
-		if (type != CSSPrimitiveUnit.CSS_IDENT &&
-			type != CSSPrimitiveUnit.CSS_URI)
-			cssThrowError(LangId.MUST_BE_URI_OR_IDENTIFIER, cssName);
-	}
-
-	@Deprecated
-	public static void checkIdentOrColorType(final CSSName cssName, final PropertyValue value) {
-		final CSSPrimitiveUnit type = value.getPrimitiveTypeN();
-
-		if (type != CSSPrimitiveUnit.CSS_IDENT
-			&& type != CSSPrimitiveUnit.CSS_RGBCOLOR)
-		cssThrowError(LangId.MUST_BE_COLOR_OR_IDENTIFIER, cssName);
-	}
-
-	@Deprecated
-	public static void checkIdentOrIntegerType(final CSSName cssName, final PropertyValue value) {
-		final CSSPrimitiveUnit type = value.getPrimitiveTypeN();
-		if ((type != CSSPrimitiveUnit.CSS_IDENT && type != CSSPrimitiveUnit.CSS_NUMBER)
-			|| (type == CSSPrimitiveUnit.CSS_NUMBER &&
-			(int) value.getFloatValue() != 
-			Math.round(value.getFloatValue()))) 
-		{
-			cssThrowError(LangId.MUST_BE_INT_OR_IDENTIFIER, cssName);
-		}
-	}
-
-	@Deprecated
-	public static void checkInteger(final CSSName cssName, final PropertyValue value) {
-		final CSSPrimitiveUnit type = value.getPrimitiveTypeN();
-		if (type != CSSPrimitiveUnit.CSS_NUMBER ||
-		   (type == CSSPrimitiveUnit.CSS_NUMBER && 
-		    value.getFloatValue() % 1f != 0f))
-		{
-			cssThrowError(LangId.MUST_BE_INT, cssName);
-		}
-	}
-
-	@Deprecated
-	public static void checkIdentOrLengthType(final CSSName cssName, final PropertyValue value) {
-		final CSSPrimitiveUnit type = value.getPrimitiveTypeN();
-		if (type != CSSPrimitiveUnit.CSS_IDENT && !isLength(value)) {
-			cssThrowError(LangId.MUST_BE_LENGTH_OR_IDENTIFIER, cssName);
-		}
-	}
-
-	@Deprecated
-	public static void checkIdentOrNumberType(final CSSName cssName, final PropertyValue value) {
-		final CSSPrimitiveUnit type = value.getPrimitiveTypeN();
-		if (type != CSSPrimitiveUnit.CSS_IDENT
-				&& type != CSSPrimitiveUnit.CSS_NUMBER) {
-			cssThrowError(LangId.MUST_BE_NUMBER_OR_IDENTIFIER, cssName);
-		}
-	}
-
-	@Deprecated
-	public static void checkIdentLengthOrPercentType(final CSSName cssName,
-			final PropertyValue value) {
-		final CSSPrimitiveUnit type = value.getPrimitiveTypeN();
-		if (type != CSSPrimitiveUnit.CSS_IDENT && !isLength(value)
-				&& type != CSSPrimitiveUnit.CSS_PERCENTAGE) {
-			cssThrowError(LangId.MUST_BE_LENGTH_PERCENT_OR_IDENTIFIER, cssName);
-		}
-	}
-
-	@Deprecated
-	public static void checkLengthOrPercentType(final CSSName cssName,
-			final PropertyValue value) {
-		final CSSPrimitiveUnit type = value.getPrimitiveTypeN();
-		if (!isLength(value) && type != CSSPrimitiveUnit.CSS_PERCENTAGE) {
-			cssThrowError(LangId.MUST_BE_LENGTH_OR_PERCENT, cssName);
-		}
-	}
-
-	@Deprecated
 	public static void checkLengthType(final CSSName cssName, final PropertyValue value) {
 		if (!isLength(value)) {
 			cssThrowError(LangId.MUST_BE_LENGTH, cssName);
-		}
-	}
-
-	@Deprecated
-	public static void checkNumberType(final CSSName cssName, final PropertyValue value) {
-		if (value.getPrimitiveTypeN() != CSSPrimitiveUnit.CSS_NUMBER) {
-			cssThrowError(LangId.MUST_BE_NUMBER, cssName);
-		}
-	}
-
-	@Deprecated
-	public static void checkStringType(final CSSName cssName, final PropertyValue value) {
-		if (value.getPrimitiveTypeN() != CSSPrimitiveUnit.CSS_STRING) {
-			cssThrowError(LangId.MUST_BE_STRING, cssName);
-		}
-	}
-
-	@Deprecated
-	public static void checkIdentOrString(final CSSName cssName, final PropertyValue value) {
-		final CSSPrimitiveUnit type = value.getPrimitiveTypeN();
-		if (type != CSSPrimitiveUnit.CSS_STRING
-				&& type != CSSPrimitiveUnit.CSS_IDENT) {
-			cssThrowError(LangId.MUST_BE_STRING_OR_IDENTIFIER, cssName);
-		}
-	}
-
-	@Deprecated
-	public static void checkIdentLengthNumberOrPercentType(final CSSName cssName,
-			final PropertyValue value) {
-		final CSSPrimitiveUnit type = value.getPrimitiveTypeN();
-		if (type != CSSPrimitiveUnit.CSS_IDENT && !isLength(value)
-				&& type != CSSPrimitiveUnit.CSS_PERCENTAGE
-				&& type != CSSPrimitiveUnit.CSS_NUMBER) {
-			cssThrowError(LangId.MUST_BE_LENGTH_NUMBER_PERCENT_OR_IDENTIFIER, cssName);
 		}
 	}
 

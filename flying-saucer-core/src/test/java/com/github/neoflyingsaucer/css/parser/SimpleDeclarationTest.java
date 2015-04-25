@@ -6,7 +6,7 @@ import org.xhtmlrenderer.css.parser.CSSParser;
 import org.xhtmlrenderer.css.sheet.Ruleset;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
 
-import com.github.neoflyingsaucer.extend.useragent.LangId;
+import com.github.neoflyingsaucer.extend.controller.error.LangId;
 
 public class SimpleDeclarationTest
 {

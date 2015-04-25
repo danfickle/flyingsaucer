@@ -3,8 +3,6 @@ package com.github.neoflyingsaucer.extend.controller.error;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
-import com.github.neoflyingsaucer.extend.useragent.LangId;
-
 public class FSError 
 {
 	private int lineNumber;

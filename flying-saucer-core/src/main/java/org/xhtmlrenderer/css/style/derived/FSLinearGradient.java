@@ -19,7 +19,7 @@ import org.xhtmlrenderer.css.style.CalculatedStyle;
 import org.xhtmlrenderer.css.style.CssContext;
 import org.xhtmlrenderer.util.GeneralUtil;
 
-import com.github.neoflyingsaucer.extend.useragent.LangId;
+import com.github.neoflyingsaucer.extend.controller.error.LangId;
 
 public class FSLinearGradient
 {

@@ -10,7 +10,7 @@ import org.xhtmlrenderer.css.parser.CSSErrorHandler;
 import org.xhtmlrenderer.css.parser.CSSParser;
 import org.xhtmlrenderer.layout.SharedContext;
 
-import com.github.neoflyingsaucer.extend.useragent.LangId;
+import com.github.neoflyingsaucer.extend.controller.error.LangId;
 
 import static org.junit.Assert.*;
 

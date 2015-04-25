@@ -54,7 +54,7 @@ import org.xhtmlrenderer.css.sheet.StylesheetInfo;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
 import org.xhtmlrenderer.util.GeneralUtil;
 
-import com.github.neoflyingsaucer.extend.useragent.LangId;
+import com.github.neoflyingsaucer.extend.controller.error.LangId;
 import com.github.neoflyingsaucer.extend.useragent.Optional;
 import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 

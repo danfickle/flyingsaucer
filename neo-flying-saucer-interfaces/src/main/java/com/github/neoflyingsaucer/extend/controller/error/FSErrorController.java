@@ -3,7 +3,6 @@ package com.github.neoflyingsaucer.extend.controller.error;
 import java.util.Locale;
 
 import com.github.neoflyingsaucer.extend.controller.error.FSError.FSErrorLevel;
-import com.github.neoflyingsaucer.extend.useragent.LangId;
 
 public class FSErrorController 
 {

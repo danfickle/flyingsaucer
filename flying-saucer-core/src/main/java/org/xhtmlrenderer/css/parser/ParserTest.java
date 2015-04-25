@@ -23,7 +23,7 @@ import java.io.StringReader;
 
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
 
-import com.github.neoflyingsaucer.extend.useragent.LangId;
+import com.github.neoflyingsaucer.extend.controller.error.LangId;
 
 public class ParserTest {
     public static void main(final String[] args) throws Exception {

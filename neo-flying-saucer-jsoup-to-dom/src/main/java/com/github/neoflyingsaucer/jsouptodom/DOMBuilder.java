@@ -31,8 +31,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.github.neoflyingsaucer.extend.controller.error.FSErrorController;
+import com.github.neoflyingsaucer.extend.controller.error.LangId;
 import com.github.neoflyingsaucer.extend.controller.error.FSError.FSErrorLevel;
-import com.github.neoflyingsaucer.extend.useragent.LangId;
 
 /**
 *

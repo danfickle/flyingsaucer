@@ -1,4 +1,4 @@
-package com.github.neoflyingsaucer.extend.useragent;
+package com.github.neoflyingsaucer.extend.controller.error;
 
 public enum LangId
 {
@@ -15,26 +15,6 @@ public enum LangId
 	/**
 	 * 1 arguments.
 	 */
-	MUST_BE_IDENTIFIER,
-
-	/**
-	 * 1 arguments.
-	 */
-	MUST_BE_URI_OR_IDENTIFIER,
-
-	/**
-	 * 1 arguments.
-	 */
-	MUST_BE_COLOR_OR_IDENTIFIER,
-
-	/**
-	 * 1 arguments.
-	 */
-	MUST_BE_INT_OR_IDENTIFIER, 
-
-	/**
-	 * 1 arguments.
-	 */
 	MUST_BE_INT,
 	
 	/**
@@ -45,42 +25,7 @@ public enum LangId
 	/**
 	 * 1 arguments.
 	 */
-	MUST_BE_NUMBER_OR_IDENTIFIER,
-
-	/**
-	 * 1 arguments.
-	 */
-	MUST_BE_LENGTH_PERCENT_OR_IDENTIFIER,
-
-	/**
-	 * 1 arguments.
-	 */
-	MUST_BE_LENGTH_OR_PERCENT,
-
-	/**
-	 * 1 arguments.
-	 */
 	MUST_BE_LENGTH,
-
-	/**
-	 * 1 arguments.
-	 */
-	MUST_BE_NUMBER,
-
-	/**
-	 * 1 arguments.
-	 */
-	MUST_BE_STRING,
-	
-	/**
-	 * 1 arguments.
-	 */
-	MUST_BE_STRING_OR_IDENTIFIER,
-
-	/**
-	 * 1 arguments.
-	 */
-	MUST_BE_LENGTH_NUMBER_PERCENT_OR_IDENTIFIER,
 
 	/**
 	 * 2 arguments.
@@ -151,16 +96,6 @@ public enum LangId
 	 * 1 arguments.
 	 */
 	INVALID_KEYWORD_COMBINATION,
-
-	/**
-	 * 2 arguments.
-	 */
-	AT_LEAST_PARAMS_REQUIRED,
-
-	/**
-	 * 1 arguments.
-	 */
-	FUNCTION_GENERAL,
 
 	/**
 	 * 2 arguments.

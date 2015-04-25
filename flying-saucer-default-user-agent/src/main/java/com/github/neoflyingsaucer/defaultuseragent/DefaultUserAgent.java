@@ -42,10 +42,10 @@ import org.xhtmlrenderer.util.GeneralUtil;
 import org.xhtmlrenderer.util.ImageUtil;
 
 import com.github.neoflyingsaucer.extend.controller.error.FSErrorType;
+import com.github.neoflyingsaucer.extend.controller.error.LangId;
 import com.github.neoflyingsaucer.extend.useragent.CSSResourceI;
 import com.github.neoflyingsaucer.extend.useragent.HTMLResourceI;
 import com.github.neoflyingsaucer.extend.useragent.ImageResourceI;
-import com.github.neoflyingsaucer.extend.useragent.LangId;
 import com.github.neoflyingsaucer.extend.useragent.Optional;
 import com.github.neoflyingsaucer.extend.useragent.ResourceCache;
 import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
