@@ -32,8 +32,11 @@ import org.xhtmlrenderer.css.sheet.Stylesheet;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
 
+import com.github.neoflyingsaucer.extend.controller.error.FSError;
+import com.github.neoflyingsaucer.extend.controller.error.FSErrorController;
+import com.github.neoflyingsaucer.extend.controller.error.FSErrorType;
+import com.github.neoflyingsaucer.extend.controller.error.FSError.FSErrorLevel;
 import com.github.neoflyingsaucer.extend.useragent.CSSResourceI;
-import com.github.neoflyingsaucer.extend.useragent.FSErrorType;
 import com.github.neoflyingsaucer.extend.useragent.LangId;
 import com.github.neoflyingsaucer.extend.useragent.Optional;
 import com.github.neoflyingsaucer.extend.useragent.StylesheetI;
@@ -62,8 +65,9 @@ public class StylesheetFactoryImpl implements StylesheetFactory {
         	public void error(String uri, int line, LangId msgId, Object... args) {
         		if (_userAgentCallback != null)
         		{
-        			// Send it back to the user agent to decide what to do with it.
-        			_userAgentCallback.onError(msgId, line, FSErrorType.CSS_ERROR, args);
+        			// Send it back to the user configurable error handler to decide what to do with it.
+        			FSError err = new FSError(line, msgId, FSErrorType.CSS_ERROR, uri, StylesheetFactory.class, FSErrorLevel.WARNING, args);
+        			FSErrorController.onError(err);
         		}
         	}
         }, _userAgentCallback);

@@ -18,6 +18,11 @@
 	<description>Flying Saucer is a CSS 2.1 renderer written in Java.  This artifact contains the interfaces that glue the other modules together.</description>
 
   <dependencies>
+  		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.7</version>
+		</dependency>
   </dependencies>
 </project>
 

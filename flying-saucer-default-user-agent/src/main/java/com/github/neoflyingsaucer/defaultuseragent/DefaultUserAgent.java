@@ -41,8 +41,8 @@ import org.xhtmlrenderer.resource.ImageResource;
 import org.xhtmlrenderer.util.GeneralUtil;
 import org.xhtmlrenderer.util.ImageUtil;
 
+import com.github.neoflyingsaucer.extend.controller.error.FSErrorType;
 import com.github.neoflyingsaucer.extend.useragent.CSSResourceI;
-import com.github.neoflyingsaucer.extend.useragent.FSErrorType;
 import com.github.neoflyingsaucer.extend.useragent.HTMLResourceI;
 import com.github.neoflyingsaucer.extend.useragent.ImageResourceI;
 import com.github.neoflyingsaucer.extend.useragent.LangId;
@@ -80,10 +80,6 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
     // TODO: Make this configurable.
     protected ResourceCache _resourceCache = new ResourceCacheImpl(32, 5);
 
-    // TODO: Customize resource locale.
-    protected ResourceBundle messages = ResourceBundle.getBundle("languages.ErrorMessages", Locale.US);
-    
-    
     private final int _imageCacheCapacity;
 
     /**
@@ -390,30 +386,6 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
         xr = HTMLResourceHelper.load(notFound);
         return new HTMLResource("about:error", xr.getDocument());
     }
-
-	@Override
-	public void onError(LangId msgId, int line, FSErrorType errorType, Object[] args) 
-	{
-		if (msgId == null)
-		{
-			LOGGER.error("NO error message here");
-			return;
-		}
-		
-		String msgUnformatted = messages.getString(msgId.toString());
-		String msg = MessageFormat.format(msgUnformatted, args);
-		
-		if (errorType == FSErrorType.CSS_ERROR)
-		{
-			String cssUnformattedMsg = messages.getString(LangId.CSS_ERROR.toString());
-			String cssMsg = MessageFormat.format(cssUnformattedMsg, line);
-			LOGGER.warn(cssMsg + " " + msg);
-		}
-		else
-		{
-			LOGGER.warn(msg);
-		}
-	}
 
 	@Override
 	public ResourceCache getResourceCache() 

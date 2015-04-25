@@ -19,8 +19,6 @@
  */
 package com.github.neoflyingsaucer.extend.useragent;
 
-
-
 /**
  * <p>To be implemented by any user agent using the panel. "User agent" is a
  * term defined by the W3C in the documentation for XHTML and CSS; in most
@@ -99,8 +97,6 @@ public interface UserAgentCallback {
      * @return the full uri in uri-spaces known to the current implementation.
      */
     Optional<String> resolveURI(String baseUri, String uri);
-	
-	void onError(LangId msgId, int line, FSErrorType errorType, Object[] args);
 
 	/**
 	 * May NOT return null.
