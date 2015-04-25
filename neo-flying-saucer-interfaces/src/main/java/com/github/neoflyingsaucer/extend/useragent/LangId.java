@@ -315,5 +315,15 @@ public enum LangId
 	/**
 	 * 2 arguments.
 	 */
-	EXPECTED_TOKEN;
+	EXPECTED_TOKEN,
+	
+	/**
+	 * 1 argument.
+	 */
+	NODE_TYPE_NOT_HANDLED,
+	
+	/**
+	 * 1 argument.
+	 */
+	STYLE_ELEM_MOVED_TO_HEAD;
 }

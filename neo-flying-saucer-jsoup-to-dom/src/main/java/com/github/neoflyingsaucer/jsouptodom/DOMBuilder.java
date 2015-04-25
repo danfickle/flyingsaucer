@@ -30,6 +30,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.github.neoflyingsaucer.extend.controller.error.FSErrorController;
+import com.github.neoflyingsaucer.extend.controller.error.FSError.FSErrorLevel;
+import com.github.neoflyingsaucer.extend.useragent.LangId;
+
 /**
 *
 * @author <a href="mailto:kasper@dfki.de">Walter Kasper</a>
@@ -78,6 +82,11 @@ public class DOMBuilder {
       else
       {
     	  head = (Element) nl.item(nl.getLength() - 1);
+      }
+      
+      if (!styleElements.isEmpty())
+      {
+    	  FSErrorController.log(DOMBuilder.class, FSErrorLevel.INFO, LangId.STYLE_ELEM_MOVED_TO_HEAD, styleElements.size());
       }
       
       for(org.jsoup.nodes.Element e : styleElements)
@@ -173,8 +182,8 @@ public class DOMBuilder {
     } else if (node instanceof org.jsoup.nodes.Comment) {
       // Ignored
     } else {
-      System.out.println("Node type not handled:" + node.getClass());
-      throw new UnsupportedOperationException();
+      FSErrorController.log(DOMBuilder.class, FSErrorLevel.ERROR, LangId.NODE_TYPE_NOT_HANDLED, node.getClass());
+      assert(false);
     }
   }
 
