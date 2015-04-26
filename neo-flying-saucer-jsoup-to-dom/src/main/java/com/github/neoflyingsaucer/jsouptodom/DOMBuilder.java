@@ -30,6 +30,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
 import com.github.neoflyingsaucer.extend.controller.error.FSErrorController;
 import com.github.neoflyingsaucer.extend.controller.error.LangId;
 import com.github.neoflyingsaucer.extend.controller.error.FSError.FSErrorLevel;
@@ -114,7 +115,8 @@ public class DOMBuilder {
   private static void createDOM(org.jsoup.nodes.Node node, Node out,
       Document doc, Map<String, String> ns, java.util.List<org.jsoup.nodes.Element> styleElements) 
   {
-
+    FSCancelController.cancelOpportunity(DOMBuilder.class);
+	  
     if (node instanceof org.jsoup.nodes.Document) {
 
       org.jsoup.nodes.Document d = ((org.jsoup.nodes.Document) node);
@@ -162,6 +164,8 @@ public class DOMBuilder {
         if ("id".equals(attName)) {
           _e.setIdAttribute(attName, true);
         }
+        
+        FSCancelController.cancelOpportunity(DOMBuilder.class);
       }
 
       for (org.jsoup.nodes.Node n : e.childNodes()) {
