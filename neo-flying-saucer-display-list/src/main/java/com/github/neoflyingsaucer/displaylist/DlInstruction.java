@@ -3,10 +3,7 @@ package com.github.neoflyingsaucer.displaylist;
 import java.awt.BasicStroke;
 import java.awt.Shape;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
-
 import com.github.neoflyingsaucer.extend.output.DlItem;
 import com.github.neoflyingsaucer.extend.output.FSFont;
 import com.github.neoflyingsaucer.extend.output.FSGlyphVector;
@@ -45,13 +42,6 @@ public class DlInstruction
 		{
 			return DlType.INTERNAL_LINK;
 		}
-		
-		@Override
-		public String toString() 
-		{
-			// TODO
-			return "";
-		}
 	}
 	
 	public static class DlExternalLink implements DlItem
@@ -73,13 +63,6 @@ public class DlInstruction
 		public DlType getType()
 		{
 			return DlType.EXTERNAL_LINK;
-		}
-		
-		@Override
-		public String toString() 
-		{
-			// TODO
-			return "";
 		}
 	}
 	
@@ -106,13 +89,6 @@ public class DlInstruction
 		public DlType getType() 
 		{
 			return DlType.BOOKMARK;
-		}
-		
-		@Override
-		public String toString()
-		{
-			// TODO
-			return "";
 		}
 	}
 	
@@ -154,12 +130,6 @@ public class DlInstruction
 		{
 			return type;
 		}
-
-		@Override
-		public String toString()
-		{
-			return ""; // TODO
-		}
 	}
 	
 	public static class DlReplaced implements DlItem
@@ -177,12 +147,6 @@ public class DlInstruction
 		{
 			return type;
 		}
-
-		@Override
-		public String toString() 
-		{
-			return String.format(Locale.US, "{%s}", replaced);
-		}
 	}
 	
 	public static class DlAntiAliasOff implements DlItem
@@ -198,12 +162,6 @@ public class DlInstruction
 		{
 			return type;
 		}
-
-		@Override
-		public String toString() 
-		{
-			return String.format(Locale.US, "");
-		}
 	}
 	
 	public static class DlAntiAliasDefault implements DlItem
@@ -218,12 +176,6 @@ public class DlInstruction
 		public DlType getType()
 		{
 			return type;
-		}
-
-		@Override
-		public String toString() 
-		{
-			return String.format(Locale.US, "");
 		}
 	}
 	
@@ -244,13 +196,6 @@ public class DlInstruction
 		public DlType getType()
 		{
 			return type;
-		}
-
-		@Override
-		public String toString() 
-		{
-			// TODO: Make sure FSGlyphVector::toString returns something sensible.
-			return String.format(Locale.US, "{%s %f %f}", vec, x, y);
 		}
 	}
 	
@@ -275,13 +220,6 @@ public class DlInstruction
 		{
 			return type;
 		}
-		
-		@Override
-		public String toString() 
-		{
-			// TODO: Make sure JustificationInfo::toString returns something sensible.
-			return String.format(Locale.US, "{%s, %f, %f}", txt, x, y);
-		}
 	}
 	
 	public static class DlString implements DlItem
@@ -301,12 +239,6 @@ public class DlInstruction
 		public DlType getType()
 		{
 			return type;
-		}
-		
-		@Override
-		public String toString() 
-		{
-			return String.format(Locale.US, "{%s, %f, %f}", txt, x, y);
 		}
 	}
 	
@@ -331,12 +263,6 @@ public class DlInstruction
 		{
 			return type;
 		}
-		
-		@Override
-		public String toString() 
-		{
-			return String.format(Locale.US, "{%d, %d, %d, %d}", x1, y1, x2, y2);
-		}
 	}
 	
 	public static class DlTranslate implements DlItem
@@ -355,12 +281,6 @@ public class DlInstruction
 		{
 			return type;
 		}
-		
-		@Override
-		public String toString() 
-		{
-			return String.format(Locale.US, "{%f %f}", tx, ty);
-		}
 	}
 	
 	public static class DlStroke implements DlItem
@@ -378,14 +298,6 @@ public class DlInstruction
 		{
 			return type;
 		}
-		
-		@Override
-		public String toString() 
-		{
-			return String.format(Locale.US, "{%f %d %d %f %s %f}", 
-					stroke.getLineWidth(), stroke.getEndCap(), stroke.getLineJoin(), 
-					stroke.getMiterLimit(), Arrays.asList(stroke.getDashArray()), stroke.getDashPhase());
-		}
 	}
 	
 	public static class DlOpacity implements DlItem
@@ -402,12 +314,6 @@ public class DlInstruction
 		public DlType getType()
 		{
 			return type;
-		}
-
-		@Override
-		public String toString() 
-		{
-			return String.format(Locale.US, "{%f}", opacity);
 		}
 	}
 	
@@ -428,12 +334,6 @@ public class DlInstruction
 		public DlType getType()
 		{
 			return type;
-		}
-
-		@Override
-		public String toString()
-		{
-			return String.format(Locale.US, "{%f %f %f %f}", c, m, y, k);
 		}
 	}
 	
@@ -456,12 +356,6 @@ public class DlInstruction
 		{
 			return type;
 		}
-
-		@Override
-		public String toString()
-		{
-			return String.format(Locale.US, "{%d %d %d %d}", r, g, b, a);
-		}
 	}
 	
 	public static class DlSetClip implements DlItem
@@ -478,13 +372,6 @@ public class DlInstruction
 		public DlType getType()
 		{
 			return type;
-		}
-
-		@Override
-		public String toString()
-		{
-			// TODO: More sensible string format.
-			return String.format(Locale.US, "{%s}", clip);
 		}
 	}
 	
@@ -505,13 +392,6 @@ public class DlInstruction
 		{
 			return type;
 		}
-
-		@Override
-		public String toString()
-		{
-			// TODO: More sensible string format.
-			return String.format(Locale.US, "{%s}", shape.toString());
-		}
 	}
 	
 	public static class DlClip implements DlItem
@@ -528,13 +408,6 @@ public class DlInstruction
 		public DlType getType()
 		{
 			return type;
-		}
-
-		@Override
-		public String toString()
-		{
-			// TODO: More sensible string format.
-			return String.format(Locale.US, "{%s}", clip.toString());
 		}
 	}
 	
@@ -556,12 +429,6 @@ public class DlInstruction
 		{
 			return type;
 		}
-
-		@Override
-		public String toString() 
-		{
-			return String.format(Locale.US, "{%s %d %d}", image, x, y);
-		}
 	}
 	
 	public static class DlFont implements DlItem
@@ -578,12 +445,6 @@ public class DlInstruction
 		public DlType getType()
 		{
 			return type;
-		}
-
-		@Override
-		public String toString() 
-		{
-			return String.format(Locale.US, "{%s}", font);
 		}
 	}
 	
@@ -607,12 +468,6 @@ public class DlInstruction
 		{
 			return type;
 		}
-
-		@Override
-		public String toString() 
-		{
-			return String.format(Locale.US, "{%d %d %d %d}", x, y, width, height);
-		}
 	}
 	
 	public static class DlRectangle implements DlItem
@@ -634,12 +489,6 @@ public class DlInstruction
 		public DlType getType()
 		{
 			return type;
-		}
-
-		@Override
-		public String toString() 
-		{
-			return String.format(Locale.US, "{%d %d %d %d}", x, y, width, height);
 		}
 	}
 }

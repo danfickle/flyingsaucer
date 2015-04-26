@@ -4,16 +4,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
 import com.github.neoflyingsaucer.extend.output.DisplayList;
 import com.github.neoflyingsaucer.extend.output.DlItem;
 
 public class DisplayListImpl implements DisplayList
 {
-	private List<DlItem> dl = new ArrayList<DlItem>(100);
+	private List<DlItem> dl = new ArrayList<DlItem>(1000);
 
 	@Override
 	public void add(DlItem item)
 	{
+		FSCancelController.cancelOpportunity(DisplayListImpl.class);
 		dl.add(item);
 	}
 	
