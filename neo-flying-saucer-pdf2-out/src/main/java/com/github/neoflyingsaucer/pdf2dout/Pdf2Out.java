@@ -33,8 +33,6 @@ import org.apache.pdfbox.pdmodel.interactive.action.type.PDActionURI;
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationLink;
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDBorderStyleDictionary;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlBookmark;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlCMYKColor;
@@ -59,6 +57,9 @@ import com.github.neoflyingsaucer.displaylist.DlInstruction.DlStroke;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlTranslate;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.Operation;
 import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
+import com.github.neoflyingsaucer.extend.controller.error.FSErrorController;
+import com.github.neoflyingsaucer.extend.controller.error.FSError.FSErrorLevel;
+import com.github.neoflyingsaucer.extend.controller.error.LangId;
 import com.github.neoflyingsaucer.extend.output.DisplayList;
 import com.github.neoflyingsaucer.extend.output.DisplayListOuputDevice;
 import com.github.neoflyingsaucer.extend.output.DlItem;
@@ -97,7 +98,6 @@ public class Pdf2Out implements DisplayListOuputDevice
     
     private static final BasicStroke STROKE_ONE = new BasicStroke(1);
     private static final AffineTransform IDENTITY = new AffineTransform();
-    private static final Logger LOGGER = LoggerFactory.getLogger(Pdf2Out.class);
     private static final int FILL = 1;
     private static final int STROKE = 2;
     private static final int CLIP = 3;
@@ -596,7 +596,7 @@ public class Pdf2Out implements DisplayListOuputDevice
         	}
         	catch (IOException e)
         	{
-        		LOGGER.warn("Unable to read img({})", image.getUri());
+        		FSErrorController.log(Pdf2Out.class, FSErrorLevel.ERROR, LangId.COULDNT_LOAD_IMAGE, image.getUri());
         		return;
         	}
         	

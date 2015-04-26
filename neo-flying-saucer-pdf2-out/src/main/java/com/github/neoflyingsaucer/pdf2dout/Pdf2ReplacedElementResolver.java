@@ -1,9 +1,6 @@
 package com.github.neoflyingsaucer.pdf2dout;
 
 import java.awt.Point;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.github.neoflyingsaucer.extend.controller.error.FSErrorController;

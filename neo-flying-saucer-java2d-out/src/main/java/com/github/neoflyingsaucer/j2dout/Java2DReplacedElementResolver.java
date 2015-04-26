@@ -2,9 +2,11 @@ package com.github.neoflyingsaucer.j2dout;
 
 import java.awt.Point;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
+
+import com.github.neoflyingsaucer.extend.controller.error.FSErrorController;
+import com.github.neoflyingsaucer.extend.controller.error.FSError.FSErrorLevel;
+import com.github.neoflyingsaucer.extend.controller.error.LangId;
 import com.github.neoflyingsaucer.extend.output.FSImage;
 import com.github.neoflyingsaucer.extend.output.ImageResolver;
 import com.github.neoflyingsaucer.extend.output.ReplacedElement;
@@ -15,8 +17,6 @@ import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 
 public class Java2DReplacedElementResolver implements ReplacedElementResolver
 {
-	private static final Logger LOGGER = LoggerFactory.getLogger(Java2DReplacedElementResolver.class);
-	
 	@Override
 	public ReplacedElement createReplacedElement(Element e, String baseUri, UserAgentCallback uac, ImageResolver imgResolver, float cssWidth, float cssHeight)
 	{
@@ -35,7 +35,7 @@ public class Java2DReplacedElementResolver implements ReplacedElementResolver
 
         if (imageSrc.isEmpty())
         {
-        	LOGGER.warn("No source provided for img element.");
+        	FSErrorController.log(Java2DReplacedElementResolver.class, FSErrorLevel.ERROR, LangId.NO_IMAGE_SRC_PROVIDED);
         	return new Java2DImageReplacedElement(null, cssWidth, cssHeight);
         }
 
@@ -48,8 +48,6 @@ public class Java2DReplacedElementResolver implements ReplacedElementResolver
         	re = null;// lookupImageReplacedElement(elem, ruri.get(), cssWidth, cssHeight);
            
         	if (re == null) {
-        		LOGGER.debug("Swing: Image " + ruri + " requested at " + " to " + cssWidth + ", " + cssHeight);
-
             	//ImageResourceI imageResource = uac.getImageResourceCache().get(ruri.get(), cssWidth, cssHeight);
             	// TODO: ImageResource may be null.
             		
