@@ -26,14 +26,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.Locale;
-import java.util.ResourceBundle;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.event.DocumentListener;
 import org.xhtmlrenderer.resource.CSSResource;
 import org.xhtmlrenderer.resource.HTMLResource;
@@ -41,8 +35,9 @@ import org.xhtmlrenderer.resource.ImageResource;
 import org.xhtmlrenderer.util.GeneralUtil;
 import org.xhtmlrenderer.util.ImageUtil;
 
-import com.github.neoflyingsaucer.extend.controller.error.FSErrorType;
+import com.github.neoflyingsaucer.extend.controller.error.FSErrorController;
 import com.github.neoflyingsaucer.extend.controller.error.LangId;
+import com.github.neoflyingsaucer.extend.controller.error.FSError.FSErrorLevel;
 import com.github.neoflyingsaucer.extend.useragent.CSSResourceI;
 import com.github.neoflyingsaucer.extend.useragent.HTMLResourceI;
 import com.github.neoflyingsaucer.extend.useragent.ImageResourceI;
@@ -50,25 +45,7 @@ import com.github.neoflyingsaucer.extend.useragent.Optional;
 import com.github.neoflyingsaucer.extend.useragent.ResourceCache;
 import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 
-/**
- * <p>NaiveUserAgent is a simple implementation of {@link UserAgentCallback} which places no restrictions on what
- * XML, CSS or images are loaded, and reports visited links without any filtering. The most straightforward process
- * available in the JDK is used to load the resources in question--either using java.io or java.net classes.
- *
- * <p>The NaiveUserAgent has a small cache for images,
- * the size of which (number of images) can be passed as a constructor argument. There is no automatic cleaning of
- * the cache; call {@link #shrinkImageCache()} to remove the least-accessed elements--for example, you might do this
- * when a new document is about to be loaded. The NaiveUserAgent is also a DocumentListener; if registered with a
- * source of document events (like the panel hierarchy), it will respond to the
- * {@link org.xhtmlrenderer.event.DocumentListener#documentStarted()} call and attempt to shrink its cache.
- *
- * <p>This class is meant as a starting point--it will work out of the box, but you should really implement your
- * own, tuned to your application's needs.
- *
- * @author Torbjoern Gannholm
- */
 public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultUserAgent.class);
 
     private static final int DEFAULT_IMAGE_CACHE_SIZE = 16;
 
@@ -150,7 +127,7 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
 		}
         catch (IOException e) 
         {
-        	LOGGER.warn("I/O problem", e);
+        	FSErrorController.log(DefaultUserAgent.class, FSErrorLevel.ERROR, LangId.COULDNT_LOAD_CSS, uri);
 			return Optional.empty();
 		}
     }
@@ -182,16 +159,13 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
 					ir = createImageResource(uri, is);
 					_imageCache.put(uri, ir);
 				}
-				catch (final FileNotFoundException e)
+				catch (FileNotFoundException e)
 				{
-					LOGGER.error("Can't read image file; image at URI '" + uri
-							+ "' not found");
+					FSErrorController.log(DefaultUserAgent.class, FSErrorLevel.ERROR, LangId.COULDNT_LOAD_IMAGE, uri);
 				} 
 				catch (final IOException e) 
 				{
-					LOGGER.error(
-							"Can't read image file; unexpected problem for URI '"
-									+ uri + "'", e);
+					FSErrorController.log(DefaultUserAgent.class, FSErrorLevel.ERROR, LangId.COULDNT_LOAD_IMAGE, uri);
 				}
 				finally {
 //					try {
@@ -243,8 +217,7 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
         	bs = sr.bufferedStream();
         	xmlResource = HTMLResourceHelper.load(bs);
         } catch (IOException e) {
-			// TODO
-			LOGGER.error("I/O Problem", e);
+        	FSErrorController.log(DefaultUserAgent.class, FSErrorLevel.ERROR, LangId.COULDNT_LOAD_HTML_DOCUMENT, uri);
 			return Optional.empty();
 		} finally {
             if (bs != null) {
@@ -331,7 +304,7 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
         	}
         	catch (URISyntaxException e)
         	{
-        		LOGGER.warn("Unable to parse URI: {}", uri, e);
+        		FSErrorController.log(DefaultUserAgent.class, FSErrorLevel.ERROR, LangId.INVALID_URI, uri);
         		return Optional.empty();
         	}
         }
@@ -347,7 +320,7 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
         	}
         	catch (URISyntaxException e)
         	{
-        		LOGGER.warn("Unable to parse URI base/rel pair: {} => {}", baseUri, uri, e);
+        		FSErrorController.log(DefaultUserAgent.class, FSErrorLevel.ERROR, LangId.INVALID_BASE_URI_PAIR, baseUri, uri);
         		return Optional.empty();
         	}
         }

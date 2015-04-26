@@ -1,8 +1,5 @@
 package com.github.neoflyingsaucer.defaultuseragent;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.InputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -12,9 +9,12 @@ import java.net.HttpURLConnection;
 import java.net.URLConnection;
 import java.net.URL;
 
+import com.github.neoflyingsaucer.extend.controller.error.FSErrorController;
+import com.github.neoflyingsaucer.extend.controller.error.FSError.FSErrorLevel;
+import com.github.neoflyingsaucer.extend.controller.error.LangId;
+
 public class StreamResource {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(StreamResource.class);
     private String _uri;
     private String _uriFinal;
     private URLConnection _conn;
@@ -68,12 +68,12 @@ public class StreamResource {
             		_slen = _conn.getContentLength();
             	}
             }
-        } catch (final java.net.MalformedURLException e) {
-            LOGGER.error("bad URL given: " + _uri, e);
-        } catch (final FileNotFoundException e) {
-            LOGGER.error("item at URI " + _uri + " not found");
-        } catch (final IOException e) {
-            LOGGER.error("IO problem for " + _uri, e);
+        } catch (java.net.MalformedURLException e) {
+            FSErrorController.log(StreamResource.class, FSErrorLevel.ERROR, LangId.INVALID_URI, _uri);
+        } catch (FileNotFoundException e) {
+        	FSErrorController.log(StreamResource.class, FSErrorLevel.ERROR, LangId.ITEM_AT_URI_NOT_FOUND, _uri);
+        } catch (IOException e) {
+            FSErrorController.log(StreamResource.class, FSErrorLevel.ERROR, LangId.GENERIC_IO_EXCEPTION, _uri);
         }
     }
 

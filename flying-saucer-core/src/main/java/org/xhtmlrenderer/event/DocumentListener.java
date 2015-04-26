@@ -25,12 +25,14 @@ package org.xhtmlrenderer.event;
  * any EDT activity until the methods return; make sure you do as little as possible in each method, or where necessary,
  * spin the task off to a separate thread.
  */
+@Deprecated
 public interface DocumentListener {
     /**
      * Indicates document has been requested (e.g. a new document is going to be
      * loaded). This will be called before any activity takes place for the
      * document.
      */
+	@Deprecated
     void documentStarted();
 
     /**
@@ -39,6 +41,7 @@ public interface DocumentListener {
      * being loaded. This method will be called on every layout run (including,
      * for example, after panel resizes).
      */
+	@Deprecated
     void documentLoaded();
 
     /**
@@ -49,6 +52,7 @@ public interface DocumentListener {
      * defined an XHTML panel, the listener is entirely responsible for
      * handling the exception. No other action will be taken.
      */
+	@Deprecated
     void onLayoutException(Throwable t);
 
     /**
@@ -59,6 +63,7 @@ public interface DocumentListener {
      * defined an XHTML panel, the listener is entirely responsible for
      * handling the exception. No other action will be taken.
      */
+	@Deprecated
     void onRenderException(Throwable t);
 
 }

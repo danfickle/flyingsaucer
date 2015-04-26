@@ -2,19 +2,16 @@ package com.github.neoflyingsaucer.defaultuseragent;
 
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
-import org.xhtmlrenderer.css.sheet.Stylesheet;
-
+import com.github.neoflyingsaucer.extend.controller.error.FSError.FSErrorLevel;
+import com.github.neoflyingsaucer.extend.controller.error.FSErrorController;
+import com.github.neoflyingsaucer.extend.controller.error.LangId;
 import com.github.neoflyingsaucer.extend.useragent.Optional;
 import com.github.neoflyingsaucer.extend.useragent.ResourceCache;
 import com.github.neoflyingsaucer.extend.useragent.StylesheetI;
 
 public class ResourceCacheImpl implements ResourceCache
 {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ResourceCacheImpl.class);
-
     private final int _cssCacheSize;
     private final int _htmlCacheSize;
 	private final Map<String, StylesheetI> _cache;
@@ -55,12 +52,12 @@ public class ResourceCacheImpl implements ResourceCache
 	{
 		if (resolvedUri != null)
 		{
-			LOGGER.info("Receiving stylesheet for {}", resolvedUri);
+			FSErrorController.log(ResourceCacheImpl.class, FSErrorLevel.INFO, LangId.RECEIVING_STYLESHEET, resolvedUri);
 			_cache.put(resolvedUri, sheet);
 		}
 		else
 		{
-			LOGGER.error("Tried to put a stylesheet in cache without uri");
+			FSErrorController.log(ResourceCacheImpl.class, FSErrorLevel.WARNING, LangId.RESOURCE_WITH_NO_URI);
 		}
 	}
 

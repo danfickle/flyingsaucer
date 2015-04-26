@@ -275,5 +275,45 @@ public enum LangId
 	/**
 	 * 0 arguments.
 	 */	
-	NO_IMAGE_SRC_PROVIDED;
+	NO_IMAGE_SRC_PROVIDED,
+
+	/**
+	 * 1 argument.
+	 */
+	COULDNT_LOAD_CSS,
+
+	/**
+	 * 1 argument.
+	 */
+	COULDNT_LOAD_HTML_DOCUMENT,
+	
+	/**
+	 * 1 argument.
+	 */
+	INVALID_URI,
+
+	/**
+	 * 2 arguments.
+	 */
+	INVALID_BASE_URI_PAIR,
+	
+	/**
+	 * 1 argument.
+	 */
+	ITEM_AT_URI_NOT_FOUND,
+	
+	/**
+	 * 1 argument.
+	 */
+	GENERIC_IO_EXCEPTION,
+	
+	/**
+	 * 1 argument.
+	 */
+	RECEIVING_STYLESHEET,
+	
+	/**
+	 * 1 argument.
+	 */
+	RESOURCE_WITH_NO_URI;
 }

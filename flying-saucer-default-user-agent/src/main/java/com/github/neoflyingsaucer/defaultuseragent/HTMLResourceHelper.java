@@ -24,20 +24,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xhtmlrenderer.util.XRRuntimeException;
 
+import com.github.neoflyingsaucer.extend.controller.error.FSError.FSErrorLevel;
+import com.github.neoflyingsaucer.extend.controller.error.FSErrorController;
+import com.github.neoflyingsaucer.extend.controller.error.LangId;
 import com.github.neoflyingsaucer.jsouptodom.Parser;
 
 /**
  * @author Patrick Wright
  */
 // TODO Charsets.
-public class HTMLResourceHelper {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(HTMLResourceHelper.class);
+public class HTMLResourceHelper 
+{
     private Document document;
     
     private HTMLResourceHelper(final String html)
@@ -49,7 +49,7 @@ public class HTMLResourceHelper {
     	try {
 			document = Parser.parseHtml(stream);
 		} catch (final IOException e) {
-			LOGGER.warn("Unable to parse input stream", e);
+			FSErrorController.log(HTMLResourceHelper.class, FSErrorLevel.ERROR, LangId.COULDNT_LOAD_HTML_DOCUMENT, "{unknown}");
 			throw new XRRuntimeException("Unable to parse input stream", e);
 		}
     }
@@ -59,7 +59,7 @@ public class HTMLResourceHelper {
     	try {
 			document = Parser.parseHtml(file);
 		} catch (final IOException e) {
-			LOGGER.warn("Unable to parse file", e);
+			FSErrorController.log(HTMLResourceHelper.class, FSErrorLevel.ERROR, LangId.COULDNT_LOAD_HTML_DOCUMENT, "{unknown}");
 			throw new XRRuntimeException("Unable to parse file", e);
 		}
     }
@@ -84,7 +84,7 @@ public class HTMLResourceHelper {
 			    builder.append(cbuf, 0, numChars);
 			}
 		} catch (final IOException e) {
-			LOGGER.warn("Unable to parse reader", e);
+			FSErrorController.log(HTMLResourceHelper.class, FSErrorLevel.ERROR, LangId.COULDNT_LOAD_HTML_DOCUMENT, "{unknown}");
 			throw new XRRuntimeException("Unable to parse reader", e);
 		}
 
