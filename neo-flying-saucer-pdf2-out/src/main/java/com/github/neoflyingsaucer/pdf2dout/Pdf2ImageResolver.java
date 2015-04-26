@@ -4,15 +4,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
+import com.github.neoflyingsaucer.extend.controller.error.FSError.FSErrorLevel;
+import com.github.neoflyingsaucer.extend.controller.error.FSErrorController;
+import com.github.neoflyingsaucer.extend.controller.error.LangId;
 import com.github.neoflyingsaucer.extend.output.FSImage;
 import com.github.neoflyingsaucer.extend.output.ImageResolver;
 
 public class Pdf2ImageResolver implements ImageResolver
 {
-	private static final Logger LOGGER = LoggerFactory.getLogger(Pdf2ImageResolver.class);
 	private final float _dotsPerPoint;
 	
 	public Pdf2ImageResolver(float dotsPerPoint)
@@ -24,7 +24,7 @@ public class Pdf2ImageResolver implements ImageResolver
 	@Override
 	public FSImage resolveImage(String uri, InputStream strm)
 	{
-		byte[] bytes = new byte[8096];
+		byte[] bytes = new byte[32000];
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		int l;
 		
@@ -35,6 +35,7 @@ public class Pdf2ImageResolver implements ImageResolver
 			while ((l = strm.read(bytes)) != -1)
 			{
 				out.write(bytes, 0, l);
+				FSCancelController.cancelOpportunity(Pdf2ImageResolver.class);
 			}
 			
 			Pdf2Image img = new Pdf2Image(out.toByteArray(), uri);
@@ -43,8 +44,7 @@ public class Pdf2ImageResolver implements ImageResolver
 		}
 		catch (IOException e) 
 		{
-			// TODO
-			System.err.println("Whoops!");
+			FSErrorController.log(Pdf2ImageResolver.class, FSErrorLevel.ERROR, LangId.COULDNT_LOAD_IMAGE, uri);
 		}
 
 		return null;

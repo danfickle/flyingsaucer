@@ -13,6 +13,8 @@ public class FSErrorController
 		}
 	};
 	
+	private FSErrorController() {}
+	
 	public static void onError(FSError err)
 	{
 		FSErrorHandler errorHandler = THREAD_ERROR_HANDLER.get();
@@ -27,6 +29,7 @@ public class FSErrorController
 	
 	public static void setThreadErrorHandler(FSErrorHandler handler)
 	{
+		assert(handler != null);
 		THREAD_ERROR_HANDLER.set(handler);
 	}
 }

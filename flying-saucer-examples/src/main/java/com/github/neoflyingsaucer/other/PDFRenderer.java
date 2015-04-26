@@ -21,6 +21,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
 import javax.imageio.ImageIO;
 
 import org.xhtmlrenderer.renderers.ContinuousRenderer;
@@ -31,7 +32,7 @@ public class PDFRenderer
     /**
      * Renders the HTML file at the given URL as a PDF file, paged images and continuous image.
      *
-     * @param url url for the XML file to render
+     * @param url url for the HTML file to render
      * @param pdf path to the PDF file to create
      * @param uac
      * @throws IOException       if the URL or PDF location is
@@ -60,6 +61,10 @@ public class PDFRenderer
     
     private static void renderToPagedPdf(String url, UserAgentCallback uac, String filename) throws IOException
     {
+    	// Optional.
+    	// FSErrorController.setThreadErrorHandler(handler);
+    	// FSCancelController.setThreadCancelHandler(handler);
+   	
     	PagedRenderer r3 = new PagedRenderer(uac, PDF_DEFAULT_DOTS_PER_POINT * 72f, PDF_DEFAULT_DOTS_PER_PIXEL);
 
     	Pdf2Out out = new Pdf2Out(PDF_DEFAULT_DOTS_PER_POINT, PdfOutMode.TEST_MODE);

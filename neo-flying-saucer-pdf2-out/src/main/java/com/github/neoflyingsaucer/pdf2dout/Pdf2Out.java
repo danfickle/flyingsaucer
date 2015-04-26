@@ -58,6 +58,7 @@ import com.github.neoflyingsaucer.displaylist.DlInstruction.DlStringEx;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlStroke;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlTranslate;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.Operation;
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
 import com.github.neoflyingsaucer.extend.output.DisplayList;
 import com.github.neoflyingsaucer.extend.output.DisplayListOuputDevice;
 import com.github.neoflyingsaucer.extend.output.DlItem;
@@ -118,6 +119,8 @@ public class Pdf2Out implements DisplayListOuputDevice
 	{
 		for (DlItem item : dl.getDisplayList())
 		{
+			FSCancelController.cancelOpportunity(Pdf2Out.class);
+			
 			switch (item.getType())
 			{
 			case LINE:
@@ -1014,6 +1017,7 @@ public class Pdf2Out implements DisplayListOuputDevice
             	break;
             }
 
+            FSCancelController.cancelOpportunity(Pdf2Out.class);
             points.next();
         }
 
@@ -1039,15 +1043,6 @@ public class Pdf2Out implements DisplayListOuputDevice
                 pdfClipNonZero(_content);
         }
     }
-
-    /**
-     * Sets the page count.
-     * @param pageCount
-     */
-    @Deprecated
-    public void setPageCount(int pageCount)
-	{
-	}
 
     /**
      * Sets document information in a PDF document.

@@ -31,6 +31,7 @@ import org.apache.pdfbox.pdmodel.graphics.pattern.PDPatternResources;
 
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlLinearGradient;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlStopPoint;
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
 
 public class Pdf2LinearGradient
 {
@@ -66,6 +67,8 @@ public class Pdf2LinearGradient
 			{
 				if (sv.rgb.a != 255)
 					this.hasAlpha = true;
+				
+				FSCancelController.cancelOpportunity(Pdf2LinearGradient.class);
 			}
 		}
 	}
@@ -138,6 +141,8 @@ public class Pdf2LinearGradient
  		for (int i = 1; i < g.stopPoints.size() - 1;i++)
 		{
 			bounds.add(new COSFloat(g.stopPoints.get(i).dots / lastStopPosition));
+			
+			FSCancelController.cancelOpportunity(Pdf2LinearGradient.class);
 		}
  		shadingDictionary.setItem(COSName.BOUNDS, bounds);
 		
@@ -146,6 +151,8 @@ public class Pdf2LinearGradient
 		{
 			encoding.add(new COSFloat(0));
 			encoding.add(new COSFloat(1));
+			
+			FSCancelController.cancelOpportunity(Pdf2LinearGradient.class);
 		}
 		shadingDictionary.setItem(COSName.ENCODE, encoding);
 		
@@ -201,6 +208,8 @@ public class Pdf2LinearGradient
 			}
 
 			array.add(obj);
+			
+			FSCancelController.cancelOpportunity(Pdf2LinearGradient.class);
 		}
 
     	return array;

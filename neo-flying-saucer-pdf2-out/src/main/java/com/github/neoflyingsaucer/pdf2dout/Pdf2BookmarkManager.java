@@ -9,6 +9,7 @@ import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDDocume
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
 
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlBookmark;
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
 
 public class Pdf2BookmarkManager
 {
@@ -45,6 +46,8 @@ public class Pdf2BookmarkManager
  
     	for (int i = 0; i < bookmarks.size(); i++)
     	{
+    		FSCancelController.cancelOpportunity(Pdf2BookmarkManager.class);
+    		
     		Bookmark bm = bookmarks.get(i);
         	int currentLevel = bm.bm.level;
    	
@@ -56,6 +59,8 @@ public class Pdf2BookmarkManager
     				bm.parent = bookmarks.get(j);
     				break;
     			}
+
+    			FSCancelController.cancelOpportunity(Pdf2BookmarkManager.class);
     		}
     	}
 		
@@ -75,6 +80,8 @@ public class Pdf2BookmarkManager
 			{
 				root.appendChild(item);
 			}
+			
+			FSCancelController.cancelOpportunity(Pdf2BookmarkManager.class);
 		}
 		
 		doc.getDocumentCatalog().setDocumentOutline(outline);

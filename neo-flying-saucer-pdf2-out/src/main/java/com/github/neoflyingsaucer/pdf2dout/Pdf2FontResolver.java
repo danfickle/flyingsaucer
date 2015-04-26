@@ -19,6 +19,10 @@
  */
 package com.github.neoflyingsaucer.pdf2dout;
 
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
+import com.github.neoflyingsaucer.extend.controller.error.FSErrorController;
+import com.github.neoflyingsaucer.extend.controller.error.LangId;
+import com.github.neoflyingsaucer.extend.controller.error.FSError.FSErrorLevel;
 import com.github.neoflyingsaucer.extend.output.FSFont;
 import com.github.neoflyingsaucer.extend.output.FSFontFaceItem;
 import com.github.neoflyingsaucer.extend.output.FontResolver;
@@ -74,6 +78,8 @@ public class Pdf2FontResolver implements FontResolver
         		
         		if (font != null)
         			return font;
+        		
+        		FSCancelController.cancelOpportunity(Pdf2BookmarkManager.class);
         	}
         }
 
@@ -384,6 +390,8 @@ public class Pdf2FontResolver implements FontResolver
                 if (description.getStyle() == style) {
                     candidates.add(description);
                 }
+                
+                FSCancelController.cancelOpportunity(Pdf2BookmarkManager.class);
             }
 
             if (candidates.size() == 0) {
@@ -423,6 +431,7 @@ public class Pdf2FontResolver implements FontResolver
                     if (descr.getWeight() == desiredWeight) {
                         return descr;
                     }
+                    FSCancelController.cancelOpportunity(Pdf2BookmarkManager.class);
                 }
                 return null;
             } else if (searchMode == SM_LIGHTER_OR_DARKER){
@@ -433,6 +442,7 @@ public class Pdf2FontResolver implements FontResolver
                     if (descr.getWeight() > desiredWeight) {
                         break;
                     }
+                    FSCancelController.cancelOpportunity(Pdf2BookmarkManager.class);
                 }
 
                 if (offset > 0 && descr.getWeight() > desiredWeight) {
@@ -449,6 +459,7 @@ public class Pdf2FontResolver implements FontResolver
                     if (descr.getWeight() < desiredWeight) {
                         break;
                     }
+                    FSCancelController.cancelOpportunity(Pdf2BookmarkManager.class);
                 }
 
                 if (offset != matches.length - 1 && descr.getWeight() < desiredWeight) {
@@ -471,7 +482,7 @@ public class Pdf2FontResolver implements FontResolver
 			try {
 				font = PDTrueTypeFont.loadTTF(doc, new ByteArrayInputStream(item.getFontBytes()));
 			} catch (IOException e) {
-				//TODO LOGGER.warn("Couldn't load font");
+				FSErrorController.log(Pdf2FontResolver.class, FSErrorLevel.ERROR, LangId.COULDNT_LOAD_FONT, item.getFontFamily());
 				continue;
 			}
 			

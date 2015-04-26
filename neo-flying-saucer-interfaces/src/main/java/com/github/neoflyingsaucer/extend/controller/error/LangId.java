@@ -260,5 +260,20 @@ public enum LangId
 	/**
 	 * 1 argument.
 	 */
-	STYLE_ELEM_MOVED_TO_HEAD;
+	STYLE_ELEM_MOVED_TO_HEAD,
+	
+	/**
+	 * 1 argument.
+	 */
+	COULDNT_LOAD_FONT,
+
+	/**
+	 * 1 argument.
+	 */
+	COULDNT_LOAD_IMAGE,
+
+	/**
+	 * 0 arguments.
+	 */	
+	NO_IMAGE_SRC_PROVIDED;
 }
