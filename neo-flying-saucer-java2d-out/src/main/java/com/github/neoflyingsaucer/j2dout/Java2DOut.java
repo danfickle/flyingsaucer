@@ -30,6 +30,7 @@ import com.github.neoflyingsaucer.displaylist.DlInstruction.DlStringEx;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlStroke;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlTranslate;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.Operation;
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
 import com.github.neoflyingsaucer.extend.output.DisplayList;
 import com.github.neoflyingsaucer.extend.output.DisplayListOuputDevice;
 import com.github.neoflyingsaucer.extend.output.DlItem;
@@ -56,6 +57,8 @@ public class Java2DOut implements DisplayListOuputDevice
 	{
 		for (DlItem item : dl.getDisplayList())
 		{
+			FSCancelController.cancelOpportunity(Java2DOut.class);
+			
 			switch (item.getType())
 			{
 			case LINE:
@@ -220,6 +223,8 @@ public class Java2DOut implements DisplayListOuputDevice
 
 			colors[i] = new Color(sp.rgb.r, sp.rgb.g, sp.rgb.b, sp.rgb.a);
 			fractions[i] = sp.dots / range;
+			
+			FSCancelController.cancelOpportunity(Java2DOut.class);
 		}
 		
 		LinearGradientPaint paint = new LinearGradientPaint(linear.x1 + linear.x, linear.y1 + linear.y,
@@ -288,6 +293,8 @@ public class Java2DOut implements DisplayListOuputDevice
                 adjust += info.getSpaceAdjust();
             else
                 adjust += info.getNonSpaceAdjust();
+            
+            FSCancelController.cancelOpportunity(Java2DOut.class);
 		}
 	}
 	
@@ -309,6 +316,8 @@ public class Java2DOut implements DisplayListOuputDevice
                 adjust += info.getSpaceAdjust();
             else
                 adjust += info.getNonSpaceAdjust();
+            
+            FSCancelController.cancelOpportunity(Java2DOut.class);
         }
     }
 

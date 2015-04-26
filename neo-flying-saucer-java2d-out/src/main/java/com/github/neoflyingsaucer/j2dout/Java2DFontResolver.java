@@ -19,6 +19,10 @@
  */
 package com.github.neoflyingsaucer.j2dout;
 
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
+import com.github.neoflyingsaucer.extend.controller.error.FSErrorController;
+import com.github.neoflyingsaucer.extend.controller.error.FSError.FSErrorLevel;
+import com.github.neoflyingsaucer.extend.controller.error.LangId;
 import com.github.neoflyingsaucer.extend.output.FSFont;
 import com.github.neoflyingsaucer.extend.output.FSFontFaceItem;
 import com.github.neoflyingsaucer.extend.output.FontResolver;
@@ -93,6 +97,8 @@ public class Java2DFontResolver implements FontResolver
                 {
                     return new Java2DFont(font);
                 }
+                
+                FSCancelController.cancelOpportunity(Java2DFontResolver.class);
             }
         }
 
@@ -199,6 +205,7 @@ public class Java2DFontResolver implements FontResolver
            		{
            			baseFont = item;
            		}
+           		FSCancelController.cancelOpportunity(Java2DFontResolver.class);
            	}
             
            	// Next match on style alone.
@@ -210,6 +217,7 @@ public class Java2DFontResolver implements FontResolver
            	   		{
            	   			baseFont = item;
            	   		}
+           	   		FSCancelController.cancelOpportunity(Java2DFontResolver.class);
            	   	}
            	}
 
@@ -292,9 +300,10 @@ public class Java2DFontResolver implements FontResolver
 			try {
 				font = Font.createFont(Font.TRUETYPE_FONT, new ByteArrayInputStream(item.getFontBytes()));
 			} catch (IOException e) {
-				//TODO LOGGER.warn("Couldn't load font");
+				FSErrorController.log(Java2DFontResolver.class, FSErrorLevel.ERROR, LangId.COULDNT_LOAD_FONT, item.getFontFamily());
 				continue;
 			} catch (FontFormatException e) {
+				FSErrorController.log(Java2DFontResolver.class, FSErrorLevel.ERROR, LangId.COULDNT_LOAD_FONT, item.getFontFamily());
 				continue;
 			}
 
@@ -310,6 +319,8 @@ public class Java2DFontResolver implements FontResolver
 				item.getSpecification() == null ? FontStyle.NORMAL : item.getSpecification().getStyle(), font);
 
 			fontFamily.add(description);
+			
+			FSCancelController.cancelOpportunity(Java2DFontResolver.class);
 		}
 	}
 }
