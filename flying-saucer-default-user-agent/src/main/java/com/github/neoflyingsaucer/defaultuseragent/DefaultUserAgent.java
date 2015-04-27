@@ -28,9 +28,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-
 import org.xhtmlrenderer.event.DocumentListener;
 import org.xhtmlrenderer.resource.CSSResource;
 import org.xhtmlrenderer.resource.HTMLResource;
@@ -48,59 +45,11 @@ import com.github.neoflyingsaucer.extend.useragent.Optional;
 import com.github.neoflyingsaucer.extend.useragent.ResourceCache;
 import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 
-public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
+public class DefaultUserAgent implements UserAgentCallback, DocumentListener 
+{
+    private ResourceCache _resourceCache = new ResourceCacheImpl(32, 5, 20);
 
-    private static final int DEFAULT_IMAGE_CACHE_SIZE = 16;
-
-    /**
-     * a (simple) LRU cache
-     */
-    protected LinkedHashMap<String, ImageResource> _imageCache;
-
-    // TODO: Make this configurable.
-    protected ResourceCache _resourceCache = new ResourceCacheImpl(32, 5);
-
-    private final int _imageCacheCapacity;
-
-    /**
-     * Creates a new instance of NaiveUserAgent with a max image cache of 16 images.
-     */
-    public DefaultUserAgent() {
-        this(DEFAULT_IMAGE_CACHE_SIZE);
-    }
-
-    /**
-     * Creates a new NaiveUserAgent with a cache of a specific size.
-     *
-     * @param imgCacheSize Number of images to hold in cache before LRU images are released.
-     */
-    public DefaultUserAgent(final int imgCacheSize) {
-        this._imageCacheCapacity = imgCacheSize;
-
-        // note we do *not* override removeEldestEntry() here--users of this class must call shrinkImageCache().
-        // that's because we don't know when is a good time to flush the cache
-        this._imageCache = new java.util.LinkedHashMap<String, ImageResource>(_imageCacheCapacity, 0.75f, true);
-    }
-
-    /**
-     * If the image cache has more items than the limit specified for this class, the least-recently used will
-     * be dropped from cache until it reaches the desired size.
-     */
-    public void shrinkImageCache() {
-        int ovr = _imageCache.size() - _imageCacheCapacity;
-        final Iterator<String> it = _imageCache.keySet().iterator();
-        while (it.hasNext() && ovr-- > 0) {
-            it.next();
-            it.remove();
-        }
-    }
-
-    /**
-     * Empties the image cache entirely.
-     */
-    public void clearImageCache() {
-        _imageCache.clear();
-    }
+    public DefaultUserAgent() {}
 
     /**
      * Retrieves the CSS located at the given URI.  It's assumed the URI does point to a CSS file--the URI will
@@ -144,46 +93,39 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
      * @return An ImageResource containing the image.
      */
     @Override
-    public Optional<ImageResourceI> getImageResource(String uri) {
-        ImageResource ir;
+    public Optional<ImageResourceI> getImageResource(String uri) 
+    {
+        ImageResource ir = null;
+        
         if (ImageUtil.isEmbeddedBase64Image(uri)) {
-            final InputStream image = ImageUtil.loadEmbeddedBase64Image(uri);
+            InputStream image = ImageUtil.loadEmbeddedBase64Image(uri);
             ir = createImageResource(null, image);
-        } else {
-            ir = null;
-            //TODO: check that cached image is still valid
-            if (ir == null) {
-            	StreamResource sr = new StreamResource(uri);
-            	sr.connect();
-            	InputStream is = null;
-				try 
-				{
-					is = sr.bufferedStream();
-					ir = createImageResource(uri, is);
-					_imageCache.put(uri, ir);
-				}
-				catch (FileNotFoundException e)
-				{
-					FSErrorController.log(DefaultUserAgent.class, FSErrorLevel.ERROR, LangId.COULDNT_LOAD_IMAGE, uri);
-				} 
-				catch (final IOException e) 
-				{
-					FSErrorController.log(DefaultUserAgent.class, FSErrorLevel.ERROR, LangId.COULDNT_LOAD_IMAGE, uri);
-				}
-				finally {
-//					try {
-////						if (is != null)
-////							is.close();
-//					} catch (final IOException e) {
-//						// ignore
-//					}
-				}
-            }
-            if (ir == null) {
+        }
+        else
+        {
+           	StreamResource sr = new StreamResource(uri);
+           	sr.connect();
+           	InputStream is = null;
+
+           	try 
+			{
+				is = sr.bufferedStream();
+				ir = createImageResource(uri, is);
+			}
+			catch (FileNotFoundException e)
+			{
+				FSErrorController.log(DefaultUserAgent.class, FSErrorLevel.ERROR, LangId.COULDNT_LOAD_IMAGE, uri);
+			} 
+			catch (IOException e) 
+			{
+				FSErrorController.log(DefaultUserAgent.class, FSErrorLevel.ERROR, LangId.COULDNT_LOAD_IMAGE, uri);
+			}
+
+			if (ir == null) {
                 ir = createImageResource(uri, null);
             }
         }
-        return Optional.ofNullable((ImageResourceI) ir);
+        return Optional.<ImageResourceI>ofNullable(ir);
     }
 
     /**
@@ -214,15 +156,20 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
         InputStream bs = null;
         StreamResource sr;
         
-        try {
+        try
+        {
         	sr = new StreamResource(uri);
         	sr.connect();
         	bs = sr.bufferedStream();
         	xmlResource = HTMLResourceHelper.load(bs);
-        } catch (IOException e) {
+        }
+        catch (IOException e) 
+        {
         	FSErrorController.log(DefaultUserAgent.class, FSErrorLevel.ERROR, LangId.COULDNT_LOAD_HTML_DOCUMENT, uri);
 			return Optional.empty();
-		} finally {
+		} 
+        finally 
+        {
             if (bs != null) {
                 try {
                     bs.close();
@@ -231,7 +178,11 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
                 }
             }
         }
-        return Optional.of((HTMLResourceI) new HTMLResource(sr.getFinalUri(), xmlResource.getDocument())); 
+        
+        if (xmlResource.getDocument() != null)
+        	return Optional.<HTMLResourceI>of(new HTMLResource(sr.getFinalUri(), xmlResource.getDocument()));
+        else
+        	return Optional.empty();
     }
 
     @Override
@@ -241,7 +192,8 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
     	sr.connect();
     	InputStream is = null;
     	
-        try {
+        try
+        {
         	is = sr.bufferedStream();
         	final ByteArrayOutputStream result = new ByteArrayOutputStream();
 
@@ -254,9 +206,13 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
             is = null;
 
             return Optional.of(result.toByteArray());
-        } catch (final IOException e) {
+        } 
+        catch (final IOException e)
+        {
             return Optional.empty();
-        } finally {
+        } 
+        finally 
+        {
             if (is != null) {
                 try {
                     is.close();
@@ -330,9 +286,7 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
     }
 
     @Override
-    public void documentStarted() {
-        shrinkImageCache();
-    }
+    public void documentStarted() {}
 
     @Override
     public void documentLoaded() { /* ignore*/ }
@@ -369,6 +323,11 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
 		return _resourceCache;
 	}
 
+	public void setResourceCache(ResourceCache cache)
+	{
+		_resourceCache = cache;
+	}
+	
 	@Override
 	public Optional<HTMLResourceI> parseHTMLResource(String uri, String html) 
 	{

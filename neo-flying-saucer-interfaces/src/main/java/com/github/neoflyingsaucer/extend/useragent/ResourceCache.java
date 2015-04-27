@@ -2,6 +2,8 @@ package com.github.neoflyingsaucer.extend.useragent;
 
 import org.w3c.dom.Document;
 
+import com.github.neoflyingsaucer.extend.output.FSImage;
+
 public interface ResourceCache
 {
 	/**
@@ -25,4 +27,14 @@ public interface ResourceCache
 	 * This method takes a Stylesheet and optionally puts it in a cache.
 	 */
 	public void putCssStylesheet(String resolvedUri, StylesheetI sheet);
+	
+	/**
+	 * This method takes an FSImage and its type and optionally puts it in a cache.
+	 */
+	public void putImage(String resolvedUri, Class<?> imgType, FSImage img);
+
+	/**
+	 * This method should return an FSImage of the type specified or Optional.empty() otherwise.
+	 */
+	public Optional<FSImage> getImage(String resolvedUri, Class<?> imgType);
 }

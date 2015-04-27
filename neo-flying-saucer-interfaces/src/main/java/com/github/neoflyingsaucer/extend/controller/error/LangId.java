@@ -315,5 +315,10 @@ public enum LangId
 	/**
 	 * 1 argument.
 	 */
-	RESOURCE_WITH_NO_URI;
+	RESOURCE_WITH_NO_URI,
+	
+	/**
+	 * 1 argument.
+	 */
+	RECEIVING_IMAGE;
 }
