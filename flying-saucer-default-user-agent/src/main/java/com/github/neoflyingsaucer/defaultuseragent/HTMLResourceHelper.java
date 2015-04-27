@@ -25,8 +25,6 @@ import java.io.InputStream;
 import java.io.Reader;
 
 import org.w3c.dom.Document;
-import org.xhtmlrenderer.util.XRRuntimeException;
-
 import com.github.neoflyingsaucer.extend.controller.error.FSError.FSErrorLevel;
 import com.github.neoflyingsaucer.extend.controller.error.FSErrorController;
 import com.github.neoflyingsaucer.extend.controller.error.LangId;
@@ -40,44 +38,42 @@ public class HTMLResourceHelper
 {
     private Document document;
     
-    private HTMLResourceHelper(final String html)
+    private HTMLResourceHelper(String html)
     {
     	setDocument(Parser.parseHtml(html));
     }
 
-    private HTMLResourceHelper(final InputStream stream) {
+    private HTMLResourceHelper(InputStream stream) {
     	try {
 			document = Parser.parseHtml(stream);
 		} catch (final IOException e) {
 			FSErrorController.log(HTMLResourceHelper.class, FSErrorLevel.ERROR, LangId.COULDNT_LOAD_HTML_DOCUMENT, "{unknown}");
-			throw new XRRuntimeException("Unable to parse input stream", e);
 		}
     }
     
-    private HTMLResourceHelper(final File file)
+    private HTMLResourceHelper(File file)
     {
     	try {
 			document = Parser.parseHtml(file);
 		} catch (final IOException e) {
 			FSErrorController.log(HTMLResourceHelper.class, FSErrorLevel.ERROR, LangId.COULDNT_LOAD_HTML_DOCUMENT, "{unknown}");
-			throw new XRRuntimeException("Unable to parse file", e);
 		}
     }
 
-    public static HTMLResourceHelper load(final String html)
+    public static HTMLResourceHelper load(String html)
     {
     	return new HTMLResourceHelper(html);
     }
     
-    public static HTMLResourceHelper load(final InputStream stream) {
+    public static HTMLResourceHelper load(InputStream stream) {
         return new HTMLResourceHelper(stream);
     }
 
-    public static HTMLResourceHelper load(final Reader reader) {
-    	final char[] cbuf = new char[4096];
+    public static HTMLResourceHelper load(Reader reader) {
+    	char[] cbuf = new char[4096];
     	int numChars;
     	
-    	final StringBuilder builder = new StringBuilder(4096);
+    	StringBuilder builder = new StringBuilder(4096);
 
     	try {
 			while ((numChars = reader.read(cbuf)) >= 0) {
@@ -85,7 +81,6 @@ public class HTMLResourceHelper
 			}
 		} catch (final IOException e) {
 			FSErrorController.log(HTMLResourceHelper.class, FSErrorLevel.ERROR, LangId.COULDNT_LOAD_HTML_DOCUMENT, "{unknown}");
-			throw new XRRuntimeException("Unable to parse reader", e);
 		}
 
     	return new HTMLResourceHelper(builder.toString());
@@ -99,7 +94,7 @@ public class HTMLResourceHelper
         this.document = document;
     }
 
-	public static HTMLResourceHelper load(final File file) {
+	public static HTMLResourceHelper load(File file) {
 		return new HTMLResourceHelper(file);
 	}
 }

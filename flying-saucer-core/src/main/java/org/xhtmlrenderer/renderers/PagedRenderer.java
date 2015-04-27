@@ -30,6 +30,7 @@ import org.xhtmlrenderer.render.ViewportBox;
 import org.xhtmlrenderer.resource.ResourceLoadHelper;
 import org.xhtmlrenderer.simple.HtmlNamespaceHandler;
 import org.xhtmlrenderer.util.NodeHelper;
+import org.xhtmlrenderer.util.XRRuntimeException;
 
 import com.github.neoflyingsaucer.displaylist.DisplayListImpl;
 import com.github.neoflyingsaucer.extend.output.DisplayList;
@@ -73,9 +74,20 @@ public class PagedRenderer
 		this.uri = uri;
 	}
 	
-	public void setDocumentHtml(Document html)
+	public void setDocumentHtml(String html)
 	{
-		this.doc = html;
+		Optional<HTMLResourceI> document = cb.parseHTMLResource(uri, html);
+		
+		if (document.isPresent())
+		{
+			this.doc = document.get().getDocument();
+			this.uri = document.get().getURI();
+		}
+		else
+		{
+			// TODO
+			throw new XRRuntimeException("Unable to load document");
+		}
 	}
 
 	public void setImageResolver(ImageResolver imgResolver)

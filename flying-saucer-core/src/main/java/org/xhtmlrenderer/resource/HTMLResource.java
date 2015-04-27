@@ -15,7 +15,7 @@ public class HTMLResource implements HTMLResourceI
 	
 	/**
 	 * @param uri The final URI of the document.
-	 * @param doc A Jsoup document.
+	 * @param doc A W3C document.
 	 */
 	public HTMLResource(String uri, Document doc)
 	{

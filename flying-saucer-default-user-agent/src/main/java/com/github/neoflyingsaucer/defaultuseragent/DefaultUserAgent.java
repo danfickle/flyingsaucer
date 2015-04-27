@@ -20,14 +20,17 @@
 package com.github.neoflyingsaucer.defaultuseragent;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+
 import org.xhtmlrenderer.event.DocumentListener;
 import org.xhtmlrenderer.resource.CSSResource;
 import org.xhtmlrenderer.resource.HTMLResource;
@@ -364,5 +367,38 @@ public class DefaultUserAgent implements UserAgentCallback, DocumentListener {
 	public ResourceCache getResourceCache() 
 	{
 		return _resourceCache;
+	}
+
+	@Override
+	public Optional<HTMLResourceI> parseHTMLResource(String uri, String html) 
+	{
+		HTMLResourceHelper helper = HTMLResourceHelper.load(html); 
+
+		if (helper.getDocument() != null)
+			return Optional.<HTMLResourceI>of(new HTMLResource(uri, helper.getDocument()));
+		else
+			return Optional.empty();
+	}
+
+	@Override
+	public Optional<HTMLResourceI> parseHTMLResource(String uri, File html) 
+	{
+		HTMLResourceHelper helper = HTMLResourceHelper.load(html); 
+
+		if (helper.getDocument() != null)
+			return Optional.<HTMLResourceI>of(new HTMLResource(uri, helper.getDocument()));
+		else
+			return Optional.empty();
+	}
+
+	@Override
+	public Optional<HTMLResourceI> parseHTMLResource(String uri, Reader html) 
+	{
+		HTMLResourceHelper helper = HTMLResourceHelper.load(html); 
+
+		if (helper.getDocument() != null)
+			return Optional.<HTMLResourceI>of(new HTMLResource(uri, helper.getDocument()));
+		else
+			return Optional.empty();
 	}
 }

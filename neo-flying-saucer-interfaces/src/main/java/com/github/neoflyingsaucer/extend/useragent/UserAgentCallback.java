@@ -19,6 +19,9 @@
  */
 package com.github.neoflyingsaucer.extend.useragent;
 
+import java.io.File;
+import java.io.Reader;
+
 /**
  * <p>To be implemented by any user agent using the panel. "User agent" is a
  * term defined by the W3C in the documentation for XHTML and CSS; in most
@@ -58,6 +61,10 @@ public interface UserAgentCallback {
      */
     Optional<ImageResourceI> getImageResource(String uri);
 
+    Optional<HTMLResourceI> parseHTMLResource(String uri, String html);
+    Optional<HTMLResourceI> parseHTMLResource(String uri, File html);
+    Optional<HTMLResourceI> parseHTMLResource(String uri, Reader html);
+    
     /**
      * Retrieves the HTML at the given URI.
      * This is a synchronous call.

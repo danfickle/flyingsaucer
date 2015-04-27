@@ -21,11 +21,10 @@ public class BufferedImageTest
 {
 	private static BufferedImage renderImage(String html, int pageNo)
 	{
-		Document doc = HTMLResourceHelper.load(html).getDocument();
-		return renderToPagedImage(doc, pageNo);
+		return renderToPagedImage(html, pageNo);
 	}
 
-    private static BufferedImage renderToPagedImage(Document doc, int pageNo)
+    private static BufferedImage renderToPagedImage(String doc, int pageNo)
     {
     	BufferedImage layoutGraphics = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
  

@@ -36,8 +36,6 @@ public class PdfTest
 	{
     	PagedRenderer r3 = new PagedRenderer(new DefaultUserAgent(), PDF_DEFAULT_DOTS_PER_POINT * 72f, PDF_DEFAULT_DOTS_PER_PIXEL);
 
-    	Document doc = HTMLResourceHelper.load(html).getDocument();
-
     	Pdf2Out out = new Pdf2Out(PDF_DEFAULT_DOTS_PER_POINT, PdfOutMode.TEST_MODE);
 
     	try {
@@ -46,7 +44,7 @@ public class PdfTest
 			throw new RuntimeException(e);
 		}
     	
-    	r3.setDocumentHtml(doc);
+    	r3.setDocumentHtml(html);
     	r3.setImageResolver(new Pdf2ImageResolver(PDF_DEFAULT_DOTS_PER_PIXEL));
     	r3.setFontContext(new Pdf2FontContext());
     	r3.setFontResolver(new Pdf2FontResolver(out.getDocument()));
