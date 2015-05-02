@@ -19,8 +19,11 @@
  */
 package com.github.neoflyingsaucer.extend.output;
 
+/**
+ * FSImage is placed in a cache, so implementations need to be immutable.
+ */
 public interface FSImage {
     public int getWidth();
     public int getHeight();
-    public void scale(int width, int height);
+    public FSImage scale(int width, int height);
 }

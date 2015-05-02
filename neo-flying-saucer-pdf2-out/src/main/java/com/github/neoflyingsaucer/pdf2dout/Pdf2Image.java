@@ -16,17 +16,10 @@ public class Pdf2Image implements FSImage
 	private final byte[] _bytes;
 	private final String _uri;
 
-	private int _intrinsicWidth;
-	private int _intrinsicHeight;
-
-	private final int _originalWidth;
-	private final int _originalHeight;
+	private final float _intrinsicWidth;
+	private final float _intrinsicHeight;
 	
-	private int _setWidth = -1;
-	private int _setHeight = -1;
-	
-	private boolean _isJpeg;
-	private int _colorComponents;
+	private final boolean _isJpeg;
 	
 	public Pdf2Image(byte[] image, String uri) throws IOException
 	{
@@ -36,15 +29,14 @@ public class Pdf2Image implements FSImage
 		ImageInputStream in = ImageIO.createImageInputStream(new ByteArrayInputStream(_bytes));
 
 		try {
-			final Iterator<ImageReader> readers = ImageIO.getImageReaders(in);
-		    if (readers.hasNext()) {
+			Iterator<ImageReader> readers = ImageIO.getImageReaders(in);
+		   
+			if (readers.hasNext()) 
+		    {
 		        ImageReader reader = readers.next();
 	            reader.setInput(in);
 	            _intrinsicWidth = reader.getWidth(0);
 	            _intrinsicHeight = reader.getHeight(0);
-	            
-	            _originalWidth = _intrinsicWidth;
-	            _originalHeight = _intrinsicHeight;
 	            
 	            String type = reader.getFormatName();
 	            
@@ -52,21 +44,6 @@ public class Pdf2Image implements FSImage
 	        	   (type.equalsIgnoreCase("jpeg") ||
 	            	type.equalsIgnoreCase("jpg") ||
 	            	type.equalsIgnoreCase("jfif"));
-
-	           ImageTypeSpecifier spec = reader.getRawImageType(0);
-	           
-	           if (spec != null)
-	           {
-	        	   _colorComponents = spec.getNumComponents();
-	           }
-	           else
-	           {
-	        	   // Due to a bug in the JRE, getRawImageType
-	        	   // can return null.
-	        	   Iterator<ImageTypeSpecifier> iter = reader.getImageTypes(0);
-	        	   ImageTypeSpecifier speci = iter.next();
-	        	   _colorComponents = speci.getNumComponents();
-	           }
 		    }
 		    else
 		    {
@@ -78,83 +55,82 @@ public class Pdf2Image implements FSImage
 		}
 	}
 	
-	
-    public void scaleToOutputResolution(float dotsPerPixel)
+	public Pdf2Image(byte[] bytes, String uri, float width, float height, boolean isJpeg)
     {
-        final float factor = dotsPerPixel;
+    	this._bytes = bytes;
+    	this._uri = uri;
+    	this._intrinsicWidth = width;
+    	this._intrinsicHeight = height;
+    	this._isJpeg = isJpeg;
+	}
+
+	public FSImage scaleToOutputResolution(float dotsPerPixel)
+    {
+        float factor = dotsPerPixel;
+        float width = _intrinsicWidth;
+        float height = _intrinsicHeight;
         
         if (factor != 1.0f)
         {
-            _intrinsicWidth *= factor;
-            _intrinsicHeight *= factor;
+            width *= factor;
+            height *= factor;
         }
+        
+        return new Pdf2Image(_bytes, _uri, width, height, _isJpeg);
     }
 
-	public int getOriginalWidth()
-	{
-		return _originalWidth;
-	}
-
-	public int getOriginalHeight()
-	{
-		return _originalHeight;
-	}
-    
-	public int getIntrinsicWidth()
-	{
-		return _intrinsicWidth;
-	}
-
-	public int getIntrinsicHeight()
-	{
-		return _intrinsicHeight;
-	}
-	
 	@Override
 	public int getWidth() 
 	{
-		if (_setWidth != -1)
-			return _setWidth;
-			
-		return _intrinsicWidth;
+		return (int) _intrinsicWidth;
 	}
 	
 	@Override
 	public int getHeight() 
 	{
-		if (_setHeight != -1)
-			return _setHeight;
-
-		return _intrinsicHeight;
+		return (int) _intrinsicHeight;
 	}
 
 	@Override
-	public void scale(int width, int height)
+	public FSImage scale(int width, int height)
 	{
+		float setWidth, setHeight;
+		
 		if (width != -1)
 		{
-			_setWidth = width;
+			setWidth = width;
 
 			if (height == -1 && _intrinsicWidth != 0)
 			{
 				// Use the width ratio to set the height.
-				_setHeight = (int) (((float) _setWidth / (float) _intrinsicWidth) * _intrinsicHeight); 
+				setHeight = (int) (((float) setWidth / (float) _intrinsicWidth) * _intrinsicHeight); 
 			}
 			else
 			{
-				_setHeight = height;
+				setHeight = height;
 			}
 		}
 		else if (height != -1)
 		{
-			_setHeight = height;
+			setHeight = height;
 			
 			if (_intrinsicHeight != 0)
 			{
 				// Use the height ratio to set the width.
-				_setWidth = (int) (((float) _setHeight / (float) _intrinsicHeight) * _intrinsicWidth); 
+				setWidth = (int) (((float) setHeight / (float) _intrinsicHeight) * _intrinsicWidth); 
+			}
+			else
+			{
+				setWidth = 0;
 			}
 		}
+		else
+		{
+			setWidth = _intrinsicWidth;
+			setHeight = _intrinsicHeight;
+		}
+		
+		return new Pdf2Image(_bytes, _uri, setWidth, setHeight, _isJpeg);
 	}
 
 	public byte[] getBytes()
@@ -170,10 +146,5 @@ public class Pdf2Image implements FSImage
 	public boolean isJpeg()
 	{
 		return _isJpeg;
-	}
-	
-	public int getNumberComponents()
-	{
-		return _colorComponents;
 	}
 }

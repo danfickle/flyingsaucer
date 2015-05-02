@@ -9,7 +9,7 @@ import com.github.neoflyingsaucer.extend.output.FSImage;
 
 public class Java2DImage implements FSImage
 {
-	private BufferedImage img;
+	private final BufferedImage img;
 	
 	public Java2DImage(BufferedImage img)
 	{
@@ -24,17 +24,23 @@ public class Java2DImage implements FSImage
 	@Override
 	public int getWidth()
 	{
+		if (img == null)
+			return 0;
+		
 		return img.getWidth();
 	}
 
 	@Override
 	public int getHeight()
 	{
+		if (img == null)
+			return 0;
+		
 		return img.getHeight();
 	}
 
 	@Override
-	public void scale(int width, int height) 
+	public FSImage scale(int width, int height) 
 	{
 		if (width > 0 || height > 0)
 		{
@@ -47,7 +53,9 @@ public class Java2DImage implements FSImage
 			else 
 				newImg = Scalr.resize(img, Mode.FIT_TO_WIDTH, width);
 
-			img = newImg;
+			return new Java2DImage(newImg);
 		}
+
+		return this;
 	}
 }

@@ -51,9 +51,9 @@ public abstract class AWTFSImage implements FSImage {
 
 
     static class NewAWTFSImage extends AWTFSImage {
-        private BufferedImage img;
+        private final BufferedImage img;
 
-        public NewAWTFSImage(final BufferedImage img) {
+        public NewAWTFSImage(BufferedImage img) {
             this.img = img;
         }
 
@@ -69,7 +69,7 @@ public abstract class AWTFSImage implements FSImage {
             return img;
         }
 
-        public void scale(final int width, final int height) {
+        public FSImage scale(final int width, final int height) {
             if (width > 0 || height > 0) {
                 final int currentWith = getWidth();
                 final int currentHeight = getHeight();
@@ -85,9 +85,11 @@ public abstract class AWTFSImage implements FSImage {
                 }
 
                 if (currentWith != targetWidth || currentHeight != targetHeight) {
-                    img = ImageUtil.getScaledInstance(img, targetWidth, targetHeight);
+                    return new NewAWTFSImage(ImageUtil.getScaledInstance(img, targetWidth, targetHeight));
                 }
             }
+            
+            return this;
         }
     }
 
@@ -102,7 +104,9 @@ public abstract class AWTFSImage implements FSImage {
             return 0;
         }
 
-        public void scale(final int width, final int height) {
+        public FSImage scale(final int width, final int height) 
+        {
+        	return this;
         }
 
         public BufferedImage getImage() {

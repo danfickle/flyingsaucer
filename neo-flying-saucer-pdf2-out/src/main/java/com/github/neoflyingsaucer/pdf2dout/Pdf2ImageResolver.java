@@ -20,7 +20,6 @@ public class Pdf2ImageResolver implements ImageResolver
 		this._dotsPerPoint = dotsPerPoint;
 	}
 	
-	
 	@Override
 	public FSImage resolveImage(String uri, InputStream strm)
 	{
@@ -39,8 +38,7 @@ public class Pdf2ImageResolver implements ImageResolver
 			}
 			
 			Pdf2Image img = new Pdf2Image(out.toByteArray(), uri);
-			img.scaleToOutputResolution(_dotsPerPoint);
-			return img;
+			return img.scaleToOutputResolution(_dotsPerPoint);
 		}
 		catch (IOException e) 
 		{
