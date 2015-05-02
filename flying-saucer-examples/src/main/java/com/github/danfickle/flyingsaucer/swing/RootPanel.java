@@ -108,29 +108,6 @@ public class RootPanel extends JPanel implements ComponentListener, FSCanvas
         repaint();
     }
 
-    // iterates over all boxes and, if they have a BG url assigned, makes a call to the UAC
-    // to request it. when running with async image loading, this means BG images will start
-    // loading before the box ever shows on screen
-    @SuppressWarnings("unused")
-	private void requestBGImages(final Box box) {
-        if (box.getChildCount() == 0) return;
-        final Iterator<Box> ci = box.getChildIterator();
-        while (ci.hasNext()) {
-            final Box cb = (Box) ci.next();
-            final CalculatedStyle style = cb.getStyle();
-            if (!style.isIdent(CSSName.BACKGROUND_IMAGE, IdentValue.NONE)) {
-                final String uri = style.getStringProperty(CSSName.BACKGROUND_IMAGE);
-                LOGGER.debug("Greedily loading background property " + uri);
-                try {
-                    getSharedContext().getUac().getImageResource(uri);
-                } catch (final Exception ex) {
-                    // swallow
-                }
-            }
-            requestBGImages(cb);
-        }
-    }
-
     protected JScrollPane enclosingScrollPane;
     public void resetScrollPosition() {
         if (this.enclosingScrollPane != null) {

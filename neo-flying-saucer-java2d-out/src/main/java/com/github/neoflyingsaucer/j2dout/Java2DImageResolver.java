@@ -33,7 +33,19 @@ public class Java2DImageResolver implements ImageResolver
 			FSErrorController.log(Java2DImageResolver.class, FSErrorLevel.ERROR, LangId.COULDNT_LOAD_IMAGE, uri);
 			img = NULL_IMG;
 		}
+		finally
+		{
+			try {
+				strm.close();
+			} catch (IOException e) { }
+		}
 		
 		return new Java2DImage(img);
+	}
+
+	@Override
+	public Class<?> getImageClass()
+	{
+		return Java2DImage.class;
 	}
 }

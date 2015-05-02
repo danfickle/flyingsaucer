@@ -342,23 +342,42 @@ public class BlockBox extends Box implements InlinePaintable {
 
 
     private MarkerData.ImageMarker makeImageMarker(
-            final LayoutContext c, final StrutMetrics structMetrics, final String image) {
+            final LayoutContext c, final StrutMetrics structMetrics, final String image)
+    {
         FSImage img = null;
-        if (! image.equals("none")) 
+        
+        if (!image.equals("none")) 
         {
-            Optional<ImageResourceI> resource= c.getUac().getImageResource(image);
+            // Lookup in cache.
+            Optional<FSImage> fsImage = c.getUac().getResourceCache().getImage(image, c.getSharedContext().getImageResolver().getImageClass()); 
         	
-            if (!resource.isPresent())
-            	return null;
-            
-        	img = c.getSharedContext().resolveImage(resource.get());
+            if (!fsImage.isPresent())
+            {
+            	// Get from uac.
+            	Optional<ImageResourceI> resource = c.getUac().getImageResource(image);
+        	
+               	if (!resource.isPresent())
+               		return null;
 
-            if (img != null) {
-                final StrutMetrics strutMetrics = structMetrics;
+               	img = c.getSharedContext().resolveImage(resource.get());
+
+               	// Put in cache.
+               	c.getUac().getResourceCache().putImage(image, c.getSharedContext().getImageResolver().getImageClass(), img);
+            }
+            else
+            {
+            	img = fsImage.get();
+            }
+
+            if (img != null)
+            {
+                StrutMetrics strutMetrics = structMetrics;
+                
                 if (img.getHeight() > strutMetrics.getAscent()) {
                     img.scale(-1, (int) strutMetrics.getAscent());
                 }
-                final MarkerData.ImageMarker result = new MarkerData.ImageMarker();
+                
+                MarkerData.ImageMarker result = new MarkerData.ImageMarker();
                 result.setImage(img);
                 result.setLayoutWidth(img.getWidth() * 2);
                 return result;

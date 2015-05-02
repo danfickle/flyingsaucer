@@ -1,6 +1,7 @@
 package com.github.neoflyingsaucer.pdf2dout;
 
 import java.awt.Point;
+
 import org.w3c.dom.Element;
 
 import com.github.neoflyingsaucer.extend.controller.error.FSErrorController;
@@ -29,7 +30,6 @@ public class Pdf2ReplacedElementResolver implements ReplacedElementResolver
 	
     protected ReplacedElement replaceImage(UserAgentCallback uac, String baseUri, Element elem, ImageResolver imgResolver, int cssWidth, int cssHeight) 
     {
-    	ReplacedElement re = null;
         String imageSrc = elem.getAttribute("src");
 
         if (imageSrc.isEmpty())
@@ -38,32 +38,34 @@ public class Pdf2ReplacedElementResolver implements ReplacedElementResolver
         	return new Pdf2ImageReplacedElement(null, cssWidth, cssHeight);
         }
 
-        // lookup in cache, or instantiate
       	// TODO: Make sure we have the correct base uri.
         Optional<String> ruri = uac.resolveURI(baseUri, imageSrc);
 
-        if (ruri.isPresent())
+        if (!ruri.isPresent())
         {
-        	re = null;// lookupImageReplacedElement(elem, ruri.get(), cssWidth, cssHeight);
-           
-        	if (re == null) {
-            	//ImageResourceI imageResource = uac.getImageResourceCache().get(ruri.get(), cssWidth, cssHeight);
-            	// TODO: ImageResource may be null.
-            		
-        		Optional<ImageResourceI> img = uac.getImageResource(ruri.get());
-        		
-        		if (img.isPresent())
-        		{
-        			FSImage image = imgResolver.resolveImage(ruri.get(), img.get().getImage());
-        			re = new Pdf2ImageReplacedElement(image, cssWidth, cssHeight);
-        		}
-            }
-            else
-            {
-            	return new Pdf2ImageReplacedElement(null, cssWidth, cssHeight);
-            }
+        	return new Pdf2ImageReplacedElement(null, cssWidth, cssHeight);
         }
-        return re;
+        
+        // Lookup in cache.
+        Optional<FSImage> fsImage = uac.getResourceCache().getImage(ruri.get(), Pdf2Image.class);
+        
+        if (fsImage.isPresent())
+        	return new Pdf2ImageReplacedElement(fsImage.get(), cssWidth, cssHeight);
+        
+        // Get from user agent.
+       	Optional<ImageResourceI> img = uac.getImageResource(ruri.get());
+        
+       	if (img.isPresent())
+       	{
+       		FSImage image = imgResolver.resolveImage(ruri.get(), img.get().getImage());
+
+       		// Put in cache.
+       		uac.getResourceCache().putImage(ruri.get(), Pdf2Image.class, image);
+
+       		return new Pdf2ImageReplacedElement(image, cssWidth, cssHeight);
+        }
+        
+       	return new Pdf2ImageReplacedElement(null, cssWidth, cssHeight);
     }
 
 	@Override

@@ -37,4 +37,10 @@ public class Java2DImageResolver implements ImageResolver
 		
 		return new Java2DImage(img);
 	}
+
+	@Override
+	public Class<?> getImageClass() 
+	{
+		return Java2DImage.class;
+	}
 }

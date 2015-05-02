@@ -30,41 +30,43 @@ public class Java2DReplacedElementResolver implements ReplacedElementResolver
 	
     protected ReplacedElement replaceImage(UserAgentCallback uac, String baseUri, Element elem, ImageResolver imgResolver, int cssWidth, int cssHeight) 
     {
-    	ReplacedElement re = null;
         String imageSrc = elem.getAttribute("src");
 
         if (imageSrc.isEmpty())
         {
         	FSErrorController.log(Java2DReplacedElementResolver.class, FSErrorLevel.ERROR, LangId.NO_IMAGE_SRC_PROVIDED);
+
         	return new Java2DImageReplacedElement(null, cssWidth, cssHeight);
         }
 
-        // lookup in cache, or instantiate
       	// TODO: Make sure we have the correct base uri.
         Optional<String> ruri = uac.resolveURI(baseUri, imageSrc);
 
-        if (ruri.isPresent())
+        if (!ruri.isPresent())
         {
-        	re = null;// lookupImageReplacedElement(elem, ruri.get(), cssWidth, cssHeight);
-           
-        	if (re == null) {
-            	//ImageResourceI imageResource = uac.getImageResourceCache().get(ruri.get(), cssWidth, cssHeight);
-            	// TODO: ImageResource may be null.
-            		
-        		Optional<ImageResourceI> img = uac.getImageResource(ruri.get());
-        		
-        		if (img.isPresent())
-        		{
-        			FSImage image = imgResolver.resolveImage(ruri.get(), img.get().getImage());
-        			re = new Java2DImageReplacedElement(image, cssWidth, cssHeight);
-        		}
-            }
-            else
-            {
-            	return new Java2DImageReplacedElement(null, cssWidth, cssHeight);
-            }
+        	return new Java2DImageReplacedElement(null, cssWidth, cssHeight);
         }
-        return re;
+        
+        // Lookup in cache.
+        Optional<FSImage> fsImage = uac.getResourceCache().getImage(ruri.get(), Java2DImage.class);
+        	
+        if (fsImage.isPresent())
+        	return new Java2DImageReplacedElement(fsImage.get(), cssWidth, cssHeight);
+        
+        // Get from user agent.
+       	Optional<ImageResourceI> img = uac.getImageResource(ruri.get());
+        		
+       	if (img.isPresent())
+       	{
+       		FSImage image = imgResolver.resolveImage(ruri.get(), img.get().getImage());
+
+       		// Put in cache.
+       		uac.getResourceCache().putImage(ruri.get(), Java2DImage.class, image);
+
+       		return new Java2DImageReplacedElement(image, cssWidth, cssHeight);
+        }
+
+       	return new Java2DImageReplacedElement(null, cssWidth, cssHeight);
     }
 
 	@Override

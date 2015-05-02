@@ -87,6 +87,7 @@ public class SwingReplacedElementFactory implements ReplacedElementFactory {
      * @param cssHeight Target height of the image @return A ReplacedElement for the image; will not be null.
      * @return
      */
+    @Deprecated
     protected ReplacedElement replaceImage(final UserAgentCallback uac, final LayoutContext context, final Element elem, final int cssWidth, final int cssHeight) 
     {
     	ReplacedElement re = null;

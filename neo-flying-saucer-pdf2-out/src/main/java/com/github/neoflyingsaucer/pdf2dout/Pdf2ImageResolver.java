@@ -46,7 +46,20 @@ public class Pdf2ImageResolver implements ImageResolver
 		{
 			FSErrorController.log(Pdf2ImageResolver.class, FSErrorLevel.ERROR, LangId.COULDNT_LOAD_IMAGE, uri);
 		}
+		finally
+		{
+			try {
+				strm.close();
+			} catch (IOException e) { }
+		}
 
 		return null;
+	}
+
+
+	@Override
+	public Class<?> getImageClass()
+	{
+		return Pdf2Image.class;
 	}
 }

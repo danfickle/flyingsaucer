@@ -55,8 +55,6 @@ import com.github.neoflyingsaucer.extend.useragent.Optional;
  */
 public abstract class AbstractOutputDevice implements OutputDevice {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractOutputDevice.class);
-
 	private FontSpecification _fontSpec;
 
     protected abstract void drawLine(int x1, int y1, int x2, int y2);
@@ -184,21 +182,30 @@ public abstract class AbstractOutputDevice implements OutputDevice {
 
     private FSImage getBackgroundImage(final RenderingContext c, final CalculatedStyle style) 
     {
-    	if (! style.isIdent(CSSName.BACKGROUND_IMAGE, IdentValue.NONE)) 
+    	if (!style.isIdent(CSSName.BACKGROUND_IMAGE, IdentValue.NONE)) 
     	{
-            final String uri = style.getStringProperty(CSSName.BACKGROUND_IMAGE);
+            String uri = style.getStringProperty(CSSName.BACKGROUND_IMAGE);
 
-            LOGGER.debug("get bg image: " + uri);
-
+            // Lookup in cache.
+            Optional<FSImage> fsImage = c.getUac().getResourceCache().getImage(uri, c.sharedContext.getImageResolver().getImageClass()); 
+            
+            if (fsImage.isPresent())
+            	return fsImage.get();
+           	
+            // Get from uac.
             Optional<ImageResourceI> resource = c.getUac().getImageResource(uri);
             	
             if (resource.isPresent())
             {
-            	return c.sharedContext.resolveImage(resource.get());
+            	FSImage img = c.sharedContext.resolveImage(resource.get());
+
+            	// Put in cache.
+            	c.getUac().getResourceCache().putImage(uri, c.sharedContext.getImageResolver().getImageClass(), img);
+            
+            	return img;
             }
             else
             {
-            	LOGGER.warn("Unable to load image");
             	return null;
             }
         }
