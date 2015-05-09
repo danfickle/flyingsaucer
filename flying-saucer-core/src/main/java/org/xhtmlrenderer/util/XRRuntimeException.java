@@ -20,9 +20,11 @@
  */
 package org.xhtmlrenderer.util;
 
+import com.github.neoflyingsaucer.extend.controller.error.FSError.FSErrorLevel;
+import com.github.neoflyingsaucer.extend.controller.error.FSErrorController;
+import com.github.neoflyingsaucer.extend.controller.error.LangId;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 /**
  * General runtime exception used in XHTMLRenderer. Auto-logs messages to
@@ -32,7 +34,6 @@ import org.slf4j.LoggerFactory;
  */
 public class XRRuntimeException extends RuntimeException {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(XRRuntimeException.class);
     private static final long serialVersionUID = 1L;
 
     /**
@@ -63,7 +64,7 @@ public class XRRuntimeException extends RuntimeException {
      * @param msg  Message for the log.
      */
     private void log( final String msg ) {
-        LOGGER.error("Unhandled exception. " + msg );
+        FSErrorController.log(XRRuntimeException.class, FSErrorLevel.ERROR, LangId.UNHANDLED_EXCEPTION, msg);
     }
 
     /**
@@ -75,6 +76,6 @@ public class XRRuntimeException extends RuntimeException {
      *      IOException.
      */
     private void log( final String msg, final Throwable cause ) {
-        LOGGER.error("Unhandled exception. " + msg, cause );
+    	FSErrorController.log(XRRuntimeException.class, FSErrorLevel.ERROR, LangId.UNHANDLED_EXCEPTION_WITH_CAUSE, msg, cause);
     }
 }

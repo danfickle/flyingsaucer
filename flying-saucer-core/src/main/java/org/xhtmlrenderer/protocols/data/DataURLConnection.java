@@ -32,12 +32,12 @@ import java.util.Map;
 
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.net.URLCodec;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import com.github.neoflyingsaucer.extend.controller.error.FSError.FSErrorLevel;
+import com.github.neoflyingsaucer.extend.controller.error.FSErrorController;
+import com.github.neoflyingsaucer.extend.controller.error.LangId;
 
 public class DataURLConnection extends URLConnection {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(DataURLConnection.class);
 
     private final Map<String, String> _headers = new HashMap<String, String>();
     private byte [] _data;
@@ -144,7 +144,7 @@ public class DataURLConnection extends URLConnection {
 				return URLCodec.decodeUrl(s.getBytes("ASCII"));
 			} catch (DecoderException e) 
 			{
-				LOGGER.warn("Unable to decode url");
+				FSErrorController.log(DataURLConnection.class, FSErrorLevel.WARNING, LangId.UNABLE_TO_DECODE_URL);
 				return new byte[0];
 			} catch (UnsupportedEncodingException e) {
 				return new byte[0];
@@ -160,6 +160,3 @@ public class DataURLConnection extends URLConnection {
         }
     }
 }
-
-
-

@@ -20,11 +20,11 @@
  */
 package org.xhtmlrenderer.css.constants;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.css.CSSValue;
 import org.xhtmlrenderer.css.parser.PropertyValue;
-import org.xhtmlrenderer.util.GeneralUtil;
+import com.github.neoflyingsaucer.extend.controller.error.FSErrorController;
+import com.github.neoflyingsaucer.extend.controller.error.FSError.FSErrorLevel;
+import com.github.neoflyingsaucer.extend.controller.error.LangId;
 
 // TODO: Fix up below and move to CSSPrimitiveUnit enum.
 
@@ -34,8 +34,6 @@ import org.xhtmlrenderer.util.GeneralUtil;
  * @author empty
  */
 public final class ValueConstants {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ValueConstants.class);
 
     public static String stringForSACPrimitiveType(final CSSPrimitiveUnit type) {
         return type.toString();
@@ -102,9 +100,7 @@ public final class ValueConstants {
             case CSS_STRING:
                 return true;
             case CSS_UNKNOWN:
-                LOGGER.warn("Asked whether type was absolute, given CSS_UNKNOWN as the type. " +
-                        "Might be one of those funny values like background-position.");
-                GeneralUtil.dumpShortException(new Exception());
+                FSErrorController.log(ValueConstants.class, FSErrorLevel.WARNING, LangId.ENCOUNTERED_CSS_UNKNOWN);
                 // fall-through
             default:
                 return false;

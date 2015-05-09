@@ -31,8 +31,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Document;
@@ -51,6 +49,9 @@ import org.xhtmlrenderer.util.Configuration;
 import org.xhtmlrenderer.util.GeneralUtil;
 import org.xhtmlrenderer.util.NodeHelper;
 
+import com.github.neoflyingsaucer.extend.controller.error.FSError.FSErrorLevel;
+import com.github.neoflyingsaucer.extend.controller.error.FSErrorController;
+import com.github.neoflyingsaucer.extend.controller.error.LangId;
 import com.github.neoflyingsaucer.extend.useragent.Optional;
 import com.github.neoflyingsaucer.extend.useragent.StylesheetI;
 
@@ -60,8 +61,6 @@ import static org.xhtmlrenderer.util.GeneralUtil.ciEquals;
  * Handles a general HTML document
  */
 public class HtmlNamespaceHandler implements NamespaceHandler {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(HtmlNamespaceHandler.class);
 
     private Map<String, String> _metadata = null;
 	
@@ -734,7 +733,8 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
 				info.setStylesheet(sheet.get());
 
 		} catch (final Exception e) {
-			LOGGER.error("Could not parse default stylesheet", e);
+			FSErrorController.log(HtmlNamespaceHandler.class, FSErrorLevel.ERROR, LangId.COULDNT_LOAD_DEFAULT_CSS);
+			assert(false);
 		} finally {
 			if (is != null) {
 				try {
@@ -756,8 +756,8 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
 
         if (stream == null)
         {
-            LOGGER.error("Can't load default CSS from " + defaultStyleSheet + "." +
-                    "This file must be on your CLASSPATH. Please check before continuing.");
+        	FSErrorController.log(HtmlNamespaceHandler.class, FSErrorLevel.ERROR, LangId.COULDNT_LOAD_DEFAULT_CSS);
+        	assert(false);
         }
 
         return stream;

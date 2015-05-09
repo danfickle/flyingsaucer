@@ -19,8 +19,6 @@
  */
 package org.xhtmlrenderer.css.style.derived;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.CSSPrimitiveUnit;
 import org.xhtmlrenderer.css.constants.ValueConstants;
@@ -32,12 +30,13 @@ import org.xhtmlrenderer.css.style.DerivedValue;
 import org.xhtmlrenderer.css.value.FontSpecification;
 import org.xhtmlrenderer.layout.SharedContext;
 
+import com.github.neoflyingsaucer.extend.controller.error.FSErrorController;
+import com.github.neoflyingsaucer.extend.controller.error.LangId;
+import com.github.neoflyingsaucer.extend.controller.error.FSError.FSErrorLevel;
 import com.github.neoflyingsaucer.extend.output.FontSpecificationI;
 
 public class LengthValue extends DerivedValue {
 
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(LengthValue.class);
     private final static int MM__PER__CM = 10;
     private final static float CM__PER__IN = 2.54F;
     private final static float PT__PER__IN = 1f / 72f;
@@ -181,27 +180,12 @@ public class LengthValue extends DerivedValue {
                 absVal = relVal;
                 break;
             default:
-                // nothing to do, we only convert those listed above
-                LOGGER.error("Asked to convert " + cssName + " from relative to absolute, " +
-                        " don't recognize the datatype " +
-                        "'" + ValueConstants.stringForSACPrimitiveType(primitiveType) + "' "
-                        + primitiveType + "(" + stringValue + ")");
-        }
-        //assert (new Float(absVal).intValue() >= 0);
-
-        if (LOGGER.isTraceEnabled()) {
-            if (cssName == CSSName.FONT_SIZE) {
-                LOGGER.trace(cssName + ", relative= " +
-                        relVal + " (" + stringValue + "), absolute= "
-                        + absVal);
-            } else {
-                LOGGER.trace(cssName + ", relative= " +
-                        relVal + " (" + stringValue + "), absolute= "
-                        + absVal + " using base=" + baseValue);
-            }
+            	// nothing to do, we only convert those listed above
+            	FSErrorController.log(LengthValue.class, FSErrorLevel.WARNING, LangId.COULDNT_CONVERT_UNIT,
+                		cssName, ValueConstants.stringForSACPrimitiveType(primitiveType), stringValue);
         }
 
-        final double d = Math.round((double) absVal);
+        double d = Math.round((double) absVal);
         absVal = new Float(d).floatValue();
         return absVal;
     }
@@ -255,12 +239,12 @@ public class LengthValue extends DerivedValue {
 	        	    absVal = (relVal / MM__PER__CM) / ctx.getMmPerPx();
 	        	    break;
 	           default:
-	        	   LOGGER.warn("Asked to convert value for media query: {}", ValueConstants.stringForSACPrimitiveType(primitiveType));
+	        	   FSErrorController.log(LengthValue.class, FSErrorLevel.WARNING, LangId.COULDNT_CONVERT_UNIT_MEDIA_QUERY, ValueConstants.stringForSACPrimitiveType(primitiveType));
 	    	   }
 	       }
 	       else
 	       {
-	    	   LOGGER.warn("Asked to convert value for media query: {}", cssValue.getCssValueTypeN().toString());
+	    	   FSErrorController.log(LengthValue.class, FSErrorLevel.WARNING, LangId.COULDNT_CONVERT_UNIT_MEDIA_QUERY, cssValue.getCssValueTypeN().toString());
 	       }
 
 	       return absVal;

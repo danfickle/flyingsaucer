@@ -24,8 +24,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -42,6 +40,9 @@ import org.xhtmlrenderer.css.sheet.StylesheetInfo;
 import org.xhtmlrenderer.extend.NamespaceHandler;
 import org.xhtmlrenderer.layout.SharedContext;
 
+import com.github.neoflyingsaucer.extend.controller.error.FSError.FSErrorLevel;
+import com.github.neoflyingsaucer.extend.controller.error.FSErrorController;
+import com.github.neoflyingsaucer.extend.controller.error.LangId;
 import com.github.neoflyingsaucer.extend.useragent.Optional;
 import com.github.neoflyingsaucer.extend.useragent.StylesheetI;
 import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
@@ -52,7 +53,6 @@ import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
  */
 public class StyleReference {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(StyleReference.class);
     /**
      * The Context this StyleReference operates in; used for property
      * resolution.
@@ -87,8 +87,6 @@ public class StyleReference {
 
         final List<StylesheetInfo> infos = getStylesheets();
         
-        LOGGER.info("media = " + _context.getMedia());
-
         _matcher = new org.xhtmlrenderer.css.newmatch.Matcher(
                 new DOMTreeResolver(),
                 attRes, 
@@ -236,9 +234,8 @@ public class StyleReference {
 
         // TODO: here we should also get user stylesheet from userAgent
 
-        final long el = System.currentTimeMillis() - st;
-        LOGGER.info("TIME: parse stylesheets  " + el + "ms");
-
+        long el = System.currentTimeMillis() - st;
+        FSErrorController.log(StyleReference.class, FSErrorLevel.INFO, LangId.TIME_TO_PARSE_STYLESHEETS, el);
         return infos;
     }
     

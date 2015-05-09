@@ -19,8 +19,6 @@
  */
 package org.xhtmlrenderer.swing;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.xhtmlrenderer.extend.ReplacedElementFactory;
 import org.xhtmlrenderer.layout.LayoutContext;
@@ -40,7 +38,7 @@ import java.util.Map;
  */
 @Deprecated
 public class SwingReplacedElementFactory implements ReplacedElementFactory {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SwingReplacedElementFactory.class);
+
     /**
      * Cache of image components (ReplacedElements) for quick lookup, keyed by Element.
      */
@@ -95,7 +93,6 @@ public class SwingReplacedElementFactory implements ReplacedElementFactory {
 
         if (!oImageSrc.isPresent() || oImageSrc.get().isEmpty())
         {
-        	LOGGER.warn("No source provided for img element.");
         	return newIrreplaceableImageElement(cssWidth, cssHeight);
         }
 
@@ -110,7 +107,6 @@ public class SwingReplacedElementFactory implements ReplacedElementFactory {
         	re = null;// lookupImageReplacedElement(elem, ruri.get(), cssWidth, cssHeight);
            
         	if (re == null) {
-        		LOGGER.debug("Swing: Image " + ruri + " requested at " + " to " + cssWidth + ", " + cssHeight);
 
             	//ImageResourceI imageResource = uac.getImageResourceCache().get(ruri.get(), cssWidth, cssHeight);
             	// TODO: ImageResource may be null.

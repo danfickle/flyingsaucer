@@ -320,5 +320,105 @@ public enum LangId
 	/**
 	 * 1 argument.
 	 */
-	RECEIVING_IMAGE;
+	RECEIVING_IMAGE,
+
+	/**
+	 * 2 arguments.
+	 */
+	DONT_UNDERSTAND_ASSIGNMENT,
+	
+	/**
+	 * 1 argument.
+	 */
+	UNHANDLED_EXCEPTION,
+	
+	/**
+	 * 2 arguments.
+	 */
+	UNHANDLED_EXCEPTION_WITH_CAUSE,
+	
+	/**
+	 * 0 arguments.
+	 */
+	ENCOUNTERED_CSS_UNKNOWN,
+	
+	/**
+	 * 0 arguments.
+	 */
+	UNABLE_TO_DECODE_URL,
+	
+	/**
+	 * 0 arguments.
+	 */
+	COULDNT_LOAD_DEFAULT_CSS,
+	
+	/**
+	 * 3 arguments.
+	 */
+	COULDNT_CONVERT_UNIT,
+	
+	/**
+	 * 1 argument.
+	 */
+	COULDNT_CONVERT_UNIT_MEDIA_QUERY,
+	
+	/**
+	 * 0 arguments.
+	 */
+	NO_CMYK_FOR_LINEAR_GRADIENT,
+	
+	/**
+	 * 1 argument.
+	 */
+	COULDNT_FIND_HASH_LINK_TARGET,
+	
+	/**
+	 * 0 arguments.
+	 */
+	NO_INTERNAL_LINKS_FOR_CONTINOUS,
+
+	/**
+	 * 0 arguments.
+	 */
+	NO_BOOKMARKS_FOR_CONTINOUS,
+	
+	/**
+	 * 0 arguments.
+	 */
+	COULDNT_CONVERT_DATA_URI,
+	
+	/**
+	 * 0 arguments.
+	 */
+	NO_CONTENT_LIMIT,
+	
+	/**
+	 * 0 arguments.
+	 */
+	COULDNT_PARSE_STYLESHEET_NO_URI,
+	
+	/**
+	 * 1 argument.
+	 */
+	TIME_TO_PARSE_STYLESHEETS,
+	
+	/**
+	 * 1 argument.
+	 */
+	MATCHER_CREATED,
+	
+	/**
+	 * 1 argument.
+	 */
+	APPEND_CONDITIONS_TO_PSEUDO,
+	
+	/**
+	 * 0 arguments.
+	 */
+	BAD_SIBLING_AXIS,
+	
+	/**
+	 * 0 arguments.
+	 */
+	SET_MORE_THAN_ONE_PSEUDO;
 }

@@ -20,8 +20,6 @@
  */
 package org.xhtmlrenderer.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.DefaultCSSMarker;
 
 import java.io.*;
@@ -70,9 +68,9 @@ import java.net.MalformedURLException;
  *
  * @author Patrick Wright
  */
+@Deprecated
 public class Configuration {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Configuration.class);
     /**
      * Our backing data store of properties.
      */
@@ -112,7 +110,7 @@ public class Configuration {
                 }
             } catch (final SecurityException e) {
                 // may be thrown in a sandbox; OK
-                LOGGER.error(e.getLocalizedMessage());
+                //LOGGER.error(e.getLocalizedMessage());
             }
             loadDefaultProperties();
 
@@ -165,7 +163,7 @@ public class Configuration {
             throw new RuntimeException("Could not load properties file for configuration.",
                     ex);
         }
-        LOGGER.info("Configuration loaded from " + SF_FILE_NAME);
+        //LOGGER.info("Configuration loaded from " + SF_FILE_NAME);
     }
 
     /**
@@ -179,7 +177,7 @@ public class Configuration {
             final File f = new File(uri);
             final Properties temp = new Properties();
             if (f.exists()) {
-                LOGGER.info("Found config override file " + f.getAbsolutePath());
+                //LOGGER.info("Found config override file " + f.getAbsolutePath());
                 try {
                     final InputStream readStream = new BufferedInputStream(new FileInputStream(f));
                     try {
@@ -188,7 +186,7 @@ public class Configuration {
                         readStream.close();
                     }
                 } catch (final IOException iex) {
-                    LOGGER.warn("Error while loading override properties file; skipping.", iex);
+                    //LOGGER.warn("Error while loading override properties file; skipping.", iex);
                     return;
                 }
             } else {
@@ -196,13 +194,13 @@ public class Configuration {
                 try {
 					final URL url = new URL(uri);
 					in = new BufferedInputStream(url.openStream());
-					LOGGER.info("Found config override URI " + uri);
+					//LOGGER.info("Found config override URI " + uri);
 					temp.load(in);
 				} catch (final MalformedURLException e) {
-                    LOGGER.warn("URI for override properties is malformed, skipping: " + uri);
+                    //LOGGER.warn("URI for override properties is malformed, skipping: " + uri);
                     return;
                 } catch (final IOException e) {
-                    LOGGER.warn("Overridden properties could not be loaded from URI: " + uri, e);
+                    //LOGGER.warn("Overridden properties could not be loaded from URI: " + uri, e);
                     return;
                 } finally {
                     if (in != null ) try {
@@ -225,11 +223,11 @@ public class Configuration {
                 final String val = temp.getProperty(key);
                 if (val != null) {
                     this.properties.setProperty(key, val);
-                    LOGGER.trace("  " + key + " -> " + val);
+                    //LOGGER.trace("  " + key + " -> " + val);
                     cnt++;
                 }
             }
-            LOGGER.trace("Configuration: " + cnt + " properties overridden from secondary properties file.");
+            //LOGGER.trace("Configuration: " + cnt + " properties overridden from secondary properties file.");
             // and add any new properties we don't already know about (needed for custom logging
             // configuration)
             final Enumeration allRead = temp.keys();
@@ -242,11 +240,11 @@ public class Configuration {
                 final String val = temp.getProperty(key);
                 if (val != null) {
                     this.properties.setProperty(key, val);
-                    LOGGER.trace("  (+)" + key + " -> " + val);
+                    //LOGGER.trace("  (+)" + key + " -> " + val);
                     cnt++;
                 }
             }
-            LOGGER.trace("Configuration: " + cnt + " properties added from secondary properties file.");
+            //LOGGER.trace("Configuration: " + cnt + " properties added from secondary properties file.");
         } catch (final SecurityException e) {
             // can happen in a sandbox environment
             System.err.println(e.getLocalizedMessage());
@@ -280,7 +278,7 @@ public class Configuration {
         final List lp = Collections.list(elem);
         Collections.sort(lp);
         final Iterator iter = lp.iterator();
-        LOGGER.debug("Overriding loaded configuration from System properties.");
+        //LOGGER.debug("Overriding loaded configuration from System properties.");
         int cnt = 0;
         while (iter.hasNext()) {
             final String key = (String) iter.next();
@@ -292,14 +290,14 @@ public class Configuration {
                 final String val = System.getProperty(key);
                 if (val != null) {
                     properties.setProperty(key, val);
-                    LOGGER.trace("  Overrode value for " + key);
+                    //LOGGER.trace("  Overrode value for " + key);
                     cnt++;
                 }
             } catch (final SecurityException e) {
                 // skip, this will happen in WebStart
             }
         }
-        LOGGER.debug("Configuration: " + cnt + " properties overridden from System properties.");
+        //LOGGER.debug("Configuration: " + cnt + " properties overridden from System properties.");
 
         // add any additional properties we don't already know about (e.g. used for extended logging properties)
         try {
@@ -311,14 +309,14 @@ public class Configuration {
                 if (key.startsWith("xr.") && !this.properties.containsKey(key)) {
                     final Object val = sysProps.get(key);
                     this.properties.put(key, val);
-                    LOGGER.trace("  (+) " + key);
+                    //LOGGER.trace("  (+) " + key);
                     cnt++;
                 }
             }
         } catch (final SecurityException e) {
             // skip, this will happen in webstart or sandbox
         }
-        LOGGER.debug("Configuration: " + cnt + " FS properties added from System properties.");
+        //LOGGER.debug("Configuration: " + cnt + " FS properties added from System properties.");
     }
 
     /**
@@ -329,14 +327,14 @@ public class Configuration {
         final List lp = Collections.list(elem);
         Collections.sort(lp);
         final Iterator iter = lp.iterator();
-        LOGGER.trace("Configuration contains " + properties.size() + " keys.");
-        LOGGER.trace("List of configuration properties, after override:");
+        //LOGGER.trace("Configuration contains " + properties.size() + " keys.");
+        //LOGGER.trace("List of configuration properties, after override:");
         while (iter.hasNext()) {
             final String key = (String) iter.next();
             final String val = properties.getProperty(key);
-            LOGGER.trace("  " + key + " = " + val);
+            //LOGGER.trace("  " + key + " = " + val);
         }
-        LOGGER.trace("Properties list complete.");
+        //LOGGER.trace("Properties list complete.");
     }
 
     /**
@@ -350,7 +348,7 @@ public class Configuration {
         final Configuration conf = instance();
         final String val = conf.properties.getProperty(key);
         if (val == null) {
-            LOGGER.warn("CONFIGURATION: no value found for key " + key);
+            //LOGGER.warn("CONFIGURATION: no value found for key " + key);
         }
         return val;
     }
@@ -381,8 +379,8 @@ public class Configuration {
         try {
             bval = Byte.valueOf(val).byteValue();
         } catch (final NumberFormatException nex) {
-            LOGGER.error("Property '" + key + "' was requested as a byte, but " +
-                    "value of '" + val + "' is not a byte. Check configuration.");
+//            LOGGER.error("Property '" + key + "' was requested as a byte, but " +
+//                    "value of '" + val + "' is not a byte. Check configuration.");
             bval = defaultVal;
         }
         return bval;
@@ -408,8 +406,8 @@ public class Configuration {
         try {
             sval = Short.valueOf(val).shortValue();
         } catch (final NumberFormatException nex) {
-            LOGGER.error("Property '" + key + "' was requested as a short, but " +
-                    "value of '" + val + "' is not a short. Check configuration.");
+//            LOGGER.error("Property '" + key + "' was requested as a short, but " +
+//                    "value of '" + val + "' is not a short. Check configuration.");
             sval = defaultVal;
         }
         return sval;
@@ -435,8 +433,8 @@ public class Configuration {
         try {
             ival = Integer.valueOf(val).intValue();
         } catch (final NumberFormatException nex) {
-            LOGGER.error("Property '" + key + "' was requested as an integer, but " +
-                    "value of '" + val + "' is not an integer. Check configuration.");
+//            LOGGER.error("Property '" + key + "' was requested as an integer, but " +
+//                    "value of '" + val + "' is not an integer. Check configuration.");
             ival = defaultVal;
         }
         return ival;
@@ -460,8 +458,8 @@ public class Configuration {
         }
 
         if(val.length() > 1) {
-            LOGGER.error("Property '" + key + "' was requested as a character. The value of '" +
-                    val + "' is too long to be a char. Returning only the first character.");
+//            LOGGER.error("Property '" + key + "' was requested as a character. The value of '" +
+//                    val + "' is too long to be a char. Returning only the first character.");
         }
 
         return val.charAt(0);
@@ -487,8 +485,7 @@ public class Configuration {
         try {
             lval = Long.valueOf(val).longValue();
         } catch (final NumberFormatException nex) {
-            LOGGER.error("Property '" + key + "' was requested as a long, but " +
-                    "value of '" + val + "' is not a long. Check configuration.");
+//
             lval = defaultVal;
         }
         return lval;
@@ -514,8 +511,8 @@ public class Configuration {
         try {
             fval = Float.valueOf(val).floatValue();
         } catch (final NumberFormatException nex) {
-            LOGGER.error("Property '" + key + "' was requested as a float, but " +
-                    "value of '" + val + "' is not a float. Check configuration.");
+//            LOGGER.error("Property '" + key + "' was requested as a float, but " +
+//                    "value of '" + val + "' is not a float. Check configuration.");
             fval = defaultVal;
         }
         return fval;
@@ -541,8 +538,8 @@ public class Configuration {
         try {
             dval = Double.valueOf(val).doubleValue();
         } catch (final NumberFormatException nex) {
-            LOGGER.error("Property '" + key + "' was requested as a double, but " +
-                    "value of '" + val + "' is not a double. Check configuration.");
+//            LOGGER.error("Property '" + key + "' was requested as a double, but " +
+//                    "value of '" + val + "' is not a double. Check configuration.");
             dval = defaultVal;
         }
         return dval;
@@ -562,7 +559,7 @@ public class Configuration {
         String val = conf.properties.getProperty(key);
         val = (val == null ? defaultVal : val);
         if (val == null) {
-            LOGGER.warn("CONFIGURATION: no value found for key " + key + " and no default given.");
+//            LOGGER.warn("CONFIGURATION: no value found for key " + key + " and no default given.");
         }
         return val;
     }
@@ -624,8 +621,8 @@ public class Configuration {
         }
 
         if ("true|false".indexOf(val) == -1) {
-            LOGGER.error("Property '" + key + "' was requested as a boolean, but " +
-                    "value of '" + val + "' is not a boolean. Check configuration.");
+//            LOGGER.error("Property '" + key + "' was requested as a boolean, but " +
+//                    "value of '" + val + "' is not a boolean. Check configuration.");
             return defaultVal;
         } else {
             return Boolean.valueOf(val).booleanValue();
@@ -679,15 +676,15 @@ public class Configuration {
             klassname = val.substring(0, idx);
             cnst = val.substring(idx + 1);
         } catch (final IndexOutOfBoundsException e) {
-            LOGGER.warn("Property key " + key + " for object value constant is not properly formatted; " +
-                    "should be FQN<dot>constant, is " + val);
+//            LOGGER.warn("Property key " + key + " for object value constant is not properly formatted; " +
+//                    "should be FQN<dot>constant, is " + val);
             return defaultValue;
         }
         Class klass;
         try {
             klass = Class.forName(klassname);
         } catch (final ClassNotFoundException e) {
-            LOGGER.warn("Property for object value constant " + key + " is not a FQN: " + klassname);
+//            LOGGER.warn("Property for object value constant " + key + " is not a FQN: " + klassname);
             return defaultValue;
         }
 
@@ -697,12 +694,12 @@ public class Configuration {
             try {
                 cnstVal = fld.get(klass);
             } catch (final IllegalAccessException e) {
-                LOGGER.warn("Property for object value constant " + key + ", field is not public: " + klassname +
-                        "." + cnst);
+//                LOGGER.warn("Property for object value constant " + key + ", field is not public: " + klassname +
+//                        "." + cnst);
                 return defaultValue;
             }
         } catch (final NoSuchFieldException e) {
-            LOGGER.warn("Property for object value constant " + key + " is not a FQN: " + klassname);
+//            LOGGER.warn("Property for object value constant " + key + " is not a FQN: " + klassname);
             return defaultValue;
         }
         return cnstVal;

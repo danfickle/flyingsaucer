@@ -26,11 +26,14 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
+
 import javax.xml.bind.DatatypeConverter;
 
 import org.imgscalr.Scalr;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import com.github.neoflyingsaucer.extend.controller.error.FSErrorController;
+import com.github.neoflyingsaucer.extend.controller.error.LangId;
+import com.github.neoflyingsaucer.extend.controller.error.FSError.FSErrorLevel;
 
 /**
  * Static utility methods for working with images. Meant to suggest "best practices" for the most straightforward
@@ -39,8 +42,6 @@ import org.slf4j.LoggerFactory;
  * @author pwright
  */
 public class ImageUtil {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ImageUtil.class);
 
     private static final Map<DownscaleQuality, Scaler> qual;
 
@@ -289,7 +290,7 @@ public class ImageUtil {
             final String b64encoded = imageDataUri.substring(b64Index + "base64,".length());
             return DatatypeConverter.parseBase64Binary(b64encoded);
         } else {
-            LOGGER.error("Embedded XHTML images must be encoded in base 64.");
+            FSErrorController.log(ImageUtil.class, FSErrorLevel.WARNING, LangId.COULDNT_CONVERT_DATA_URI);
         }
         return null;
     }

@@ -53,7 +53,6 @@ import org.xhtmlrenderer.event.DefaultDocumentListener;
 import org.xhtmlrenderer.simple.HtmlNamespaceHandler;
 
 import com.github.danfickle.flyingsaucer.swing.XHTMLPanel;
-import com.github.neoflyingsaucer.defaultuseragent.DefaultUserAgent;
 import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
 
 /**

@@ -20,8 +20,6 @@
  */
 package org.xhtmlrenderer.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.URL;
@@ -38,7 +36,6 @@ import java.util.Locale;
  */
 public class GeneralUtil {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GeneralUtil.class);
 	public static boolean ciEquals(final String a, final String b)
 	{
 		if (a == null)
@@ -77,27 +74,9 @@ public class GeneralUtil {
                 if (stream != null) readStream = stream.openStream();
             }
         } catch (final Exception ex) {
-            LOGGER.error("Could not open stream from CLASSPATH: " + resource, ex);
+            //LOGGER.error("Could not open stream from CLASSPATH: " + resource, ex);
         }
         return readStream;
-    }
-
-    public static URL getURLFromClasspath(final Object obj, final String resource) {
-        URL url = null;
-        try {
-            final ClassLoader loader = obj.getClass().getClassLoader();
-            if (loader == null) {
-                url = ClassLoader.getSystemResource(resource);
-            } else {
-                url = loader.getResource(resource);
-            }
-            if (url == null) {
-                url = resource.getClass().getResource(resource);
-            }
-        } catch (final Exception ex) {
-            LOGGER.error("Could not get URL from CLASSPATH: " + resource, ex);
-        }
-        return url;
     }
 
     /**

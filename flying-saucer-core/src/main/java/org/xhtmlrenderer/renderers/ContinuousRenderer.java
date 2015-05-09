@@ -4,8 +4,6 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xhtmlrenderer.css.sheet.FontFaceRule;
 import org.xhtmlrenderer.displaylist.DlOutputDevice;
@@ -43,8 +41,6 @@ public class ContinuousRenderer
 	private final UserAgentCallback cb;
 	private final SharedContext sharedContext;
 	private final DisplayList displayList;
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(ContinuousRenderer.class);
 	
 	public ContinuousRenderer(UserAgentCallback cb)
 	{
@@ -106,8 +102,6 @@ public class ContinuousRenderer
 
             LayoutContext c = newLayoutContext();
 
-            long start = System.currentTimeMillis();
-
             BlockBox root = (BlockBox) getRootBox();
 
             if (root != null) {
@@ -122,10 +116,6 @@ public class ContinuousRenderer
             sharedContext.set_TempCanvas(viewportSize);
             root.setContainingBlock(new ViewportBox(viewportSize));
             root.layout(c);
-
-            long end = System.currentTimeMillis();
-            
-            LOGGER.info("Layout took " + (end - start) + " milliseconds");
     }
 
     private SharedContext newSharedContext(final UserAgentCallback userAgent) 

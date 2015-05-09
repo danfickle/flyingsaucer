@@ -31,8 +31,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.xhtmlrenderer.css.constants.MarginBoxName;
 import org.xhtmlrenderer.css.extend.AttributeResolver;
@@ -47,6 +45,9 @@ import org.xhtmlrenderer.css.sheet.Stylesheet;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
 import org.xhtmlrenderer.layout.SharedContext;
 
+import com.github.neoflyingsaucer.extend.controller.error.FSErrorController;
+import com.github.neoflyingsaucer.extend.controller.error.FSError.FSErrorLevel;
+import com.github.neoflyingsaucer.extend.controller.error.LangId;
 import com.github.neoflyingsaucer.extend.useragent.Optional;
 
 
@@ -54,8 +55,6 @@ import com.github.neoflyingsaucer.extend.useragent.Optional;
  * @author Torbjoern Gannholm
  */
 public class Matcher {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(Matcher.class);
 
     private final Mapper docMapper;
     private final org.xhtmlrenderer.css.extend.AttributeResolver _attRes;
@@ -158,7 +157,7 @@ public class Matcher {
     Mapper createDocumentMapper(final List<Stylesheet> stylesheets, final SharedContext sharedCtx) {
         final java.util.TreeMap<String, Selector> sorter = new java.util.TreeMap<String, Selector>();
         addAllStylesheets(stylesheets, sorter, sharedCtx);
-        LOGGER.info("Matcher created with " + sorter.size() + " selectors");
+        FSErrorController.log(Matcher.class, FSErrorLevel.INFO, LangId.MATCHER_CREATED, sorter.size());
         return new Mapper(sorter.values());
     }
     

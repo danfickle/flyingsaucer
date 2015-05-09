@@ -11,8 +11,6 @@ import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Stroke;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.IdentValue;
@@ -60,6 +58,9 @@ import com.github.neoflyingsaucer.displaylist.DlInstruction.DlStringEx;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlStroke;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlTranslate;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.Operation;
+import com.github.neoflyingsaucer.extend.controller.error.FSErrorController;
+import com.github.neoflyingsaucer.extend.controller.error.LangId;
+import com.github.neoflyingsaucer.extend.controller.error.FSError.FSErrorLevel;
 import com.github.neoflyingsaucer.extend.output.DisplayList;
 import com.github.neoflyingsaucer.extend.output.FSFont;
 import com.github.neoflyingsaucer.extend.output.FSGlyphVector;
@@ -83,7 +84,6 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
 	private DisplayList dl;
     private final SharedContext sharedContext;
     private final Box root;
-    private static final Logger LOGGER = LoggerFactory.getLogger(DlOutputDevice.class);
     
     private AffineTransform transform = new AffineTransform();
     private Area clip;
@@ -440,7 +440,7 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
 			}
 			else
 			{
-				LOGGER.warn("We only support RGBA stop pointsw for linear gradients currently.");
+				FSErrorController.log(DlOutputDevice.class, FSErrorLevel.WARNING, LangId.NO_CMYK_FOR_LINEAR_GRADIENT);
 				// TODO: Convert to RGB or support CMYK gradients.
 			}
 		}
@@ -581,14 +581,14 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
                     Box target = sharedContext.getBoxById(anchor);
                     if (target == null)
                     {
-                    	LOGGER.warn("Unable to find hash link target: {}", uri);
+                    	FSErrorController.log(DlOutputDevice.class, FSErrorLevel.WARNING, LangId.COULDNT_FIND_HASH_LINK_TARGET, uri);
                     	return;
                     }
                     
                		// Continuous renderer does not support internal links currently.
                		if (root.getLayer().getPages().isEmpty())
                		{
-               			LOGGER.info("Continuous renderer does not currently support internal links.");
+               			FSErrorController.log(DlOutputDevice.class, FSErrorLevel.WARNING, LangId.NO_INTERNAL_LINKS_FOR_CONTINOUS);
                			return;
                		}
 
@@ -646,7 +646,7 @@ public class DlOutputDevice extends AbstractOutputDevice implements OutputDevice
 		
 		if (root.getLayer().getPages().isEmpty())
 		{
-			LOGGER.info("Continuous renderer does not support bookmarks currently.");
+			FSErrorController.log(DlOutputDevice.class, FSErrorLevel.WARNING, LangId.NO_BOOKMARKS_FOR_CONTINOUS);
 			return;
 		}
 		

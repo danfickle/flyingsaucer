@@ -28,8 +28,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -67,8 +65,6 @@ import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
  * @author empty
  */
 public class SharedContext {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SharedContext.class);
 
     private TextRenderer text_renderer;
     private String media;
@@ -130,7 +126,6 @@ public class SharedContext {
         setMedia("screen");
         this.uac = uac;
         setCss(new StyleReference(uac));
-        LOGGER.info("Using CSS implementation from: " + getCss().getClass().getName());
         setTextRenderer(new Java2DTextRenderer());
         try {
             setDPI(Toolkit.getDefaultToolkit().getScreenResolution());
@@ -151,7 +146,6 @@ public class SharedContext {
         setMedia("screen");
         this.uac = uac;
         setCss(new StyleReference(uac));
-        LOGGER.info("Using CSS implementation from: " + getCss().getClass().getName());
         setTextRenderer(tr);
         setDPI(dpi);
     }

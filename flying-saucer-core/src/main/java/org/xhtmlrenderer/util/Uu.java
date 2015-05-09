@@ -19,9 +19,6 @@
  */
 package org.xhtmlrenderer.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -31,10 +28,10 @@ import java.io.StringWriter;
  *
  * @author empty
  */
+@Deprecated
 public class Uu extends Util {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Uu.class);
-    /**
+	/**
      * Description of the Field
      */
     private static Util util;
@@ -53,6 +50,7 @@ public class Uu extends Util {
     /**
      * Description of the Method
      */
+    @Deprecated
     public static void on() {
         init();
         util.setOn(true);
@@ -61,6 +59,7 @@ public class Uu extends Util {
     /**
      * Description of the Method
      */
+    @Deprecated
     public static void off() {
         init();
         util.setOn(false);
@@ -71,6 +70,7 @@ public class Uu extends Util {
      *
      * @param object PARAM
      */
+    @Deprecated
     public static void p(final Object object) {
         init();
         final StringWriter sw = new StringWriter();
@@ -78,7 +78,7 @@ public class Uu extends Util {
         utilAsString.setPrintWriter(pw);
         utilAsString.print(object);// our log adds a newline
         pw.flush();
-        LOGGER.info(sw.getBuffer().toString());
+        //LOGGER.info(sw.getBuffer().toString());
 
     }
 
@@ -87,6 +87,7 @@ public class Uu extends Util {
      *
      * @param object PARAM
      */
+    @Deprecated
     public static void pr(final Object object) {
         init();
         final StringWriter sw = new StringWriter();
@@ -94,7 +95,7 @@ public class Uu extends Util {
         utilAsString.setPrintWriter(pw);
         utilAsString.print(object);// our log adds a newline
         pw.flush();
-        LOGGER.info(sw.getBuffer().toString());
+        //LOGGER.info(sw.getBuffer().toString());
         //util.print( object );
     }
 
@@ -103,6 +104,7 @@ public class Uu extends Util {
      *
      * @param msec PARAM
      */
+    @Deprecated
     public static void sleep(final int msec) throws InterruptedException {
         Thread.sleep(msec);
     }
@@ -110,6 +112,7 @@ public class Uu extends Util {
     /**
      * Description of the Method
      */
+    @Deprecated
     public static void dump_stack() {
         p(stack_to_string(new Exception()));
     }
@@ -119,6 +122,7 @@ public class Uu extends Util {
      *
      * @param args PARAM
      */
+    @Deprecated
     public static void main(final String args[]) {
         try {
             Uu.p(new Object());
@@ -130,6 +134,7 @@ public class Uu extends Util {
     /**
      * Description of the Method
      */
+    @Deprecated
     private static void init() {
         if (util == null) {
             util = new Util(System.out);

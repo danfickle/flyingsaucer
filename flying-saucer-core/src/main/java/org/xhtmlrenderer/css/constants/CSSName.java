@@ -24,8 +24,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.parser.CSSErrorHandler;
 import org.xhtmlrenderer.css.parser.CSSParser;
 import org.xhtmlrenderer.css.parser.PropertyValue;
@@ -1544,9 +1542,6 @@ public enum CSSName {
     	NOT_INHERITED;
     }
 
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(CSSName.class);
-
     /**
      * The CSS 2 property name, e.g. "border"
      */
@@ -1774,10 +1769,11 @@ public enum CSSName {
                 final PropertyValue value = parser.parsePropertyValue(
                         cssName, StylesheetInfo.CSSOrigin.USER_AGENT, cssName.initialValue);
 
-                if (value == null) {
-                    LOGGER.error("Unable to derive initial value for " + cssName);
-                } else {
-                    cssName.initialDerivedValue = DerivedValueFactory.newDerivedValue(
+                assert(value != null);
+                
+                if (value != null)
+                {
+                	cssName.initialDerivedValue = DerivedValueFactory.newDerivedValue(
                             null,
                             cssName,
                             value);

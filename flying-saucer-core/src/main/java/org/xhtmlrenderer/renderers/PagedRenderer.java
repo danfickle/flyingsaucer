@@ -8,8 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -58,8 +56,6 @@ public class PagedRenderer
 	private final int dpp;
 	private DlOutputDevice dlOut;
 	private LayoutContext c1;
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(PagedRenderer.class);
 	
 	public PagedRenderer(UserAgentCallback cb, float dpi, int dpp)
 	{
@@ -143,16 +139,12 @@ public class PagedRenderer
                 root = BoxBuilder.createRootBox(c1, doc);
                 setRootBox(root);
             }
-
-
     }
     
     private void doDocumentLayout2()
     {
         BlockBox root = (BlockBox) getRootBox();
     	
-        long start = System.currentTimeMillis();
-        
     	root.setContainingBlock(new ViewportBox(getInitialExtents(c1)));
         root.layout(c1);
 
@@ -160,10 +152,6 @@ public class PagedRenderer
         
         root.getLayer().trimEmptyPages(c, intrinsicSize.height);
         root.getLayer().layoutPages(c1);
-        
-        long end = System.currentTimeMillis();
-        
-        LOGGER.info("Layout took " + (end - start) + " milliseconds");	
     }
 
     private SharedContext newSharedContext(final UserAgentCallback userAgent) 

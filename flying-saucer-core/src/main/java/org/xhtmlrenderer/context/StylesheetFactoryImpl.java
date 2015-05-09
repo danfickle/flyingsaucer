@@ -22,8 +22,6 @@ package org.xhtmlrenderer.context;
 import java.io.IOException;
 import java.io.Reader;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.extend.StylesheetFactory;
 import org.xhtmlrenderer.css.parser.CSSErrorHandler;
 import org.xhtmlrenderer.css.parser.CSSParser;
@@ -51,7 +49,6 @@ import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
  */
 public class StylesheetFactoryImpl implements StylesheetFactory {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(StylesheetFactoryImpl.class);
 	/**
      * the UserAgentCallback to resolve uris
      */
@@ -98,7 +95,7 @@ public class StylesheetFactoryImpl implements StylesheetFactory {
        		return Optional.of((StylesheetI) s1);
        	}
 
-        LOGGER.warn("Couldn't parse stylesheet with no URI");
+        FSErrorController.log(StylesheetFactoryImpl.class, FSErrorLevel.WARNING, LangId.COULDNT_PARSE_STYLESHEET_NO_URI);
         return Optional.empty();
     }
 
@@ -111,7 +108,6 @@ public class StylesheetFactoryImpl implements StylesheetFactory {
 
         if (!cr.isPresent())
         {
-        	LOGGER.warn("Unable to retrieve stylesheet at url({})", info.getUri());
         	return Optional.empty();
         }
         
@@ -155,13 +151,11 @@ public class StylesheetFactoryImpl implements StylesheetFactory {
 
         if (s1.isPresent())
         {
-        	LOGGER.info("Stylesheet HIT for " + info.getUri().get());
         	return s1;
         }
         
         // Otherwise, we have to try to get it from the 
         // user agent proper.        
-        LOGGER.info("Stylesheet MISS for " + info.getUri());
         return parse(info);
     }
 

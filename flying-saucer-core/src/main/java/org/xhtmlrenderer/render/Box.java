@@ -30,8 +30,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.IdentValue;
@@ -50,8 +48,6 @@ import org.xhtmlrenderer.util.NodeHelper;
 import com.github.neoflyingsaucer.extend.useragent.Optional;
 
 public abstract class Box implements Styleable {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(Box.class);
 
     protected static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
@@ -581,7 +577,8 @@ public abstract class Box implements Styleable {
     public int forcePageBreakBefore(final LayoutContext c, final IdentValue pageBreakValue, final boolean pendingPageName) {
         PageBox page = c.getRootLayer().getFirstPage(c, this);
         if (page == null) {
-            LOGGER.warn("Box has no page");
+            // Box has no page
+        	assert(false);
             return 0;
         } else {
             int pageBreakCount = 1;

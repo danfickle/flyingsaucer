@@ -21,13 +21,14 @@ package org.xhtmlrenderer.css.newmatch;
 
 import java.util.ArrayList;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.xhtmlrenderer.css.extend.AttributeResolver;
 import org.xhtmlrenderer.css.extend.TreeResolver;
 import org.xhtmlrenderer.css.sheet.Ruleset;
 
+import com.github.neoflyingsaucer.extend.controller.error.FSError.FSErrorLevel;
+import com.github.neoflyingsaucer.extend.controller.error.FSErrorController;
+import com.github.neoflyingsaucer.extend.controller.error.LangId;
 import com.github.neoflyingsaucer.extend.useragent.Optional;
 
 
@@ -39,7 +40,6 @@ import com.github.neoflyingsaucer.extend.useragent.Optional;
  */
 public class Selector {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Selector.class);
     private Ruleset _parent;
     private Selector chainedSelector = null;
     private Selector siblingSelector = null;
@@ -299,7 +299,7 @@ public class Selector {
     public void setPseudoElement(final String pseudoElement) {
         if (_pe != null) {
             addUnsupportedCondition();
-            LOGGER.warn("Trying to set more than one pseudo-element");
+            FSErrorController.log(Selector.class, FSErrorLevel.WARNING, LangId.SET_MORE_THAN_ONE_PSEUDO);
         } else {
             _specificityD++;
             _pe = pseudoElement;
@@ -409,7 +409,7 @@ public class Selector {
                 break;
             default:
             	sibling = Optional.empty();
-            	LOGGER.error("Bad sibling axis");
+            	FSErrorController.log(Selector.class, FSErrorLevel.ERROR, LangId.BAD_SIBLING_AXIS);
         }
         return sibling;
     }
@@ -422,7 +422,7 @@ public class Selector {
     private void addCondition(final Condition c) {
         if (_pe != null) {
             conditions.add(Condition.createUnsupportedCondition());
-            LOGGER.warn("Trying to append conditions to pseudoElement " + _pe);
+            FSErrorController.log(Selector.class, FSErrorLevel.WARNING, LangId.APPEND_CONDITIONS_TO_PSEUDO, _pe);
         }
         conditions.add(c);
     }

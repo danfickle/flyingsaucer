@@ -25,8 +25,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.css.constants.CSSName;
 import org.xhtmlrenderer.css.constants.IdentValue;
 import org.xhtmlrenderer.css.newmatch.CascadedStyle;
@@ -48,6 +46,9 @@ import org.xhtmlrenderer.css.value.FontSpecification;
 import org.xhtmlrenderer.util.GeneralUtil;
 import org.xhtmlrenderer.util.XRRuntimeException;
 
+import com.github.neoflyingsaucer.extend.controller.error.FSErrorController;
+import com.github.neoflyingsaucer.extend.controller.error.FSError.FSErrorLevel;
+import com.github.neoflyingsaucer.extend.controller.error.LangId;
 import com.github.neoflyingsaucer.extend.output.FSFont;
 import com.github.neoflyingsaucer.extend.output.FSFontMetrics;
 
@@ -70,9 +71,7 @@ import com.github.neoflyingsaucer.extend.output.FSFontMetrics;
  * @author Patrick Wright
  */
 public class CalculatedStyle {
-
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(CalculatedStyle.class);
+	
     /**
      * The parent-style we inherit from
      */
@@ -249,9 +248,7 @@ public class CalculatedStyle {
         try {
             isAbs = valueByName(cssName).hasAbsoluteUnit();
         } catch (final Exception e) {
-            LOGGER.warn("Property " + cssName + " has an assignment we don't understand, " +
-                    "and can't tell if it's an absolute unit or not. Assuming it is not. Exception was: " +
-                    e.getMessage());
+            FSErrorController.log(CalculatedStyle.class, FSErrorLevel.WARNING, LangId.DONT_UNDERSTAND_ASSIGNMENT, cssName, e.getMessage());
             isAbs = false;
         }
         return isAbs;

@@ -1,18 +1,12 @@
 package org.xhtmlrenderer.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.*;
-import java.net.URL;
-import java.net.URLConnection;
 
 /**
  * @author patrick
  */
 public class IOUtil {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(IOUtil.class);
     public static File copyFile(final File page, final File outputDir) throws IOException {
         InputStream in = null;
         OutputStream out = null;
@@ -58,43 +52,5 @@ public class IOUtil {
                 throw new IOException("Cleanup directory " + dir + ", can't delete file " + file);
             }
         }
-    }
-
-    /**
-     * Attempts to open a connection, and a stream, to the URI provided. timeouts will be set for opening the connection
-     * and reading from it. will return the stream, or null if unable to open or read or a timeout occurred. Does not
-     * buffer the stream.
-     */
-    public static InputStream openStreamAtUrl(final String uri) {
-        InputStream is = null;
-        try {
-            final URLConnection uc = new URL(uri).openConnection();
-
-            // If using Java 5+ you can set timeouts for the URL connection--useful if the remote
-            // server is down etc.; the default timeout is pretty long
-            //
-            //uc.setConnectTimeout(10 * 1000);
-            //uc.setReadTimeout(30 * 1000);
-            //
-            // TODO:CLEAN-JDK1.4
-            // Since we target 1.4, we use a couple of system properties--note these are only supported
-            // in the Sun JDK implementation--see the Net properties guide in the JDK
-            // e.g. file:///usr/java/j2sdk1.4.2_17/docs/guide/net/properties.html
-            System.setProperty("sun.net.client.defaultConnectTimeout", String.valueOf(10 * 1000));
-            System.setProperty("sun.net.client.defaultReadTimeout", String.valueOf(30 * 1000));
-
-            uc.connect();
-
-            is = uc.getInputStream();
-        } catch (final java.net.MalformedURLException e) {
-            LOGGER.error("bad URL given: " + uri, e);
-        } catch (final FileNotFoundException e) {
-            LOGGER.error("item at URI " + uri + " not found");
-        } catch (final IOException e) {
-            LOGGER.error("IO problem for " + uri, e);
-        }
-
-        return is;
-
     }
 }
