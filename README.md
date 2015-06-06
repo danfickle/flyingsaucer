@@ -46,7 +46,7 @@ BROWSER
 2. Set up Eclispe project with 'mvn eclipse:eclipse' command.
 3. Import project in Eclipse with File -> Import -> Existing project.
 3. Take the browser for a spin at:
-/flying-saucer-examples/src/main/java/org/xhtmlrenderer/demo/browser/BrowserStartup.java
+/neo-flying-saucer-browser/src/main/java/com/github/neoflyingsaucer/browser/BrowserMain.java
 
 HOW TO HELP
 -----------

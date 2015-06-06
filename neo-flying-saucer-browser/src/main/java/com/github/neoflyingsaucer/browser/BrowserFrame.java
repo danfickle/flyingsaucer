@@ -1,11 +1,14 @@
 package com.github.neoflyingsaucer.browser;
 
+import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -131,6 +134,52 @@ public class BrowserFrame extends JFrame
     	}
     }
     
+    class OpenFileAction extends AbstractAction
+    {
+		private static final long serialVersionUID = 1L;
+
+		public OpenFileAction() 
+		{
+			super("Open file...");
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+            FileDialog fd = new FileDialog(BrowserFrame.this, "Open a local file", FileDialog.LOAD);
+            fd.setVisible(true);
+            
+            if (fd.getFile() != null) 
+            {
+            	String url = null;
+				try {
+					url = new File(fd.getDirectory(), fd.getFile()).toURI().toURL().toString();
+				} catch (MalformedURLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+            	BrowserFrame.this._currentDemo = url;
+            	BrowserFrame.this.setTitle(url);
+            	BrowserFrame.this.run();
+            }
+		}
+    }
+    
+    class RefreshAction extends AbstractAction
+    {
+		private static final long serialVersionUID = 1L;
+
+		public RefreshAction()
+    	{
+    		super("Refresh");
+    	}
+
+		@Override
+		public void actionPerformed(ActionEvent e) 
+		{
+			BrowserFrame.this.run();
+		}
+    }
+
 	public void createMenuBar()
 	{
 		JMenuBar menuBar = new JMenuBar();
@@ -152,6 +201,13 @@ public class BrowserFrame extends JFrame
 		{
 			demos.add(new LoadAction(dp));
 		}
+		
+		JMenu load = new JMenu("Load");
+		load.setMnemonic(KeyEvent.VK_L);
+		menuBar.add(load);
+
+		load.add(new OpenFileAction());
+		load.add(new RefreshAction());
 		
 		JMenu export = new JMenu("Export");
 		export.setMnemonic(KeyEvent.VK_E);
