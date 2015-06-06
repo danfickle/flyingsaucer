@@ -9,12 +9,12 @@
     <version>9.0.5-SNAPSHOTX</version>
   </parent>
 
-  <artifactId>flying-saucer-examples</artifactId>
+  <artifactId>neo-flying-saucer-tests</artifactId>
 
   <packaging>jar</packaging>
 
-  <name>Flying Saucer Examples</name>
-  <description>Misc. Flying Saucer example code.  It is not deployed with a release.</description>
+  <name>neoFlying Saucer Integration Tests</name>
+  <description>neoFlyingSaucer integration tests.</description>
 
   <dependencies>
     <dependency>

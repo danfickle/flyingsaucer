@@ -24,7 +24,7 @@
 
   <modules>
     <module>flying-saucer-core</module>
-    <module>flying-saucer-examples</module>
+    <module>neo-flying-saucer-tests</module>
     <module>flying-saucer-default-user-agent</module>
     <module>neo-flying-saucer-jsoup-to-dom</module>
     <module>neo-flying-saucer-display-list</module>
