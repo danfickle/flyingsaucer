@@ -79,7 +79,6 @@
     padding: 20px;
     border: 1px solid #c0c0ff;
     margin: 10px;
-    margin-top: 50px;
     }
 
     html {
@@ -87,17 +86,25 @@
     }
 
     #fslogo {
-    border-style: none;
+    border: 1px solid gray;
     text-decoration: none;
     font-family: tahoma, verdana, arial;
-    font-size: 20pt;
+    font-size: 16pt;
     font-weight: bold;
     margin: 0pt;    
-    padding: 0pt;   
+    padding: 8px;   
     margin-bottom: 10pt;
+    border-radius: 8px;
+    background-image: linear-gradient(to bottom, white, gray);
+    text-align: center;
     }
     #pagebyline {
     border-style: none;
     font-family: tahoma, verdana, arial;
     font-size: 16pt;
+    }
+    
+    .neo-prefix
+    {
+     color: rgb(190, 10, 10);
     }

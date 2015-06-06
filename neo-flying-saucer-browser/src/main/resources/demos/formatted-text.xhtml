@@ -1,7 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<html lang="en">
 <head>
-  <title>Flying Saucer: CSS Formatted Text Support</title>
+  <title>neoFlying Saucer: CSS Formatted Text Support</title>
   <meta name="creator" content="Tim Telcik &lt;tim.telcik@permeance.com.au&gt;" />
   <meta name="keywords" content="test xhtml pdf meta adapter" />
   <meta name="subject" content="CSS Formatted Text Demo Page" />
@@ -33,6 +32,7 @@
         text-align: right;
         }
     p.just { text-align: justify; }
+    div.just-box { max-width: 350px; border: 1px solid black; padding: 8px; }
     .uppercase {
         text-transform: uppercase;
         }
@@ -47,14 +47,10 @@
   </style>
   </head>
   <body>
-    <p class="link left-link"><a href="demoNav:back">Previous Page</a></p>
-    <p class="link right-link"><a href="demoNav:forward">Next Page</a></p>
-
-    <p id="fslogo">Flying Saucer XML/CSS2 Renderer</p>
+    <h1 id="fslogo"><span class="neo-prefix">neo</span>Flying Saucer HTML5/CSS Renderer</h1>
     <span id="pagebyline">CSS <span class="customfont">Formatted Text</span> Support</span><br />
     <p><b>Formatted text support includes</b>: formatting text using CSS styling including the many styling properties
     shown below.</p>
-    <br />
 
     <p>You can use <b>bold</b>, <i>italic</i>, <span class="smallcaps">smallcaps</span>,
     <span class="underline">underline</span>, <span class="uppercase">uppercased text</span>,
@@ -75,8 +71,11 @@
     <p class="left-align">left</p>
     <p class="center-align">center</p>
     <p class="right-align">and right aligned text.</p>
-    <p class="just">You can even justify text on a single line (if the line is long enough, and I mean really long)</p>
-
+    <div class="just-box">
+      <p class="just">You can even justify text (if the line is long enough, and I mean really long)
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+      </p>
+    </div>
     <p>and spec-compliant whitespace control such as:</p>
 
     <pre>    some

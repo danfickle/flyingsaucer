@@ -1,11 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
     <head>
-    <title>Flying Saucer: CSS Font Sizing Support</title>
+    <title>neoFlying Saucer: CSS Font Sizing Support</title>
     <link rel="stylesheet" type="text/css" href="general.css" title="Style" media="screen" />
     <link rel="stylesheet" type="text/css" href="print.css" title="Style" media="print" />
     <style>
@@ -16,20 +11,22 @@
 		  border-collapse: collapse;
 	  }
 	  td, th {
-          padding: 5px;
+          padding: 8px 3px;
+      }
+      .even td, .even th
+      {
+        background-color: rgb(220, 220, 220);
       }
       .label {
           text-align: left;
-          background-color: silver; 
           font-weight: bold;
+          font-size: 80%;
       }
     </style>
   </head>
 
   <body>
-    <p class="link left-link"><a href="demoNav:back">Previous Page</a></p>
-    <p class="link right-link"><a href="demoNav:forward">Next Page</a></p>
-    <p id="fslogo">Flying Saucer XML/CSS2 Renderer</p>
+    <h1 id="fslogo"><span class="neo-prefix">neo</span>Flying Saucer HTML5/CSS Renderer</h1>
     <span id="pagebyline">
       <span style="font-size: xx-large">CSS</span> 
       <span style="font-size: large">Font</span> 
@@ -42,8 +39,8 @@
       using em, %, and ex.</p>
       <br />
       <h3>Table of Absolute versus HX Sizes</h3>
-      <table border="1" style="width: 100%">
-      <tr>
+      <table border="0">
+      <tr class="even">
         <th class="label" style="width: 10%; ">CSS abs-size</th>
         <td style="width: 8%; font-size: xx-small;">xx-small</td>
         <td style="width: 5%; font-size: x-small;">x-small</td>
@@ -63,7 +60,7 @@
         <td style="width: 12%;"><h2>h2</h2></td>
         <td style="width: 15%;"><h1>h1</h1></td>
       </tr>
-      <tr>
+      <tr class="even">
         <th class="label" style="width: 10%; ">HTML Font</th>
         <td style="width: 8%;">1</td>
         <td style="width: 5%;">{n/a}</td>

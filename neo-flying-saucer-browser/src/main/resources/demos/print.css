@@ -15,3 +15,20 @@ body {
     margin: 10px;
 }
 
+#fslogo {
+    border: 1px solid gray;
+    text-decoration: none;
+    font-family: Tahoma, Verdana, Arial;
+    font-size: 16pt;
+    font-weight: normal;
+    margin: 0;
+    padding: 12px;   
+    margin-bottom: 10pt;
+    border-radius: 8px;
+    background-image: linear-gradient(to bottom, white, gray);
+    text-align: center;
+}
+.neo-prefix
+{
+  color: rgb(190, 10, 10);
+}
