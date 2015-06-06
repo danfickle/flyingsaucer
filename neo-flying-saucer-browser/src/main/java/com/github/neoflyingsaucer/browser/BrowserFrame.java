@@ -39,6 +39,16 @@ public class BrowserFrame extends JFrame
 		add(_scrollPane);
 	}
 	
+	public String getCurrentDemo()
+	{
+		return _currentDemo;
+	}
+
+	public UserAgentCallback getUac()
+	{
+		return _demoUserAgent;
+	}
+	
 	private void run()
 	{
 		if (_isContinuous)
@@ -142,7 +152,15 @@ public class BrowserFrame extends JFrame
 		{
 			demos.add(new LoadAction(dp));
 		}
+		
+		JMenu export = new JMenu("Export");
+		export.setMnemonic(KeyEvent.VK_E);
+		menuBar.add(export);
 
+		export.add(new ExportAction("pdf", this));
+		export.add(new ExportAction("continuous-image", this));
+		export.add(new ExportAction("paged-image", this));
+		
 		setJMenuBar(menuBar);
 	}
 	
