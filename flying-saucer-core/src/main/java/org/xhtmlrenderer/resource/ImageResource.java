@@ -21,9 +21,6 @@ package org.xhtmlrenderer.resource;
 
 import java.io.InputStream;
 
-import org.xhtmlrenderer.swing.AWTFSImage;
-
-import com.github.neoflyingsaucer.extend.output.FSImage;
 import com.github.neoflyingsaucer.extend.useragent.ImageResourceI;
 
 /**

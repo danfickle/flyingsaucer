@@ -32,7 +32,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xhtmlrenderer.context.AWTFontResolver;
 import org.xhtmlrenderer.context.StyleReference;
 import org.xhtmlrenderer.css.sheet.StylesheetInfo;
 import org.xhtmlrenderer.css.style.CalculatedStyle;
@@ -43,9 +42,6 @@ import org.xhtmlrenderer.extend.ReplacedElementFactory;
 import org.xhtmlrenderer.extend.TextRenderer;
 import org.xhtmlrenderer.render.Box;
 import org.xhtmlrenderer.render.RenderingContext;
-import org.xhtmlrenderer.swing.Java2DTextRenderer;
-import org.xhtmlrenderer.swing.SwingReplacedElementFactory;
-
 import com.github.neoflyingsaucer.extend.output.FSFont;
 import com.github.neoflyingsaucer.extend.output.FSFontMetrics;
 import com.github.neoflyingsaucer.extend.output.FSImage;
@@ -121,12 +117,12 @@ public class SharedContext {
     public SharedContext(final UserAgentCallback uac) {
     	this();
     	
-    	font_resolver = new AWTFontResolver();
-        replacedElementFactory = new SwingReplacedElementFactory();
+    	//font_resolver = new AWTFontResolver();
+        //replacedElementFactory = new SwingReplacedElementFactory();
         setMedia("screen");
         this.uac = uac;
         setCss(new StyleReference(uac));
-        setTextRenderer(new Java2DTextRenderer());
+        //setTextRenderer(new Java2DTextRenderer());
         try {
             setDPI(Toolkit.getDefaultToolkit().getScreenResolution());
         } catch (final HeadlessException e) {
@@ -504,38 +500,6 @@ public class SharedContext {
     public void setPrint(final boolean print) {
         this.print = print;
         setMedia(print ? "print" : "screen");
-    }
-
-    /**
-     * Adds or overrides a font mapping, meaning you can associate a particular
-     * font with a particular string. For example, the following would load a
-     * font out of the cool.ttf file and associate it with the name <i>CoolFont
-     * </i>:
-  	 *
-     * <pre>
-     *   Font font = Font.createFont(Font.TRUETYPE_FONT,
-     *   new FileInputStream("cool.ttf");
-     *   setFontMapping("CoolFont", font);
-     * </pre>
-	 *
-     * You could then put the following css in your page <pre>
-     *   p { font-family: CoolFont Arial sans-serif; }
-     * </pre>
-	 *
-     * You can also override existing font mappings, like replacing Arial with
-     * Helvetica.
-     *
-     * @param name The new font name
-     * @param font The actual Font to map
-     */
-    /*
-     * add a new font mapping, or replace an existing one
-     */
-    public void setFontMapping(final String name, final Font font) {
-        final FontResolver resolver = getFontResolver();
-        if (resolver instanceof AWTFontResolver) {
-            ((AWTFontResolver)resolver).setFontMapping(name, font);
-        }
     }
 
     public void setFontResolver(final FontResolver resolver) {
