@@ -11,8 +11,6 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
-import org.xhtmlrenderer.renderers.PagedRenderer;
-
 import com.github.neoflyingsaucer.extend.output.DisplayList;
 import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 import com.github.neoflyingsaucer.j2dout.Java2DFontContext;
@@ -20,6 +18,7 @@ import com.github.neoflyingsaucer.j2dout.Java2DFontResolver;
 import com.github.neoflyingsaucer.j2dout.Java2DImageResolver;
 import com.github.neoflyingsaucer.j2dout.Java2DOut;
 import com.github.neoflyingsaucer.j2dout.Java2DReplacedElementResolver;
+import com.github.neoflyingsaucer.renderers.PagedRenderer;
 
 public class HtmlPagedPanel extends JPanel 
 {

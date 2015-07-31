@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 import org.w3c.dom.Document;
-import org.xhtmlrenderer.renderers.PagedRenderer;
 
 import com.github.neoflyingsaucer.defaultuseragent.DefaultUserAgent;
 import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
@@ -18,6 +17,7 @@ import com.github.neoflyingsaucer.pdf2dout.Pdf2ImageResolver;
 import com.github.neoflyingsaucer.pdf2dout.Pdf2Out;
 import com.github.neoflyingsaucer.pdf2dout.Pdf2ReplacedElementResolver;
 import com.github.neoflyingsaucer.pdf2dout.Pdf2Out.PdfOutMode;
+import com.github.neoflyingsaucer.renderers.PagedRenderer;
 
 public class PdfTest 
 {

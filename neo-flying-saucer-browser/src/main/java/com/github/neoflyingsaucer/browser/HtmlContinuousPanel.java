@@ -8,8 +8,6 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
-import org.xhtmlrenderer.renderers.ContinuousRenderer;
-
 import com.github.neoflyingsaucer.extend.output.DisplayList;
 import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 import com.github.neoflyingsaucer.j2dout.Java2DFontContext;
@@ -17,6 +15,7 @@ import com.github.neoflyingsaucer.j2dout.Java2DFontResolver;
 import com.github.neoflyingsaucer.j2dout.Java2DImageResolver;
 import com.github.neoflyingsaucer.j2dout.Java2DOut;
 import com.github.neoflyingsaucer.j2dout.Java2DReplacedElementResolver;
+import com.github.neoflyingsaucer.renderers.ContinuousRenderer;
 
 public class HtmlContinuousPanel extends JPanel
 {

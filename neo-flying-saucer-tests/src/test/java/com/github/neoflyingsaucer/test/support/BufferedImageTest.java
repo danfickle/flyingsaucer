@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.w3c.dom.Document;
-import org.xhtmlrenderer.renderers.PagedRenderer;
+
 import com.github.neoflyingsaucer.defaultuseragent.DefaultUserAgent;
 import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
 import com.github.neoflyingsaucer.extend.output.DisplayList;
@@ -16,6 +16,7 @@ import com.github.neoflyingsaucer.j2dout.Java2DFontResolver;
 import com.github.neoflyingsaucer.j2dout.Java2DImageResolver;
 import com.github.neoflyingsaucer.j2dout.Java2DOut;
 import com.github.neoflyingsaucer.j2dout.Java2DReplacedElementResolver;
+import com.github.neoflyingsaucer.renderers.PagedRenderer;
 
 public class BufferedImageTest
 {

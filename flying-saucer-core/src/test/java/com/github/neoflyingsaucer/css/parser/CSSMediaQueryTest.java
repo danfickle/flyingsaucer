@@ -5,12 +5,12 @@ import java.awt.Rectangle;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.xhtmlrenderer.css.mediaquery.MediaQueryList;
-import org.xhtmlrenderer.css.parser.CSSErrorHandler;
-import org.xhtmlrenderer.css.parser.CSSParser;
-import org.xhtmlrenderer.layout.SharedContext;
 
+import com.github.neoflyingsaucer.css.mediaquery.MediaQueryList;
+import com.github.neoflyingsaucer.css.parser.CSSErrorHandler;
+import com.github.neoflyingsaucer.css.parser.CSSParser;
 import com.github.neoflyingsaucer.extend.controller.error.LangId;
+import com.github.neoflyingsaucer.layout.SharedContext;
 
 import static org.junit.Assert.*;
 

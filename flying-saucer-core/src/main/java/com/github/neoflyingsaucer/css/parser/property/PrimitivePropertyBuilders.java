@@ -1,0 +1,1688 @@
+/*
+ * {{{ header & license
+ * Copyright (c) 2007 Wisconsin Court System
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public License
+ * as published by the Free Software Foundation; either version 2.1
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * }}}
+ */
+package com.github.neoflyingsaucer.css.parser.property;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.List;
+
+import com.github.neoflyingsaucer.css.constants.CSSName;
+import com.github.neoflyingsaucer.css.constants.CSSPrimitiveUnit;
+import com.github.neoflyingsaucer.css.constants.IdentValue;
+import com.github.neoflyingsaucer.css.parser.FSFunction;
+import com.github.neoflyingsaucer.css.parser.FSRGBColor;
+import com.github.neoflyingsaucer.css.parser.PropertyValue;
+import com.github.neoflyingsaucer.css.parser.PropertyValueImp;
+import com.github.neoflyingsaucer.css.parser.Token;
+import com.github.neoflyingsaucer.css.parser.PropertyValueImp.CSSValueType;
+import com.github.neoflyingsaucer.css.sheet.PropertyDeclaration;
+import com.github.neoflyingsaucer.css.sheet.StylesheetInfo.CSSOrigin;
+import com.github.neoflyingsaucer.extend.controller.error.LangId;
+import com.github.neoflyingsaucer.util.GeneralUtil;
+
+import static com.github.neoflyingsaucer.css.parser.property.BuilderUtil.*;
+
+public class PrimitivePropertyBuilders 
+{
+    public static final PropertyBuilder COLOR = new GenericColor();
+    public static final PropertyBuilder BORDER_STYLE = new GenericBorderStyle();
+    public static final PropertyBuilder BORDER_WIDTH = new GenericBorderWidth();
+    public static final PropertyBuilder MARGIN = new LengthLikeWithAuto();
+    public static final PropertyBuilder PADDING = new NonNegativeLengthLike();
+
+    private static abstract class SingleIdent implements PropertyBuilder
+    {
+        protected abstract EnumSet<IdentValue> getAllowed();
+
+        @Override
+        public List<PropertyDeclaration> buildDeclarations(
+                final CSSName cssName, final List<PropertyValue> values, final CSSOrigin origin, final boolean important, final boolean inheritAllowed) 
+        {
+            PropertyValue value = checkGetSingleProperty(cssName, values, inheritAllowed,
+            		EnumSet.of(GenericType.IdentType));
+
+            if (value.getCssValueTypeN() != CSSValueType.CSS_INHERIT)
+                checkIdentValidity(cssName, getAllowed(), value);
+
+            return sList(cssName, value, important, origin);
+        }
+    }
+
+    private static class GenericColor implements PropertyBuilder 
+    {
+        @Override
+        public List<PropertyDeclaration> buildDeclarations(
+                final CSSName cssName, final List<PropertyValue> values, final CSSOrigin origin, final boolean important, final boolean inheritAllowed) 
+        {
+        	PropertyValue value = checkGetSingleProperty(cssName, values, inheritAllowed,
+            		EnumSet.of(GenericType.ColorType, GenericType.IdentType));
+
+            if (value.getCssValueTypeN() != CSSValueType.CSS_INHERIT && 
+            	value.getPrimitiveTypeN() == CSSPrimitiveUnit.CSS_IDENT) 
+            {
+               final FSRGBColor color = Conversions.getColor(value.getStringValue());
+
+               if (color != null) 
+               {
+                   return sList(cssName, new PropertyValueImp(color), important, origin);
+               }
+
+               cssThrowError(LangId.UNRECOGNIZED_IDENTIFIER, value.getStringValue(), cssName);
+            }
+
+            return sList(cssName, value, important, origin);
+        }
+    }
+
+    private static class GenericBorderStyle extends SingleIdent {
+        @Override
+    	protected EnumSet<IdentValue> getAllowed() {
+            return IdentSet.BORDER_STYLES;
+        }
+    }
+
+    private static class GenericBorderWidth implements PropertyBuilder
+    {
+        @Override
+    	public List<PropertyDeclaration> buildDeclarations(
+                final CSSName cssName, final List<PropertyValue> values, final CSSOrigin origin, final boolean important, final boolean inheritAllowed) 
+        {
+        	PropertyValue value = checkGetSingleProperty(cssName, values, inheritAllowed,
+            		EnumSet.of(GenericType.IdentType, GenericType.LengthType));
+        	
+            if (value.getCssValueTypeN() != CSSValueType.CSS_INHERIT) 
+            {
+                if (value.getPrimitiveTypeN() == CSSPrimitiveUnit.CSS_IDENT) 
+                {
+                    final IdentValue ident = checkIdent(cssName, value);
+                    checkValidity(cssName, IdentSet.BORDER_WIDTHS, ident);
+
+                    return sList(cssName, Conversions.getBorderWidth(ident.toString()), important, origin);
+                }
+                else 
+                {
+                	if (value.getFloatValue() < 0.0f)
+                        cssThrowError(LangId.NO_NEGATIVE, cssName);
+                }
+            }
+
+            return sList(cssName, value, important, origin);
+        }
+    }
+
+    private static abstract class LengthWithIdent implements PropertyBuilder
+    {
+        protected abstract EnumSet<IdentValue> getAllowed();
+        @Override
+        public List<PropertyDeclaration> buildDeclarations(
+                final CSSName cssName, final List<PropertyValue> values, final CSSOrigin origin, final boolean important, final boolean inheritAllowed) 
+        {
+            PropertyValue value = checkGetSingleProperty(cssName, values, inheritAllowed,
+            		EnumSet.of(GenericType.LengthType, GenericType.IdentType));
+
+            if (value.getCssValueTypeN() != CSSValueType.CSS_INHERIT) 
+            {
+                if (value.getPrimitiveTypeN() == CSSPrimitiveUnit.CSS_IDENT)
+                {
+                    IdentValue ident = checkIdent(cssName, value);
+                    checkValidity(cssName, getAllowed(), ident);
+                }
+                else if (!isNegativeValuesAllowed() && value.getFloatValue() < 0.0f) 
+                {
+                    cssThrowError(LangId.NO_NEGATIVE, cssName);
+                }
+            }
+
+            return sList(cssName, value, important, origin);
+        }
+
+        protected boolean isNegativeValuesAllowed() {
+            return true;
+        }
+    }
+
+    private static abstract class LengthLikeWithIdent implements PropertyBuilder
+    {
+        protected abstract EnumSet<IdentValue> getAllowed();
+        @Override
+        public List<PropertyDeclaration> buildDeclarations(
+                final CSSName cssName, final List<PropertyValue> values, final CSSOrigin origin, final boolean important, final boolean inheritAllowed) 
+        {
+            final PropertyValue value = checkGetSingleProperty(cssName, values, inheritAllowed,
+            		EnumSet.of(GenericType.IdentType, GenericType.LengthType, GenericType.PercentageType));
+            
+            if (value.getCssValueTypeN() != CSSValueType.CSS_INHERIT) 
+            {
+                if (value.getPrimitiveTypeN() == CSSPrimitiveUnit.CSS_IDENT) 
+                {
+                    IdentValue ident = checkIdent(cssName, value);
+                    checkValidity(cssName, getAllowed(), ident);
+                }
+                else if (!isNegativeValuesAllowed() && value.getFloatValue() < 0.0f) 
+                {
+                    cssThrowError(LangId.NO_NEGATIVE, cssName);
+                }
+            }
+
+            return sList(cssName, value, important, origin);
+        }
+
+        protected boolean isNegativeValuesAllowed() {
+            return true;
+        }
+    }
+
+    private static class LengthLike implements PropertyBuilder
+    {
+        @Override
+    	public List<PropertyDeclaration> buildDeclarations(
+                final CSSName cssName, final List<PropertyValue> values, final CSSOrigin origin, final boolean important, final boolean inheritAllowed) 
+        {
+            PropertyValue value = checkGetSingleProperty(cssName, values, inheritAllowed,
+            		EnumSet.of(GenericType.LengthType, GenericType.PercentageType));
+
+            if (value.getCssValueTypeN() != CSSValueType.CSS_INHERIT) 
+            {
+                if (!isNegativeValuesAllowed() && value.getFloatValue() < 0.0f)
+                    cssThrowError(LangId.NO_NEGATIVE, cssName);
+            }
+
+            return sList(cssName, value, important, origin);
+        }
+
+        protected boolean isNegativeValuesAllowed() {
+            return true;
+        }
+    }
+
+    private static class NonNegativeLengthLike extends LengthLike
+    {
+        @Override
+    	protected boolean isNegativeValuesAllowed() {
+            return false;
+        }
+    }
+
+    private static class ColOrRowSpan implements PropertyBuilder
+    {
+        @Override
+    	public List<PropertyDeclaration> buildDeclarations(final CSSName cssName, final List<PropertyValue> values, final CSSOrigin origin, final boolean important, final boolean inheritAllowed) 
+    	{
+            final PropertyValue value = checkGetSingleProperty(cssName, values, inheritAllowed,
+            		EnumSet.of(GenericType.NumberType));
+
+            if (value.getCssValueTypeN() != CSSValueType.CSS_INHERIT) 
+            {
+                if (value.getFloatValue() < 1) 
+                    cssThrowError(LangId.SPAN_MUST_BE_GT_ZERO);
+            }
+
+            return sList(cssName, value, important, origin);
+        }
+    }
+
+    private static class PlainInteger implements PropertyBuilder
+    {
+        @Override
+    	public List<PropertyDeclaration> buildDeclarations(
+                final CSSName cssName, final List<PropertyValue> values, final CSSOrigin origin, final boolean important, final boolean inheritAllowed)
+        {
+            final PropertyValue value = checkGetSingleProperty(cssName, values, inheritAllowed,
+            		EnumSet.of(GenericType.IntegerType));
+
+            if (value.getCssValueTypeN() != CSSValueType.CSS_INHERIT) 
+            {
+                if (!isNegativeValuesAllowed() && value.getFloatValue() < 0.0f)
+                    cssThrowError(LangId.NO_NEGATIVE, cssName);
+            }
+
+            return sList(cssName, value, important, origin);
+        }
+
+        protected boolean isNegativeValuesAllowed() {
+            return true;
+        }
+    }
+
+    private static class Length implements PropertyBuilder
+    {
+        @Override
+    	public List<PropertyDeclaration> buildDeclarations(
+                final CSSName cssName, final List<PropertyValue> values, final CSSOrigin origin, final boolean important, final boolean inheritAllowed) 
+        {
+            final PropertyValue value = checkGetSingleProperty(cssName, values, inheritAllowed,
+            		EnumSet.of(GenericType.LengthType));
+
+            if (value.getCssValueTypeN() != CSSValueType.CSS_INHERIT) 
+            {
+                if (!isNegativeValuesAllowed() && value.getFloatValue() < 0.0f) 
+                	cssThrowError(LangId.NO_NEGATIVE, cssName);
+            }
+
+            return sList(cssName, value, important, origin);
+        }
+
+        protected boolean isNegativeValuesAllowed() {
+            return true;
+        }
+    }
+
+    /*
+    private static class SingleString extends AbstractPropertyBuilder {
+        public List buildDeclarations(
+                CSSName cssName, List values, CSSOrigin origin, boolean important, boolean inheritAllowed) {
+            checkValueCount(cssName, 1, values.size());
+            CSSPrimitiveValue value = (CSSPrimitiveValue)values.get(0);
+            checkInheritAllowed(value, inheritAllowed);
+            if (value.getCssValueType() != CSSPrimitiveValue.CSS_INHERIT) {
+                checkStringType(cssName, value);
+            }
+
+            return Collections.singletonList(
+                    new PropertyDeclaration(cssName, value, important, origin));
+
+        }
+    }
+    */
+
+    /*
+    private static abstract class SingleStringWithIdent extends AbstractPropertyBuilder {
+        protected abstract EnumSet<IdentValue> getAllowed();
+
+        public List buildDeclarations(
+                CSSName cssName, List values, CSSOrigin origin, boolean important, boolean inheritAllowed) {
+            checkValueCount(cssName, 1, values.size());
+            CSSPrimitiveValue value = (CSSPrimitiveValue)values.get(0);
+            checkInheritAllowed(value, inheritAllowed);
+            if (value.getCssValueType() != CSSPrimitiveValue.CSS_INHERIT) {
+                checkIdentOrString(cssName, value);
+
+                if (value.getPrimitiveType() == CSSPrimitiveValue.CSS_IDENT) {
+                    IdentValue ident = checkIdent(cssName, value);
+
+                    checkValidity(cssName, getAllowed(), ident);
+                }
+            }
+
+            return Collections.singletonList(
+                    new PropertyDeclaration(cssName, value, important, origin));
+
+        }
+    }
+    */
+
+    /*
+    private static class SingleStringWithNone extends SingleStringWithIdent {
+        private static final EnumSet<IdentValue> ALLOWED = setFor(new IdentValue[] { IdentValue.NONE });
+
+        protected EnumSet<IdentValue> getAllowed() {
+            return ALLOWED;
+        }
+    }
+    */
+
+    private static class LengthLikeWithAuto extends LengthLikeWithIdent
+    {
+        // <length> | <percentage> | auto | inherit
+        private static final EnumSet<IdentValue> ALLOWED = EnumSet.of(IdentValue.AUTO);
+        @Override
+        protected EnumSet<IdentValue> getAllowed() {
+            return ALLOWED;
+        }
+    }
+
+    private static class LengthWithNormal extends LengthWithIdent
+    {
+        // <length> | normal | inherit
+        private static final EnumSet<IdentValue> ALLOWED = EnumSet.of(IdentValue.NORMAL);
+        @Override
+        protected EnumSet<IdentValue> getAllowed() {
+            return ALLOWED;
+        }
+    }
+
+    private static class LengthLikeWithNone extends LengthLikeWithIdent
+    {
+        // <length> | <percentage> | none | inherit
+        private static final EnumSet<IdentValue> ALLOWED = EnumSet.of(IdentValue.NONE);
+        @Override
+        protected EnumSet<IdentValue> getAllowed() {
+            return ALLOWED;
+        }
+    }
+
+    private static class GenericURIWithNone implements PropertyBuilder
+    {
+        // <uri> | none | inherit
+        private static final EnumSet<IdentValue> ALLOWED = EnumSet.of(IdentValue.NONE);
+        @Override
+        public List<PropertyDeclaration> buildDeclarations(
+                final CSSName cssName, final List<PropertyValue> values, final CSSOrigin origin, final boolean important, final boolean inheritAllowed)
+        {
+            PropertyValue value = checkGetSingleProperty(cssName, values, inheritAllowed, 
+            		EnumSet.of(GenericType.IdentType, GenericType.UriType));
+
+            if (value.getCssValueTypeN() != CSSValueType.CSS_INHERIT) 
+            {
+                if (value.getPrimitiveTypeN() == CSSPrimitiveUnit.CSS_IDENT) 
+                {
+                    IdentValue ident = checkIdent(cssName, value);
+                    checkValidity(cssName, ALLOWED, ident);
+                }
+            }
+            
+            return sList(cssName, value, important, origin);
+        }
+    }
+
+    public static class BackgroundAttachment extends SingleIdent
+    {
+        @Override
+    	protected EnumSet<IdentValue> getAllowed() {
+            return IdentSet.BACKGROUND_ATTACHMENTS;
+        }
+    }
+
+    public static class BackgroundColor extends GenericColor { }
+
+	public static class BackgroundImage extends GenericURIWithNone
+	{
+		@Override
+		public List<PropertyDeclaration> buildDeclarations(final CSSName cssName,
+				final List<PropertyValue> values, final CSSOrigin origin,
+				final boolean important, final boolean inheritAllowed) {
+
+			checkValueCount(cssName, 1, values.size());
+			final PropertyValue value = values.get(0);
+
+			if (value.getFunction() == null) 
+			{
+				return super.buildDeclarations(cssName, values, origin,
+						important, inheritAllowed);
+			}
+
+			checkFunctionsAllowed(value.getFunction(), "linear-gradient");
+			
+			return sList(cssName, value, important, origin);
+		}
+	}
+
+    public static class BackgroundSize implements PropertyBuilder
+    {
+
+        @Override
+        public List<PropertyDeclaration> buildDeclarations(final CSSName cssName, final List<PropertyValue> values, final CSSOrigin origin, final boolean important, final boolean inheritAllowed) {
+            checkValueCount(cssName, 1, 2, values.size());
+
+            final PropertyValue first = values.get(0);
+            PropertyValue second = null;
+            if (values.size() == 2) {
+                second = values.get(1);
+            }
+
+            checkInheritAllowed(first, inheritAllowed);
+            if (values.size() == 1 &&
+                    first.getCssValueTypeN() == CSSValueType.CSS_INHERIT) {
+                return sList(cssName, first, important, origin);
+            }
+
+            if (second != null) {
+                checkInheritAllowed(second, false);
+            }
+
+            checkGenericType(cssName, first,
+            		EnumSet.of(GenericType.IdentType, GenericType.LengthType, GenericType.PercentageType));
+
+            if (second == null) {
+                if (first.getPrimitiveTypeN() == CSSPrimitiveUnit.CSS_IDENT) {
+                    final IdentValue firstIdent = checkIdent(cssName, first);
+                    checkValidity(cssName, IdentSet.BACKGROUND_SIZES, firstIdent);
+
+                    if (firstIdent == IdentValue.CONTAIN || firstIdent == IdentValue.COVER) {
+                        return sList(cssName, first, important, origin);
+                    } else {
+                        return createTwoValueResponse(first, first, origin, important);
+                    }
+                } else {
+                    return createTwoValueResponse(first, new PropertyValueImp(IdentValue.AUTO), origin, important);
+                }
+            } else {
+                checkGenericType(cssName, second,
+                		EnumSet.of(GenericType.IdentType, GenericType.LengthType, GenericType.PercentageType));
+
+                if (first.getPrimitiveTypeN() == CSSPrimitiveUnit.CSS_IDENT) {
+                    final IdentValue firstIdent = checkIdent(cssName, first);
+                    if (firstIdent != IdentValue.AUTO) {
+                        cssThrowError(LangId.ONLY_AUTO_ALLOWED, cssName);
+                    }
+                } else if (((PropertyValue)first).getFloatValue() < 0.0f) {
+                    cssThrowError(LangId.NO_NEGATIVE, cssName);
+                }
+
+                if (second.getPrimitiveTypeN() == CSSPrimitiveUnit.CSS_IDENT) {
+                    final IdentValue secondIdent = checkIdent(cssName, second);
+                    if (secondIdent != IdentValue.AUTO) {
+                        cssThrowError(LangId.ONLY_AUTO_ALLOWED, cssName);
+                    }
+                } else if (((PropertyValue)second).getFloatValue() < 0.0f) {
+                    cssThrowError(LangId.NO_NEGATIVE, cssName);
+                }
+
+                return createTwoValueResponse(first, second, origin, important);
+            }
+        }
+
+        private List<PropertyDeclaration> createTwoValueResponse(final PropertyValue value1, final PropertyValue value2,
+                final CSSOrigin origin, final boolean important) 
+        {
+            List<PropertyValue> values = Arrays.asList(value1, value2);
+            return sList(CSSName.BACKGROUND_SIZE, new PropertyValueImp(values), important, origin);
+        }
+    }
+
+    public static class BackgroundPosition implements PropertyBuilder 
+    {
+        @Override
+    	public List<PropertyDeclaration> buildDeclarations(
+                final CSSName cssName, final List<PropertyValue> values, final CSSOrigin origin, final boolean important, final boolean inheritAllowed) {
+            checkValueCount(cssName, 1, 2, values.size());
+
+            final PropertyValue first = values.get(0);
+            PropertyValue second = null;
+            if (values.size() == 2) {
+                second = values.get(1);
+            }
+
+            checkInheritAllowed(first, inheritAllowed);
+            if (values.size() == 1 &&
+                    first.getCssValueTypeN() == CSSValueType.CSS_INHERIT) {
+                return sList(cssName, first, important, origin);
+            }
+
+            if (second != null) {
+                checkInheritAllowed(second, false);
+            }
+
+            checkGenericType(cssName, first,
+            		EnumSet.of(GenericType.IdentType, GenericType.LengthType, GenericType.PercentageType));
+
+            if (second == null) {
+                if (isLength(first) || first.getPrimitiveTypeN() == CSSPrimitiveUnit.CSS_PERCENTAGE) 
+                {
+                    List<PropertyValue> responseValues = Arrays.asList(first,
+                    		new PropertyValueImp(CSSPrimitiveUnit.CSS_PERCENTAGE, 50.0f, "50%"));
+
+                    return sList(CSSName.BACKGROUND_POSITION,
+                                new PropertyValueImp(responseValues), important, origin);
+                }
+            } else {
+                checkGenericType(cssName, second,
+                		EnumSet.of(GenericType.IdentType, GenericType.LengthType, GenericType.PercentageType));
+            }
+
+
+            IdentValue firstIdent = null;
+            if (first.getPrimitiveTypeN() == CSSPrimitiveUnit.CSS_IDENT) {
+                firstIdent = checkIdent(cssName, first);
+                checkValidity(cssName, getAllowed(), firstIdent);
+            }
+
+            IdentValue secondIdent = null;
+            if (second == null) {
+                secondIdent = IdentValue.CENTER;
+            } else if (second.getPrimitiveTypeN() == CSSPrimitiveUnit.CSS_IDENT) {
+                secondIdent = checkIdent(cssName, second);
+                checkValidity(cssName, getAllowed(), secondIdent);
+            }
+
+            if (firstIdent == null && secondIdent == null) {
+                return sList(CSSName.BACKGROUND_POSITION, new PropertyValueImp(values), important, origin);
+            } else if (firstIdent != null && secondIdent != null) {
+                if (firstIdent == IdentValue.TOP || firstIdent == IdentValue.BOTTOM ||
+                        secondIdent == IdentValue.LEFT || secondIdent == IdentValue.RIGHT) {
+                    final IdentValue temp = firstIdent;
+                    firstIdent = secondIdent;
+                    secondIdent = temp;
+                }
+
+                checkIdentPosition(cssName, firstIdent, secondIdent);
+
+                return createTwoPercentValueResponse(
+                        getPercentForIdent(firstIdent),
+                        getPercentForIdent(secondIdent),
+                        important,
+                        origin);
+            } else {
+                checkIdentPosition(cssName, firstIdent, secondIdent);
+
+                final List<PropertyValue> responseValues = new ArrayList<PropertyValue>(2);
+
+                if (firstIdent == null) {
+                    responseValues.add((PropertyValue) first);
+                    responseValues.add(createValueForIdent(secondIdent));
+                } else {
+                    responseValues.add(createValueForIdent(firstIdent));
+                    responseValues.add((PropertyValue) second);
+                }
+
+                return sList(CSSName.BACKGROUND_POSITION, new PropertyValueImp(responseValues), important, origin);
+            }
+        }
+
+        private void checkIdentPosition(final CSSName cssName, final IdentValue firstIdent, final IdentValue secondIdent) {
+            if (firstIdent == IdentValue.TOP || firstIdent == IdentValue.BOTTOM ||
+                    secondIdent == IdentValue.LEFT || secondIdent == IdentValue.RIGHT) {
+            	cssThrowError(LangId.INVALID_KEYWORD_COMBINATION, cssName);
+            }
+        }
+
+        private float getPercentForIdent(final IdentValue ident) {
+            float percent = 0.0f;
+
+            if (ident == IdentValue.CENTER) {
+                percent = 50.f;
+            } else if (ident == IdentValue.BOTTOM || ident == IdentValue.RIGHT) {
+                percent = 100.0f;
+            }
+
+            return percent;
+        }
+
+        private PropertyValue createValueForIdent(final IdentValue ident) {
+            final float percent = getPercentForIdent(ident);
+            return new PropertyValueImp(
+            		CSSPrimitiveUnit.CSS_PERCENTAGE, percent, percent + "%");
+        }
+
+        private List<PropertyDeclaration> createTwoPercentValueResponse(
+                final float percent1, final float percent2, final boolean important, final CSSOrigin origin) 
+        {
+            final PropertyValue value1 = new PropertyValueImp(
+            		CSSPrimitiveUnit.CSS_PERCENTAGE, percent1, percent1 + "%");
+
+            final PropertyValue value2 = new PropertyValueImp(
+            		CSSPrimitiveUnit.CSS_PERCENTAGE, percent2, percent2 + "%");
+
+            List<PropertyValue> values = Arrays.asList(value1, value2);
+
+            return sList(CSSName.BACKGROUND_POSITION, new PropertyValueImp(values), important, origin);
+        }
+
+        private EnumSet<IdentValue> getAllowed() {
+            return IdentSet.BACKGROUND_POSITIONS;
+        }
+    }
+
+    public static class BackgroundRepeat extends SingleIdent 
+    {
+        @Override
+    	protected EnumSet<IdentValue> getAllowed() {
+            return IdentSet.BACKGROUND_REPEATS;
+        }
+    }
+
+    public static class BorderCollapse extends SingleIdent
+    {
+        // collapse | separate | inherit
+        private static final EnumSet<IdentValue> ALLOWED = EnumSet.of(IdentValue.COLLAPSE, IdentValue.SEPARATE);
+        @Override
+        protected EnumSet<IdentValue> getAllowed() {
+            return ALLOWED;
+        }
+    }
+
+    public static class BorderTopColor extends GenericColor { }
+
+    public static class BorderRightColor extends GenericColor { }
+
+    public static class BorderBottomColor extends GenericColor { }
+
+    public static class BorderLeftColor extends GenericColor { }
+
+    public static class BorderTopStyle extends GenericBorderStyle { }
+
+    public static class BorderRightStyle extends GenericBorderStyle { }
+
+    public static class BorderBottomStyle extends GenericBorderStyle { }
+
+    public static class BorderLeftStyle extends GenericBorderStyle { }
+
+    public static class BorderTopWidth extends GenericBorderWidth { }
+
+    public static class BorderRightWidth extends GenericBorderWidth { }
+
+    public static class BorderBottomWidth extends GenericBorderWidth { }
+
+    public static class BorderLeftWidth extends GenericBorderWidth { }
+
+    public static class Bottom extends LengthLikeWithAuto { }
+
+    public static class CaptionSide extends SingleIdent 
+    {
+        // top | bottom | inherit
+        private static final EnumSet<IdentValue> ALLOWED = EnumSet.of(
+        		IdentValue.TOP, IdentValue.BOTTOM);
+        @Override
+        protected EnumSet<IdentValue> getAllowed() {
+            return ALLOWED;
+        }
+    }
+
+    public static class Clear extends SingleIdent
+    {
+        // none | left | right | both | inherit
+        private static final EnumSet<IdentValue> ALLOWED = EnumSet.of(
+        		IdentValue.NONE, IdentValue.LEFT, IdentValue.RIGHT, IdentValue.BOTH);
+        @Override
+        protected EnumSet<IdentValue> getAllowed() {
+            return ALLOWED;
+        }
+    }
+
+    public static class Color extends GenericColor { }
+
+    public static class Cursor extends SingleIdent 
+    {
+        // [ [<uri> ,]* [ auto | crosshair | default | pointer | move | e-resize
+        // | ne-resize | nw-resize | n-resize | se-resize | sw-resize | s-resize
+        // | w-resize | text | wait | help | progress ] ] | inherit
+        private static final EnumSet<IdentValue> ALLOWED = EnumSet.of(
+                        IdentValue.AUTO, IdentValue.CROSSHAIR,
+                        IdentValue.DEFAULT, IdentValue.POINTER,
+                        IdentValue.MOVE, IdentValue.E_RESIZE,
+                        IdentValue.NE_RESIZE, IdentValue.NW_RESIZE,
+                        IdentValue.N_RESIZE, IdentValue.SE_RESIZE,
+                        IdentValue.SW_RESIZE, IdentValue.S_RESIZE,
+                        IdentValue.W_RESIZE, IdentValue.TEXT,
+                        IdentValue.WAIT, IdentValue.HELP,
+                        IdentValue.PROGRESS);
+        @Override
+        protected EnumSet<IdentValue> getAllowed() {
+            return ALLOWED;
+        }
+    }
+
+    public static class Display extends SingleIdent 
+    {
+        // inline | block | list-item | run-in | inline-block | table | inline-table
+        // | table-row-group | table-header-group
+        // | table-footer-group | table-row | table-column-group | table-column
+        // | table-cell | table-caption | none | inherit
+        private static final EnumSet<IdentValue> ALLOWED = EnumSet.of(
+                        IdentValue.INLINE, IdentValue.BLOCK,
+                        IdentValue.LIST_ITEM, /* IdentValue.RUN_IN, */
+                        IdentValue.INLINE_BLOCK, IdentValue.TABLE,
+                        IdentValue.INLINE_TABLE, IdentValue.TABLE_ROW_GROUP,
+                        IdentValue.TABLE_HEADER_GROUP, IdentValue.TABLE_FOOTER_GROUP,
+                        IdentValue.TABLE_ROW, IdentValue.TABLE_COLUMN_GROUP,
+                        IdentValue.TABLE_COLUMN, IdentValue.TABLE_CELL,
+                        IdentValue.TABLE_CAPTION, IdentValue.NONE);
+        @Override
+        protected EnumSet<IdentValue> getAllowed() {
+            return ALLOWED;
+        }
+    }
+
+    public static class EmptyCells extends SingleIdent
+    {
+        // show | hide | inherit
+        private static final EnumSet<IdentValue> ALLOWED = EnumSet.of(IdentValue.SHOW, IdentValue.HIDE);
+        @Override
+        protected EnumSet<IdentValue> getAllowed() {
+            return ALLOWED;
+        }
+    }
+
+    public static class Float extends SingleIdent
+    {
+        // left | right | none | inherit
+        private static final EnumSet<IdentValue> ALLOWED = EnumSet.of(
+        		IdentValue.LEFT, IdentValue.RIGHT, IdentValue.NONE);
+        @Override
+        protected EnumSet<IdentValue> getAllowed() {
+            return ALLOWED;
+        }
+    }
+
+    public static class FontFamily implements PropertyBuilder
+    {
+        // [[ <family-name> | <generic-family> ] [, <family-name>| <generic-family>]* ] | inherit
+
+        public List<PropertyDeclaration> buildDeclarations(
+                final CSSName cssName, final List<PropertyValue> values, final CSSOrigin origin, final boolean important, final boolean inheritAllowed) {
+            if (values.size() == 1) {
+                final PropertyValue value = values.get(0);
+                checkInheritAllowed(value, inheritAllowed);
+                if (value.getCssValueTypeN() == CSSValueType.CSS_INHERIT) {
+                    return sList(cssName, value, important, origin);
+                }
+            }
+
+            // Both Opera and Firefox parse "Century Gothic" Arial sans-serif as
+            // [Century Gothic], [Arial sans-serif] (i.e. the comma is assumed
+            // after a string).  Seems wrong per the spec, but FF (at least)
+            // does it in standards mode so we do too.
+            final List<String> consecutiveIdents = new ArrayList<String>();
+            final List<String> normalized = new ArrayList<String>(values.size());
+            for (final PropertyValue value : values) {
+                final Token operator = value.getOperator();
+                if (operator != null && operator != Token.TK_COMMA) {
+                    cssThrowError(LangId.INVALID_FONT_FAMILY);
+                }
+
+                if (operator != null) {
+                    if (consecutiveIdents.size() > 0) {
+                        normalized.add(concat(consecutiveIdents, ' '));
+                        consecutiveIdents.clear();
+                    }
+                }
+
+                checkInheritAllowed(value, false);
+                final CSSPrimitiveUnit type = value.getPrimitiveTypeN();
+                if (type == CSSPrimitiveUnit.CSS_STRING) {
+                    if (consecutiveIdents.size() > 0) {
+                        normalized.add(concat(consecutiveIdents, ' '));
+                        consecutiveIdents.clear();
+                    }
+                    normalized.add(value.getStringValue());
+                } else if (type == CSSPrimitiveUnit.CSS_IDENT) {
+                    consecutiveIdents.add(value.getStringValue());
+                } else {
+                    cssThrowError(LangId.INVALID_FONT_FAMILY);
+                }
+            }
+            if (consecutiveIdents.size() > 0) {
+                normalized.add(concat(consecutiveIdents, ' '));
+            }
+
+            final String text = concat(normalized, ',');
+            final PropertyValue result = new PropertyValueImp(
+            		CSSPrimitiveUnit.CSS_STRING, text, text);  // HACK cssText can be wrong
+            result.setStringArrayValue((String[]) normalized.toArray(new String[normalized.size()]));
+
+            return sList(cssName, result, important, origin);
+        }
+
+        private String concat(final List<String> strings, final char separator) 
+        {
+        	StringBuilder sb = new StringBuilder();
+        	
+        	for (int i = 0; i < strings.size(); i++)
+        	{
+        		sb.append(strings.get(i));
+        		
+        		if (i != strings.size() - 1)
+        			sb.append(separator);
+        	}
+        	
+        	return sb.toString();
+        }
+    }
+
+    public static class FontSize implements PropertyBuilder
+    {
+        // <absolute-size> | <relative-size> | <length> | <percentage> | inherit
+        private static final EnumSet<IdentValue> ALLOWED;
+
+        static {
+            ALLOWED = EnumSet.copyOf(IdentSet.ABSOLUTE_FONT_SIZES);
+            ALLOWED.addAll(IdentSet.RELATIVE_FONT_SIZES);
+        }
+        @Override
+        public List<PropertyDeclaration> buildDeclarations(
+                final CSSName cssName, final List<PropertyValue> values, final CSSOrigin origin, final boolean important, final boolean inheritAllowed) {
+            checkValueCount(cssName, 1, values.size());
+            final PropertyValue value = (PropertyValue)values.get(0);
+            checkInheritAllowed(value, inheritAllowed);
+            if (value.getCssValueTypeN() != CSSValueType.CSS_INHERIT) {
+                checkGenericType(cssName, value,
+                		EnumSet.of(GenericType.IdentType, GenericType.LengthType, GenericType.PercentageType));
+
+                if (value.getPrimitiveTypeN() == CSSPrimitiveUnit.CSS_IDENT) {
+                    final IdentValue ident = checkIdent(cssName, value);
+                    checkValidity(cssName, ALLOWED, ident);
+                } else if (value.getFloatValue() < 0.0f) {
+                    cssThrowError(LangId.NO_NEGATIVE, cssName);
+                }
+            }
+
+            return sList(cssName, value, important, origin);
+        }
+    }
+
+    public static class FontStyle extends SingleIdent
+    {
+        @Override
+    	protected EnumSet<IdentValue> getAllowed() {
+            return IdentSet.FONT_STYLES;
+        }
+    }
+
+    public static class FontVariant extends SingleIdent
+    {
+        @Override
+    	protected EnumSet<IdentValue> getAllowed() {
+            return IdentSet.FONT_VARIANTS;
+        }
+    }
+
+    public static class FontWeight implements PropertyBuilder
+    {
+        // normal | bold | bolder | lighter | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | inherit
+        @Override
+    	public List<PropertyDeclaration> buildDeclarations(
+                final CSSName cssName, final List<PropertyValue> values, final CSSOrigin origin, final boolean important, final boolean inheritAllowed) {
+            checkValueCount(cssName, 1, values.size());
+            final PropertyValue value = (PropertyValue)values.get(0);
+            checkInheritAllowed(value, inheritAllowed);
+            if (value.getCssValueTypeN() != CSSValueType.CSS_INHERIT) {
+                checkGenericType(cssName, value,
+                		EnumSet.of(GenericType.IdentType, GenericType.NumberType));
+
+                final CSSPrimitiveUnit type = value.getPrimitiveTypeN();
+                if (type == CSSPrimitiveUnit.CSS_IDENT) {
+                    final IdentValue ident = checkIdent(cssName, value);
+
+                    checkValidity(cssName, getAllowed(), ident);
+                } else if (type == CSSPrimitiveUnit.CSS_NUMBER) {
+                    final IdentValue weight = Conversions.getNumericFontWeight(value.getFloatValue());
+                    if (weight == null) {
+                       cssThrowError(LangId.INVALID_FONT_WEIGHT, value);
+                    }
+
+                    final PropertyValue replacement = new PropertyValueImp(
+                    		CSSPrimitiveUnit.CSS_IDENT, weight.toString(), weight.toString());
+                    replacement.setIdentValue(weight);
+                    return sList(cssName, replacement, important, origin);
+                }
+            }
+
+            return sList(cssName, value, important, origin);
+        }
+
+        private EnumSet<IdentValue> getAllowed() {
+            return IdentSet.FONT_WEIGHTS;
+        }
+    }
+
+    public static class FSBorderSpacingHorizontal extends Length { }
+
+    public static class FSBorderSpacingVertical extends Length { }
+
+    public static class FSFontMetricSrc extends GenericURIWithNone { }
+
+    public static class FSPageHeight extends LengthLikeWithAuto
+    {
+    	@Override
+    	protected boolean isNegativeValuesAllowed() {
+            return false;
+        }
+    }
+
+    public static class FSPageWidth extends LengthLikeWithAuto
+    {
+        @Override
+    	protected boolean isNegativeValuesAllowed() {
+            return false;
+        }
+    }
+
+    public static class FSPageSequence extends SingleIdent
+    {
+        // start | auto
+        private static final EnumSet<IdentValue> ALLOWED = EnumSet.of(
+        		IdentValue.START, IdentValue.AUTO);
+        @Override
+        protected EnumSet<IdentValue> getAllowed() {
+            return ALLOWED;
+        }
+    }
+
+    public static class FSPageOrientation extends SingleIdent
+    {
+        @Override
+    	protected EnumSet<IdentValue> getAllowed() {
+            return IdentSet.PAGE_ORIENTATIONS;
+        }
+    }
+
+    public static class FSPDFFontEmbed extends SingleIdent
+    {
+        // auto | embed
+        private static final EnumSet<IdentValue> ALLOWED = EnumSet.of(IdentValue.AUTO, IdentValue.EMBED);
+
+        @Override
+        protected EnumSet<IdentValue> getAllowed() {
+            return ALLOWED;
+        }
+    }
+
+    public static class FSPDFFontEncoding implements PropertyBuilder
+    {
+        @Override
+    	public List<PropertyDeclaration> buildDeclarations(
+                final CSSName cssName, final List<PropertyValue> values, final CSSOrigin origin, final boolean important, final boolean inheritAllowed) {
+            checkValueCount(cssName, 1, values.size());
+            final PropertyValue value = values.get(0);
+            checkInheritAllowed(value, inheritAllowed);
+            if (value.getCssValueTypeN() != CSSValueType.CSS_INHERIT) {
+            	checkGenericType(cssName, value, EnumSet.of(GenericType.IdentType, GenericType.StringType));
+
+                if (value.getPrimitiveTypeN() == CSSPrimitiveUnit.CSS_IDENT) {
+                    // Convert to string
+                    return sList(cssName, new PropertyValueImp(CSSPrimitiveUnit.CSS_STRING, value.getStringValue(), value.getCssText()),
+                                 important,  origin);
+                }
+            }
+
+            return sList(cssName, value, important, origin);
+        }
+    }
+
+    public static class FSTableCellColspan extends ColOrRowSpan { }
+
+    public static class FSTableCellRowspan extends ColOrRowSpan { }
+
+    public static class FSTablePaginate extends SingleIdent
+    {
+        private static final EnumSet<IdentValue> ALLOWED = EnumSet.of(IdentValue.PAGINATE, IdentValue.AUTO);
+        @Override
+        protected EnumSet<IdentValue> getAllowed() {
+            return ALLOWED;
+        }
+     }
+
+    public static class FSTextDecorationExtent extends SingleIdent
+    {
+       private static final EnumSet<IdentValue> ALLOWED = EnumSet.of(
+    		   IdentValue.LINE, IdentValue.BLOCK);
+       @Override
+       protected EnumSet<IdentValue> getAllowed() {
+           return ALLOWED;
+       }
+    }
+
+    public static class FSFitImagesToWidth extends LengthLikeWithAuto
+    {
+        @Override
+    	protected boolean isNegativeValuesAllowed() {
+            return false;
+        }
+     }
+
+    public static class Height extends LengthLikeWithAuto
+    {
+        @Override
+    	protected boolean isNegativeValuesAllowed() {
+            return false;
+        }
+    }
+
+    public static class FSDynamicAutoWidth extends SingleIdent
+    {
+        private static final EnumSet<IdentValue> ALLOWED = EnumSet.of(
+        		IdentValue.DYNAMIC, IdentValue.STATIC);
+        @Override
+        protected EnumSet<IdentValue> getAllowed() {
+            return ALLOWED;
+        }
+    }
+
+    public static class FSKeepWithInline extends SingleIdent
+    {
+        // auto | keep
+        private static final EnumSet<IdentValue> ALLOWED = EnumSet.of(
+        		IdentValue.AUTO, IdentValue.KEEP);
+        @Override
+        protected EnumSet<IdentValue> getAllowed() {
+            return ALLOWED;
+        }
+    }
+
+    public static class FSNamedDestination extends SingleIdent
+    {
+        // none | create
+        private static final EnumSet<IdentValue> ALLOWED = EnumSet.of(IdentValue.NONE, IdentValue.CREATE);
+        @Override
+        protected EnumSet<IdentValue> getAllowed() {
+            return ALLOWED;
+        }
+    }
+
+    public static class Left extends LengthLikeWithAuto { }
+
+    public static class LetterSpacing extends LengthWithNormal { }
+
+    public static class LineHeight implements PropertyBuilder 
+    {
+        // normal | <number> | <length> | <percentage> | inherit
+        private static final EnumSet<IdentValue> ALLOWED = EnumSet.of(IdentValue.NORMAL);
+        @Override
+        public List<PropertyDeclaration> buildDeclarations(
+                final CSSName cssName, final List<PropertyValue> values, final CSSOrigin origin, final boolean important, final boolean inheritAllowed) {
+            checkValueCount(cssName, 1, values.size());
+            final PropertyValue value = (PropertyValue)values.get(0);
+            checkInheritAllowed(value, inheritAllowed);
+            if (value.getCssValueTypeN() != CSSValueType.CSS_INHERIT) {
+            	checkGenericType(cssName, value,
+            			EnumSet.of(GenericType.IdentType, GenericType.LengthType, GenericType.NumberType, GenericType.PercentageType));
+            	
+                if (value.getPrimitiveTypeN() == CSSPrimitiveUnit.CSS_IDENT) {
+                    final IdentValue ident = checkIdent(cssName, value);
+                    checkValidity(cssName, ALLOWED, ident);
+                } else if (value.getFloatValue() < 0.0) {
+                    cssThrowError(LangId.NO_NEGATIVE, cssName);
+                }
+            }
+            return sList(cssName, value, important, origin);
+        }
+    }
+
+    public static class ListStyleImage extends GenericURIWithNone { }
+
+    public static class ListStylePosition extends SingleIdent
+    {
+    	@Override
+    	protected EnumSet<IdentValue> getAllowed() {
+            return IdentSet.LIST_STYLE_POSITIONS;
+        }
+    }
+
+    public static class ListStyleType extends SingleIdent
+    {
+        @Override
+    	protected EnumSet<IdentValue> getAllowed() {
+            return IdentSet.LIST_STYLE_TYPES;
+        }
+    }
+
+    public static class MarginTop extends LengthLikeWithAuto { }
+
+    public static class MarginRight extends LengthLikeWithAuto { }
+
+    public static class MarginBottom extends LengthLikeWithAuto { }
+
+    public static class MarginLeft extends LengthLikeWithAuto { }
+
+    public static class MaxHeight extends LengthLikeWithNone
+    {
+        @Override
+    	protected boolean isNegativeValuesAllowed() {
+            return false;
+        }
+    }
+
+    public static class MaxWidth extends LengthLikeWithNone
+    {
+        @Override
+    	protected boolean isNegativeValuesAllowed() {
+            return false;
+        }
+    }
+
+    public static class MinHeight extends NonNegativeLengthLike { }
+
+    public static class MinWidth extends NonNegativeLengthLike { }
+
+    public static class Orphans extends PlainInteger 
+    {
+        @Override
+    	protected boolean isNegativeValuesAllowed() {
+            return false;
+        }
+    }
+
+    public static class Overflow extends SingleIdent 
+    {
+        // visible | hidden | scroll | auto | inherit
+        private static final EnumSet<IdentValue> ALLOWED = EnumSet.of(
+                        IdentValue.VISIBLE, IdentValue.HIDDEN
+                        /* IdentValue.SCROLL, IdentValue.AUTO, */ );
+
+        // We only support visible or hidden for now
+        @Override
+        protected EnumSet<IdentValue> getAllowed() {
+            return ALLOWED;
+        }
+    }
+
+    public static class PaddingTop extends NonNegativeLengthLike { }
+
+    public static class PaddingRight extends NonNegativeLengthLike { }
+
+    public static class PaddingBottom extends NonNegativeLengthLike { }
+
+    public static class PaddingLeft extends NonNegativeLengthLike { }
+
+    public static class PageBreakBefore extends SingleIdent
+    {
+        // auto | always | avoid | left | right | inherit
+        private static final EnumSet<IdentValue> ALLOWED = EnumSet.of(
+                        IdentValue.AUTO, IdentValue.ALWAYS,
+                        IdentValue.AVOID, IdentValue.LEFT,
+                        IdentValue.RIGHT);
+        @Override
+        protected EnumSet<IdentValue> getAllowed() {
+            return ALLOWED;
+        }
+    }
+
+    public static class Page implements PropertyBuilder
+    {
+
+    	@Override
+    	public List<PropertyDeclaration> buildDeclarations(
+                final CSSName cssName, final List<PropertyValue> values, final CSSOrigin origin, final boolean important, final boolean inheritAllowed) {
+            checkValueCount(cssName, 1, values.size());
+            PropertyValue value = values.get(0);
+            checkInheritAllowed(value, inheritAllowed);
+            if (value.getCssValueTypeN() != CSSValueType.CSS_INHERIT) {
+                checkGenericType(cssName, value, EnumSet.of(GenericType.IdentType));
+
+                if (! GeneralUtil.ciEquals(value.getStringValue(), "auto")) {
+                    // Treat as string since it won't be a proper IdentValue
+                    value = new PropertyValueImp(
+                    		CSSPrimitiveUnit.CSS_STRING, value.getStringValue(), value.getCssText());
+                }
+            }
+
+            return sList(cssName, value, important, origin);
+        }
+    }
+
+    public static class PageBreakAfter extends SingleIdent
+    {
+        // auto | always | avoid | left | right | inherit
+        private static final EnumSet<IdentValue> ALLOWED = EnumSet.of(
+                        IdentValue.AUTO, IdentValue.ALWAYS,
+                        IdentValue.AVOID, IdentValue.LEFT,
+                        IdentValue.RIGHT);
+        @Override
+        protected EnumSet<IdentValue> getAllowed() {
+            return ALLOWED;
+        }
+    }
+
+    public static class PageBreakInside extends SingleIdent
+    {
+        // avoid | auto | inherit
+        private static final EnumSet<IdentValue> ALLOWED = EnumSet.of(
+                        IdentValue.AVOID, IdentValue.AUTO);
+        @Override
+        protected EnumSet<IdentValue> getAllowed() {
+            return ALLOWED;
+        }
+    }
+
+    public static class Position implements PropertyBuilder
+    {
+        // static | relative | absolute | fixed | inherit
+        private static final EnumSet<IdentValue> ALLOWED = EnumSet.of(
+                        IdentValue.STATIC, IdentValue.RELATIVE,
+                        IdentValue.ABSOLUTE, IdentValue.FIXED);
+        @Override
+        public List<PropertyDeclaration> buildDeclarations(
+                final CSSName cssName, final List<PropertyValue> values, final CSSOrigin origin, final boolean important, final boolean inheritAllowed) {
+            checkValueCount(cssName, 1, values.size());
+            final PropertyValue value = (PropertyValue)values.get(0);
+            checkInheritAllowed(value, inheritAllowed);
+            if (value.getCssValueTypeN() != CSSValueType.CSS_INHERIT) {
+                if (value.getPrimitiveTypeN() == CSSPrimitiveUnit.CSS_IDENT) {
+                	checkGenericType(cssName, value, EnumSet.of(GenericType.IdentType));
+                    final IdentValue ident = checkIdent(cssName, value);
+
+                    checkValidity(cssName, getAllowed(), ident);
+                } else if (value.getPropertyValueType() == PropertyValueImp.VALUE_TYPE_FUNCTION) {
+                    final FSFunction function = value.getFunction();
+                    if (GeneralUtil.ciEquals(function.getName(), "running")) {
+                        final List<PropertyValue> params = function.getParameters();
+                        if (params.size() == 1) {
+                            final PropertyValue param = (PropertyValue)params.get(0);
+                            if (param.getPrimitiveTypeN() != CSSPrimitiveUnit.CSS_IDENT) {
+                            	cssThrowError(LangId.RUNNING_NEED_IDENTIFIER, cssName);
+                            }
+                        } else {
+                        	cssThrowError(LangId.VALUE_COUNT_MISMATCH, params.size(), cssName, 1);
+                        }
+                    } else {
+                        cssThrowError(LangId.ONLY_RUNNING_ALLOWED, cssName);
+                    }
+                } else {
+                   cssThrowError(LangId.MUST_BE_FUNC_OR_IDENTIFIER, cssName);
+                }
+            }
+
+            return sList(cssName, value, important, origin);
+        }
+
+        private EnumSet<IdentValue> getAllowed() {
+            return ALLOWED;
+        }
+    }
+
+    public static class Right extends LengthLikeWithAuto { }
+
+    public static class Src extends GenericURIWithNone { }
+
+    public static class TabSize extends PlainInteger 
+    {
+        @Override
+    	protected boolean isNegativeValuesAllowed() {
+            return false;
+        }
+    }
+
+    public static class Top extends LengthLikeWithAuto { }
+
+    public static class TableLayout extends SingleIdent 
+    {
+        // auto | fixed | inherit
+        private static final EnumSet<IdentValue> ALLOWED = EnumSet.of(
+                        IdentValue.AUTO, IdentValue.FIXED);
+        @Override
+        protected EnumSet<IdentValue> getAllowed() {
+            return ALLOWED;
+        }
+    }
+
+    public static class TextAlign extends SingleIdent
+    {
+        // left | right | center | justify | inherit
+        private static final EnumSet<IdentValue> ALLOWED = EnumSet.of(
+                        IdentValue.LEFT, IdentValue.RIGHT,
+                        IdentValue.CENTER, IdentValue.JUSTIFY);
+        @Override
+        protected EnumSet<IdentValue> getAllowed() {
+            return ALLOWED;
+        }
+    }
+
+    public static class TextDecoration implements PropertyBuilder
+    {
+        // none | [ underline || overline || line-through || blink ] | inherit
+        private static final EnumSet<IdentValue> ALLOWED = EnumSet.of(
+                        /* IdentValue.NONE, */ IdentValue.UNDERLINE,
+                        IdentValue.OVERLINE, IdentValue.LINE_THROUGH
+                        /* IdentValue.BLINK */);
+
+        private EnumSet<IdentValue> getAllowed() {
+            return ALLOWED;
+        }
+        @Override
+        public List<PropertyDeclaration> buildDeclarations(
+                final CSSName cssName, final List<PropertyValue> values, final CSSOrigin origin, final boolean important, final boolean inheritAllowed) {
+            if (values.size() == 1) {
+                final PropertyValue value = values.get(0);
+                boolean goWithSingle = false;
+                if (value.getCssValueTypeN() == CSSValueType.CSS_INHERIT) {
+                    goWithSingle = true;
+                } else {
+                	checkGenericType(cssName, value, EnumSet.of(GenericType.IdentType));
+                    final IdentValue ident = checkIdent(cssName, value);
+                    if (ident == IdentValue.NONE) {
+                        goWithSingle = true;
+                    }
+                }
+
+                if (goWithSingle) {
+                    return sList(cssName, value, important, origin);
+                }
+            }
+
+            for (final PropertyValue value : values) {
+                checkInheritAllowed(value, false);
+                checkGenericType(cssName, value, EnumSet.of(GenericType.IdentType));
+                final IdentValue ident = checkIdent(cssName, value);
+                if (ident == IdentValue.NONE) {
+                	cssThrowError(LangId.NO_NONE_VALUE, cssName);
+                }
+                checkValidity(cssName, getAllowed(), ident);
+            }
+
+            return sList(cssName, new PropertyValueImp(values), important, origin);
+        }
+    }
+
+    public static class TextIndent extends LengthLike { }
+
+    public static class TextTransform extends SingleIdent
+    {
+       // capitalize | uppercase | lowercase | none | inherit
+        private static final EnumSet<IdentValue> ALLOWED = EnumSet.of(
+                        IdentValue.CAPITALIZE, IdentValue.UPPERCASE,
+                        IdentValue.LOWERCASE, IdentValue.NONE);
+        @Override
+        protected EnumSet<IdentValue> getAllowed() {
+            return ALLOWED;
+        }
+    }
+
+    public static class VerticalAlign extends LengthLikeWithIdent
+    {
+        // baseline | sub | super | top | text-top | middle
+        // | bottom | text-bottom | <percentage> | <length> | inherit
+        private static final EnumSet<IdentValue> ALLOWED = EnumSet.of(
+                        IdentValue.BASELINE, IdentValue.SUB,
+                        IdentValue.SUPER, IdentValue.TOP,
+                        IdentValue.TEXT_TOP, IdentValue.MIDDLE,
+                        IdentValue.BOTTOM, IdentValue.TEXT_BOTTOM);
+        @Override
+        protected EnumSet<IdentValue> getAllowed() {
+            return ALLOWED;
+        }
+    }
+
+    public static class Visibility extends SingleIdent 
+    {
+        // visible | hidden | collapse | inherit
+        private static final EnumSet<IdentValue> ALLOWED = EnumSet.of(
+                        IdentValue.VISIBLE, IdentValue.HIDDEN, IdentValue.COLLAPSE);
+        @Override
+        protected EnumSet<IdentValue> getAllowed() {
+            return ALLOWED;
+        }
+    }
+
+    public static class WhiteSpace extends SingleIdent 
+    {
+        // normal | pre | nowrap | pre-wrap | pre-line | inherit
+        private static final EnumSet<IdentValue> ALLOWED = EnumSet.of(
+                        IdentValue.NORMAL, IdentValue.PRE, IdentValue.NOWRAP,
+                        IdentValue.PRE_WRAP, IdentValue.PRE_LINE);
+        @Override
+        protected EnumSet<IdentValue> getAllowed() {
+            return ALLOWED;
+        }
+    }
+
+    public static class WordWrap extends SingleIdent 
+    {
+        // normal | break-word
+        private static final EnumSet<IdentValue> ALLOWED = EnumSet.of(
+                        IdentValue.NORMAL, IdentValue.BREAK_WORD);
+        @Override
+        protected EnumSet<IdentValue> getAllowed() {
+            return ALLOWED;
+        }
+    }
+
+
+    public static class Widows extends PlainInteger 
+    {
+        @Override
+    	protected boolean isNegativeValuesAllowed() {
+            return false;
+        }
+    }
+
+    public static class Width extends LengthLikeWithAuto
+    {
+        @Override
+    	protected boolean isNegativeValuesAllowed() {
+            return false;
+        }
+    }
+
+    public static class WordSpacing extends LengthWithNormal { }
+
+    public static class ZIndex implements PropertyBuilder
+    {
+        // auto | <integer> | inherit
+        private static final EnumSet<IdentValue> ALLOWED = EnumSet.of(IdentValue.AUTO);
+
+        @Override
+        public List<PropertyDeclaration> buildDeclarations(
+                final CSSName cssName, final List<PropertyValue> values, final CSSOrigin origin, final boolean important, final boolean inheritAllowed) 
+        {
+            PropertyValue value = checkGetSingleProperty(cssName, values, inheritAllowed,
+            		EnumSet.of(GenericType.IdentType, GenericType.IntegerType));
+            
+            if (value.getCssValueTypeN() != CSSValueType.CSS_INHERIT) 
+            {
+                if (value.getPrimitiveTypeN() == CSSPrimitiveUnit.CSS_IDENT) 
+                {
+                    IdentValue ident = checkIdent(cssName, value);
+                    checkValidity(cssName, ALLOWED, ident);
+                }
+            }
+
+            return sList(cssName, value, important, origin);
+        }
+    }
+    
+	public static class Opacity implements PropertyBuilder
+	{
+		@Override
+		public List<PropertyDeclaration> buildDeclarations(final CSSName cssName,
+				final List<PropertyValue> values, final CSSOrigin origin,
+				final boolean important, final boolean inheritAllowed) {
+			final PropertyValue value = checkGetSingleProperty(cssName, values, inheritAllowed,
+					EnumSet.of(GenericType.NumberType));
+
+			if (value.getFloatValue() > 1 || value.getFloatValue() < 0) {
+				cssThrowError(LangId.OPACITY_OUT_OF_RANGE);
+			}
+
+			return sList(cssName, value, important, origin);
+		}
+	}
+
+	private static class GenericBorderCornerRadius implements PropertyBuilder
+	{
+		@Override
+		public List<PropertyDeclaration> buildDeclarations(final CSSName cssName,
+				final List<PropertyValue> values, final CSSOrigin origin,
+				final boolean important, final boolean inheritAllowed) {
+			checkValueCount(cssName, 1, 2, values.size());
+
+			final PropertyValue first = values.get(0);
+			final PropertyValue second = values.size() == 2 ? values.get(1)
+					: null;
+
+			checkInheritAllowed(first, inheritAllowed);
+
+			if (second != null) {
+				checkInheritAllowed(second, false);
+			}
+
+			checkGenericType(cssName, first, EnumSet.of(GenericType.LengthType, GenericType.PercentageType));
+
+			if (second == null) {
+				return createTwoValueResponse(cssName, first, first, origin,
+						important);
+			} else {
+				checkGenericType(cssName, second, EnumSet.of(GenericType.LengthType, GenericType.PercentageType));
+				return createTwoValueResponse(cssName, first, second, origin,
+						important);
+			}
+		}
+	}
+
+	public static class BorderTopLeftRadius extends GenericBorderCornerRadius { }
+
+	public static class BorderTopRightRadius extends GenericBorderCornerRadius { }
+
+	public static class BorderBottomRightRadius extends GenericBorderCornerRadius {	}
+
+	public static class BorderBottomLeftRadius extends GenericBorderCornerRadius { }
+
+	private static List<PropertyDeclaration> createTwoValueResponse(
+			final CSSName cssName, final PropertyValue value1,
+			final PropertyValue value2,
+			final CSSOrigin origin, final boolean important) 
+	{
+		List<PropertyValue> values = Arrays.asList(value1, value2);
+		return sList(cssName, new PropertyValueImp(values), important, origin);
+	}
+
+	public static class BookmarkLevel implements PropertyBuilder
+	{
+		/* bookmark-level property. Use to define a bookmark in PDFs.
+		 * See: https://dvcs.w3.org/hg/csswg/raw-file/f7490857b4eb/css-gcpm/Overview.html#bookmarks
+		 * We prefix, so: "fs-bookmark-level"
+		 * Must be the ident "none" or a plain number, starting at 1.
+		 */
+		@Override
+		public List<PropertyDeclaration> buildDeclarations(CSSName cssName,
+				List<PropertyValue> values, CSSOrigin origin,
+				boolean important, boolean inheritAllowed) 
+		{
+			PropertyValue value = checkGetSingleProperty(cssName, values, inheritAllowed, EnumSet.of(GenericType.IdentType, GenericType.IntegerType));
+			
+			if (value.getPrimitiveTypeN() == CSSPrimitiveUnit.CSS_IDENT)
+			{
+				checkIdentValidity(cssName, EnumSet.of(IdentValue.NONE), value);
+			}
+			else if (value.getFloatValue() < 1.0f) 
+			{
+				cssThrowError(LangId.NO_NEGATIVE, cssName);
+            }
+			
+			return sList(cssName, value, important, origin);
+		}
+	}
+	
+	public static class BorderRadius implements PropertyBuilder
+	{
+		@Override
+		public List<PropertyDeclaration> buildDeclarations(final CSSName cssName,
+				final List<PropertyValue> values, final CSSOrigin origin,
+				final boolean important, final boolean inheritAllowed)
+		{
+			// border-radius: 2em 1em 4em 1em / 0.5em 3em 5em 6em;
+			// Note: The four values for each radii are given in the order top-left, top-right,
+			// bottom-right, bottom-left. If bottom-left is omitted it is the same as top-right. 
+			// If bottom-right is omitted it is the same as top-left. If top-right is omitted 
+			// it is the same as top-left.
+
+			// TODO: Not pickup up forward slash.
+			checkValueCount(cssName, 1, 9, values.size());
+			
+			if (values.size() == 1)
+			{
+				// Deal with the common case first.
+				final List<PropertyDeclaration> declarations = new ArrayList<PropertyDeclaration>(4);
+				
+				declarations.addAll(CSSName.getPropertyBuilder(
+						CSSName.BORDER_TOP_LEFT_RADIUS).buildDeclarations(
+						CSSName.BORDER_TOP_LEFT_RADIUS,
+						values, origin, important, true));
+
+				declarations.addAll(CSSName.getPropertyBuilder(
+						CSSName.BORDER_TOP_RIGHT_RADIUS).buildDeclarations(
+						CSSName.BORDER_TOP_RIGHT_RADIUS,
+						values, origin, important, true));
+
+				declarations.addAll(CSSName.getPropertyBuilder(
+						CSSName.BORDER_BOTTOM_RIGHT_RADIUS).buildDeclarations(
+						CSSName.BORDER_BOTTOM_RIGHT_RADIUS,
+						values, origin, important, true));
+
+				declarations.addAll(CSSName.getPropertyBuilder(
+						CSSName.BORDER_BOTTOM_LEFT_RADIUS).buildDeclarations(
+						CSSName.BORDER_BOTTOM_LEFT_RADIUS,
+						values, origin, important, true));
+				
+				return declarations;
+			}
+			else
+			{
+				final List<PropertyDeclaration> declarations = new ArrayList<PropertyDeclaration>(4);
+				final List<PropertyValue> leftValues = new ArrayList<PropertyValue>(4);
+				final List<PropertyValue> rightValues = new ArrayList<PropertyValue>(4);
+
+				boolean addToLeft = true;
+
+				for (final PropertyValue value : values) {
+					if (value.getOperator() == Token.TK_VIRGULE) {
+						addToLeft = false;
+					}
+					
+					if (addToLeft) {
+						leftValues.add(value);
+					} else {
+						rightValues.add(value);
+					}
+				}
+			
+				declarations.addAll(CSSName.getPropertyBuilder(
+						CSSName.BORDER_TOP_LEFT_RADIUS).buildDeclarations(
+						CSSName.BORDER_TOP_LEFT_RADIUS,
+						getValues(leftValues, rightValues, 0), origin,
+						important, true));
+
+				declarations.addAll(CSSName.getPropertyBuilder(
+						CSSName.BORDER_TOP_RIGHT_RADIUS).buildDeclarations(
+						CSSName.BORDER_TOP_RIGHT_RADIUS,
+						getValues(leftValues, rightValues, 1), origin,
+						important, true));
+
+				declarations.addAll(CSSName.getPropertyBuilder(
+						CSSName.BORDER_BOTTOM_RIGHT_RADIUS).buildDeclarations(
+						CSSName.BORDER_BOTTOM_RIGHT_RADIUS,
+						getValues(leftValues, rightValues, 2), origin,
+						important, true));
+
+				declarations.addAll(CSSName.getPropertyBuilder(
+						CSSName.BORDER_BOTTOM_LEFT_RADIUS).buildDeclarations(
+						CSSName.BORDER_BOTTOM_LEFT_RADIUS,
+						getValues(leftValues, rightValues, 3), origin,
+						important, true));
+
+				return declarations;
+			}
+
+		}
+
+		private List<PropertyValue> getValues(final List<PropertyValue> leftValues,
+				final List<PropertyValue> rightValues, final int index)
+		{
+			final List<PropertyValue> values = new ArrayList<PropertyValue>(2);
+			values.add(getValue(leftValues, index));
+
+			if (!rightValues.isEmpty())
+			{
+				values.add(getValue(rightValues, index));
+			}
+
+			return values;
+		}
+
+		private PropertyValue getValue(final List<PropertyValue> list, final int index)
+		{
+			if (index < list.size())
+			{
+				return list.get(index);
+			}
+			else
+			{
+				if (index == 3 && list.size() >= 2)
+				{
+					// If bottom-left(3) is omitted it is the same as top-right(1).
+					return list.get(1);
+				}
+
+				// Everything else matches to zero if missing.
+				return list.get(0);
+			}
+		}
+	}
+}

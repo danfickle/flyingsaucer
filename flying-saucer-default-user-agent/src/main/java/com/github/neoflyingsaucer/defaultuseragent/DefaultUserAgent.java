@@ -28,13 +28,8 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import org.xhtmlrenderer.event.DocumentListener;
-import org.xhtmlrenderer.resource.CSSResource;
-import org.xhtmlrenderer.resource.HTMLResource;
-import org.xhtmlrenderer.resource.ImageResource;
-import org.xhtmlrenderer.util.GeneralUtil;
-import org.xhtmlrenderer.util.ImageUtil;
 
+import com.github.neoflyingsaucer.event.DocumentListener;
 import com.github.neoflyingsaucer.extend.controller.error.FSErrorController;
 import com.github.neoflyingsaucer.extend.controller.error.LangId;
 import com.github.neoflyingsaucer.extend.controller.error.FSError.FSErrorLevel;
@@ -44,6 +39,11 @@ import com.github.neoflyingsaucer.extend.useragent.ImageResourceI;
 import com.github.neoflyingsaucer.extend.useragent.Optional;
 import com.github.neoflyingsaucer.extend.useragent.ResourceCache;
 import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
+import com.github.neoflyingsaucer.resource.CSSResource;
+import com.github.neoflyingsaucer.resource.HTMLResource;
+import com.github.neoflyingsaucer.resource.ImageResource;
+import com.github.neoflyingsaucer.util.GeneralUtil;
+import com.github.neoflyingsaucer.util.ImageUtil;
 
 public class DefaultUserAgent implements UserAgentCallback, DocumentListener 
 {

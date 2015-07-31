@@ -3,10 +3,10 @@ package com.github.neoflyingsaucer.css.parser;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.xhtmlrenderer.css.parser.CSSErrorHandler;
-import org.xhtmlrenderer.css.parser.CSSParser;
-import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
 
+import com.github.neoflyingsaucer.css.parser.CSSErrorHandler;
+import com.github.neoflyingsaucer.css.parser.CSSParser;
+import com.github.neoflyingsaucer.css.sheet.StylesheetInfo.CSSOrigin;
 import com.github.neoflyingsaucer.extend.controller.error.LangId;
 
 /**

@@ -4,13 +4,12 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-import org.xhtmlrenderer.css.constants.CSSName;
-import org.xhtmlrenderer.css.parser.CSSErrorHandler;
-import org.xhtmlrenderer.css.parser.CSSParser;
-import org.xhtmlrenderer.css.parser.PropertyValue;
-import org.xhtmlrenderer.css.sheet.Ruleset;
-import org.xhtmlrenderer.css.sheet.StylesheetInfo.CSSOrigin;
-
+import com.github.neoflyingsaucer.css.constants.CSSName;
+import com.github.neoflyingsaucer.css.parser.CSSErrorHandler;
+import com.github.neoflyingsaucer.css.parser.CSSParser;
+import com.github.neoflyingsaucer.css.parser.PropertyValue;
+import com.github.neoflyingsaucer.css.sheet.Ruleset;
+import com.github.neoflyingsaucer.css.sheet.StylesheetInfo.CSSOrigin;
 import com.github.neoflyingsaucer.extend.controller.error.LangId;
 
 /**

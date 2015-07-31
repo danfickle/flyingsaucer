@@ -13,9 +13,6 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 
-import org.xhtmlrenderer.renderers.ContinuousRenderer;
-import org.xhtmlrenderer.renderers.PagedRenderer;
-
 import com.github.neoflyingsaucer.extend.output.DisplayList;
 import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
 import com.github.neoflyingsaucer.j2dout.Java2DFontContext;
@@ -29,6 +26,8 @@ import com.github.neoflyingsaucer.pdf2dout.Pdf2ImageResolver;
 import com.github.neoflyingsaucer.pdf2dout.Pdf2Out;
 import com.github.neoflyingsaucer.pdf2dout.Pdf2ReplacedElementResolver;
 import com.github.neoflyingsaucer.pdf2dout.Pdf2Out.PdfOutMode;
+import com.github.neoflyingsaucer.renderers.ContinuousRenderer;
+import com.github.neoflyingsaucer.renderers.PagedRenderer;
 
 public class ExportAction extends AbstractAction
 {

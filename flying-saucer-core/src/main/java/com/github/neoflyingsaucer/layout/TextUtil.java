@@ -1,0 +1,172 @@
+/*
+ * {{{ header & license
+ * Copyright (c) 2004, 2005 Joshua Marinacci
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public License
+ * as published by the Free Software Foundation; either version 2.1
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * }}}
+ */
+package com.github.neoflyingsaucer.layout;
+
+import com.github.neoflyingsaucer.css.constants.CSSName;
+import com.github.neoflyingsaucer.css.constants.IdentValue;
+import com.github.neoflyingsaucer.css.style.CalculatedStyle;
+import com.github.neoflyingsaucer.util.Uu;
+
+
+/**
+ * Description of the Class
+ *
+ * @author   empty
+ */
+public class TextUtil {
+
+    /**
+     * Description of the Method
+     *
+     * @param text   PARAM
+     * @param style
+     * @return       Returns
+     */
+	// TODO: Locale to use.
+    public static String transformText( String text, final CalculatedStyle style ) {
+        final IdentValue transform = style.getIdent( CSSName.TEXT_TRANSFORM );
+        if ( transform == IdentValue.LOWERCASE ) {
+            text = text.toLowerCase();
+        }
+        if ( transform == IdentValue.UPPERCASE ) {
+            text = text.toUpperCase();
+        }
+        if ( transform == IdentValue.CAPITALIZE ) {
+            text = capitalizeWords( text );
+        }
+        final IdentValue fontVariant = style.getIdent( CSSName.FONT_VARIANT );
+        if ( fontVariant == IdentValue.SMALL_CAPS ) {
+            text = text.toUpperCase();
+        }
+        return text;
+    }
+
+    /**
+     * Description of the Method
+     *
+     * @param text   PARAM
+     * @param style
+     * @return       Returns
+     */
+    public static String transformFirstLetterText( String text, final CalculatedStyle style ) {
+        if (text.length() > 0) {
+            final IdentValue transform = style.getIdent( CSSName.TEXT_TRANSFORM );
+            final IdentValue fontVariant = style.getIdent( CSSName.FONT_VARIANT );
+            char currentChar;
+            for ( int i = 0, end = text.length(); i < end; i++ ) {
+                currentChar = text.charAt(i);
+                if ( !isFirstLetterSeparatorChar( currentChar ) ) {
+                    if ( transform == IdentValue.LOWERCASE ) {
+                        currentChar = Character.toLowerCase( currentChar );
+                        text = replaceChar( text, currentChar, i );
+                    } else if ( transform == IdentValue.UPPERCASE || transform == IdentValue.CAPITALIZE || fontVariant == IdentValue.SMALL_CAPS ) {
+                        currentChar = Character.toUpperCase( currentChar );
+                        text = replaceChar( text, currentChar, i );
+                    }
+                    break;
+                }
+            }
+        }
+        return text;
+    }
+
+    /**
+     * Replace character at the specified index by another.
+     *
+     * @param text    Source text
+     * @param newChar Replacement character
+     * @return        Returns the new text
+     */
+    public static String replaceChar( final String text, final char newChar, final int index ) {
+        final int textLength = text.length();
+        final StringBuilder b = new StringBuilder(textLength);
+        for (int i = 0; i < textLength; i++) {
+            if (i == index) {
+                b.append(newChar);
+            } else {
+                b.append(text.charAt(i));
+            }
+        }
+        return b.toString();
+    }
+
+    /**
+     * Description of the Method
+     *
+     * @param c     PARAM
+     * @return      Returns
+     */
+    public static boolean isFirstLetterSeparatorChar( final char c ) {
+        switch (Character.getType(c)) {
+            case Character.START_PUNCTUATION:
+            case Character.END_PUNCTUATION:
+            case Character.INITIAL_QUOTE_PUNCTUATION:
+            case Character.FINAL_QUOTE_PUNCTUATION:
+            case Character.OTHER_PUNCTUATION:
+            case Character.SPACE_SEPARATOR:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+
+    /**
+     * Description of the Method
+     *
+     * @param text  PARAM
+     * @return      Returns
+     */
+    private static String capitalizeWords( final String text ) {
+        //Uu.p("start = -"+text+"-");
+        if ( text.length() == 0 ) {
+            return text;
+        }
+
+        final StringBuffer sb = new StringBuffer();
+        //Uu.p("text = -" + text + "-");
+
+        // do first letter
+        //Uu.p("first = " + text.substring(0,1));
+        boolean cap = true;
+        for ( int i = 0; i < text.length(); i++ ) {
+            final String ch = text.substring( i, i + 1 );
+            //Uu.p("ch = " + ch + " cap = " + cap);
+
+
+            if ( cap ) {
+                sb.append( ch.toUpperCase() );
+            } else {
+                sb.append( ch );
+            }
+            cap = false;
+            if ( ch.equals( " " ) ) {
+                cap = true;
+            }
+        }
+
+        //Uu.p("final = -"+sb.toString()+"-");
+        if ( sb.toString().length() != text.length() ) {
+            Uu.p( "error! to strings arent the same length = -" + sb.toString() + "-" + text + "-" );
+        }
+        return sb.toString();
+    }
+
+}
