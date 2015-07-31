@@ -5,9 +5,9 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>org.xhtmlrenderer</groupId>
-		<artifactId>flying-saucer-parent</artifactId>
-		<version>9.0.5-SNAPSHOTX</version>
+		<groupId>com.github.danfickle</groupId>
+		<artifactId>neo-flying-saucer-parent</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>neo-flying-saucer-java2d-out</artifactId>
@@ -15,11 +15,11 @@
 	<packaging>jar</packaging>
 
 	<name>neo-flying-saucer-java2d-out</name>
-	<description>Flying Saucer is a CSS 2.1 renderer written in Java.  This artifact is is a Java2D output device that can print to images or Swing panels.</description>
+	<description>neoFlying Saucer is a CSS 2.1 renderer written in Java.  This artifact is is a Java2D output device that can print to images or Swing panels.</description>
 
   <dependencies>
     <dependency>
-      <groupId>org.xhtmlrenderer</groupId>
+      <groupId>com.github.danfickle</groupId>
       <artifactId>neo-flying-saucer-interfaces</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -29,7 +29,7 @@
 		<version>4.2</version>
 	</dependency>
     <dependency>
-      <groupId>org.xhtmlrenderer</groupId>
+      <groupId>com.github.danfickle</groupId>
       <artifactId>neo-flying-saucer-display-list</artifactId>
       <version>${project.version}</version>
     </dependency>

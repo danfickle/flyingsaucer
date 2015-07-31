@@ -3,17 +3,16 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-
-  <groupId>org.xhtmlrenderer</groupId>
-  <artifactId>flying-saucer-parent</artifactId>
-  <version>9.0.5-SNAPSHOTX</version>
+  <groupId>com.github.danfickle</groupId>
+  <artifactId>neo-flying-saucer-parent</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
 
   <packaging>pom</packaging>
 
-  <name>Flying Saucer</name>
-  <description>Flying Saucer is a CSS 2.1 renderer written in Java.  It supports Java2D and PDF output.</description>
+  <name>neoFlying Saucer</name>
+  <description>neoFlying Saucer is a CSS 2.1/3 renderer written in Java.  It supports Java2D and PDF output.</description>
 
-  <url>http://code.google.com/p/flying-saucer/</url>
+  <url>https://github.com/danfickle/neoflyingsaucer</url>
 
   <licenses>
     <license>
@@ -23,9 +22,9 @@
   </licenses>
 
   <modules>
-    <module>flying-saucer-core</module>
+    <module>neo-flying-saucer-core</module>
     <module>neo-flying-saucer-tests</module>
-    <module>flying-saucer-default-user-agent</module>
+    <module>neo-flying-saucer-default-user-agent</module>
     <module>neo-flying-saucer-jsoup-to-dom</module>
     <module>neo-flying-saucer-display-list</module>
     <module>neo-flying-saucer-java2d-out</module>
@@ -34,11 +33,10 @@
     <module>neo-flying-saucer-browser</module>
   </modules>
 
-
   <scm>
-    <connection>scm:git:git://github.com/flyingsaucerproject/flyingsaucer.git</connection>
-    <developerConnection>scm:git:git@github.com:flyingsaucerproject/flyingsaucer.git</developerConnection>
-    <url>git://github.com/flyingsaucerproject/flyingsaucer.git</url>
+    <connection>scm:git:git://github.com/danfickle/neoflyingsaucer.git</connection>
+    <developerConnection>scm:git:git@github.com:danfickle/neoflyingsaucer.git</developerConnection>
+    <url>git://github.com/danfickle/neoflyingsaucer.git</url>
   </scm>
 
   <developers>
@@ -80,6 +78,9 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
         <executions>
           <execution>
             <id>attach-javadocs</id>

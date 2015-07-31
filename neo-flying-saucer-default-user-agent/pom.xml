@@ -5,31 +5,31 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>org.xhtmlrenderer</groupId>
-		<artifactId>flying-saucer-parent</artifactId>
-		<version>9.0.5-SNAPSHOTX</version>
+		<groupId>com.github.danfickle</groupId>
+		<artifactId>neo-flying-saucer-parent</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>flying-saucer-default-user-agent</artifactId>
+	<artifactId>neo-flying-saucer-default-user-agent</artifactId>
 
 	<packaging>jar</packaging>
 
-	<name>flying-saucer-default-user-agent</name>
+	<name>neo-flying-saucer-default-user-agent</name>
 	<description>Flying Saucer is a CSS 2.1 renderer written in Java.  This artifact is a default user agent implementation.</description>
 
 	<dependencies>
     <dependency>
-      <groupId>org.xhtmlrenderer</groupId>
+      <groupId>com.github.danfickle</groupId>
       <artifactId>neo-flying-saucer-interfaces</artifactId>
       <version>${project.version}</version>
     </dependency>
 		<dependency>
-			<groupId>org.xhtmlrenderer</groupId>
-			<artifactId>flying-saucer-core</artifactId>
+			<groupId>com.github.danfickle</groupId>
+			<artifactId>neo-flying-saucer-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.xhtmlrenderer</groupId>
+			<groupId>com.github.danfickle</groupId>
 			<artifactId>neo-flying-saucer-jsoup-to-dom</artifactId>
 			<version>${project.version}</version>
 		</dependency>
