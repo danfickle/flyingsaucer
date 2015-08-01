@@ -25,6 +25,7 @@ import java.util.List;
 
 import com.github.neoflyingsaucer.css.constants.CSSName;
 import com.github.neoflyingsaucer.css.constants.IdentValue;
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
 import com.github.neoflyingsaucer.render.Box;
 import com.github.neoflyingsaucer.render.InlineLayoutBox;
 
@@ -185,6 +186,8 @@ public class VerticalAlignContext {
     public void alignChildren() {
         final List<ChildContextData> children = getChildren();
         for (int i = 0; i < children.size(); i++) {
+        	FSCancelController.cancelOpportunity(VerticalAlignContext.class);
+        	
             final ChildContextData data = (ChildContextData)children.get(i);
             data.align();
             merge(data.getVerticalAlignContext());

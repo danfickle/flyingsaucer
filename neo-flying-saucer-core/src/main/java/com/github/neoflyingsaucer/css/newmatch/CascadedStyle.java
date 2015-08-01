@@ -33,6 +33,7 @@ import com.github.neoflyingsaucer.css.parser.PropertyValue;
 import com.github.neoflyingsaucer.css.parser.PropertyValueImp;
 import com.github.neoflyingsaucer.css.sheet.PropertyDeclaration;
 import com.github.neoflyingsaucer.css.sheet.StylesheetInfo;
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
 
 
 /**
@@ -152,7 +153,9 @@ public class CascadedStyle {
 
         for (final List<PropertyDeclaration> bucket : buckets) {
             for (final java.util.Iterator<PropertyDeclaration> it = bucket.iterator(); it.hasNext();) {
-                final PropertyDeclaration prop = (PropertyDeclaration) it.next();
+                FSCancelController.cancelOpportunity(CascadedStyle.class);
+            	
+            	PropertyDeclaration prop = it.next();
                 cascadedProperties.put(prop.getCSSName(), prop);
             }
         }

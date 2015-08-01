@@ -42,6 +42,7 @@ import com.github.neoflyingsaucer.css.style.CalculatedStyle;
 import com.github.neoflyingsaucer.css.style.CssContext;
 import com.github.neoflyingsaucer.css.style.derived.LengthValue;
 import com.github.neoflyingsaucer.css.style.derived.RectPropertySet;
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
 import com.github.neoflyingsaucer.layout.BoxBuilder;
 import com.github.neoflyingsaucer.layout.Layer;
 import com.github.neoflyingsaucer.layout.LayoutContext;
@@ -387,6 +388,8 @@ public class PageBox {
         if (props != null && props.size() > 0)
         {
             for (final Iterator<PropertyDeclaration> i = props.iterator(); i.hasNext(); ) {
+            	FSCancelController.cancelOpportunity(PageBox.class);
+            	
                 final PropertyDeclaration decl = (PropertyDeclaration)i.next();
                 if (decl.getCSSName() == CSSName.CONTENT) {
                     final PropertyValue value = (PropertyValue)decl.getValue();

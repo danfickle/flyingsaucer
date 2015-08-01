@@ -23,6 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.github.neoflyingsaucer.extend.OutputDevice;
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
 import com.github.neoflyingsaucer.render.RenderingContext;
 import com.github.neoflyingsaucer.util.XRRuntimeException;
 
@@ -54,6 +55,8 @@ public class BoxRangeHelper {
     
     public void pushClipRegion(final RenderingContext c, final int contentIndex) {
         while (_current != null && _current.getRange().getStart() == contentIndex) {
+        	FSCancelController.cancelOpportunity(BoxRangeHelper.class);
+        	
             _current.setClip(_outputDevice.getClip());
             _clipRegionStack.add(_current);
             
@@ -69,6 +72,8 @@ public class BoxRangeHelper {
     
     public void popClipRegions(final RenderingContext c, final int contentIndex) {
         while (_clipRegionStack.size() > 0) {
+        	FSCancelController.cancelOpportunity(BoxRangeHelper.class);
+        	
             final BoxRangeData data = _clipRegionStack.getLast();
             if (data.getRange().getEnd() == contentIndex) {
                 _outputDevice.setClip(data.getClip());

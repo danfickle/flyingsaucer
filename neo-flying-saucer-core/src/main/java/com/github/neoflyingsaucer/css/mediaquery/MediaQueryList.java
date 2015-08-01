@@ -3,6 +3,7 @@ package com.github.neoflyingsaucer.css.mediaquery;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
 import com.github.neoflyingsaucer.layout.SharedContext;
 
 public class MediaQueryList
@@ -25,6 +26,8 @@ public class MediaQueryList
 		{
 			for (MediaQueryItem item : queryItems)
 			{
+				FSCancelController.cancelOpportunity(MediaQueryList.class);
+				
 				if (item.eval(ctx))
 					return true;
 			}

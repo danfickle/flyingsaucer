@@ -39,6 +39,7 @@ import com.github.neoflyingsaucer.css.sheet.PropertyDeclaration;
 import com.github.neoflyingsaucer.css.sheet.Stylesheet;
 import com.github.neoflyingsaucer.css.sheet.StylesheetInfo;
 import com.github.neoflyingsaucer.extend.NamespaceHandler;
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
 import com.github.neoflyingsaucer.extend.controller.error.FSError.FSErrorLevel;
 import com.github.neoflyingsaucer.extend.controller.error.FSErrorController;
 import com.github.neoflyingsaucer.extend.controller.error.LangId;
@@ -103,7 +104,9 @@ public class StyleReference {
         {
           if (!info.appliesToMedia(_context))
         		continue;
-        	
+
+          FSCancelController.cancelOpportunity(StyleReference.class);
+          
       	  Optional<StylesheetI> sheet = info.getStylesheet();
         	
     	  if (!sheet.isPresent()) {
@@ -139,7 +142,9 @@ public class StyleReference {
         final CascadedStyle cs = _matcher.getCascadedStyle(uri, e, false);//this is only for debug, I think
         final java.util.LinkedHashMap<String, PropertyValue> props = new java.util.LinkedHashMap<String, PropertyValue>();
         for (final java.util.Iterator<PropertyDeclaration> i = cs.getCascadedPropertyDeclarations(); i.hasNext();) {
-            final PropertyDeclaration pd = i.next();
+            FSCancelController.cancelOpportunity(StyleReference.class);
+        	
+        	final PropertyDeclaration pd = i.next();
 
             final String propName = pd.getPropertyName();
             final CSSName cssName = CSSName.getByPropertyName(propName);

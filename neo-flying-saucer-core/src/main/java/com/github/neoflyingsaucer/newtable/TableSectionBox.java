@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
 import com.github.neoflyingsaucer.layout.LayoutContext;
 import com.github.neoflyingsaucer.render.BlockBox;
 import com.github.neoflyingsaucer.render.Box;
@@ -68,6 +69,8 @@ public class TableSectionBox extends BlockBox {
     
     public void splitColumn(final int pos) {
         for (final Iterator<RowData> i = _grid.iterator(); i.hasNext(); ) {
+        	FSCancelController.cancelOpportunity(TableSectionBox.class);
+        	
             final RowData row = i.next();
             row.splitColumn(pos);
         }
@@ -78,9 +81,13 @@ public class TableSectionBox extends BlockBox {
         _grid.clear();
         ensureChildren(c);
         for (final Iterator<Box> i = getChildIterator(); i.hasNext(); cRow++) {
+        	FSCancelController.cancelOpportunity(TableSectionBox.class);
+        	
             final TableRowBox row = (TableRowBox)i.next();
             row.ensureChildren(c);
             for (final Iterator<Box> j = row.getChildIterator(); j.hasNext(); ) {
+            	FSCancelController.cancelOpportunity(TableSectionBox.class);
+            	
                 final TableCellBox cell = (TableCellBox)j.next();
                 addCell(row, cell, cRow);
             }
@@ -90,9 +97,13 @@ public class TableSectionBox extends BlockBox {
     public void calcBorders(final LayoutContext c) {
         ensureChildren(c);
         for (final Iterator<Box> i = getChildIterator(); i.hasNext(); ) {
+        	FSCancelController.cancelOpportunity(TableSectionBox.class);
+        	
             final TableRowBox row = (TableRowBox)i.next();
             row.ensureChildren(c);
             for (final Iterator<Box> j = row.getChildIterator(); j.hasNext(); ) {
+            	FSCancelController.cancelOpportunity(TableSectionBox.class);
+            	
                 final TableCellBox cell = (TableCellBox)j.next();
                 cell.calcCollapsedBorder(c);
             }
@@ -115,6 +126,8 @@ public class TableSectionBox extends BlockBox {
         final int nCols = getTable().numEffCols();
         
         while (nRows < numRows) {
+        	FSCancelController.cancelOpportunity(TableSectionBox.class);
+        	
             final RowData row = new RowData();
             row.extendToColumnCount(nCols);
             _grid.add(row);
@@ -157,6 +170,8 @@ public class TableSectionBox extends BlockBox {
         final int col = cCol;
         TableCellBox set = cell;
         while (cSpan > 0) {
+        	FSCancelController.cancelOpportunity(TableSectionBox.class);
+        	
             int currentSpan;
             while ( cCol >= getTable().getColumns().size() ) {
                 getTable().appendColumn(1);
@@ -197,6 +212,8 @@ public class TableSectionBox extends BlockBox {
         final int[] columnPos = getTable().getColumnPos();
         
         for (final Iterator<RowData> i = _grid.iterator(); i.hasNext(); ) {
+        	FSCancelController.cancelOpportunity(TableSectionBox.class);
+        	
             final RowData row = i.next();
             final List<TableCellBox> cols = row.getRow();
             final int hspacing = getTable().getStyle().getBorderHSpacing(c);

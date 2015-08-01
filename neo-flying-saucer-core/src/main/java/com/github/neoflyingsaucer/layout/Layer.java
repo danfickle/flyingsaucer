@@ -38,6 +38,7 @@ import com.github.neoflyingsaucer.css.newmatch.PageInfo;
 import com.github.neoflyingsaucer.css.style.CalculatedStyle;
 import com.github.neoflyingsaucer.css.style.CssContext;
 import com.github.neoflyingsaucer.css.style.EmptyStyle;
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
 import com.github.neoflyingsaucer.newtable.CollapsedBorderValue;
 import com.github.neoflyingsaucer.newtable.TableBox;
 import com.github.neoflyingsaucer.newtable.TableCellBox;
@@ -170,6 +171,8 @@ public class Layer {
     private void paintFloats(final RenderingContext c) {
         if (_floats != null) {
             for (int i = _floats.size() - 1; i >= 0; i--) {
+            	FSCancelController.cancelOpportunity(Layer.class);
+            	
                 final BlockBox floater = _floats.get(i);
                 paintAsLayer(c, floater);
             }
@@ -178,6 +181,8 @@ public class Layer {
 
     private void paintLayers(final RenderingContext c, final List<Layer> layers) {
         for (int i = 0; i < layers.size(); i++) {
+        	FSCancelController.cancelOpportunity(Layer.class);
+        	
             final Layer layer = layers.get(i);
             layer.paint(c);
         }
@@ -197,6 +202,8 @@ public class Layer {
         
         final List<Layer> children = getChildren();
         for (int i = 0; i < children.size(); i++) {
+        	FSCancelController.cancelOpportunity(Layer.class);
+        	
             final Layer child = children.get(i);
             
             if (! child.isStackingContext()) {
@@ -215,6 +222,8 @@ public class Layer {
         
         final List<Layer> children = getChildren();
         for (int i = 0; i < children.size(); i++) {
+        	FSCancelController.cancelOpportunity(Layer.class);
+        	
             final Layer target = children.get(i);
 
             if (target.isStackingContext()) {
@@ -254,6 +263,8 @@ public class Layer {
         final BoxRangeHelper helper = new BoxRangeHelper(c.getOutputDevice(), rangeLists.getBlock());
         
         for (int i = 0; i < blocks.size(); i++) {
+        	FSCancelController.cancelOpportunity(Layer.class);
+        	
             helper.popClipRegions(c, i);
             
             final BlockBox box = (BlockBox)blocks.get(i);
@@ -284,6 +295,8 @@ public class Layer {
                 c.getOutputDevice(), rangeLists.getInline());
         
         for (int i = 0; i < lines.size(); i++) {
+        	FSCancelController.cancelOpportunity(Layer.class);
+        	
             helper.popClipRegions(c, i);
             helper.pushClipRegion(c, i);
             
@@ -297,6 +310,8 @@ public class Layer {
     private void paintSelection(final RenderingContext c, final List<Box> lines) {
         if (c.getOutputDevice().isSupportsSelection()) {
             for (final Box box : lines) {
+            	FSCancelController.cancelOpportunity(Layer.class);
+            	
                 final InlinePaintable paintable = (InlinePaintable) box;
                 if (paintable instanceof InlineLayoutBox) {
                     ((InlineLayoutBox)paintable).paintSelection(c);
@@ -386,6 +401,8 @@ public class Layer {
         
         for (Box floater : getFloats())
         {
+        	FSCancelController.cancelOpportunity(Layer.class);
+        	
         	result = floater.find(cssCtx, absX, absY, findAnonymous);
         	
         	if (result != null)
@@ -433,6 +450,8 @@ public class Layer {
         
         final Set<CollapsedBorderValue> all = new HashSet<CollapsedBorderValue>();
         for (final Box b : blocks) {
+        	FSCancelController.cancelOpportunity(Layer.class);
+        	
             if (b instanceof TableCellBox) {
                 final TableCellBox cell = (TableCellBox)b;
                 if (cell.hasCollapsedPaintingBorder()) {
@@ -453,6 +472,8 @@ public class Layer {
             final Map<TableCellBox, List<CollapsedBorderSide>> result = new HashMap<TableCellBox, List<CollapsedBorderSide>>();
             
             for (final TableCellBox cell : triggerCellsByTable.values()) {
+            	FSCancelController.cancelOpportunity(Layer.class);
+            	
                 final List<CollapsedBorderSide> borders = cellBordersByTable.get(cell.getTable());
                 Collections.sort(borders);
                 result.put(cell, borders);
@@ -491,6 +512,8 @@ public class Layer {
         final BoxRangeHelper helper = new BoxRangeHelper(c.getOutputDevice(), rangeLists.getBlock());
         
         for (int i = 0; i < blocks.size(); i++) {
+        	FSCancelController.cancelOpportunity(Layer.class);
+        	
             helper.popClipRegions(c, i);
             
             final BlockBox box = (BlockBox)blocks.get(i);
@@ -506,6 +529,8 @@ public class Layer {
         final BoxRangeHelper helper = new BoxRangeHelper(c.getOutputDevice(), rangeLists.getBlock());
         
         for (int i = 0; i < blocks.size(); i++) {
+        	FSCancelController.cancelOpportunity(Layer.class);
+        	
             helper.popClipRegions(c, i);
             
             final BlockBox box = (BlockBox)blocks.get(i);
@@ -576,6 +601,8 @@ public class Layer {
 
         for (Layer child : getChildren())
         {
+        	FSCancelController.cancelOpportunity(Layer.class);
+        	
         	if (!child.getMaster().getStyle().isFixed() &&
 	            child.getMaster().getStyle().isAbsolute())
         	{
@@ -590,6 +617,8 @@ public class Layer {
     
     public void positionChildren(final LayoutContext c) {
         for (final Layer child : getChildren()) {
+        	FSCancelController.cancelOpportunity(Layer.class);
+        	
             child.position(c);
         }
     }
@@ -640,7 +669,9 @@ public class Layer {
         synchronized (this) {
             if (_children != null) {
                 for (final Iterator<Layer> i = _children.iterator(); i.hasNext(); ) {
-                    final Layer child = i.next();
+                	FSCancelController.cancelOpportunity(Layer.class);
+
+                	final Layer child = i.next();
                     if (child == layer) {
                         removed = true;
                         i.remove();
@@ -699,6 +730,8 @@ public class Layer {
         if (children.size() > 0) {
             final LayoutState state = c.captureLayoutState();
             for (int i = 0; i < children.size(); i++) {
+            	FSCancelController.cancelOpportunity(Layer.class);
+            	
                 final Layer child = children.get(i);
                 if (child.isRequiresLayout()) {
                     layoutAbsoluteChild(c, child);
@@ -860,6 +893,8 @@ public class Layer {
                 int high = count-6;
                 
                 while (low <= high) {
+                	FSCancelController.cancelOpportunity(Layer.class);
+                	
                     final int mid = (low + high) >> 1;
                     final PageBox pageBox = (PageBox)pages.get(mid);
                     
@@ -889,6 +924,8 @@ public class Layer {
         final List<PageBox> pages = getPages();
         PageBox last = pages.get(pages.size()-1);
         while (position >= last.getBottom()) {
+        	FSCancelController.cancelOpportunity(Layer.class);
+        	
             addPage(c);
             last = pages.get(pages.size()-1);
         }
@@ -899,6 +936,8 @@ public class Layer {
         // cannot be satisfied and is dropped
         final List<PageBox> pages = getPages();
         for (int i = pages.size() - 1; i > 0; i--) {
+        	FSCancelController.cancelOpportunity(Layer.class);
+        	
             final PageBox page = pages.get(i);
             if (page.getTop() >= maxYHeight) {
                 if (page == getLastRequestedPage()) {
@@ -913,6 +952,8 @@ public class Layer {
     
     public void trimPageCount(final int newPageCount) {
         while (_pages.size() > newPageCount) {
+        	FSCancelController.cancelOpportunity(Layer.class);
+        	
             final PageBox pageBox = _pages.remove(_pages.size()-1);
             if (pageBox == getLastRequestedPage()) {
                 setLastRequestedPage(null);
@@ -945,6 +986,8 @@ public class Layer {
         final List<PageBox> pages = getPages();
         int maxWidth = 0;
         for (final PageBox page : pages) {
+        	FSCancelController.cancelOpportunity(Layer.class);
+        	
             final int pageWidth = page.getWidth(cssCtx) + additionalClearance*2;
             if (pageWidth > maxWidth) {
                 maxWidth = pageWidth;
@@ -1194,6 +1237,8 @@ public class Layer {
     
     private int getPageSequenceStart(final RenderingContext c, final List<BlockBox> sequences, final PageBox page) {
         for (int i = sequences.size() - 1; i >= 0; i--) {
+        	FSCancelController.cancelOpportunity(Layer.class);
+        	
             final BlockBox start = sequences.get(i);
             if (start.getAbsY() < page.getBottom() - 1) {
                 return i;

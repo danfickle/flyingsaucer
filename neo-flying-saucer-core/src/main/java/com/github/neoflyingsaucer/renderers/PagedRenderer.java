@@ -18,6 +18,7 @@ import com.github.neoflyingsaucer.css.style.CalculatedStyle;
 import com.github.neoflyingsaucer.displaylist.DisplayListImpl;
 import com.github.neoflyingsaucer.displaylist.DlOutputDevice;
 import com.github.neoflyingsaucer.displaylist.DlTextRenderer;
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
 import com.github.neoflyingsaucer.extend.output.DisplayList;
 import com.github.neoflyingsaucer.extend.output.FSFontFaceItem;
 import com.github.neoflyingsaucer.extend.output.FontContext;
@@ -308,6 +309,8 @@ public class PagedRenderer
         	
         	for (int i = 0; i < length; i++)
         	{
+        		FSCancelController.cancelOpportunity(PagedRenderer.class);
+        		
         		Node n = nl.item(i);
         		
         		if (!(n instanceof Element) ||

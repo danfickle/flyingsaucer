@@ -24,6 +24,7 @@ import java.awt.Shape;
 import java.util.List;
 
 import com.github.neoflyingsaucer.css.style.CssContext;
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
 import com.github.neoflyingsaucer.newtable.TableBox;
 import com.github.neoflyingsaucer.render.BlockBox;
 import com.github.neoflyingsaucer.render.Box;
@@ -59,6 +60,8 @@ public class BoxCollector {
         final List<Box> content = iB.getElementWithContent();
         
         for (int i = 0; i < content.size(); i++) {
+        	FSCancelController.cancelOpportunity(BoxCollector.class);
+        	
             final Box b = (Box)content.get(i);
             
             if (b.intersects(c, clip)) {

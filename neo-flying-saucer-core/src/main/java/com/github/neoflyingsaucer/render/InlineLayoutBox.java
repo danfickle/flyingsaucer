@@ -37,6 +37,7 @@ import com.github.neoflyingsaucer.css.style.CalculatedStyle;
 import com.github.neoflyingsaucer.css.style.CssContext;
 import com.github.neoflyingsaucer.css.style.derived.BorderPropertySet;
 import com.github.neoflyingsaucer.css.style.derived.RectPropertySet;
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
 import com.github.neoflyingsaucer.extend.output.FSFontMetrics;
 import com.github.neoflyingsaucer.extend.output.JustificationInfo;
 import com.github.neoflyingsaucer.layout.BoxCollector;
@@ -168,6 +169,8 @@ public class InlineLayoutBox extends Box implements InlinePaintable {
     public void prunePending() {
         if (getInlineChildCount() > 0) {
             for (int i = getInlineChildCount() - 1; i >= 0; i--) {
+            	FSCancelController.cancelOpportunity(InlineLayoutBox.class);
+            	
                 final Object child = (Object)getInlineChild(i);
                 if (! (child instanceof InlineLayoutBox)) {
                     break;
@@ -231,6 +234,8 @@ public class InlineLayoutBox extends Box implements InlinePaintable {
     public void connectChildrenToCurrentLayer(final LayoutContext c) {
         if (getInlineChildCount() > 0) {
             for (int i = 0; i < getInlineChildCount(); i++) {
+            	FSCancelController.cancelOpportunity(InlineLayoutBox.class);
+            	
                 final Object obj = getInlineChild(i);
                 if (obj instanceof Box) {
                     final Box box = (Box)obj;
@@ -243,6 +248,8 @@ public class InlineLayoutBox extends Box implements InlinePaintable {
     
     public void paintSelection(final RenderingContext c) {
         for (int i = 0; i < getInlineChildCount(); i++) {
+        	FSCancelController.cancelOpportunity(InlineLayoutBox.class);
+        	
             final Object child = getInlineChild(i);
             if (child instanceof InlineText) {
                 ((InlineText)child).paintSelection(c);
@@ -439,6 +446,8 @@ public class InlineLayoutBox extends Box implements InlinePaintable {
     
     public boolean intersectsInlineBlocks(final CssContext cssCtx, final Shape clip) {
         for (int i = 0; i < getInlineChildCount(); i++) {
+        	FSCancelController.cancelOpportunity(InlineLayoutBox.class);
+        	
             final Object obj = getInlineChild(i);
             
             if (obj instanceof InlineLayoutBox) {
@@ -494,6 +503,8 @@ public class InlineLayoutBox extends Box implements InlinePaintable {
         
         BlockBox container = (BlockBox)getLineBox().getParent();
         while (true) {
+        	FSCancelController.cancelOpportunity(InlineLayoutBox.class);
+        	
             final List<Box> elementBoxes = container.getElementBoxes(getElement());
             for (int i = 0; i < elementBoxes.size(); i++) {
                 final InlineLayoutBox iB = (InlineLayoutBox)elementBoxes.get(i);
@@ -519,6 +530,8 @@ public class InlineLayoutBox extends Box implements InlinePaintable {
         final Box parent = container.getParent();
         int current = 0;
         for (; current < parent.getChildCount(); current++) {
+        	FSCancelController.cancelOpportunity(InlineLayoutBox.class);
+        	
             if (parent.getChild(current) == container) {
                 current++;
                 break;
@@ -526,6 +539,8 @@ public class InlineLayoutBox extends Box implements InlinePaintable {
         }
         
         for (; current < parent.getChildCount(); current++) {
+        	FSCancelController.cancelOpportunity(InlineLayoutBox.class);
+        	
             if (parent.getChild(current) instanceof AnonymousBlockBox) {
                 break;
             } else {
@@ -540,6 +555,8 @@ public class InlineLayoutBox extends Box implements InlinePaintable {
     private boolean containsEnd(final List<Box> result) {
         
         for (int i = 0; i < result.size(); i++) {
+        	FSCancelController.cancelOpportunity(InlineLayoutBox.class);
+        	
             final Box b = (Box)result.get(i);
             if (b instanceof InlineLayoutBox) {
                 final InlineLayoutBox iB = (InlineLayoutBox)b;
@@ -554,6 +571,8 @@ public class InlineLayoutBox extends Box implements InlinePaintable {
     public List<Box> getElementBoxes(final Element elem) {
         final List<Box> result = new ArrayList<Box>();
         for (int i = 0; i < getInlineChildCount(); i++) {
+        	FSCancelController.cancelOpportunity(InlineLayoutBox.class);
+        	
             final Object child = getInlineChild(i);
             if (child instanceof Box) {
                 final Box b = (Box)child;
@@ -575,6 +594,8 @@ public class InlineLayoutBox extends Box implements InlinePaintable {
         final List<Box> toTranslate = getElementWithContent();
         
         for (int i = 0; i < toTranslate.size(); i++) {
+        	FSCancelController.cancelOpportunity(InlineLayoutBox.class);
+        	
             final Box b = (Box)toTranslate.get(i);
             b.setX(b.getX() + delta.width);
             b.setY(b.getY() + delta.height);
@@ -588,6 +609,8 @@ public class InlineLayoutBox extends Box implements InlinePaintable {
     
     public void addAllChildren(final List<Box> list, final Layer layer) {
         for (int i = 0; i < getInlineChildCount(); i++) {
+        	FSCancelController.cancelOpportunity(InlineLayoutBox.class);
+        	
             final Object child = getInlineChild(i);
             if (child instanceof Box) {
                 if (((Box)child).getContainingLayer() == layer) {
@@ -606,6 +629,8 @@ public class InlineLayoutBox extends Box implements InlinePaintable {
     
     protected void resetChildren(final LayoutContext c) {
         for (int i = 0; i < getInlineChildCount(); i++) {
+        	FSCancelController.cancelOpportunity(InlineLayoutBox.class);
+        	
             final Object object = getInlineChild(i);
             if (object instanceof Box) {
                 ((Box)object).reset(c);
@@ -631,6 +656,8 @@ public class InlineLayoutBox extends Box implements InlinePaintable {
         }
         
         for (int i = 0; i < _inlineChildren.size() - 1; i++) {
+        	FSCancelController.cancelOpportunity(InlineLayoutBox.class);
+        	
             final Object obj = _inlineChildren.get(i);
             if (obj == child) {
                 if (i == 0) {
@@ -651,6 +678,8 @@ public class InlineLayoutBox extends Box implements InlinePaintable {
         }
         
         for (int i = 0; i < _inlineChildren.size() - 1; i++) {
+        	FSCancelController.cancelOpportunity(InlineLayoutBox.class);
+        	
             final Object obj = _inlineChildren.get(i);
             if (obj == child) {
                 final Object next = _inlineChildren.get(i+1);
@@ -669,6 +698,8 @@ public class InlineLayoutBox extends Box implements InlinePaintable {
     
     public void calcChildLocations() {
         for (int i = 0; i < getInlineChildCount(); i++) {
+        	FSCancelController.cancelOpportunity(InlineLayoutBox.class);
+        	
             final Object obj = getInlineChild(i);
             if (obj instanceof Box) {
                 final Box child = (Box)obj;
@@ -696,6 +727,8 @@ public class InlineLayoutBox extends Box implements InlinePaintable {
     
     public void selectAll() {
         for (int i = 0; i < getInlineChildCount(); i++) {
+        	FSCancelController.cancelOpportunity(InlineLayoutBox.class);
+        	
             final Object obj = getInlineChild(i);
             if (obj instanceof Box) {
                 ((Box)obj).selectAll();
@@ -708,6 +741,8 @@ public class InlineLayoutBox extends Box implements InlinePaintable {
     protected void calcChildPaintingInfo(
             final CssContext c, final PaintingInfo result, final boolean useCache) {
         for (int i = 0; i < getInlineChildCount(); i++) {
+        	FSCancelController.cancelOpportunity(InlineLayoutBox.class);
+        	
             final Object obj = getInlineChild(i);
             if (obj instanceof Box) {
                 final PaintingInfo info = ((Box)obj).calcPaintingInfo(c, useCache);
@@ -719,6 +754,8 @@ public class InlineLayoutBox extends Box implements InlinePaintable {
     
     public void lookForDynamicFunctions(final RenderingContext c) {
         for (int i = 0; i < getInlineChildCount(); i++) {
+        	FSCancelController.cancelOpportunity(InlineLayoutBox.class);
+        	
             final Object obj = getInlineChild(i);
             if (obj instanceof InlineText) {
                 final InlineText iT = (InlineText)obj;
@@ -739,6 +776,8 @@ public class InlineLayoutBox extends Box implements InlinePaintable {
         InlineText result = null;
         
         for (int offset = getInlineChildCount() - 1; offset >= 0; offset--) {
+        	FSCancelController.cancelOpportunity(InlineLayoutBox.class);
+        	
             final Object child = getInlineChild(offset);
             if (child instanceof InlineText) {
                 result = (InlineText)child;
@@ -775,6 +814,8 @@ public class InlineLayoutBox extends Box implements InlinePaintable {
         
         Box result = null;
         for (int i = 0; i < getInlineChildCount(); i++) {
+        	FSCancelController.cancelOpportunity(InlineLayoutBox.class);
+        	
             final Object child = getInlineChild(i);
             if (child instanceof Box) {
                     result = ((Box)child).find(cssCtx, absX, absY, findAnonymous);
@@ -865,6 +906,8 @@ public class InlineLayoutBox extends Box implements InlinePaintable {
     
     protected void restyleChildren(final LayoutContext c) {
         for (int i = 0; i < getInlineChildCount(); i++) {
+        	FSCancelController.cancelOpportunity(InlineLayoutBox.class);
+        	
             final Object obj = getInlineChild(i);
             if (obj instanceof Box) {
                 ((Box)obj).restyle(c);
@@ -877,6 +920,8 @@ public class InlineLayoutBox extends Box implements InlinePaintable {
         // to the nearest block box
         Box result = getParent();
         while (result instanceof InlineLayoutBox) {
+        	FSCancelController.cancelOpportunity(InlineLayoutBox.class);
+        	
             result = result.getParent();
         }
         return result.getParent();
@@ -884,6 +929,8 @@ public class InlineLayoutBox extends Box implements InlinePaintable {
     
     public void collectText(final RenderingContext c, final StringBuffer buffer) throws IOException {
         for (final Iterator<Object> i = getInlineChildren().iterator(); i.hasNext(); ) {
+        	FSCancelController.cancelOpportunity(InlineLayoutBox.class);
+        	
             final Object obj = (Object)i.next();
             if (obj instanceof InlineText) {
                 buffer.append(((InlineText)obj).getTextExportText());
@@ -896,6 +943,8 @@ public class InlineLayoutBox extends Box implements InlinePaintable {
     public void countJustifiableChars(final CharCounts counts) {
         final boolean justifyThis = getStyle().isTextJustify();
         for (final Iterator<Object> i = getInlineChildren().iterator(); i.hasNext(); ) {
+        	FSCancelController.cancelOpportunity(InlineLayoutBox.class);
+        	
             final Object o = i.next();
             if (o instanceof InlineLayoutBox) {
                 ((InlineLayoutBox)o).countJustifiableChars(counts);
@@ -911,6 +960,8 @@ public class InlineLayoutBox extends Box implements InlinePaintable {
         float result = 0.0f;
         
         for (final Iterator<Object> i = getInlineChildren().iterator(); i.hasNext(); ) {
+        	FSCancelController.cancelOpportunity(InlineLayoutBox.class);
+        	
             final Object o = i.next();
             
             if (o instanceof InlineText) {

@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 import com.github.neoflyingsaucer.css.constants.CSSName;
 import com.github.neoflyingsaucer.css.constants.IdentValue;
 import com.github.neoflyingsaucer.css.style.CalculatedStyle;
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
 import com.github.neoflyingsaucer.render.InlineBox;
 
 /**
@@ -57,6 +58,8 @@ public class WhitespaceStripper {
         boolean allWhitespace = true;
 
         for (final Iterator<Styleable> i = inlineContent.iterator(); i.hasNext();) {
+        	FSCancelController.cancelOpportunity(WhitespaceStripper.class);
+        	
             final Styleable node = (Styleable)i.next();
 
             if (node.getStyle().isInline()) {
@@ -88,6 +91,8 @@ public class WhitespaceStripper {
     private static void stripTextContent(final List<Styleable> stripped) {
         boolean onlyAnonymous = true;
         for (final Iterator<Styleable> i = stripped.iterator(); i.hasNext(); ) {
+        	FSCancelController.cancelOpportunity(WhitespaceStripper.class);
+        	
             final Styleable node = (Styleable)i.next();
             if (node.getStyle().isInline()) {
                 final InlineBox iB = (InlineBox)node;
@@ -101,6 +106,8 @@ public class WhitespaceStripper {
         
         if (onlyAnonymous) {
             for (final Iterator<Styleable> i = stripped.iterator(); i.hasNext(); ) {
+            	FSCancelController.cancelOpportunity(WhitespaceStripper.class);
+            	
                 final Styleable node = (Styleable)i.next();
                 if (node.getStyle().isInline()) {
                     i.remove();

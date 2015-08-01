@@ -17,7 +17,6 @@ import com.github.neoflyingsaucer.css.parser.property.BuilderUtil;
 import com.github.neoflyingsaucer.css.parser.property.Conversions;
 import com.github.neoflyingsaucer.css.style.CalculatedStyle;
 import com.github.neoflyingsaucer.css.style.CssContext;
-import com.github.neoflyingsaucer.extend.controller.error.LangId;
 import com.github.neoflyingsaucer.util.GeneralUtil;
 
 public class FSLinearGradient

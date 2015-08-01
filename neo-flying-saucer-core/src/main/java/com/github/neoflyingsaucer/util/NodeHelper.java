@@ -6,6 +6,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
 import com.github.neoflyingsaucer.extend.useragent.Optional;
 
 public class NodeHelper {
@@ -30,6 +31,8 @@ public class NodeHelper {
   	
   	for (int i = 0; i < length; i++)
   	{
+  		FSCancelController.cancelOpportunity(NodeHelper.class);
+  		
   		Node item = nl.item(i);
   		
   		if (item instanceof Element &&

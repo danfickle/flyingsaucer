@@ -36,6 +36,7 @@ import com.github.neoflyingsaucer.css.style.FSDerivedValue;
 import com.github.neoflyingsaucer.css.style.derived.BorderPropertySet;
 import com.github.neoflyingsaucer.css.style.derived.LengthValue;
 import com.github.neoflyingsaucer.css.style.derived.RectPropertySet;
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
 import com.github.neoflyingsaucer.extend.output.FSImage;
 import com.github.neoflyingsaucer.extend.output.ReplacedElement;
 import com.github.neoflyingsaucer.extend.useragent.ImageResourceI;
@@ -1046,6 +1047,8 @@ public class BlockBox extends Box implements InlinePaintable {
         int i = 0;
         final int cCount = getChildCount();
         while (i < cCount) {
+        	FSCancelController.cancelOpportunity(BlockBox.class);
+        	
             final LineBox lB = (LineBox)getChild(i);
             if (lB.getAbsY() >= firstPage.getBottom()) {
                 break;
@@ -1115,6 +1118,8 @@ public class BlockBox extends Box implements InlinePaintable {
         _inlineContent = inlineContent;
         if (inlineContent != null) {
             for (final Iterator<Styleable> i = inlineContent.iterator(); i.hasNext();) {
+            	FSCancelController.cancelOpportunity(BlockBox.class);
+            	
                 final Styleable child = (Styleable) i.next();
                 if (child instanceof Box) {
                     ((Box) child).setContainingBlock(this);
@@ -1184,6 +1189,8 @@ public class BlockBox extends Box implements InlinePaintable {
     private BlockBox getNextCollapsableSibling(final MarginCollapseResult collapsedMargin) {
         BlockBox next = (BlockBox) getNextSibling();
         while (next != null) {
+        	FSCancelController.cancelOpportunity(BlockBox.class);
+        	
             if (next instanceof AnonymousBlockBox) {
                 ((AnonymousBlockBox) next).provideSiblingMarginToFloats(
                         collapsedMargin.getMargin());
@@ -1217,6 +1224,8 @@ public class BlockBox extends Box implements InlinePaintable {
                     ensureChildren(c);
                     if (getChildrenContentType() == CONTENT_BLOCK) {
                         for (final Iterator<Box> i = getChildIterator(); i.hasNext();) {
+                        	FSCancelController.cancelOpportunity(BlockBox.class);
+                        	
                             final BlockBox child = (BlockBox) i.next();
                             child.collapseTopMargin(c, false, result);
 
@@ -1688,6 +1697,8 @@ public class BlockBox extends Box implements InlinePaintable {
         InlineBox trimmableIB = null;
 
         for (final Iterator<Styleable> i = _inlineContent.iterator(); i.hasNext();) {
+        	FSCancelController.cancelOpportunity(BlockBox.class);
+        	
             final Styleable child = (Styleable) i.next();
 
             if (child.getStyle().isAbsolute() || child.getStyle().isFixed() || child.getStyle().isRunning()) {
@@ -1816,6 +1827,8 @@ public class BlockBox extends Box implements InlinePaintable {
             final LinkedList<CalculatedStyle> styles = new LinkedList<CalculatedStyle>();
             styles.add(style);
             for (final Iterator<Styleable> i = _inlineContent.iterator(); i.hasNext();) {
+            	FSCancelController.cancelOpportunity(BlockBox.class);
+            	
                 final Styleable child = (Styleable) i.next();
                 if (child instanceof InlineBox) {
                     final InlineBox iB = (InlineBox) child;
@@ -1909,6 +1922,8 @@ public class BlockBox extends Box implements InlinePaintable {
 
     public int calcBaseline(final LayoutContext c) {
         for (int i = 0; i < getChildCount(); i++) {
+        	FSCancelController.cancelOpportunity(BlockBox.class);
+        	
             final Box b = getChild(i);
             if (b instanceof LineBox) {
                 return b.getAbsY() + ((LineBox) b).getBaseline();
@@ -2198,6 +2213,8 @@ public class BlockBox extends Box implements InlinePaintable {
         int current = start;
 
         while (current <= end) {
+        	FSCancelController.cancelOpportunity(BlockBox.class);
+        	
             final ContentLimit contentLimit =
                 currentContainer.getContentLimit(current);
 

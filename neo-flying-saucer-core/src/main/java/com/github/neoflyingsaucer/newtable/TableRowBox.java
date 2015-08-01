@@ -30,6 +30,7 @@ import com.github.neoflyingsaucer.css.constants.IdentValue;
 import com.github.neoflyingsaucer.css.style.CssContext;
 import com.github.neoflyingsaucer.css.style.derived.BorderPropertySet;
 import com.github.neoflyingsaucer.css.style.derived.RectPropertySet;
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
 import com.github.neoflyingsaucer.layout.LayoutContext;
 import com.github.neoflyingsaucer.render.BlockBox;
 import com.github.neoflyingsaucer.render.Box;
@@ -114,6 +115,8 @@ public class TableRowBox extends BlockBox {
         
         for (Box cell : getChildren())
         {
+        	FSCancelController.cancelOpportunity(TableRowBox.class);
+        	
         	int baseline = ((TableCellBox) cell).calcBlockBaseline(c);
         	
         	if (baseline != BlockBox.NO_BASELINE && baseline < page.getBottom())
@@ -134,6 +137,8 @@ public class TableRowBox extends BlockBox {
             }
             
             for (final Iterator<Box> i = getChildIterator(); i.hasNext(); ) {
+            	FSCancelController.cancelOpportunity(TableRowBox.class);
+            	
                 final Box b = (Box)i.next();
                 b.analyzePageBreaks(c, _contentLimitContainer);
             }
@@ -150,6 +155,8 @@ public class TableRowBox extends BlockBox {
         int maxBorderAndPadding = 0;
         
         for (final Iterator<Box> i = getChildIterator(); i.hasNext(); ) {
+        	FSCancelController.cancelOpportunity(TableRowBox.class);
+        	
             final TableCellBox cell = (TableCellBox)i.next();
             
             final int borderAndPadding = (int)cell.getPadding(c).top() + (int)cell.getBorder(c).top();
@@ -170,6 +177,8 @@ public class TableRowBox extends BlockBox {
         if ((grid.size() > 0) && (cRow < grid.size())) {
             final List<TableCellBox> row = ((RowData)grid.get(cRow)).getRow();
             for (int cCol = 0; cCol < row.size(); cCol++) {
+            	FSCancelController.cancelOpportunity(TableRowBox.class);
+            	
                 final TableCellBox cell = (TableCellBox)row.get(cCol);
                 
                 if (cell == null || cell == TableCellBox.SPANNING_CELL) {
@@ -201,6 +210,8 @@ public class TableRowBox extends BlockBox {
         
         if (getChildrenContentType() != CONTENT_EMPTY) {
             for (final Iterator<Box> i = getChildIterator(); i.hasNext(); ) {
+            	FSCancelController.cancelOpportunity(TableRowBox.class);
+            	
                 final TableCellBox cell = (TableCellBox)i.next();
                 
                 layoutCell(c, cell, 0);
@@ -215,6 +226,8 @@ public class TableRowBox extends BlockBox {
         int lowest = Integer.MIN_VALUE;
         boolean found = false;
         for (int i = 0; i < getChildCount(); i++) {
+        	FSCancelController.cancelOpportunity(TableRowBox.class);
+        	
             final TableCellBox cell = (TableCellBox)getChild(i);
             
             if (cell.getVerticalAlign() == IdentValue.BASELINE) {
@@ -229,6 +242,8 @@ public class TableRowBox extends BlockBox {
         
         if (found) {
             for (int i = 0; i < getChildCount(); i++) {
+            	FSCancelController.cancelOpportunity(TableRowBox.class);
+            	
                 final TableCellBox cell = (TableCellBox)getChild(i);
                 
                 if (cell.getVerticalAlign() == IdentValue.BASELINE) {
@@ -258,6 +273,8 @@ public class TableRowBox extends BlockBox {
         if ((grid.size() > 0) && (cRow < grid.size())) {
             final List<TableCellBox> row = ((RowData)grid.get(cRow)).getRow();
             for (int cCol = 0; cCol < row.size(); cCol++) {
+            	FSCancelController.cancelOpportunity(TableRowBox.class);
+            	
                 final TableCellBox cell = (TableCellBox)row.get(cCol);
                 
                 if (cell == null || cell == TableCellBox.SPANNING_CELL) {
@@ -353,6 +370,8 @@ public class TableRowBox extends BlockBox {
         if ((grid.size() > 0) && (cRow < grid.size())) {
             final List<TableCellBox> row = ((RowData)grid.get(cRow)).getRow();
             for (int cCol = 0; cCol < row.size(); cCol++) {
+            	FSCancelController.cancelOpportunity(TableRowBox.class);
+            	
                 final TableCellBox cell = (TableCellBox)row.get(cCol);
                 
                 if (cell == null || cell == TableCellBox.SPANNING_CELL) {
@@ -390,6 +409,8 @@ public class TableRowBox extends BlockBox {
         if ((grid.size() > 0) && (cRow < grid.size())) {
             final List<TableCellBox> row = ((RowData)grid.get(cRow)).getRow();
             for (int cCol = 0; cCol < row.size(); cCol++) {
+            	FSCancelController.cancelOpportunity(TableRowBox.class);
+            	
                 final TableCellBox cell = (TableCellBox)row.get(cCol);
                 
                 if (cell == null || cell == TableCellBox.SPANNING_CELL) {
@@ -419,6 +440,8 @@ public class TableRowBox extends BlockBox {
         if ((grid.size() > 0) && (cRow < grid.size())) {
             final List<TableCellBox> row = ((RowData)grid.get(cRow)).getRow();
             for (int cCol = 0; cCol < row.size(); cCol++) {
+            	FSCancelController.cancelOpportunity(TableRowBox.class);
+            	
                 final TableCellBox cell = (TableCellBox)row.get(cCol);
                 
                 if (cell == null || cell == TableCellBox.SPANNING_CELL) {
@@ -520,6 +543,8 @@ public class TableRowBox extends BlockBox {
             }
             
             for (final Iterator<Box> i = getChildIterator(); i.hasNext(); ) {
+            	FSCancelController.cancelOpportunity(TableRowBox.class);
+            	
                 final TableCellBox cell = (TableCellBox)i.next();
                 final StringBuffer buffer =  new StringBuffer();
                 cell.collectText(c, buffer);
@@ -571,6 +596,8 @@ public class TableRowBox extends BlockBox {
                 // calculate max spill from the collapsed top borders of each child
                 int spill = 0;
                 for (final Iterator<Box> i = getChildIterator(); i.hasNext(); ) {
+                	FSCancelController.cancelOpportunity(TableRowBox.class);
+                	
                     final TableCellBox cell = (TableCellBox)i.next();
                     final BorderPropertySet collapsed = cell.getCollapsedPaintingBorder();
                     if (collapsed != null) {

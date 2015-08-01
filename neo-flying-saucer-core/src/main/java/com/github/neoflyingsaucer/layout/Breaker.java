@@ -24,6 +24,7 @@ import java.text.BreakIterator;
 
 import com.github.neoflyingsaucer.css.constants.IdentValue;
 import com.github.neoflyingsaucer.css.style.CalculatedStyle;
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
 import com.github.neoflyingsaucer.extend.output.FSFont;
 
 /**
@@ -136,6 +137,8 @@ public class Breaker {
             // Now iterate the possible line breaks until we reach the estimate.
             do
             {
+            	FSCancelController.cancelOpportunity(Breaker.class);
+            	
             	next = iter.next();
             	if (next == BreakIterator.DONE)
             		break;
@@ -151,6 +154,8 @@ public class Breaker {
         // If we still have room go to one break past.
         while (width < avail)
         {
+        	FSCancelController.cancelOpportunity(Breaker.class);
+        	
         	next = iter.next();
         	if (next == BreakIterator.DONE)
         		break;
@@ -164,6 +169,7 @@ public class Breaker {
         
         while (width >= avail)
         {
+        	FSCancelController.cancelOpportunity(Breaker.class);
         	next = iter.previous();
         	if (next == 0 || next == BreakIterator.DONE)
         		break;
@@ -178,6 +184,8 @@ public class Breaker {
         {
             while (width >= avail && last > 0)
             {
+            	FSCancelController.cancelOpportunity(Breaker.class);
+            	
             	final String broken = currentString.substring(0, last);
             	width = c.getTextRenderer().getWidth(c.getFontContext(), font, broken);
             	last--;

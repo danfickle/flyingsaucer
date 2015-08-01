@@ -40,6 +40,7 @@ import com.github.neoflyingsaucer.css.style.CalculatedStyle;
 import com.github.neoflyingsaucer.css.style.CssContext;
 import com.github.neoflyingsaucer.css.style.derived.BorderPropertySet;
 import com.github.neoflyingsaucer.css.style.derived.RectPropertySet;
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
 import com.github.neoflyingsaucer.extend.useragent.Optional;
 import com.github.neoflyingsaucer.layout.Layer;
 import com.github.neoflyingsaucer.layout.LayoutContext;
@@ -147,6 +148,8 @@ public abstract class Box implements Styleable {
 
     public void addAllChildren(final List<Box> children) {
         for (final Iterator<Box> i = children.iterator(); i.hasNext(); ) {
+        	FSCancelController.cancelOpportunity(Box.class);
+        	
             final Box box = (Box)i.next();
             addChild(box);
         }
@@ -162,6 +165,8 @@ public abstract class Box implements Styleable {
         if (_boxes != null) {
             boolean found = false;
             for (final Iterator<Box> i = getChildIterator(); i.hasNext(); ) {
+            	FSCancelController.cancelOpportunity(Box.class);
+            	
                 final Box child = (Box)i.next();
                 if (child.equals(target)) {
                     i.remove();
@@ -1035,6 +1040,8 @@ public abstract class Box implements Styleable {
         if (c.getPage() != c.getRootLayer().getLastPage()) {
             final List<PageBox> pages = c.getRootLayer().getPages();
             do {
+            	FSCancelController.cancelOpportunity(Box.class);
+            	
                 final PageBox next = (PageBox)pages.get(c.getPageNo()+1);
                 c.setPage(next.getPageNo(), next);
                 next.exportLeadingText(c, writer);
@@ -1049,6 +1056,8 @@ public abstract class Box implements Styleable {
         PageBox next = (PageBox)pages.get(c.getPageNo()+1);
         c.setPage(next.getPageNo(), next);
         while (next.getBottom() < yPos) {
+        	FSCancelController.cancelOpportunity(Box.class);
+        	
             next.exportLeadingText(c, writer);
             next.exportTrailingText(c, writer);
             next = (PageBox)pages.get(c.getPageNo()+1);
@@ -1060,6 +1069,8 @@ public abstract class Box implements Styleable {
     public boolean isInDocumentFlow() {
         Box flowRoot = this;
         while (true) {
+        	FSCancelController.cancelOpportunity(Box.class);
+        	
             final Box parent = flowRoot.getParent();
             if (parent == null) {
                 break;
@@ -1084,6 +1095,8 @@ public abstract class Box implements Styleable {
         FSColor result = null;
         Box current = this;
         while (current != null) {
+        	FSCancelController.cancelOpportunity(Box.class);
+        	
             result = current.getStyle().getBackgroundColor();
             if (result != null) {
                 return result;
@@ -1108,6 +1121,8 @@ public abstract class Box implements Styleable {
     public boolean isContainedInMarginBox() {
         Box current = this;
         while (true) {
+        	FSCancelController.cancelOpportunity(Box.class);
+        	
             final Box parent = current.getParent();
             if (parent == null) {
                 break;

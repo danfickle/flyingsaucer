@@ -27,6 +27,7 @@ import java.util.RandomAccess;
 
 import com.github.neoflyingsaucer.css.constants.CSSName;
 import com.github.neoflyingsaucer.css.constants.IdentValue;
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
 import com.github.neoflyingsaucer.render.BlockBox;
 import com.github.neoflyingsaucer.render.Box;
 import com.github.neoflyingsaucer.render.LineBox;
@@ -65,6 +66,8 @@ public class BlockBoxing {
         int pageCount = NO_PAGE_TRIM;
         BlockBox previousChildBox = null;
         for (final Box box : localChildren) {
+        	FSCancelController.cancelOpportunity(BlockBoxing.class);
+        	
             final BlockBox child = (BlockBox) box;
             offset++;
 
@@ -191,6 +194,8 @@ public class BlockBoxing {
     private static boolean isPageBreakBetweenChildBoxes(final RelayoutDataList relayoutDataList,
             final int runStart, final int runEnd, final LayoutContext c, final BlockBox block) {
         for ( int i = runStart; i < runEnd; i++ ) {
+        	FSCancelController.cancelOpportunity(BlockBoxing.class);
+        	
             final Box prevChild = block.getChild(i);
             final Box nextChild = block.getChild(i+1);
             // if nextChild is made of several lines, then only the first line
@@ -207,6 +212,7 @@ public class BlockBoxing {
 
     private static LineBox getFirstLine(final Box box) {
         for ( Box child = box; child.getChildCount()>0; child = child.getChild(0) ) {
+        	FSCancelController.cancelOpportunity(BlockBoxing.class);
             if ( child instanceof LineBox ) {
                 return (LineBox) child;
             }
@@ -230,7 +236,9 @@ public class BlockBoxing {
 
 
         for (int i = start; i <= end; i++) {
-            final BlockBox child = (BlockBox) localChildren.get(i);
+        	FSCancelController.cancelOpportunity(BlockBoxing.class);
+
+        	final BlockBox child = (BlockBox) localChildren.get(i);
 
             final RelayoutData relayoutData = relayoutDataList.get(i);
 

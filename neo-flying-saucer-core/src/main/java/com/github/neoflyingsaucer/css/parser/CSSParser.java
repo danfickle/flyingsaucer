@@ -52,6 +52,7 @@ import com.github.neoflyingsaucer.css.sheet.RulesetContainer;
 import com.github.neoflyingsaucer.css.sheet.Stylesheet;
 import com.github.neoflyingsaucer.css.sheet.StylesheetInfo;
 import com.github.neoflyingsaucer.css.sheet.StylesheetInfo.CSSOrigin;
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
 import com.github.neoflyingsaucer.extend.controller.error.LangId;
 import com.github.neoflyingsaucer.extend.useragent.Optional;
 import com.github.neoflyingsaucer.extend.useragent.UserAgentCallback;
@@ -2081,6 +2082,7 @@ public class CSSParser {
         Token t;
         while ( (t = next()) == Token.TK_S) {
             // skip
+        	FSCancelController.cancelOpportunity(CSSParser.class);
         }
         push(t);
     }
@@ -2094,6 +2096,7 @@ public class CSSParser {
         Token t;
         while (true) {
             t = next();
+            FSCancelController.cancelOpportunity(CSSParser.class);
             if (! (t == Token.TK_S || t == Token.TK_CDO || t == Token.TK_CDC)) {
                 break;
             }

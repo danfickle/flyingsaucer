@@ -51,6 +51,7 @@ import com.github.neoflyingsaucer.css.sheet.StylesheetInfo;
 import com.github.neoflyingsaucer.css.style.CalculatedStyle;
 import com.github.neoflyingsaucer.css.style.EmptyStyle;
 import com.github.neoflyingsaucer.css.style.FSDerivedValue;
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
 import com.github.neoflyingsaucer.newtable.TableBox;
 import com.github.neoflyingsaucer.newtable.TableCellBox;
 import com.github.neoflyingsaucer.newtable.TableColumn;
@@ -194,6 +195,8 @@ public class BoxBuilder {
         final boolean alwaysCreate = names.length > 1 && direction == MARGIN_BOX_HORIZONTAL;
 
         for (final MarginBoxName name : names) {
+        	FSCancelController.cancelOpportunity(BoxBuilder.class);
+        	
             final CascadedStyle cellStyle = pageInfo.createMarginBoxStyle(name, alwaysCreate);
             if (cellStyle != null) {
                 final TableCellBox cell = createMarginBox(c, cellStyle, alwaysCreate);
@@ -336,6 +339,8 @@ public class BoxBuilder {
 
         final IdentValue nextUp = getPreviousTableNestingLevel(target);
         for (final Styleable styleable : children) {
+        	FSCancelController.cancelOpportunity(BoxBuilder.class);
+        	
             if (matchesTableLevel(target, styleable.getStyle().getIdent(CSSName.DISPLAY))) {
                 childrenForAnonymous.add(styleable);
             } else {
@@ -381,6 +386,8 @@ public class BoxBuilder {
     private static void rebalanceInlineContent(final List<Styleable> content) {
         final Map<Element, InlineBox> boxesByElement = new HashMap<Element, InlineBox>();
         for (final Styleable styleable : content) {
+        	FSCancelController.cancelOpportunity(BoxBuilder.class);
+        	
             if (styleable instanceof InlineBox) {
                 final InlineBox iB = (InlineBox) styleable;
                 final Element elem = iB.getElement();
@@ -403,6 +410,8 @@ public class BoxBuilder {
         int current = 0;
         boolean started = false;
         for (current = 0; current < content.size(); current++) {
+        	FSCancelController.cancelOpportunity(BoxBuilder.class);
+        	
             final Styleable styleable = content.get(current);
             if (! styleable.getStyle().isLayedOutInInlineContext()) {
                 if (started) {
@@ -528,6 +537,8 @@ public class BoxBuilder {
         final List<Box> bottomCaptions = new LinkedList<Box>();
 
         for (final Iterator<Box> i = table.getChildIterator(); i.hasNext();) {
+        	FSCancelController.cancelOpportunity(BoxBuilder.class);
+        	
             final Box b = (Box) i.next();
             final IdentValue display = b.getStyle().getIdent(CSSName.DISPLAY);
             if (display == IdentValue.TABLE_CAPTION) {
@@ -799,6 +810,8 @@ public class BoxBuilder {
         final List<Styleable> result = new ArrayList<Styleable>(values.size());
 
         for (final Object valueObj : values) {
+        	FSCancelController.cancelOpportunity(BoxBuilder.class);
+        	
             final PropertyValue value = (PropertyValue) valueObj;
 
             ContentFunction contentFunction = null;
@@ -951,6 +964,8 @@ public class BoxBuilder {
         } else {
             final CalculatedStyle anon = style.createAnonymousStyle(IdentValue.INLINE);
             for (final Styleable styleable : inlineBoxes) {
+            	FSCancelController.cancelOpportunity(BoxBuilder.class);
+            	
                 final InlineBox iB = (InlineBox) styleable;
                 iB.setStyle(anon);
                 iB.applyTextTransform();
@@ -980,6 +995,8 @@ public class BoxBuilder {
 
         final CalculatedStyle anon = style.createAnonymousStyle(IdentValue.INLINE);
         for (final Styleable s : result) {
+        	FSCancelController.cancelOpportunity(BoxBuilder.class);
+        	
             if (s instanceof InlineBox) {
                 final InlineBox iB = (InlineBox)s;
                 iB.setElement(null);
@@ -1032,6 +1049,8 @@ public class BoxBuilder {
         
         for (int i = 0; i < length; i++)
         {
+        	FSCancelController.cancelOpportunity(BoxBuilder.class);
+        	
         	Node n = nl.item(i);
 
         	if (!(n instanceof Element))
@@ -1230,6 +1249,8 @@ public class BoxBuilder {
         List<InlineBox> savedParents = null;
 
         for (final Styleable child : children) {
+        	FSCancelController.cancelOpportunity(BoxBuilder.class);
+        	
             if (child.getStyle().isLayedOutInInlineContext() &&
                     ! (layoutRunningBlocks && child.getStyle().isRunning())) {
                 inline.add(child);

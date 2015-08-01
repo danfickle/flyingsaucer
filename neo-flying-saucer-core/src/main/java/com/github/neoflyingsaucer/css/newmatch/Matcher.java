@@ -44,6 +44,7 @@ import com.github.neoflyingsaucer.css.sheet.PropertyDeclaration;
 import com.github.neoflyingsaucer.css.sheet.Ruleset;
 import com.github.neoflyingsaucer.css.sheet.Stylesheet;
 import com.github.neoflyingsaucer.css.sheet.StylesheetInfo.CSSOrigin;
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
 import com.github.neoflyingsaucer.extend.controller.error.FSErrorController;
 import com.github.neoflyingsaucer.extend.controller.error.FSError.FSErrorLevel;
 import com.github.neoflyingsaucer.extend.controller.error.LangId;
@@ -167,7 +168,9 @@ public class Matcher {
         int pCount = 0;
         for (final Stylesheet stylesheet : stylesheets) {
             for (final Object obj : stylesheet.getContents()) {
-                if (obj instanceof Ruleset) {
+                FSCancelController.cancelOpportunity(Matcher.class);
+            	
+            	if (obj instanceof Ruleset) {
                     for (final Selector selector : ((Ruleset)obj).getFSSelectors()) {
                         selector.setPos(++count);
                         sorter.put(selector.getOrder(), selector);
@@ -180,7 +183,9 @@ public class Matcher {
                     if (mediaRule.matches(sharedCtx)) {
                         for (final Ruleset ruleset : mediaRule.getContents()) {
                             for (final Selector selector : ruleset.getFSSelectors()) {
-                                selector.setPos(++count);
+                                FSCancelController.cancelOpportunity(Matcher.class);
+                            	
+                            	selector.setPos(++count);
                                 sorter.put(selector.getOrder(), selector);
                             }
                         }
@@ -405,7 +410,9 @@ public class Matcher {
                 }
                 //these should have been returned in order of specificity
                 for (final Iterator<Ruleset> i = getMatchedRulesets(mappedSelectors); i.hasNext();) {
-                    final com.github.neoflyingsaucer.css.sheet.Ruleset rs = (com.github.neoflyingsaucer.css.sheet.Ruleset) i.next();
+                    FSCancelController.cancelOpportunity(Matcher.class);
+                	
+                	Ruleset rs = i.next();
                     propList.addAll(rs.getPropertyDeclarations());
                 }
                 //specificity 1,0,0,0
@@ -438,7 +445,9 @@ public class Matcher {
 
             final java.util.List<PropertyDeclaration> propList = new java.util.LinkedList<PropertyDeclaration>();
             for (final java.util.Iterator<Ruleset> i = getSelectedRulesets(pe); i.hasNext();) {
-                final com.github.neoflyingsaucer.css.sheet.Ruleset rs = (com.github.neoflyingsaucer.css.sheet.Ruleset) i.next();
+                FSCancelController.cancelOpportunity(Matcher.class);
+            	
+            	final com.github.neoflyingsaucer.css.sheet.Ruleset rs = (com.github.neoflyingsaucer.css.sheet.Ruleset) i.next();
                 propList.addAll(rs.getPropertyDeclarations());
             }
             if (propList.size() == 0)

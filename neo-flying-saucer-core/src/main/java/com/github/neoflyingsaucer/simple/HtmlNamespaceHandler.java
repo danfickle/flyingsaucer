@@ -46,6 +46,7 @@ import com.github.neoflyingsaucer.css.mediaquery.MediaQueryList;
 import com.github.neoflyingsaucer.css.parser.CSSParser;
 import com.github.neoflyingsaucer.css.sheet.StylesheetInfo;
 import com.github.neoflyingsaucer.extend.NamespaceHandler;
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
 import com.github.neoflyingsaucer.extend.controller.error.FSError.FSErrorLevel;
 import com.github.neoflyingsaucer.extend.controller.error.FSErrorController;
 import com.github.neoflyingsaucer.extend.controller.error.LangId;
@@ -171,6 +172,8 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
     	
     	for (int i = 0; i < length; i++)
     	{
+    		FSCancelController.cancelOpportunity(HtmlNamespaceHandler.class);
+    		
     		Node item = nl.item(i);
     		
     		if (!(item instanceof Element))
@@ -667,6 +670,8 @@ public class HtmlNamespaceHandler implements NamespaceHandler {
         final StringBuilder result = new StringBuilder();
         final int l = text.length();
         for (int i = 0; i < l; i++) {
+        	FSCancelController.cancelOpportunity(HtmlNamespaceHandler.class);
+        	
             char c = text.charAt(i);
             if (Character.isWhitespace(c)) {
                 result.append(' ');

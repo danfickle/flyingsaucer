@@ -25,6 +25,7 @@ import com.github.neoflyingsaucer.css.constants.IdentValue;
 import com.github.neoflyingsaucer.css.extend.ContentFunction;
 import com.github.neoflyingsaucer.css.parser.FSFunction;
 import com.github.neoflyingsaucer.css.style.CalculatedStyle;
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
 import com.github.neoflyingsaucer.layout.LayoutContext;
 import com.github.neoflyingsaucer.layout.Styleable;
 import com.github.neoflyingsaucer.layout.TextUtil;
@@ -165,6 +166,8 @@ public class InlineBox implements Styleable {
         int current = 0;
 
         while ( (current = _text.indexOf(WhitespaceStripper.EOL, last)) != -1) {
+        	FSCancelController.cancelOpportunity(InlineBox.class);
+        	
             String target = _text.substring(last, current);
             if (trim) {
                 target = target.trim();
@@ -228,6 +231,8 @@ public class InlineBox implements Styleable {
         final String text = getText(trimLeadingSpace);
 
         while ( (current = text.indexOf(WhitespaceStripper.SPACE, last)) != -1) {
+        	FSCancelController.cancelOpportunity(InlineBox.class);
+        	
             final String currentWord = text.substring(last, current);
             int wordWidth = getTextWidth(c, currentWord);
             int minWordWidth;

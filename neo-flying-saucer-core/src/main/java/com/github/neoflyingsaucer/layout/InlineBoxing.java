@@ -32,6 +32,7 @@ import com.github.neoflyingsaucer.css.style.CssContext;
 import com.github.neoflyingsaucer.css.style.FSDerivedValue;
 import com.github.neoflyingsaucer.css.style.derived.BorderPropertySet;
 import com.github.neoflyingsaucer.css.style.derived.RectPropertySet;
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
 import com.github.neoflyingsaucer.extend.output.FSFontMetrics;
 import com.github.neoflyingsaucer.extend.useragent.Optional;
 import com.github.neoflyingsaucer.render.AnonymousBlockBox;
@@ -117,6 +118,8 @@ public class InlineBoxing {
         int lineOffset = 0;
 
         for (final Styleable styleable : box.getInlineContent()) {
+        	FSCancelController.cancelOpportunity(InlineBoxing.class);
+        	
             final Styleable node = (Styleable)styleable;
 
             if (node.getStyle().isInline()) {
@@ -162,6 +165,8 @@ public class InlineBoxing {
                 }
 
                 do {
+                	FSCancelController.cancelOpportunity(InlineBoxing.class);
+                	
                     lbContext.reset();
 
                     int fit = 0;
@@ -417,6 +422,8 @@ public class InlineBoxing {
         }
 
         for (int i = 0; i < current.getChildCount(); i++) {
+        	FSCancelController.cancelOpportunity(InlineBoxing.class);
+        	
             final Box b = current.getChild(i);
             if (b instanceof InlineLayoutBox) {
                 final InlineLayoutBox iB = (InlineLayoutBox) current.getChild(i);
@@ -442,6 +449,8 @@ public class InlineBoxing {
         x += current.getLeftMarginBorderPadding(c);
 
         for (int i = 0; i < current.getInlineChildCount(); i++) {
+        	FSCancelController.cancelOpportunity(InlineBoxing.class);
+        	
             final Object child = current.getInlineChild(i);
             if (child instanceof InlineLayoutBox) {
                 final InlineLayoutBox iB = (InlineLayoutBox) child;
@@ -490,6 +499,8 @@ public class InlineBoxing {
             }
 
             for (int i = 0; i < current.getChildCount(); i++) {
+            	FSCancelController.cancelOpportunity(InlineBoxing.class);
+            	
                 final Box child = current.getChild(i);
                 positionInlineContentVertically(c, vaContext, child);
             }
@@ -560,6 +571,8 @@ public class InlineBoxing {
 
     private static void moveInlineContents(final InlineLayoutBox box, final int ty) {
         for (int i = 0; i < box.getInlineChildCount(); i++) {
+        	FSCancelController.cancelOpportunity(InlineBoxing.class);
+        	
             final Object obj = box.getInlineChild(i);
             if (obj instanceof Box) {
                 ((Box) obj).setY(((Box) obj).getY() + ty);
@@ -719,6 +732,8 @@ public class InlineBoxing {
     private static void positionInlineChildrenVertically(final LayoutContext c, final InlineLayoutBox current,
                                                final VerticalAlignContext vaContext) {
         for (int i = 0; i < current.getInlineChildCount(); i++) {
+        	FSCancelController.cancelOpportunity(InlineBoxing.class);
+        	
             final Object child = current.getInlineChild(i);
             if (child instanceof Box) {
                 positionInlineContentVertically(c, vaContext, (Box)child);

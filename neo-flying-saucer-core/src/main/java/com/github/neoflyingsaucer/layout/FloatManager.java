@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.github.neoflyingsaucer.css.style.CssContext;
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
 import com.github.neoflyingsaucer.render.BlockBox;
 import com.github.neoflyingsaucer.render.Box;
 import com.github.neoflyingsaucer.render.LineBox;
@@ -189,6 +190,8 @@ public class FloatManager {
         int result = 0;
 
         for (final BoxOffset floater : floats) {
+        	FSCancelController.cancelOpportunity(FloatManager.class);
+        	
             final Rectangle bounds = floater.getBox().getMarginEdge(
                     cssCtx, -floater.getX(), -floater.getY());
             if (bounds.y + bounds.height > result) {
@@ -215,6 +218,8 @@ public class FloatManager {
 
         for (BoxOffset floater : floats)
         {
+        	FSCancelController.cancelOpportunity(FloatManager.class);
+        	
         	Rectangle floaterBounds = floater.getBox().getMarginEdge(cssCtx,-floater.getX(), -floater.getY());
         	
         	if (floaterBounds.intersects(bounds))
@@ -270,6 +275,8 @@ public class FloatManager {
 
     private void removeFloat(final BlockBox floater, final List<BoxOffset> floats) {
         for (final Iterator<BoxOffset> i = floats.iterator(); i.hasNext();) {
+        	FSCancelController.cancelOpportunity(FloatManager.class);
+        	
             final BoxOffset boxOffset = i.next();
             if (boxOffset.getBox().equals(floater)) {
                 i.remove();
@@ -355,6 +362,8 @@ public class FloatManager {
         applyLineHeightHack(cssCtx, line, lineBounds);
         BlockBox farthestOverBox = null;
         for (int i = 0; i < floatsList.size(); i++) {
+        	FSCancelController.cancelOpportunity(FloatManager.class);
+        	
             final BoxOffset floater = (BoxOffset) floatsList.get(i);
             final Rectangle fr = floater.getBox().getMarginEdge(cssCtx, -floater.getX(), -floater.getY());
             if (lineBounds.intersects(fr)) {
@@ -391,6 +400,8 @@ public class FloatManager {
     private Point getOffset(final BlockBox floater, final List<BoxOffset> floats) {
 
     	for (final BoxOffset boxOffset : floats) {
+    		FSCancelController.cancelOpportunity(FloatManager.class);
+    		
             final BlockBox box = boxOffset.getBox();
 
             if (box.equals(floater)) {

@@ -33,6 +33,7 @@ import com.github.neoflyingsaucer.css.style.CssContext;
 import com.github.neoflyingsaucer.css.style.Length;
 import com.github.neoflyingsaucer.css.style.derived.BorderPropertySet;
 import com.github.neoflyingsaucer.css.style.derived.RectPropertySet;
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
 import com.github.neoflyingsaucer.extend.controller.error.FSErrorController;
 import com.github.neoflyingsaucer.extend.controller.error.LangId;
 import com.github.neoflyingsaucer.extend.controller.error.FSError.FSErrorLevel;
@@ -171,6 +172,8 @@ public class TableBox extends BlockBox {
         leftOver.setSpan(leftOver.getSpan() - firstSpan);
 
         for (final Iterator<Box> i = getChildIterator(); i.hasNext(); ) {
+        	FSCancelController.cancelOpportunity(TableBox.class);
+        	
             final TableSectionBox section = (TableSectionBox)i.next();
             section.splitColumn(pos);
         }
@@ -202,6 +205,8 @@ public class TableBox extends BlockBox {
     private void recalcSections(final LayoutContext c) {
         ensureChildren(c);
         for (final Iterator<Box> i = getChildIterator(); i.hasNext(); ) {
+        	FSCancelController.cancelOpportunity(TableBox.class);
+        	
             final TableSectionBox section = (TableSectionBox)i.next();
             section.recalcCells(c);
         }
@@ -210,6 +215,8 @@ public class TableBox extends BlockBox {
     private void calcBorders(final LayoutContext c) {
         ensureChildren(c);
         for (final Iterator<Box> i = getChildIterator(); i.hasNext(); ) {
+        	FSCancelController.cancelOpportunity(TableBox.class);
+        	
             final TableSectionBox section = (TableSectionBox)i.next();
             section.calcBorders(c);
         }
@@ -548,6 +555,8 @@ public class TableBox extends BlockBox {
                 if (row != null) {
                     int spill = 0;
                     for (final Iterator<Box> i = row.getChildIterator(); i.hasNext(); ) {
+                    	FSCancelController.cancelOpportunity(TableBox.class);
+                    	
                         final TableCellBox cell = (TableCellBox)i.next();
                         final BorderPropertySet collapsed = cell.getCollapsedPaintingBorder();
                         final int tmp = (int)collapsed.top() / 2;
@@ -580,6 +589,8 @@ public class TableBox extends BlockBox {
 
     public TableRowBox getFirstRow() {
         for (final Iterator<Box> i = getChildIterator(); i.hasNext(); ) {
+        	FSCancelController.cancelOpportunity(TableBox.class);
+        	
             final TableSectionBox section = (TableSectionBox)i.next();
             if (section.getChildCount() > 0) {
                 return (TableRowBox)section.getChild(0);
@@ -591,6 +602,8 @@ public class TableBox extends BlockBox {
 
     public TableRowBox getFirstBodyRow() {
         for (final Iterator<Box> i = getChildIterator(); i.hasNext(); ) {
+        	FSCancelController.cancelOpportunity(TableBox.class);
+        	
             final TableSectionBox section = (TableSectionBox)i.next();
             if (section.isHeader() || section.isFooter()) {
                 continue;
@@ -605,6 +618,8 @@ public class TableBox extends BlockBox {
 
     private void setCellWidths(final LayoutContext c) {
         for (final Iterator<Box> i = getChildIterator(); i.hasNext(); ) {
+        	FSCancelController.cancelOpportunity(TableBox.class);
+        	
             final BlockBox box = (BlockBox)i.next();
             if (box.getStyle().isTableSection()) {
                 ((TableSectionBox)box).setCellWidths(c);
@@ -657,6 +672,8 @@ public class TableBox extends BlockBox {
         }
         int cCol = 0;
         for (final Iterator<TableColumn> i = styleColumns.iterator(); i.hasNext();) {
+        	FSCancelController.cancelOpportunity(TableBox.class);
+        	
             final TableColumn colElem = (TableColumn)i.next();
             final int span = colElem.getStyle().getColSpan();
             cCol += span;
@@ -961,6 +978,8 @@ public class TableBox extends BlockBox {
             int usedWidth = 0;
 
             for (final Iterator<TableColumn> j = table.getStyleColumns().iterator(); j.hasNext();) {
+            	FSCancelController.cancelOpportunity(TableBox.class);
+            	
                 final TableColumn col = (TableColumn) j.next();
                 final int span = col.getStyle().getColSpan();
                 Length w = col.getStyle().asLength(c, CSSName.WIDTH);
@@ -997,6 +1016,8 @@ public class TableBox extends BlockBox {
             final TableRowBox firstRow = _table.getFirstRow();
             if (firstRow != null) {
                 for (final Iterator<Box> j = firstRow.getChildIterator(); j.hasNext();) {
+                	FSCancelController.cancelOpportunity(TableBox.class);
+                	
                     final TableCellBox cell = (TableCellBox) j.next();
                     final Length w = cell.getOuterStyleWidth(c);
                     final int span = cell.getStyle().getColSpan();
@@ -1189,6 +1210,8 @@ public class TableBox extends BlockBox {
 
             int cCol = 0;
             for (final Iterator<TableColumn> j = table.getStyleColumns().iterator(); j.hasNext();) {
+            	FSCancelController.cancelOpportunity(TableBox.class);
+            	
                 final TableColumn col = (TableColumn) j.next();
                 final int span = col.getStyle().getColSpan();
                 Length w = col.getStyle().asLength(c, CSSName.WIDTH);
@@ -1226,6 +1249,8 @@ public class TableBox extends BlockBox {
 
             // first we iterate over all rows.
             for (final Iterator<Box> j = _table.getChildIterator(); j.hasNext();) {
+            	FSCancelController.cancelOpportunity(TableBox.class);
+            	
                 final TableSectionBox section = (TableSectionBox) j.next();
                 final int numRows = section.numRows();
                 for (int i = 0; i < numRows; i++) {

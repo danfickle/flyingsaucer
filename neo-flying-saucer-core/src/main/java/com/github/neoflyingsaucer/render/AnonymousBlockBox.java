@@ -26,6 +26,7 @@ import org.w3c.dom.Element;
 
 import com.github.neoflyingsaucer.css.style.CalculatedStyle;
 import com.github.neoflyingsaucer.css.style.CssContext;
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
 import com.github.neoflyingsaucer.layout.LayoutContext;
 import com.github.neoflyingsaucer.layout.Styleable;
 
@@ -73,6 +74,8 @@ public class AnonymousBlockBox extends BlockBox {
         // An anonymous block will already have its children provided to it
     	for (Styleable styleable : getInlineContent())
     	{
+    		FSCancelController.cancelOpportunity(AnonymousBlockBox.class);
+    		
     		CalculatedStyle style = styleable.getStyle();
     		
     		if (!(style.isFloated() || style.isAbsolute() || style.isFixed() || style.isRunning()))
@@ -86,6 +89,8 @@ public class AnonymousBlockBox extends BlockBox {
     {
     	for (Styleable styleable : getInlineContent())
     	{
+    		FSCancelController.cancelOpportunity(AnonymousBlockBox.class);
+    		
     		if (!(styleable instanceof BlockBox))
     			continue;
     		

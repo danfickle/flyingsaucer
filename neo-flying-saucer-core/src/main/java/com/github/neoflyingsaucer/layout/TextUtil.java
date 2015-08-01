@@ -22,6 +22,7 @@ package com.github.neoflyingsaucer.layout;
 import com.github.neoflyingsaucer.css.constants.CSSName;
 import com.github.neoflyingsaucer.css.constants.IdentValue;
 import com.github.neoflyingsaucer.css.style.CalculatedStyle;
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
 import com.github.neoflyingsaucer.util.Uu;
 
 
@@ -71,6 +72,8 @@ public class TextUtil {
             final IdentValue fontVariant = style.getIdent( CSSName.FONT_VARIANT );
             char currentChar;
             for ( int i = 0, end = text.length(); i < end; i++ ) {
+            	FSCancelController.cancelOpportunity(TextUtil.class);
+            	
                 currentChar = text.charAt(i);
                 if ( !isFirstLetterSeparatorChar( currentChar ) ) {
                     if ( transform == IdentValue.LOWERCASE ) {

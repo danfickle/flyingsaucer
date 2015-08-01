@@ -24,6 +24,7 @@ import java.awt.Rectangle;
 
 import org.w3c.dom.Node;
 
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
 import com.github.neoflyingsaucer.extend.output.FSGlyphVector;
 import com.github.neoflyingsaucer.extend.output.JustificationInfo;
 import com.github.neoflyingsaucer.layout.FunctionData;
@@ -199,6 +200,8 @@ public class InlineText {
         _selectionStart = 0;
         _selectionEnd = 0;
         for (int i = 0; i < positions.length - 2; i += 2) {
+        	FSCancelController.cancelOpportunity(InlineText.class);
+        	
             final Rectangle target = new Rectangle(
                     (int)(offset + (positions[i] + positions[i+2]) / 2),
                     y,

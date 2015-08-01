@@ -39,6 +39,7 @@ import com.github.neoflyingsaucer.css.style.derived.FSLinearGradient;
 import com.github.neoflyingsaucer.css.style.derived.LengthValue;
 import com.github.neoflyingsaucer.css.value.FontSpecification;
 import com.github.neoflyingsaucer.extend.OutputDevice;
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
 import com.github.neoflyingsaucer.extend.output.FSFontMetrics;
 import com.github.neoflyingsaucer.extend.output.FSImage;
 import com.github.neoflyingsaucer.extend.output.JustificationInfo;
@@ -371,6 +372,8 @@ public abstract class AbstractOutputDevice implements OutputDevice {
 
         for (int x = left; x < right; x+= width) {
             for (int y = top; y < bottom; y+= height) {
+            	FSCancelController.cancelOpportunity(AbstractOutputDevice.class);
+            	
                 drawImage(image, x, y);
             }
         }
