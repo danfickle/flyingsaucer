@@ -6,10 +6,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
-import org.w3c.dom.Document;
-
 import com.github.neoflyingsaucer.defaultuseragent.DefaultUserAgent;
-import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
+import com.github.neoflyingsaucer.extend.controller.cancel.FSTimedCancelHandler;
 import com.github.neoflyingsaucer.extend.output.DisplayList;
 import com.github.neoflyingsaucer.pdf2dout.Pdf2FontContext;
 import com.github.neoflyingsaucer.pdf2dout.Pdf2FontResolver;
@@ -34,7 +33,10 @@ public class PdfTest
 	
 	public void prepare(String html)
 	{
-    	PagedRenderer r3 = new PagedRenderer(new DefaultUserAgent(), PDF_DEFAULT_DOTS_PER_POINT * 72f, PDF_DEFAULT_DOTS_PER_PIXEL);
+		// Don't let the renderer run for more than ten seconds, in case of endless loops.
+		FSCancelController.setThreadCancelHandler(new FSTimedCancelHandler(10000));
+		
+		PagedRenderer r3 = new PagedRenderer(new DefaultUserAgent(), PDF_DEFAULT_DOTS_PER_POINT * 72f, PDF_DEFAULT_DOTS_PER_PIXEL);
 
     	Pdf2Out out = new Pdf2Out(PDF_DEFAULT_DOTS_PER_POINT, PdfOutMode.TEST_MODE);
 

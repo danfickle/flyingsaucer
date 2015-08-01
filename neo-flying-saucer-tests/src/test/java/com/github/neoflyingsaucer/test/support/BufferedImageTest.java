@@ -6,10 +6,9 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.w3c.dom.Document;
-
 import com.github.neoflyingsaucer.defaultuseragent.DefaultUserAgent;
-import com.github.neoflyingsaucer.defaultuseragent.HTMLResourceHelper;
+import com.github.neoflyingsaucer.extend.controller.cancel.FSCancelController;
+import com.github.neoflyingsaucer.extend.controller.cancel.FSTimedCancelHandler;
 import com.github.neoflyingsaucer.extend.output.DisplayList;
 import com.github.neoflyingsaucer.j2dout.Java2DFontContext;
 import com.github.neoflyingsaucer.j2dout.Java2DFontResolver;
@@ -27,6 +26,9 @@ public class BufferedImageTest
 
     private static BufferedImage renderToPagedImage(String doc, int pageNo)
     {
+    	// Don't let the renderer run for more than ten seconds, in case of endless loops.
+    	FSCancelController.setThreadCancelHandler(new FSTimedCancelHandler(10000));
+    	
     	BufferedImage layoutGraphics = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
  
     	Graphics2D g2d2 = layoutGraphics.createGraphics();
