@@ -213,7 +213,8 @@ public class ExportAction extends AbstractAction
         g2d2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
     	
-    	ContinuousRenderer r3 = new ContinuousRenderer(uac);
+        // 72 DPI.
+    	ContinuousRenderer r3 = new ContinuousRenderer(uac, 72f, 1000, 1000);
     	
     	r3.setDocumentUri(url);
     	r3.setImageResolver(new Java2DImageResolver());

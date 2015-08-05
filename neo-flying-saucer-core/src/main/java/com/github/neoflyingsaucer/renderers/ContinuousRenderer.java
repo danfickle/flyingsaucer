@@ -41,10 +41,17 @@ public class ContinuousRenderer
 	private final UserAgentCallback cb;
 	private final SharedContext sharedContext;
 	private final DisplayList displayList;
+	private final float dpi;
+	private final float viewportWidth;
+	private final float viewportHeight;
 	
-	public ContinuousRenderer(UserAgentCallback cb)
+	
+	public ContinuousRenderer(UserAgentCallback cb, float dpi, float width, float height)
 	{
 		this.cb = cb;
+		this.dpi = dpi;
+		this.viewportWidth = width;
+		this.viewportHeight = height;
 		this.sharedContext = newSharedContext(cb);
 		this.displayList = new DisplayListImpl();
 	}
@@ -122,6 +129,9 @@ public class ContinuousRenderer
     {
     	SharedContext context = new SharedContext(userAgent);
         context.setTextRenderer(new DlTextRenderer());
+        
+        // Used for resolving media queries.
+        context.set_TempCanvas(new Rectangle((int) this.viewportWidth, (int) this.viewportHeight));
         return context;
     }
 
@@ -154,7 +164,7 @@ public class ContinuousRenderer
     private void print() 
     {
             getSharedContext().setPrint(false);
-            getSharedContext().setDPI(72f);
+            getSharedContext().setDPI(this.dpi);
             getSharedContext().setUserAgentCallback(this.cb);
             getSharedContext().setNamespaceHandler(new HtmlNamespaceHandler());
             getSharedContext().getCss().setDocumentContext(getSharedContext(), getSharedContext().getNamespaceHandler(), doc);

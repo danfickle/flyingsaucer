@@ -2,22 +2,22 @@
 <head>
 <style>
 @media not print {
-  body {
+  body, h1 {
    background-color: yellow;
   }
 }
 @media (min-width: 100px) { 
- body {
+ body, h1 {
   background-color: red;
  }
 }
 @media screen and (min-width: 600px) { 
- body {
+ body, h1 {
   background-color: blue;
  }
 }
 @media (min-width: 1000px) and (color) { 
- body {
+ body, h1 {
   background-color: green;
  }
 }
@@ -44,5 +44,7 @@
 <body>
 <h1>Media Queries Example</h1>
 <p>In continuous mode, experiment with the width of the page (press refresh).</p>
+<p>There are media query breaks at 100px, 600px and 1000px.</p>
+<p>In paged mode A4 is used as the standard page size for the purpose of media queries.</p>
 </body>
 </html>

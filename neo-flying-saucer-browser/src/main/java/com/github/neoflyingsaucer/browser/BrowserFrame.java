@@ -56,7 +56,7 @@ public class BrowserFrame extends JFrame
 	{
 		if (_isContinuous)
 		{
-			_continuousPanel.prepare(_demoUserAgent, _currentDemo, _scrollPane.getWidth() - _scrollPane.getVerticalScrollBar().getWidth());
+			_continuousPanel.prepare(_demoUserAgent, _currentDemo, _scrollPane.getWidth() - _scrollPane.getVerticalScrollBar().getWidth(), this.getHeight());
 			_scrollPane.setViewportView(_continuousPanel);
 			_scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		}

@@ -35,14 +35,15 @@ public class HtmlContinuousPanel extends JPanel
         _layoutGraphics = g2d2;
 	}
 	
-	public void prepare(UserAgentCallback userAgent, String uri, int width)
+	public void prepare(UserAgentCallback userAgent, String uri, int width, int height)
 	{
 		if (_layoutGraphics != null)
 			_layoutGraphics.dispose();
 		
 		newLayoutGraphics();
 		
-		_renderer = new ContinuousRenderer(userAgent);
+		// 72 DPI.
+		_renderer = new ContinuousRenderer(userAgent, 72f, width, height);
 		_renderer.setDocumentUri(uri);
 		_renderer.setImageResolver(new Java2DImageResolver());
     	_renderer.setFontContext(new Java2DFontContext(_layoutGraphics));
