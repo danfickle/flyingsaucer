@@ -119,6 +119,7 @@ public class ExportAction extends AbstractAction
     	}
     }
     
+    // These result in a DPI of 96DPI.
     private static final float PDF_DEFAULT_DOTS_PER_POINT = 20f * 4f / 3f;
     private static final int PDF_DEFAULT_DOTS_PER_PIXEL = 20;
     
@@ -173,6 +174,7 @@ public class ExportAction extends AbstractAction
         g2d2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
     	
+        // 72 DPI.
     	PagedRenderer r3 = new PagedRenderer(uac, 72, 1);
     	
     	r3.setDocumentUri(url);

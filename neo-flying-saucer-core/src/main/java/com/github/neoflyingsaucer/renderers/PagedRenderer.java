@@ -61,7 +61,7 @@ public class PagedRenderer
 	public PagedRenderer(UserAgentCallback cb, float dpi, int dpp)
 	{
 		this.cb = cb;
-		this.sharedContext = newSharedContext(cb);
+		this.sharedContext = newSharedContext(cb, dpi, dpp);
 		this.dpi = dpi;
 		this.dpp = dpp;
 	}
@@ -155,10 +155,28 @@ public class PagedRenderer
         root.getLayer().layoutPages(c1);
     }
 
-    private SharedContext newSharedContext(final UserAgentCallback userAgent) 
+    private SharedContext newSharedContext(UserAgentCallback userAgent, float dpi, float dpp) 
     {
     	SharedContext context = new SharedContext(userAgent);
         context.setTextRenderer(new DlTextRenderer());
+
+        // The temp canvas width and height is used to resolve media queries.
+        // We can't use a CSS provided width and height because they may not be
+        // calculated yet (if they're inside a media query) so we use the standard size (A4).
+        final float MM__PER__CM = 10f;
+        final float CM__PER__IN = 2.54f;
+        final float A4_PAGE_W_MM = 210f;
+        final float A4_PAGE_H_MM = 297f;
+        final float mmPerDot = (CM__PER__IN * MM__PER__CM) / dpi;
+
+        // The final value depends on DPI:
+        // 595 * 842 for 72DPI (Image default)
+        // 794 * 1123 for 96DPI (PDF default)
+        final float width = A4_PAGE_W_MM / mmPerDot / dpp; 
+        final float height = A4_PAGE_H_MM / mmPerDot / dpp;
+
+        context.set_TempCanvas(new Rectangle((int) width, (int) height));        
+
         return context;
     }
 
