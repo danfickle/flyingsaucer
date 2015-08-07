@@ -11,17 +11,15 @@ To provide the best open-source static, paged HTML renderer around. Interactive 
 
 TODO
 ----
-+ Support the WOFF font format for embedded fonts.
-+ Make cancelable/interrupted support.
 + Make case insensitive and locale insensitive.
-+ Replace StringBuffer with StringBuilder.
-+ Remove redundant casts.
 + Update LICENSE.
 + Update Samples.
 + Support Bootstrap styles.
++ Also see issues.
 
 DONE
 ----
++ Make cancelable/interrupted support.
 + Lots more tests.
 + Replace iText with a new PDF library (Apache PDF-BOX).
 + Media query support.
@@ -39,6 +37,13 @@ DONE
 + Remove SWT, itext5 and docbook support.
 + Move to latest dependencies.
 + Delete extra files, jars, etc.
+
+CURRENT LIMITATIONS
+-------------------
++ No unicode font support. Only Win-Ansi encoding can be used. This is a severe limitation but will be fixed when PDF-BOX 2 is released shortly with unicode font support. See issue #41
++ No PDF forms. See issue #43
++ No right-to-left text support. See issue #44
++ No documentation. See issues #48 and #49
 
 BROWSER
 -------
