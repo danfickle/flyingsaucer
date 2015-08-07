@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/danfickle/neoflyingsaucer.svg)](https://travis-ci.org/danfickle/neoflyingsaucer)
+[![Coverage Status](https://coveralls.io/repos/danfickle/neoflyingsaucer/badge.svg?branch=master&service=github)](https://coveralls.io/github/danfickle/neoflyingsaucer?branch=master)
 
 OVERVIEW
 --------
