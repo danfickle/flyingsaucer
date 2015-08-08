@@ -172,8 +172,10 @@ public class PagedRenderer
         // The final value depends on DPI:
         // 595 * 842 for 72DPI (Image default)
         // 794 * 1123 for 96DPI (PDF default)
-        final float width = A4_PAGE_W_MM / mmPerDot / dpp; 
-        final float height = A4_PAGE_H_MM / mmPerDot / dpp;
+        // However, these values need to be provided in device dots
+        // rather than pixels as that is how the media query engine evaluates them.
+        final float width = A4_PAGE_W_MM / mmPerDot; 
+        final float height = A4_PAGE_H_MM / mmPerDot;
 
         context.set_TempCanvas(new Rectangle((int) width, (int) height));        
 
