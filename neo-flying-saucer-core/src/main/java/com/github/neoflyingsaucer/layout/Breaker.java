@@ -190,6 +190,11 @@ public class Breaker {
             	width = c.getTextRenderer().getWidth(c.getFontContext(), font, broken);
             	last--;
             }
+            
+            if (last == 0)
+            {
+            	context.setUnbreakable(true);
+            }
         }
         
         context.setWidth(width);

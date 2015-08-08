@@ -173,7 +173,7 @@ public class InlineBoxing {
                     if (lbContext.getStart() == 0) {
                         fit += pendingLeftMBP + pendingRightMBP;
                     }
-
+                    
                     boolean trimmedLeadingSpace = false;
                     if (hasTrimmableLeadingSpace(
                             currentLine, style, lbContext, zeroWidthInlineBlock)) {
@@ -205,6 +205,12 @@ public class InlineBoxing {
                         lbContext.saveEnd();
                         final InlineText inlineText = layoutText(
                                 c, iB.getStyle(), remainingWidth - fit, lbContext, false);
+                        
+                        if (lbContext.isUnbreakable() && lbContext.getWidth() >= maxAvailableWidth - fit)
+                        {
+                        	break;
+                        }
+                        
                         if (lbContext.isUnbreakable() && ! currentLine.isContainsContent()) {
                             final int delta = c.getBlockFormattingContext().getNextLineBoxDelta(c, currentLine, maxAvailableWidth);
                             if (delta > 0) {

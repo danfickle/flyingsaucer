@@ -309,8 +309,7 @@ public class TestPage
 		pdf.assertContains(drawEllipseOperation);
 	}
 
-	@Test
-	@Ignore("Failing (infinite loop somewhere in code)")
+	@Test // Regression test
 	public void testInfiniteLoopBugOnTooWideContent()
 	{
 		PdfTest pdf = new PdfTest("InfiniteLoopBugOnTooWideContent");
