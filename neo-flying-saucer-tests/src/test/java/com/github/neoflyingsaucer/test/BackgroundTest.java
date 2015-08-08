@@ -175,8 +175,8 @@ public class BackgroundTest
 		String html =
 			"<html><head><style>" +
 			"@page { size: 8px 6px; margin: 0; }" +
-			"body {  margin: 2px; background-color: #f00; }" +
-			"html { background-color: #0f0; }" +
+			"body {  margin: 2px; background-color: #0f0; }" +
+			"html { background-color: #f00; }" +
 			"</style></head><body></body></html>";
 		
 		String expected = 
