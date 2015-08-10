@@ -1,6 +1,10 @@
 [![Build Status](https://travis-ci.org/danfickle/neoflyingsaucer.svg)](https://travis-ci.org/danfickle/neoflyingsaucer)
 [![Coverage Status](https://coveralls.io/repos/danfickle/neoflyingsaucer/badge.svg?branch=using-pdfbox&service=github)](https://coveralls.io/github/danfickle/neoflyingsaucer?branch=using-pdfbox)
 
+NEW : TRY ONLINE!
+-----------------
+neoFlyingSaucer can now be experimented with online at the [neoFlyingSaucer HTML to PDF or Image Sandbox](http://sandbox.openhtmltopdf.com/). There are some limitations for security purposes such as no remote resources and a limit of 20,000 characters. Please remember to file issues for any problems you may encounter.
+
 OVERVIEW
 --------
 neoFlying Saucer is a pure-Java library for rendering arbitrary HTML 
