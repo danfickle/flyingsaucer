@@ -33,17 +33,16 @@ import com.github.neoflyingsaucer.extend.output.FontSpecificationI.FontVariant;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.pdfbox.encoding.Encoding;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDTrueTypeFont;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 import static com.github.neoflyingsaucer.pdf2dout.Pdf2PdfBoxWrapper.*;
@@ -478,9 +477,9 @@ public class Pdf2FontResolver implements FontResolver
 	{
 		for (FSFontFaceItem item : fontFaces)
 		{
-			PDTrueTypeFont font = null;
+			PDFont font = null;
 			try {
-				font = PDTrueTypeFont.loadTTF(doc, new ByteArrayInputStream(item.getFontBytes()));
+				font = PDType0Font.load( doc, new ByteArrayInputStream(item.getFontBytes()) );
 			} catch (IOException e) {
 				FSErrorController.log(Pdf2FontResolver.class, FSErrorLevel.ERROR, LangId.COULDNT_LOAD_FONT, item.getFontFamily());
 				continue;
@@ -490,9 +489,8 @@ public class Pdf2FontResolver implements FontResolver
 			
 			if (family == null)
 				family = new FontFamily();
-			else
-				family.setName(item.getFontFamily());
 
+			family.setName(item.getFontFamily());
 			FontDescription description = new FontDescription(font);
 			description.setWeight(item.getWeight());
 			description.setFromFontFace(true);
