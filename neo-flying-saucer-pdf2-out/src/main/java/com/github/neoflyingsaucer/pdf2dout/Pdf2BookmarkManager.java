@@ -42,7 +42,7 @@ public class Pdf2BookmarkManager
 		
 		PDDocumentOutline outline = new PDDocumentOutline();
     	PDOutlineItem root = new PDOutlineItem();
-    	outline.appendChild(root);
+    	outline.addFirst( root );
  
     	for (int i = 0; i < bookmarks.size(); i++)
     	{
@@ -74,11 +74,11 @@ public class Pdf2BookmarkManager
 			
 			if (book.parent != null && book.parent.actual != null)
 			{
-				book.parent.actual.appendChild(item);
+				book.parent.actual.addLast(item);
 			}
 			else
 			{
-				root.appendChild(item);
+				root.addLast( item );
 			}
 			
 			FSCancelController.cancelOpportunity(Pdf2BookmarkManager.class);

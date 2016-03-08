@@ -8,18 +8,17 @@ import java.io.OutputStream;
 import java.util.Map;
 
 import org.apache.pdfbox.cos.COSDictionary;
-import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.PDResources;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
-import org.apache.pdfbox.pdmodel.graphics.pattern.PDPatternResources;
-import org.apache.pdfbox.pdmodel.graphics.pattern.PDShadingPatternResources;
-import org.apache.pdfbox.pdmodel.graphics.xobject.PDJpeg;
-import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObject;
+import org.apache.pdfbox.pdmodel.graphics.PDXObject;
+import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationLink;
+import org.apache.pdfbox.util.Matrix;
 
 import com.github.neoflyingsaucer.pdf2dout.Pdf2Out.PdfOutMode;
 
@@ -28,7 +27,7 @@ public class Pdf2PdfBoxWrapper
 	public static void pdfCloseSubpath(PDPageContentStream strm)
 	{
 		try {
-			strm.closeSubPath();
+			strm.closePath();
 		} catch (IOException e) {
 			throw new PdfException(e);
 		}
@@ -37,7 +36,7 @@ public class Pdf2PdfBoxWrapper
 	public static void pdfCurveTo(float x1, float y1, float x2, float y2, float x3, float y3, PDPageContentStream strm)
 	{
 		try {
-			strm.addBezier312(x1, y1, x2, y2, x3, y3);
+			strm.curveTo(x1, y1, x2, y2, x3, y3);
 		} catch (IOException e) {
 			throw new PdfException(e);
 		}
@@ -46,7 +45,7 @@ public class Pdf2PdfBoxWrapper
 	public static void pdfCurveTo(float x1, float y1, float x3, float y3, PDPageContentStream strm)
 	{
 		try {
-			strm.addBezier31(x1, y1, x3, y3);
+			strm.curveTo2(x1, y1, x3, y3);
 		} catch (IOException e) {
 			throw new PdfException(e);
 		}
@@ -65,8 +64,6 @@ public class Pdf2PdfBoxWrapper
 	{
 		try {
 			doc.save(os);
-		} catch (COSVisitorException e) {
-			throw new PdfException(e);
 		} catch (IOException e) {
 			throw new PdfException(e);
 		}
@@ -255,7 +252,7 @@ public class Pdf2PdfBoxWrapper
 	public static PDRectangle pdfGetFontBoundingBox(PDFont font)
 	{
 		try {
-			return font.getFontBoundingBox();
+			return new PDRectangle( font.getBoundingBox() );
 		} catch (IOException e) {
 			throw new PdfException(e);
 		}
@@ -265,7 +262,11 @@ public class Pdf2PdfBoxWrapper
 	{
 		try {
 			return font.getStringWidth(s);
-		} catch (IOException e) {
+		} 
+		catch( IllegalArgumentException e ) {
+			return 0;
+		}
+		catch (IOException e) {
 			throw new PdfException(e);
 		}
 	}
@@ -300,7 +301,7 @@ public class Pdf2PdfBoxWrapper
 	public static void pdfSetTextMatrix(float a, float b, float c, float d, float e, float f, PDPageContentStream strm)
 	{
 		try {
-			strm.setTextMatrix(a, b, c, d, e, f);
+			strm.setTextMatrix( new Matrix( a, b, c, d, e, f ));
 		} catch (IOException e1) {
 			throw new PdfException(e1);
 		}
@@ -309,7 +310,7 @@ public class Pdf2PdfBoxWrapper
 	public static void pdfDrawString(String s, PDPageContentStream strm)
 	{
 		try {
-			strm.drawString(s);
+			strm.showText(s);
 		} catch (IOException e) {
 			throw new PdfException(e);
 		}
@@ -333,10 +334,10 @@ public class Pdf2PdfBoxWrapper
 		}
 	}
 	
-	public static PDJpeg pdfCreateJpeg(PDDocument doc, InputStream is)
+	public static PDImageXObject pdfCreateJpeg(PDDocument doc, InputStream is)
 	{
 		try {
-			return new PDJpeg(doc, is);
+			return JPEGFactory.createFromStream( doc, is );
 		} catch (IOException e) {
 			throw new PdfException(e);
 		}
@@ -351,17 +352,17 @@ public class Pdf2PdfBoxWrapper
 		}
 	}
 
-	public static Map<String, PDPatternResources> pdfGetPatterns(PDResources res)
-	{
-		try {
-			return res.getPatterns();
-		} catch (IOException e) {
-			throw new PdfException(e);
-		}
-	}
-	
-	public static PDPatternResources pdfCreatePatterns(COSDictionary dict)
-	{
-		return new PDShadingPatternResources(dict);
-	}
+//	public static Map<String, PDPatternResources> pdfGetPatterns(PDResources res)
+//	{
+//		try {
+//			return res.getPatterns();
+//		} catch (IOException e) {
+//			throw new PdfException(e);
+//		}
+//	}
+//	
+//	public static PDPatternResources pdfCreatePatterns(COSDictionary dict)
+//	{
+//		return new PDShadingPatternResources(dict);
+//	}
 }

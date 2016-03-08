@@ -20,16 +20,17 @@ import java.util.TreeMap;
 
 import javax.imageio.ImageIO;
 
+import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.PDResources;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.graphics.PDExtendedGraphicsState;
-import org.apache.pdfbox.pdmodel.graphics.xobject.PDJpeg;
-import org.apache.pdfbox.pdmodel.graphics.xobject.PDPixelMap;
-import org.apache.pdfbox.pdmodel.interactive.action.type.PDActionURI;
+import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.pdfbox.pdmodel.graphics.state.PDExtendedGraphicsState;
+import org.apache.pdfbox.pdmodel.interactive.action.PDActionURI;
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationLink;
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDBorderStyleDictionary;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
@@ -582,17 +583,18 @@ public class Pdf2Out implements DisplayListOuputDevice
         
         if (image.isJpeg())
         {
-        	PDJpeg jpeg = pdfCreateJpeg(_pdf, new ByteArrayInputStream(image.getBytes()));
+        	PDImageXObject jpeg = pdfCreateJpeg(_pdf, new ByteArrayInputStream(image.getBytes()));
         	pdfDrawXObject(jpeg, inverse, _content);
         }
         else
         {
-        	PDPixelMap pixel;
+        	
+        	PDImageXObject pixel;
         	
         	try
         	{
         		BufferedImage img = ImageIO.read(new ByteArrayInputStream(image.getBytes()));
-        		pixel = new PDPixelMap(_pdf, img);
+        		pixel = LosslessFactory.createFromImage( _pdf, img );
         	}
         	catch (IOException e)
         	{
@@ -633,7 +635,8 @@ public class Pdf2Out implements DisplayListOuputDevice
 	{
 		if (replaced instanceof Pdf2ImageReplacedElement)
 		{
-            FSImage image = ((Pdf2ImageReplacedElement) replaced).getImage();
+			Pdf2ImageReplacedElement repImage = (Pdf2ImageReplacedElement) replaced;
+            FSImage image = ((Pdf2ImageReplacedElement) replaced).getScaledImage();
             Point location = replaced.getLocation();
             drawImage(image, location.x, location.y);
 		}
@@ -884,24 +887,16 @@ public class Pdf2Out implements DisplayListOuputDevice
 		if (name != null)
 			return name;
 		
-		PDResources resources = _currentPg.findResources();
+		PDResources resources = _currentPg.getResources();
 
 		PDExtendedGraphicsState extgstate = new PDExtendedGraphicsState();
 		extgstate.setStrokingAlphaConstant(opacity);
 		extgstate.setNonStrokingAlphaConstant(opacity);
 
 		name = "MYGS" + nextGStateNumber++;
-		Map<String, PDExtendedGraphicsState> gss = resources.getGraphicsStates();
-
-		if (gss == null)
-		{
-			gss = new TreeMap<String, PDExtendedGraphicsState>();
-		}
-		
-		gss.put(name, extgstate);
+		resources.put( COSName.getPDFName( name ), extgstate );
 		opacityExtGStates.put(opacity, name);
 		
-		resources.setGraphicsStates(gss);
 		return name;
 	}
 

@@ -1,9 +1,7 @@
 package com.github.neoflyingsaucer.pdf2dout;
 
 import static com.github.neoflyingsaucer.pdf2dout.Pdf2PdfBoxWrapper.pdfAppendRawCommand;
-import static com.github.neoflyingsaucer.pdf2dout.Pdf2PdfBoxWrapper.pdfCreatePatterns;
 import static com.github.neoflyingsaucer.pdf2dout.Pdf2PdfBoxWrapper.pdfFillRect;
-import static com.github.neoflyingsaucer.pdf2dout.Pdf2PdfBoxWrapper.pdfGetPatterns;
 import static com.github.neoflyingsaucer.pdf2dout.Pdf2PdfBoxWrapper.pdfRestoreGraphics;
 import static com.github.neoflyingsaucer.pdf2dout.Pdf2PdfBoxWrapper.pdfSaveGraphics;
 
@@ -24,10 +22,10 @@ import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.cos.COSStream;
 import org.apache.pdfbox.io.RandomAccessBuffer;
 import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.PDResources;
-import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.graphics.PDExtendedGraphicsState;
-import org.apache.pdfbox.pdmodel.graphics.pattern.PDPatternResources;
+import org.apache.pdfbox.pdmodel.graphics.pattern.PDShadingPattern;
+import org.apache.pdfbox.pdmodel.graphics.state.PDExtendedGraphicsState;
 
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlLinearGradient;
 import com.github.neoflyingsaucer.displaylist.DlInstruction.DlStopPoint;
@@ -80,38 +78,27 @@ public class Pdf2LinearGradient
 	
 	public void paint(PDPage page, PDPageContentStream strm, int nextGStateNumber, int lGradientObjNumber)
 	{
-        PDResources resources = page.findResources();
+        PDResources resources = page.getResources();
    		
         if (hasAlpha)
         {
         	PDExtendedGraphicsState alphaShader = addSpecialShader(g, x, y, w, h);
         	
-        	Map<String, PDExtendedGraphicsState> gss = resources.getGraphicsStates();
-        	
-        	if (gss == null)
-        		gss = new TreeMap<String, PDExtendedGraphicsState>();
-        	
-        	gss.put("MYGS" + nextGStateNumber, alphaShader);
-        	resources.setGraphicsStates(gss);
+        	resources.put( COSName.getPDFName( "MYGS" + nextGStateNumber ), alphaShader );
         }
         
         COSArray functions = addLowerLevelFunctions(g, false);
         COSDictionary stitcher = createStitcherFunction(g, dotsPerPoint, functions);
         COSDictionary shading = createShadingDictionary(g, stitcher, x, y);
         
-        Map<String, PDPatternResources> patterns = pdfGetPatterns(resources);
-        if (patterns == null)
-        	patterns = new TreeMap<String, PDPatternResources>();
-        
         COSDictionary patternDictionary = new COSDictionary();
         patternDictionary.setItem(COSName.TYPE, COSName.PATTERN);
         patternDictionary.setItem(COSName.PATTERN_TYPE, COSInteger.TWO);
         patternDictionary.setItem(COSName.SHADING, shading);
         
-        PDPatternResources patternResources = pdfCreatePatterns(patternDictionary);
-        patterns.put("LGRADIENT" + lGradientObjNumber, patternResources);
+        PDShadingPattern patternResources = new PDShadingPattern(patternDictionary);
         
-        resources.setPatterns(patterns);
+        resources.put( COSName.getPDFName( "LGRADIENT" + lGradientObjNumber ), patternResources );
 
         pdfSaveGraphics(strm);
 
@@ -241,7 +228,7 @@ public class Pdf2LinearGradient
     
     private PDExtendedGraphicsState addSpecialShader(DlLinearGradient gradient, float x, float y, float w, float h)
     {
-    	COSStream result = new COSStream(new RandomAccessBuffer());
+    	COSStream result = new COSStream();
 
     	COSArray bbox = new COSArray();
     	bbox.add(new COSFloat(0));

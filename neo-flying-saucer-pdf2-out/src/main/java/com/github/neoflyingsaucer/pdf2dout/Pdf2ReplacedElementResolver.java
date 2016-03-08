@@ -76,11 +76,19 @@ public class Pdf2ReplacedElementResolver implements ReplacedElementResolver
 	public static class Pdf2ImageReplacedElement implements ReplacedElement
 	{
 		private final FSImage img;
+		private final FSImage scaledImg;
 		private Point location = new Point(0, 0);
 
 		public Pdf2ImageReplacedElement(FSImage img, int cssWidth, int cssHeight)
 		{
 			this.img = img;
+			if( img != null )
+			{
+				scaledImg = img.scale( cssWidth, cssHeight );
+			}else
+			{
+				scaledImg = null;
+			}
 		}
 
 		@Override
@@ -89,7 +97,7 @@ public class Pdf2ReplacedElementResolver implements ReplacedElementResolver
 			if (img == null)
 				return 0;
 			
-			return img.getWidth();
+			return scaledImg.getWidth();
 		}
 
 		@Override
@@ -98,7 +106,7 @@ public class Pdf2ReplacedElementResolver implements ReplacedElementResolver
 			if (img == null)
 				return 0;
 			
-			return img.getHeight();
+			return scaledImg.getHeight();
 		}
 
 		@Override
@@ -134,5 +142,10 @@ public class Pdf2ReplacedElementResolver implements ReplacedElementResolver
 	    {
 	        return img;
 	    }
+
+		public FSImage getScaledImage()
+		{
+			return scaledImg;
+		}
 	}
 }
